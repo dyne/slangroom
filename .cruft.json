@@ -1,0 +1,17 @@
+{
+	"template": "https://github.com/dyne/starters",
+	"commit": "c90b84b5e10ac03215ebf4d20e83110f8a74eae3",
+	"checkout": null,
+	"context": {
+		"cookiecutter": {
+			"project_name": "slangroom",
+			"project_description": "Enhance zencode smart contracts with your slang dialect",
+			"full_name": "Puria Nafisi Azizi",
+			"email": "puria@dyne.org",
+			"project_slug": "slangroom",
+			"repo": "https://github.com/dyne/slangroom",
+			"_template": "https://github.com/dyne/starters"
+		}
+	},
+	"directory": "typescript"
+}
