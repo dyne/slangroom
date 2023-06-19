@@ -5,5 +5,5 @@ module.exports = {
 		'^.+\\.(ts|tsx)$': 'ts-jest'
 	},
   reporters: ['default', 'jest-junit'],
-	coverageReporters: ['html', 'lcov', 'text']
+	coverageReporters: ['html', 'json', 'lcov', 'text']
 };

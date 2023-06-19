@@ -26,12 +26,10 @@ jobs:
         run: pnpm coverage
 
       - name: Test Report
-        uses: dorny/test-reporter@v1
+        uses: ArtiomTr/jest-coverage-report-action@v2
         if: success() || failure()
         with:
-          name: 🧪 Unit tests
-          path: junit.xml
-          reporter: jest-junit
+          coverage-file: ./coverage/coverage-final.json
 
       - name: Build all
         run: pnpm build-all
