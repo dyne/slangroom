@@ -1,9 +1,9 @@
 import { Lexer } from 'chevrotain';
 import { zencode_exec } from 'zenroom';
-import { Comment, Identifier, Ignored, WhiteSpace } from './tokens';
+import { Comment, Identifier, Ignored, SkippedTokens, WhiteSpace } from './tokens';
 
 export const tokenize = (contract: string) => {
-	const tokens = [WhiteSpace, Identifier, Comment];
+	const tokens = [WhiteSpace, Identifier, ...SkippedTokens, Comment];
 	const Scanner = new Lexer(tokens);
 
 	return Scanner.tokenize(contract);

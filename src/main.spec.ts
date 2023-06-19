@@ -48,6 +48,13 @@ test('wrong tokens print error', () => {
 	expect(result.errors).toEqual(errors);
 });
 
+test('skipped tokens should be skipped', () => {
+	const contract = "given I am 'alice'";
+	const r = tokenize(contract);
+	expect(r.tokens.length).toBe(1);
+	expect(r.tokens[0].image).toBe("'alice'");
+});
+
 test('given some zencode get just ignored sentences', async () => {
 	const contract = `Rule unknown ignore
 
