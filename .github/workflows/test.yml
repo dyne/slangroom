@@ -25,5 +25,13 @@ jobs:
       - name: Run the tests
         run: pnpm coverage
 
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: success() || failure()
+        with:
+          name: 🧪 Unit tests
+          path: junit.xml
+          reporter: jest-junit
+
       - name: Build all
         run: pnpm build-all

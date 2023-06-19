@@ -4,5 +4,6 @@ module.exports = {
 	transform: {
 		'^.+\\.(ts|tsx)$': 'ts-jest'
 	},
-	coverageReporters: ['html', 'clover', 'json', 'lcov', ['text', { skipFull: true }]]
+  reporters: ['default', 'jest-junit'],
+	coverageReporters: ['html', 'lcov', 'text']
 };
