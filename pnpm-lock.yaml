@@ -8,6 +8,9 @@ dependencies:
   chevrotain:
     specifier: ^10.5.0
     version: 10.5.0
+  zenroom:
+    specifier: ^3.5.0
+    version: 3.5.0
 
 devDependencies:
   '@types/jest':
@@ -3420,3 +3423,7 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
     dev: true
+
+  /zenroom@3.5.0:
+    resolution: {integrity: sha512-wiW0Xg1x4nhFWdluGSP3zH9wBWB9bI358YJmvdtX6PyalQyfbcGvCH1duqjeRH6ld1vXaHjGWnoc8KshptAMUA==}
+    dev: false

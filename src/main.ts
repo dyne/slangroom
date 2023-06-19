@@ -1,26 +1,12 @@
-import { Lexer, createToken } from 'chevrotain';
-export const Identifier = createToken({
-	name: 'Identifier',
-	pattern: /'(?:[^\\']|\\(?:[bfnrtv'\\/]|u[0-9a-fA-F]{4}))*'/
-});
-
-export const Comment = createToken({
-	name: 'Comment',
-	pattern: /#[^\n\r]*/,
-	group: 'comments'
-});
-
-export const WhiteSpace = createToken({
-	name: 'WhiteSpace',
-	pattern: /\s+/,
-	group: Lexer.SKIPPED
-});
+import { Lexer } from 'chevrotain';
+import { zencode_exec } from 'zenroom';
+import { Comment, Identifier, Ignored, WhiteSpace } from './tokens';
 
 export const tokenize = (contract: string) => {
 	const tokens = [WhiteSpace, Identifier, Comment];
 	const Scanner = new Lexer(tokens);
 
-	const result = Scanner.tokenize(contract);
+	return Scanner.tokenize(contract);
 
 	// if (result.errors.length > 0) {
 	// 	const msg = result.errors
@@ -28,6 +14,11 @@ export const tokenize = (contract: string) => {
 	// 		.join(', ');
 	// 	throw new Error(`Error tokenizing the text. ${msg}`);
 	// }
+};
 
-	return result;
+export const scan = async (contract: string, data?: string) => {
+	const { logs } = await zencode_exec(contract, { data });
+	const Scanner = new Lexer([WhiteSpace, Ignored]);
+	const sentences = Scanner.tokenize(logs);
+	return sentences.tokens.map((s) => s.image);
 };

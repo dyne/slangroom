@@ -49,6 +49,7 @@
 		"typescript": "4.9.5"
 	},
 	"dependencies": {
-		"chevrotain": "^10.5.0"
+		"chevrotain": "^10.5.0",
+		"zenroom": "^3.5.0"
 	}
 }
