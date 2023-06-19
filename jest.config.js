@@ -4,6 +4,7 @@ module.exports = {
 	transform: {
 		'^.+\\.(ts|tsx)$': 'ts-jest'
 	},
-  reporters: ['default', 'jest-junit'],
-	coverageReporters: ['html', 'json', 'lcov', 'text']
+	reporters: ['default', 'jest-junit'],
+	coverageReporters: ['html', 'json', 'lcov', 'text'],
+	coverageThreshold: { global: { lines: 90 } }
 };
