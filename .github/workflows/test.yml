@@ -30,6 +30,8 @@ jobs:
         if: success() || failure()
         with:
           coverage-file: ./coverage/coverage-final.json
+          output: comment, report-markdown
+          annotations: all
 
       - name: Build all
         run: pnpm build-all
