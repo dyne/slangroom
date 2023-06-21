@@ -4,6 +4,6 @@ module.exports = {
 	transform: {
 		'^.+\\.(ts|tsx)$': 'ts-jest'
 	},
-  reporters: ['default', 'jest-junit'],
+	reporters: ['default', 'jest-junit'],
 	coverageReporters: ['html', 'lcov', 'text']
 };
