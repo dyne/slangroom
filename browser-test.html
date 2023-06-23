@@ -2,19 +2,18 @@
 	<head>
 		<script src="./dist/esbuild/browser.js"></script>
 		<script>
-			document.addEventListener("DOMContentLoaded", () => {
-
+			document.addEventListener('DOMContentLoaded', () => {
 				const contract = `# Given nothing
 'first identifier' 'second'
 'third' # some comment
-                                            `
-				const elContract = document.querySelector("#contract");
+                                            `;
+				const elContract = document.querySelector('#contract');
 				elContract.value = contract;
 
 				let parsed = tokenize(contract);
-				const elParsed = document.querySelector("#parsed");
+				const elParsed = document.querySelector('#parsed');
 				elParsed.textContent = JSON.stringify(parsed, null, 4);
-				elContract.addEventListener("input", e => {
+				elContract.addEventListener('input', (e) => {
 					parsed = tokenize(e.target.value);
 					elParsed.textContent = JSON.stringify(parsed, null, 4);
 				});
