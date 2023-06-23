@@ -1,4 +1,3 @@
-import { tokenMatcher } from 'chevrotain';
 import { Identifier, Comment } from './tokens';
 import { scan, tokenize } from './main';
 
@@ -12,8 +11,9 @@ test('tokens and identifiers are handled correctly', () => {
 	expect(result.errors).toHaveLength(0);
 
 	expect(result.groups).toHaveProperty('comments');
+
 	expect(result.groups.comments).toHaveLength(2);
-	result.groups.comments.forEach((x) => expect(tokenMatcher(x, Comment)).toBe(true));
+	result.groups.comments.forEach((x) => expect(x).toBe(Comment));
 	expect(result.groups.comments[0].image).toBe('# Given nothing');
 	expect(result.groups.comments[1].image).toBe('# and another comment');
 
