@@ -13,7 +13,7 @@ test('tokens and identifiers are handled correctly', () => {
 	expect(result.groups).toHaveProperty('comments');
 
 	expect(result.groups.comments).toHaveLength(2);
-	result.groups.comments.forEach((x) => expect(x).toBe(Comment));
+	result.groups.comments.forEach((x) => expect(x.tokenType).toBe(Comment));
 	expect(result.groups.comments[0].image).toBe('# Given nothing');
 	expect(result.groups.comments[1].image).toBe('# and another comment');
 
