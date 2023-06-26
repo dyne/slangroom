@@ -1,79 +1,28 @@
-import { Identifier, Comment } from './tokens';
-import { scan, tokenize } from './main';
+import { getIgnoredStatements } from './index';
 
-test('tokens and identifiers are handled correctly', () => {
-	const contract = `# Given nothing
-'one' # and another comment
-'two'
-	`;
-	const result = tokenize(contract);
-
-	expect(result.errors).toHaveLength(0);
-
-	expect(result.groups).toHaveProperty('comments');
-
-	expect(result.groups.comments).toHaveLength(2);
-	result.groups.comments.forEach((x) => expect(x.tokenType).toBe(Comment));
-	expect(result.groups.comments[0].image).toBe('# Given nothing');
-	expect(result.groups.comments[1].image).toBe('# and another comment');
-
-	expect(result.tokens).toHaveLength(2);
-	result.tokens.forEach((x) => expect(x.tokenType).toBe(Identifier));
-	expect(result.tokens[0].image).toBe("'one'");
-	expect(result.tokens[1].image).toBe("'two'");
-});
-
-test('wrong tokens print error', () => {
-	const contract = `broken contract`;
-	const result = tokenize(contract);
-	const errors = [
-		{
-			offset: 0,
-			length: 6,
-			line: 1,
-			column: 1,
-			message: 'unexpected character: ->b<- at offset: 0, skipped 6 characters.'
-		},
-		{
-			offset: 7,
-			length: 8,
-			line: 1,
-			column: 2,
-			message: 'unexpected character: ->c<- at offset: 7, skipped 8 characters.'
-		}
-	];
-	expect(result.errors).toHaveLength(2);
-	expect(result.errors).toStrictEqual(errors);
-});
-
-test('skipped tokens should be skipped', () => {
-	const contract = "given I am 'alice'";
-	const r = tokenize(contract);
-	expect(r.tokens).toHaveLength(1);
-	expect(r.tokens[0].image).toBe("'alice'");
-});
-
-test('given some zencode get just ignored sentences', async () => {
-	const contract = `Rule unknown ignore
-
-Given nothing
-When I test the rule with a statement that does not exist 1
-When I test the rule with a statement that does not exist 2
-When I test the rule with a statement that does not exist 2
-When I test the rule with a statement that does not exist 3
-When I write string 'test passed' in 'result'
-Then print the data
-`;
-	const result = await scan(contract);
-	expect(result).toStrictEqual([
+test("that zenroom ignores statements it doesn't know in general", async () => {
+	// Given I have a contract with a general rule unknown statemets in it
+	const uknowns = [
 		'When I test the rule with a statement that does not exist 1',
 		'When I test the rule with a statement that does not exist 2',
 		'When I test the rule with a statement that does not exist 2',
 		'When I test the rule with a statement that does not exist 3'
-	]);
+	];
+	const contract = `Rule unknown ignore
+
+Given nothing
+${uknowns.join('\n')}
+When I write string 'test passed' in 'result'
+Then print the data
+`;
+	// When I get the unknown statements
+	const result = await getIgnoredStatements(contract);
+	// Then it must be the given unknown statements
+	expect(result).toStrictEqual(uknowns);
 });
 
-test('restroom contracts show correct', async () => {
+test("that zenroom doesn't ignore ecdh but ignores restroom statements", async () => {
+	// Given I have a contract with ecdh and restroom statements
 	const contract = `# Always use 'Rule caller restroom-mw' when using Restroom
 Rule caller restroom-mw
 
@@ -120,6 +69,7 @@ When I rename the 'signature' to 'outputData.signature'
 Then print the 'outputData'
 Then print the 'outputData.signature'
 `;
+	// and params to zenroom
 	const data = {
 		endpoint: 'https://apiroom.net/api/dyneorg/512-bits-random-generator',
 		timeServer: 'http://showcase.api.linx.twenty57.net/UnixTime/tounix?date=now',
@@ -130,8 +80,10 @@ Then print the 'outputData.signature'
 			result: ''
 		}
 	};
-	const result = await scan(contract, JSON.stringify(data));
-	expect(result).toEqual([
+	// When I get the ignored statements
+	const result = await getIgnoredStatements(contract, { data: data });
+	// Then it must be equal to the statements of restroom
+	expect(result).toStrictEqual([
 		"Given that I have an endpoint named 'endpoint'",
 		"Given that I have an endpoint named 'timeServer'",
 		"Given I connect to 'endpoint' and save the output into 'dataFromEndpoint'",
