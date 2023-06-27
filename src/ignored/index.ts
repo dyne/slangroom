@@ -1,4 +1,4 @@
-import { type ZenroomParams, zencodeExec } from '../shared';
+import { type ZenroomParams, zencodeExec } from '../shared/zenroom';
 import { vocab } from './tokens';
 
 import { Lexer } from 'chevrotain';
