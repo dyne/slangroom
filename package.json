@@ -24,7 +24,7 @@
 		"docs": "typedoc --entryPoints src/main.ts",
 		"build": "tsc -p tsconfig.json",
 		"build-all": "pnpm clean && pnpm build && pnpm esbuild-node && pnpm esbuild-browser",
-		"format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json)\"",
+		"format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json|html)\"",
 		"esbuild-browser": "esbuild src/browser.ts --bundle --minify --sourcemap=external --outfile=dist/esbuild/browser.js --external:fs --external:path --external:crypto",
 		"esbuild-browser:dev": "esbuild src/browser.ts --bundle --outfile=dist/esbuild/browser.js",
 		"esbuild-browser:watch": "esbuild src/browser.ts --bundle --watch --outfile=dist/esbuild/browser.js",

@@ -1,28 +1,26 @@
-import { tokenMatcher } from 'chevrotain';
-import { WhiteSpace, Comment } from './tokens';
+import { Identifier, Comment } from './tokens';
 import { scan, tokenize } from './main';
 
-test('tokens and identifiers are handeld correctly', () => {
+test('tokens and identifiers are handled correctly', () => {
 	const contract = `# Given nothing
 'one' # and another comment
 'two'
 	`;
 	const result = tokenize(contract);
 
-	expect(result.errors.length).toBe(0);
-	expect(result.tokens.length).toBe(2);
-	expect(result.groups['comments'].length).toBe(2);
-	expect(result.groups['comments'][0].image).toBe('# Given nothing');
-	expect(result.groups['comments'][1].image).toBe('# and another comment');
+	expect(result.errors).toHaveLength(0);
+
+	expect(result.groups).toHaveProperty('comments');
+
+	expect(result.groups.comments).toHaveLength(2);
+	result.groups.comments.forEach((x) => expect(x.tokenType).toBe(Comment));
+	expect(result.groups.comments[0].image).toBe('# Given nothing');
+	expect(result.groups.comments[1].image).toBe('# and another comment');
+
+	expect(result.tokens).toHaveLength(2);
+	result.tokens.forEach((x) => expect(x.tokenType).toBe(Identifier));
 	expect(result.tokens[0].image).toBe("'one'");
 	expect(result.tokens[1].image).toBe("'two'");
-
-	result.tokens.map((t) => {
-		expect(tokenMatcher(t, WhiteSpace)).toBe(false);
-	});
-
-	expect(tokenMatcher(result.groups['comments'][0], Comment)).toBe(true);
-	expect(tokenMatcher(result.groups['comments'][1], Comment)).toBe(true);
 });
 
 test('wrong tokens print error', () => {
@@ -31,27 +29,27 @@ test('wrong tokens print error', () => {
 	const errors = [
 		{
 			offset: 0,
+			length: 6,
 			line: 1,
 			column: 1,
-			length: 6,
 			message: 'unexpected character: ->b<- at offset: 0, skipped 6 characters.'
 		},
 		{
 			offset: 7,
+			length: 8,
 			line: 1,
 			column: 2,
-			length: 8,
 			message: 'unexpected character: ->c<- at offset: 7, skipped 8 characters.'
 		}
 	];
-	expect(result.errors.length).toBe(2);
-	expect(result.errors).toEqual(errors);
+	expect(result.errors).toHaveLength(2);
+	expect(result.errors).toStrictEqual(errors);
 });
 
 test('skipped tokens should be skipped', () => {
 	const contract = "given I am 'alice'";
 	const r = tokenize(contract);
-	expect(r.tokens.length).toBe(1);
+	expect(r.tokens).toHaveLength(1);
 	expect(r.tokens[0].image).toBe("'alice'");
 });
 
@@ -67,7 +65,7 @@ When I write string 'test passed' in 'result'
 Then print the data
 `;
 	const result = await scan(contract);
-	expect(result).toEqual([
+	expect(result).toStrictEqual([
 		'When I test the rule with a statement that does not exist 1',
 		'When I test the rule with a statement that does not exist 2',
 		'When I test the rule with a statement that does not exist 2',
@@ -85,8 +83,8 @@ Scenario 'ecdh': Create the keyring
 Given that I am known as 'Alice'
 
 # Those are restroom-mw statements: define the endpoints
-Given that I have an endpoint named 'endpoint' 
-Given that I have an endpoint named 'timeServer' 
+Given that I have an endpoint named 'endpoint'
+Given that I have an endpoint named 'timeServer'
 
 # We need those object to store the output of the endpoints
 Given I have a 'string dictionary' named 'dataFromEndpoint'
@@ -105,7 +103,7 @@ When I rename the 'copy' to 'timestamp'
 When I create the copy of 'result' from dictionary 'dataFromEndpoint'
 When I rename the 'copy' to 'random-from-endpoint'
 
-# Create a string dictionary to format the output 
+# Create a string dictionary to format the output
 When I create the 'string dictionary'
 and I rename the 'string dictionary' to 'outputData'
 

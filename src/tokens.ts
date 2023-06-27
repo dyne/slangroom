@@ -26,6 +26,6 @@ export const WhiteSpace = createToken({
 
 export const Ignored = createToken({
 	name: 'Ignored',
-	pattern: /(?<=\[W\] {2}Zencode pattern ignored: ).*/,
+	pattern: /(?<=\[W\]  Zencode pattern ignored: ).*/,
 	line_breaks: false
 });
