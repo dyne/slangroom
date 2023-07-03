@@ -8,8 +8,8 @@ and I have a 'string' named 'nameOfTheFile'
 
 Then I save the 'stringToWrite' into the file 'nameOfTheFile'
 `;
-	const ast = await visit(contract, {
-		data: { stringToWrite: 'hello world', nameOfTheFile: 'hello-world.txt' }
+	await visit(contract, {
+		data: { stringToWrite: 'hello world', nameOfTheFile: 'hello-world.txt' },
 	});
 
 	expect(true).toStrictEqual(true);

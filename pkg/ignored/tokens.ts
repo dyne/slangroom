@@ -1,6 +1,5 @@
-import { Whitespace } from '../shared/tokens';
-
-import { createToken } from 'chevrotain';
+import { Whitespace } from '@slangroom/shared';
+import { createToken } from '@slangroom/deps/chevrotain';
 
 /**
  * Statements ignored by Zenroom.
@@ -13,8 +12,9 @@ import { createToken } from 'chevrotain';
  */
 export const IgnoredStatements = createToken({
 	name: 'IgnoredStatements',
+	// eslint-disable-next-line no-regex-spaces
 	pattern: /(?<=\[W\]  Zencode pattern ignored: ).*/,
-	line_breaks: false
+	line_breaks: false,
 });
 
 /**

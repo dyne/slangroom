@@ -6,7 +6,7 @@ test("that zenroom ignores statements it doesn't know in general", async () => {
 		'When I test the rule with a statement that does not exist 1',
 		'When I test the rule with a statement that does not exist 2',
 		'When I test the rule with a statement that does not exist 2',
-		'When I test the rule with a statement that does not exist 3'
+		'When I test the rule with a statement that does not exist 3',
 	];
 	const contract = `Rule unknown ignore
 
@@ -74,11 +74,11 @@ Then print the 'outputData.signature'
 		endpoint: 'https://apiroom.net/api/dyneorg/512-bits-random-generator',
 		timeServer: 'http://showcase.api.linx.twenty57.net/UnixTime/tounix?date=now',
 		dataFromEndpoint: {
-			result: ''
+			result: '',
 		},
 		'timestamp-output': {
-			result: ''
-		}
+			result: '',
+		},
 	};
 	// When I get the ignored statements
 	const result = await getIgnoredStatements(contract, { data: data });
@@ -87,6 +87,6 @@ Then print the 'outputData.signature'
 		"Given that I have an endpoint named 'endpoint'",
 		"Given that I have an endpoint named 'timeServer'",
 		"Given I connect to 'endpoint' and save the output into 'dataFromEndpoint'",
-		"Given I connect to 'timeServer' and save the output into 'timestamp-output'"
+		"Given I connect to 'timeServer' and save the output into 'timestamp-output'",
 	]);
 });

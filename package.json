@@ -8,29 +8,15 @@
 		"email": "puria@dyne.org"
 	},
 	"license": "AGPL-3.0-only",
-	"main": "./dist/tsc/main.js",
-	"types": "./dist/tsc/main.d.ts",
-	"browser": "./dist/esbuild/browser.js",
-	"bin": {
-		"slangroom": "./dist/esbuild/cli.js"
-	},
 	"scripts": {
-		"cli": "ts-node src/cli.ts",
-		"lint": "eslint src/ --ext .js,.jsx,.ts,.tsx",
+		"lint": "eslint --ext .ts pkg/ jest.config.ts",
 		"test": "jest",
 		"coverage": "jest --coverage",
-		"clean": "rm -rf dist build package coverage junit.xml",
+		"clean": "rm -rf .build .coverage",
 		"ts-node": "ts-node",
-		"docs": "typedoc --entryPoints src/main.ts",
-		"build": "tsc -p tsconfig.json",
-		"build-all": "pnpm clean && pnpm build && pnpm esbuild-node && pnpm esbuild-browser",
-		"format": "prettier --ignore-path .gitignore --write \"**/*.+(js|ts|json|html)\"",
-		"esbuild-browser": "esbuild src/browser.ts --bundle --minify --sourcemap=external --outfile=dist/esbuild/browser.js --external:fs --external:path --external:crypto",
-		"esbuild-browser:dev": "esbuild src/browser.ts --bundle --outfile=dist/esbuild/browser.js",
-		"esbuild-browser:watch": "esbuild src/browser.ts --bundle --watch --outfile=dist/esbuild/browser.js",
-		"esbuild-node": "esbuild src/cli.ts --bundle --platform=node --minify --sourcemap=external --outfile=dist/esbuild/cli.js",
-		"esbuild-node:dev": "esbuild src/cli.ts --bundle --platform=node --sourcemap=external --outfile=dist/esbuild/cli.js",
-		"esbuild-node:watch": "esbuild src/cli.ts --bundle --platform=node --watch --sourcemap=external --outfile=dist/esbuild/cli.js"
+		"build": "tsc",
+		"build-all": "pnpm build",
+		"format": "prettier --ignore-path .gitignore --write '**/*.+(js|ts|json|html)'"
 	},
 	"devDependencies": {
 		"@types/jest": "^29.5.2",
@@ -48,9 +34,5 @@
 		"tslib": "^2.5.3",
 		"typedoc": "^0.24.8",
 		"typescript": "4.9.5"
-	},
-	"dependencies": {
-		"chevrotain": "^10.5.0",
-		"zenroom": "^3.5.0"
 	}
 }

@@ -24,31 +24,10 @@ test('that convZenParams() works', () => {
 	}
 
 	{
-		// When I provide only the "data" as undefined
-		const result = convZenParams({ data: undefined });
-		// Then the result must be an empty object
-		expect(result).toStrictEqual({});
-	}
-
-	{
 		// When I provide only the ""
 		const result = convZenParams({ data: data });
 		// Then the result must be JSON.strigify()'d "data"
 		expect(result).toStrictEqual({ data: JSON.stringify(data) });
-	}
-
-	{
-		// When I provide both the "data" and "keys" as undefined
-		const result = convZenParams({ data: undefined, keys: undefined });
-		// Then the result must be an empty object
-		expect(result).toStrictEqual({});
-	}
-
-	{
-		// When I provide only the "keys" as undefined
-		const result = convZenParams({ keys: undefined });
-		// Then the result must be an empty object
-		expect(result).toStrictEqual({});
 	}
 
 	{

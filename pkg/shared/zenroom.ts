@@ -1,6 +1,6 @@
 import { JsonableObject } from './jsonable';
 
-import { zencode_exec } from 'zenroom';
+import { zencode_exec } from '@slangroom/deps/zenroom';
 
 /**
  * Output of execution of a contract in Zenroom.
@@ -22,7 +22,7 @@ export type ZenroomParams = { data?: JsonableObject; keys?: JsonableObject };
  * Also, the keys are readonly since it makes little sense to mutate
  * them after they're converted to JSON strings.
  */
-export type ZenroomStringParams = { readonly [K in keyof ZenroomParams]: string | undefined };
+export type ZenroomStringParams = { readonly [K in keyof ZenroomParams]?: string };
 
 /**
  * A utility that converts each value in ZenroomParams to a JSON string
@@ -32,7 +32,7 @@ export type ZenroomStringParams = { readonly [K in keyof ZenroomParams]: string 
  * @returns params with each value converted to a JSON string, or
  * undefined if params' values are null or undefined.
  */
-export const convZenParams = (params: ZenroomParams | undefined): ZenroomStringParams => {
+export const convZenParams = (params?: ZenroomParams): ZenroomStringParams => {
 	// We remove readonly here, and at the end, we put it back due to
 	// the return type.
 	const ret: { -readonly [k in keyof ZenroomStringParams]: ZenroomStringParams[k] } = {};

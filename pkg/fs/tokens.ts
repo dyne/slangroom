@@ -1,6 +1,5 @@
-import { Whitespace, Comment, Identifier } from '../shared/tokens';
-
-import { createToken } from 'chevrotain';
+import { Whitespace, Comment, Identifier } from '@slangroom/shared';
+import { createToken } from '@slangroom/deps/chevrotain';
 
 // TODO: maybe this should be put in shared and/or the "I" part should be split up.
 /**
@@ -8,7 +7,7 @@ import { createToken } from 'chevrotain';
  */
 export const ThenI = createToken({
 	name: 'ThenI',
-	pattern: /Then I/
+	pattern: /Then I/,
 });
 
 /**
@@ -16,16 +15,15 @@ export const ThenI = createToken({
  */
 export const SaveThe = createToken({
 	name: 'SaveThe',
-	pattern: /save the/
+	pattern: /save the/,
 });
 
-/**
- * The "into the file" statement, used to indicate the file to which to
+/** * The "into the file" statement, used to indicate the file to which to
  * write.
  */
 export const IntoTheFile = createToken({
 	name: 'IntoTheFile',
-	pattern: /into the file/
+	pattern: /into the file/,
 });
 
 /**

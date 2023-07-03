@@ -17,7 +17,7 @@ jobs:
         with:
           version: 8
 
-      - run: pnpm install
+      - run: pnpm recursive install
       - name: Linting
         continue-on-error: true
         run: pnpm lint
@@ -30,7 +30,7 @@ jobs:
         if: success() || failure()
         with:
           name: 🧪 Unit tests
-          path: junit.xml
+          path: .coverage/junit.xml
           reporter: jest-junit
 
       - name: Build all

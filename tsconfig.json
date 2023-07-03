@@ -1,28 +1,40 @@
 {
 	"compilerOptions": {
-		"target": "es6",
-		"module": "commonjs",
+		"target": "es2016",
+		"module": "node16",
 		"moduleResolution": "node",
-		"declaration": true,
-		"strict": true,
-		"baseUrl": ".",
-		"noImplicitAny": true /* Raise error on expressions and declarations with an implied 'any' type. */,
-		"strictNullChecks": true /* Enable strict null checks. */,
-		"strictFunctionTypes": true /* Enable strict checking of function types. */,
-		"noUnusedLocals": true /* Report errors on unused locals. */,
-		"noUnusedParameters": true /* Report errors on unused parameters. */,
-		"noImplicitReturns": true /* Report error when not all code paths in function return a value. */,
-		"noFallthroughCasesInSwitch": true /* Report errors for fallthrough cases in switch statement. */,
+		"incremental": true,
+		"newLine": "lf",
+		"forceConsistentCasingInFileNames": true,
+		"tsBuildInfoFile": ".build/tsbuildinfo",
+		"outDir": ".build/",
+		"rootDir": "pkg/",
+		"allowUnreachableCode": false,
+		"allowUnusedLabels": false,
+		"alwaysStrict": true,
+		"exactOptionalPropertyTypes": true,
+		"noFallthroughCasesInSwitch": true,
+		"noImplicitAny": true,
+		"noImplicitOverride": true,
+		"noImplicitReturns": true,
+		"noImplicitThis": true,
+		"noPropertyAccessFromIndexSignature": true, // maybe
+		"noUncheckedIndexedAccess": true, // maybe
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"strict": true, // for the future versions
+		"strictBindCallApply": true,
+		"strictFunctionTypes": true,
+		"strictNullChecks": true,
+		"strictPropertyInitialization": true,
+		"useUnknownInCatchVariables": false,
 		"importHelpers": true,
 		"skipLibCheck": true,
 		"esModuleInterop": true,
-		"allowSyntheticDefaultImports": true,
 		"experimentalDecorators": true,
 		"sourceMap": true,
-		"outDir": "./dist/tsc/",
 		"types": ["node", "jest"],
-		"lib": ["ES6", "DOM"]
+		"lib": ["es6", "dom"]
 	},
-	"include": ["src/**/*.ts"],
-	"exclude": ["node_modules", "**/*.test.ts"]
+	"include": ["pkg/*/**/*.ts"]
 }

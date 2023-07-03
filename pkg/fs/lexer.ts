@@ -1,8 +1,8 @@
-import { ZenroomParams } from '../shared/zenroom';
 import { vocab } from './tokens';
-import { getIgnoredStatements } from '../ignored';
 
-import { Lexer } from 'chevrotain';
+import { type ZenroomParams } from '@slangroom/shared';
+import { getIgnoredStatements } from '@slangroom/ignored';
+import { Lexer } from '@slangroom/deps/chevrotain';
 
 const FsLexer = new Lexer(vocab);
 

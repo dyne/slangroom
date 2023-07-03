@@ -1,13 +1,14 @@
-import { ZenroomParams } from '../shared/zenroom';
 import { BaseFsVisitor, parse, type FileOverrideStatementCtx } from './parser';
 
-import { type CstNode } from 'chevrotain';
+import { type ZenroomParams } from '@slangroom/shared';
+import { type CstNode } from '@slangroom/deps/chevrotain';
 
 export type FileOverrideStatement = {
 	content: string;
 	filename: string;
 };
 
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 interface Visitor {
 	visit(params: CstNode): FileOverrideStatement;
 }
@@ -23,7 +24,7 @@ class Visitor extends BaseFsVisitor {
 		const filename = ctx.filename[0].image;
 		return {
 			content: content,
-			filename: filename
+			filename: filename,
 		};
 	}
 }

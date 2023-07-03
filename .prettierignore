@@ -1,12 +1,24 @@
-.DS_Store
-node_modules
-/build
-/package
-.env
-.env.*
-!.env.example
+# blacklist everything
+*
+*/
 
-# Ignore files for PNPM, NPM and YARN
-pnpm-lock.yaml
-package-lock.json
-yarn.lock
+# shithub
+!/.github/workflows/*.yml
+
+# shitcode
+!/.vscode/tasks.json
+
+# useful stuff
+!/.cruft.json
+!/.eslintrc.js
+!/.prettierrc
+!/jest.config.ts
+!/package.json
+!/tsconfig.json
+!/pnpm-workspaces.yaml
+
+# packages
+pkg/*/node_modules/
+!/pkg/*/package.json
+!/pkg/**/*.ts
+!/pkg/**/*.test.ts

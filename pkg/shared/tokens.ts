@@ -1,4 +1,4 @@
-import { Lexer, createToken } from 'chevrotain';
+import { Lexer, createToken } from '@slangroom/deps/chevrotain';
 
 /**
  * Whitespace of any kind (blanks, tabs, and newlines).
@@ -6,7 +6,7 @@ import { Lexer, createToken } from 'chevrotain';
 export const Whitespace = createToken({
 	name: 'Whitespace',
 	pattern: /\s+/,
-	group: Lexer.SKIPPED
+	group: Lexer.SKIPPED,
 });
 
 /**
@@ -17,7 +17,7 @@ export const Whitespace = createToken({
 export const Comment = createToken({
 	name: 'Comment',
 	pattern: /#[^\n\r]*/,
-	group: 'comments'
+	group: 'comments',
 });
 
 /**
@@ -30,7 +30,5 @@ export const Comment = createToken({
  */
 export const Identifier = createToken({
 	name: 'Identifier',
-	pattern: /'(?:[^\\']|\\(?:[bfnrtv'\\/]|u[0-9a-fA-F]{4}))*'/
+	pattern: /'(?:[^\\']|\\(?:[bfnrtv'\\/]|u[0-9a-fA-F]{4}))*'/,
 });
-
-// TODO: move main's tests into this one's tests.

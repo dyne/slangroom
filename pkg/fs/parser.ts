@@ -1,9 +1,9 @@
-import { Identifier } from '../shared/tokens';
-import { ZenroomParams } from '../shared/zenroom';
 import { IntoTheFile, SaveThe, ThenI, vocab } from './tokens';
 import { lex } from './lexer';
 
-import { CstParser, IToken } from 'chevrotain';
+import { CstParser, IToken } from '@slangroom/deps/chevrotain';
+import { Identifier } from '@slangroom/shared/tokens';
+import { ZenroomParams } from '@slangroom/shared/zenroom';
 
 export type FileOverrideStatementCtx = {
 	ThenI: [IToken];

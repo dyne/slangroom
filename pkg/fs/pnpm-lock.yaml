@@ -1,0 +1,16 @@
+lockfileVersion: '6.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+dependencies:
+  '@slangroom/deps':
+    specifier: workspace:*
+    version: link:../deps
+  '@slangroom/ignored':
+    specifier: workspace:*
+    version: link:../ignored
+  '@slangroom/shared':
+    specifier: workspace:*
+    version: link:../shared
