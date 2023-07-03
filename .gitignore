@@ -16,7 +16,7 @@
 # js stuff
 !/package.json
 !/pnpm-lock.yaml
-!/pnmp-workspaces.yaml
+!/pnpm-workspace.yaml
 !/tsconfig.json
 !/jest.config.ts
 !/.prettierrc
