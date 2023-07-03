@@ -1,0 +1,14 @@
+{
+	"name": "@slangroom/deps",
+	"exports": {
+		"*": "../../.build/deps/*.js"
+	},
+	"version": "1.0.0",
+	"type": "module",
+	"repository": "https://github.com/dyne/slangroom",
+	"license": "AGPL-3.0-only",
+	"dependencies": {
+		"chevrotain": "^10.5.0",
+		"zenroom": "^3.10.0"
+	}
+}

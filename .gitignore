@@ -1,11 +1,35 @@
-/node_modules/
-/build/
-/lib/
-/dist/
-/docs/
-.idea/*
+# blacklist everything
+*
+!*/
 
-.DS_Store
-coverage
-*.log
-junit.xml
+# shithub
+!/.github/workflows/*.yml
+
+# shitcode
+!/.vscode/tasks.json
+
+# git
+!/.gitignore # <insert a recursive meme>
+!/.gitmodules
+!/.gitattributes
+
+# js stuff
+!/package.json
+!/pnpm-lock.yaml
+!/pnpm-workspace.yaml
+!/tsconfig.json
+!/jest.config.ts
+!/.prettierrc
+!/.prettierignore
+!/.npmignore
+
+# useful stuff
+!/.editorconfig
+!/.cruft.json
+
+# packages
+pkg/*/node_modules/
+!/pkg/*/package.json
+!/pkg/*/pnpm-lock.yaml
+!/pkg/**/*.ts
+!/pkg/**/*.test.ts

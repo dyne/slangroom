@@ -1,0 +1,13 @@
+{
+	"name": "@slangroom/shared",
+	"exports": {
+		"*": "../../.build/shared/*.js"
+	},
+	"version": "1.0.0",
+	"type": "module",
+	"repository": "https://github.com/dyne/slangroom",
+	"license": "AGPL-3.0-only",
+	"dependencies": {
+		"@slangroom/deps": "workspace:*"
+	}
+}
