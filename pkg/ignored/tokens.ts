@@ -4,15 +4,14 @@ import { createToken, CustomPatternMatcherFunc } from '@slangroom/deps/chevrotai
 /*
  * Prevent regex-ast annoing warnings
  * https://github.com/Chevrotain/chevrotain/issues/1670#issuecomment-1001673472
- * */
+ */
 const wrap = (regex: RegExp): CustomPatternMatcherFunc => {
-    return (text: string, offset: number): RegExpExecArray | null => {
-        const re = new RegExp(regex, 'y');
-        re.lastIndex = offset
-        return re.exec(text)
-    }
-}
-
+	return (text: string, offset: number): RegExpExecArray | null => {
+		const re = new RegExp(regex, 'y');
+		re.lastIndex = offset;
+		return re.exec(text);
+	};
+};
 
 /**
  * Statements ignored by Zenroom.
