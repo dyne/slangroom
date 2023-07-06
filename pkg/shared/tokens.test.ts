@@ -24,7 +24,7 @@ test('that identifiers are identified correctly', () => {
  'four' # blanks here and there	
      'five'  #	mix of blanks and tabs 	
 `;
-	// When I lex the it
+	// When I lex it
 	const lexed = lex(contract);
 	// Then I must have no errors
 	expect(lexed.errors).toHaveLength(0);
