@@ -1,4 +1,4 @@
-import { type JestConfigWithTsJest } from 'ts-jest';
+import type { JestConfigWithTsJest } from 'ts-jest';
 
 export default <JestConfigWithTsJest>{
 	transform: { '^.+\\.ts$': ['ts-jest', { useESM: true }] },
