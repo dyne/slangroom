@@ -1,7 +1,7 @@
 import { BaseFsVisitor, parse, type FileOverrideStatementCtx } from './parser';
 
-import { type ZenroomParams } from '@slangroom/shared';
-import { type CstNode } from '@slangroom/deps/chevrotain';
+import type { ZenroomParams } from '@slangroom/shared';
+import type { CstNode } from '@slangroom/deps/chevrotain';
 
 export type FileOverrideStatement = {
 	content: string;
