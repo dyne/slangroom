@@ -11,6 +11,16 @@ export type ZenroomResult = {
 };
 
 /**
+ * Error thrown by [zenroomExec] if contract execution somehow fails.
+ */
+export class ZenroomError extends Error {
+	constructor(logs: string) {
+		super(logs);
+		this.name = 'ZenroomError';
+	}
+}
+
+/**
  * Zenroom parameters suitable for zencode_exec() (after each value's
  * been piped to JSON.stringify()).
  */
@@ -51,8 +61,15 @@ export const convZenParams = (params?: ZenroomParams): ZenroomStringParams => {
  * @param contract is a zencode contract.
  * @param params is parameters to Zenroom.
  * @returns the output of Zenroom.
+ * @throws {ZenroomError} if execution of a contract fails.
  */
 export const zencodeExec = async (
 	contract: string,
 	params?: ZenroomParams
-): Promise<ZenroomResult> => await zencode_exec(contract, convZenParams(params));
+): Promise<ZenroomResult> => {
+	try {
+		return await zencode_exec(contract, convZenParams(params));
+	} catch (e) {
+		throw new ZenroomError(e.logs);
+	}
+};
