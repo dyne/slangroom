@@ -1,6 +1,6 @@
 import { convZenParams } from './zenroom';
 
-test('that convZenParams() works', () => {
+test('convZenParams() works', () => {
 	// Since TS already covers our butts regarding type checks, we just
 	// need to convice the coverage here that all the code paths are
 	// taken.
