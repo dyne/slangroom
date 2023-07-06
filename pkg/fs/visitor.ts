@@ -23,8 +23,8 @@ class Visitor extends BaseFsVisitor {
 		const content = ctx.content[0].image;
 		const filename = ctx.filename[0].image;
 		return {
-			content: content,
-			filename: filename,
+			content: content.slice(1, -1),
+			filename: filename.slice(1, -1),
 		};
 	}
 }
