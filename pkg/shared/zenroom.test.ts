@@ -1,4 +1,4 @@
-import { convZenParams } from './zenroom';
+import { convZenParams, zencodeExec, ZenroomError } from './zenroom';
 
 test('convZenParams() works', () => {
 	// Since TS already covers our butts regarding type checks, we just
@@ -43,4 +43,26 @@ test('convZenParams() works', () => {
 		// Then the result must be JSON.strigify()'d "keys"
 		expect(result).toStrictEqual({ data: JSON.stringify(data), keys: JSON.stringify(keys) });
 	}
+});
+
+describe('zencode()', () => {
+	test("doesn't throw with valid input", async () => {
+		// Given I have a valid contract
+		const contract = `Given I have nothing
+Then I print string 'I love you'
+`;
+		// When I execute the contract
+		const promise = zencodeExec(contract);
+		// Then it must not throw any errors
+		await expect(promise).resolves.toBeTruthy();
+	});
+
+	test('throws with invalid input', async () => {
+		// Given I have an invalid contract
+		const contract = "I'm invalid.";
+		// When I execute the contract
+		const promise = zencodeExec(contract);
+		// Then it must throw some errors
+		await expect(promise).rejects.toThrow(ZenroomError);
+	});
 });
