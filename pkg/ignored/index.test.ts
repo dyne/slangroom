@@ -1,6 +1,6 @@
 import { getIgnoredStatements } from './index';
 
-test("that zenroom ignores statements it doesn't know in general", async () => {
+test("zenroom ignores statements it doesn't know in general", async () => {
 	// Given I have a contract with a general rule unknown statemets in it
 	const uknowns = [
 		'When I test the rule with a statement that does not exist 1',
@@ -21,7 +21,7 @@ Then print the data
 	expect(result).toStrictEqual(uknowns);
 });
 
-test("that zenroom doesn't ignore ecdh but ignores restroom statements", async () => {
+test("zenroom doesn't ignore ecdh but ignores restroom statements", async () => {
 	// Given I have a contract with ecdh and restroom statements
 	const contract = `# Always use 'Rule caller restroom-mw' when using Restroom
 Rule caller restroom-mw
