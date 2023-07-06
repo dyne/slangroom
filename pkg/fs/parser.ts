@@ -19,7 +19,7 @@ class Parser extends CstParser {
 		this.performSelfAnalysis();
 	}
 
-	public fileOverrideStatement = this.RULE('fileOverrideStatement', () => {
+	fileOverrideStatement = this.RULE('fileOverrideStatement', () => {
 		this.CONSUME(ThenI);
 		this.CONSUME(SaveThe);
 		this.CONSUME(Identifier, { LABEL: 'content' });
