@@ -1,7 +1,7 @@
 import { IntoTheFile, SaveThe, ThenI, vocab } from './tokens';
 import { lex } from './lexer';
 
-import { CstParser, IToken } from '@slangroom/deps/chevrotain';
+import { CstParser, type IToken } from '@slangroom/deps/chevrotain';
 import { Identifier } from '@slangroom/shared/tokens';
 import { ZenroomParams } from '@slangroom/shared/zenroom';
 
@@ -19,7 +19,7 @@ class Parser extends CstParser {
 		this.performSelfAnalysis();
 	}
 
-	public fileOverrideStatement = this.RULE('fileOverrideStatement', () => {
+	fileOverrideStatement = this.RULE('fileOverrideStatement', () => {
 		this.CONSUME(ThenI);
 		this.CONSUME(SaveThe);
 		this.CONSUME(Identifier, { LABEL: 'content' });

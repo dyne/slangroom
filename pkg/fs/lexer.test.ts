@@ -3,7 +3,7 @@ import { ThenI, SaveThe, IntoTheFile } from './tokens';
 
 import { Identifier } from '@slangroom/shared/tokens';
 
-test('that lexing works', async () => {
+test('lexing works', async () => {
 	// Given I have a contract with filesystem statements in it
 	const contract = `Rule unknown ignore
 Given I have a 'string' named 'stringToWrite'

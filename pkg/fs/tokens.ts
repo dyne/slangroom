@@ -18,7 +18,8 @@ export const SaveThe = createToken({
 	pattern: /save the/,
 });
 
-/** * The "into the file" statement, used to indicate the file to which to
+/**
+ * The "into the file" statement, used to indicate the file to which to
  * write.
  */
 export const IntoTheFile = createToken({

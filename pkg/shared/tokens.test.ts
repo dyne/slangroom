@@ -24,7 +24,7 @@ test('that identifiers are identified correctly', () => {
  'four' # blanks here and there	
      'five'  #	mix of blanks and tabs 	
 `;
-	// When I lex the it
+	// When I lex it
 	const lexed = lex(contract);
 	// Then I must have no errors
 	expect(lexed.errors).toHaveLength(0);
@@ -58,7 +58,7 @@ test('that identifiers are identified correctly', () => {
 	/* eslint-enable */
 });
 
-test('that non-matcheds error out', () => {
+test('non-matcheds error out', () => {
 	// Given I have a broken contract
 	const contract = `broken contract`;
 	// When I lex it
@@ -82,7 +82,7 @@ test('that non-matcheds error out', () => {
 	]);
 });
 
-test('that tokens are skipped correctly', () => {
+test('tokens are skipped correctly', () => {
 	// Given I have a contract with several ignored and an identifier tokens
 	const contract = "given I am 'alice'";
 	// When I lex it
