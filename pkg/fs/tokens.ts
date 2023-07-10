@@ -1,13 +1,28 @@
 import { Whitespace, Comment, Identifier } from '@slangroom/shared';
 import { createToken } from '@slangroom/deps/chevrotain';
 
-// TODO: maybe this should be put in shared and/or the "I" part should be split up.
 /**
- * The "Then I" statement.
+ * The "Then" statement.
  */
-export const ThenI = createToken({
-	name: 'ThenI',
-	pattern: /Then I/,
+export const Then = createToken({
+	name: 'Then',
+	pattern: /Then/,
+});
+
+/**
+ * The "and" statement.
+ */
+export const And = createToken({
+	name: 'and',
+	pattern: /and/,
+});
+
+/**
+ * The selfish "I" statement.
+ */
+export const I = createToken({
+	name: 'I',
+	pattern: /I/,
 });
 
 /**
@@ -30,4 +45,4 @@ export const IntoTheFile = createToken({
 /**
  * Vocabulary to perform filesystems actions.
  */
-export const vocab = [Whitespace, Comment, ThenI, SaveThe, IntoTheFile, Identifier];
+export const vocab = [Whitespace, Comment, Then, And, I, SaveThe, IntoTheFile, Identifier];
