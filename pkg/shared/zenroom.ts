@@ -53,7 +53,6 @@ export const convZenParams = (params?: ZenroomParams): ZenroomStringParams => {
 			if (params[k]) ret[k] = JSON.stringify(params[k]);
 		}
 	}
-	// And while we are on it, let's freeze it.
 	return ret;
 };
 
