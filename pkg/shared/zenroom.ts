@@ -12,6 +12,8 @@ export type ZenroomResult = {
 
 /**
  * Error thrown by [zenroomExec] if contract execution somehow fails.
+ *
+ * The [message] contains the logs.
  */
 export class ZenroomError extends Error {
 	constructor(logs: string) {
