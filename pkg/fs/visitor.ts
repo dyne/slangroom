@@ -1,6 +1,5 @@
 import { BaseFsVisitor, parse, type FileOverrideStatementCtx } from './parser';
 
-import type { ZenroomParams } from '@slangroom/shared';
 import type { CstNode } from '@slangroom/deps/chevrotain';
 
 export type FileOverrideStatement = {
@@ -31,7 +30,13 @@ class Visitor extends BaseFsVisitor {
 
 export const FsVisitor = new Visitor();
 
-export const visit = async (contract: string, params?: ZenroomParams) => {
-	const parsed = await parse(contract, params);
-	return FsVisitor.visit(parsed);
+/**
+ * Visits the given statement for filesystems statements.
+ *
+ * @param statement is the statement ignored by Zenroom.
+ * @returns the AST of the parsed CST.
+ **/
+export const visit = (statement: string) => {
+	const cst = parse(statement);
+	return FsVisitor.visit(cst);
 };

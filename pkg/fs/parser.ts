@@ -1,9 +1,8 @@
-import { IntoTheFile, SaveThe, ThenI, vocab } from './tokens';
+import { IntoTheFile, SaveThe, Then, And, I, vocab } from './tokens';
 import { lex } from './lexer';
 
 import { CstParser, type IToken } from '@slangroom/deps/chevrotain';
 import { Identifier } from '@slangroom/shared/tokens';
-import { ZenroomParams } from '@slangroom/shared/zenroom';
 
 export type FileOverrideStatementCtx = {
 	ThenI: [IToken];
@@ -20,7 +19,11 @@ class Parser extends CstParser {
 	}
 
 	fileOverrideStatement = this.RULE('fileOverrideStatement', () => {
-		this.CONSUME(ThenI);
+		this.OR([
+			{ ALT: () => this.CONSUME(Then) },
+			{ ALT: () => this.CONSUME(And) },
+		]);
+		this.CONSUME(I);
 		this.CONSUME(SaveThe);
 		this.CONSUME(Identifier, { LABEL: 'content' });
 		this.CONSUME(IntoTheFile);
@@ -31,8 +34,14 @@ class Parser extends CstParser {
 export const FsParser = new Parser();
 export const BaseFsVisitor = FsParser.getBaseCstVisitorConstructor();
 
-export const parse = async (contract: string, params?: ZenroomParams) => {
-	const lexed = await lex(contract, params);
+/**
+ * Parses the given statement for filesystems statements.
+ *
+ * @param statement is the statement ignored by Zenroom.
+ * @returns the CST of the lexed statement.
+ **/
+export const parse = (statement: string) => {
+	const lexed = lex(statement);
 	FsParser.input = lexed.tokens;
 	return FsParser.fileOverrideStatement();
 };
