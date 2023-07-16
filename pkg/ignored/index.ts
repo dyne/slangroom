@@ -12,7 +12,10 @@ const IgnoredLexer = new Lexer(vocab);
  * @param params is the parameters of Zenroom, such as data and keys.
  * @returns the ignored statements.
  */
-export const getIgnoredStatements = async (contract: string, params?: ZenroomParams) => {
+export const getIgnoredStatements = async (
+	contract: string,
+	params?: ZenroomParams
+): Promise<string[]> => {
 	const { logs } = await zencodeExec(contract, params);
 	const lexed = IgnoredLexer.tokenize(logs);
 	return lexed.tokens.map((s) => s.image);
