@@ -49,12 +49,14 @@ describe('zencodeExec()', () => {
 	test("doesn't throw with valid input", async () => {
 		// Given I have a valid contract
 		const contract = `Given I have nothing
-Then I print string 'I love you'
+Then I print the string 'I love you'
 `;
 		// When I execute the contract
 		const promise = zencodeExec(contract);
-		// Then it must not throw any errors
-		await expect(promise).resolves.toBeTruthy();
+		// Then it must have a result, thus it's not an error
+		await expect(promise).resolves.toHaveProperty('result');
+		// And the result must be "I love you"
+		expect((await promise).result).toStrictEqual({ output: ['I_love_you'] });
 	});
 
 	test('throws with invalid input', async () => {
