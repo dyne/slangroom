@@ -45,7 +45,7 @@ test('convZenParams() works', () => {
 	}
 });
 
-describe('zencode()', () => {
+describe('zencodeExec()', () => {
 	test("doesn't throw with valid input", async () => {
 		// Given I have a valid contract
 		const contract = `Given I have nothing

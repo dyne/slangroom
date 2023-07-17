@@ -74,6 +74,9 @@ export const zencodeExec = async (
 	} catch (e) {
 		throw new ZenroomError(e.logs);
 	}
+	// Due to the try-catch above, it is ensured that [tmp.result] is a JSON
+	// string, whoose top-level value is a JSON Object.  Thus, return's [result]
+	// is a JS Object.
 	return {
 		result: JSON.parse(tmp.result),
 		logs: tmp.logs,
