@@ -16,7 +16,7 @@ Then I save the 'stringToWrite0' into the file 'nameOfTheFile0'
 and I save the 'stringToWrite1' into the file 'nameOfTheFile1'
 `;
 	// When I get the ignored statements of it
-	const ignoreds = await getIgnoredStatements(contract, {
+	const ignored = await getIgnoredStatements(contract, {
 		data: {
 			stringToWrite0: 'foo0',
 			nameOfTheFile0: 'bar0',
@@ -25,7 +25,7 @@ and I save the 'stringToWrite1' into the file 'nameOfTheFile1'
 		},
 	});
 	// and I lex each of them
-	const lexeds = ignoreds.map((x) => lex(x));
+	const lexeds = ignored.statements.map((x) => lex(x));
 	// Then the result must contain 2 items
 	expect(lexeds).toHaveLength(2);
 
