@@ -16,9 +16,9 @@ When I write string 'test passed' in 'result'
 Then print the data
 `;
 	// When I get the unknown statements
-	const result = await getIgnoredStatements(contract);
+	const { statements } = await getIgnoredStatements(contract);
 	// Then it must be the given unknown statements
-	expect(result).toStrictEqual(uknowns);
+	expect(statements).toStrictEqual(uknowns);
 });
 
 test("zenroom doesn't ignore ecdh but ignores restroom statements", async () => {
@@ -81,9 +81,9 @@ Then print the 'outputData.signature'
 		},
 	};
 	// When I get the ignored statements
-	const result = await getIgnoredStatements(contract, { data: data });
+	const { statements } = await getIgnoredStatements(contract, { data: data });
 	// Then it must be equal to the statements of restroom
-	expect(result).toStrictEqual([
+	expect(statements).toStrictEqual([
 		"Given that I have an endpoint named 'endpoint'",
 		"Given that I have an endpoint named 'timeServer'",
 		"Given I connect to 'endpoint' and save the output into 'dataFromEndpoint'",
