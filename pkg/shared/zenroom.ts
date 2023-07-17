@@ -6,7 +6,7 @@ import { zencode_exec } from '@slangroom/deps/zenroom';
  * Output of execution of a contract in Zenroom.
  */
 export type ZenroomOutput = {
-	result: string;
+	result: JsonableObject;
 	logs: string;
 };
 
@@ -68,9 +68,14 @@ export const zencodeExec = async (
 	contract: string,
 	params?: ZenroomParams
 ): Promise<ZenroomOutput> => {
+	let tmp: { result: string; logs: string };
 	try {
-		return await zencode_exec(contract, convZenParams(params));
+		tmp = await zencode_exec(contract, convZenParams(params));
 	} catch (e) {
 		throw new ZenroomError(e.logs);
 	}
+	return {
+		result: JSON.parse(tmp.result),
+		logs: tmp.logs,
+	};
 };
