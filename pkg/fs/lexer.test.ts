@@ -26,9 +26,9 @@ and I save the 'stringToWrite1' into the file 'nameOfTheFile1'
 	const lexeds = ignoreds.map((x) => lex(x));
 	// Then the result must contain 2 items
 	expect(lexeds).toHaveLength(2);
-	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 
 	// When I get the first one
+	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 	const first = lexeds[0]!;
 	// Then it must have no errors
 	expect(first.errors).toHaveLength(0);
@@ -45,6 +45,7 @@ and I save the 'stringToWrite1' into the file 'nameOfTheFile1'
 	/* eslint-enable */
 
 	// When I get the second one
+	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 	const second = lexeds[0]!;
 	// Then it must have no errors
 	expect(second.errors).toHaveLength(0);
