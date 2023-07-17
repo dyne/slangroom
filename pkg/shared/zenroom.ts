@@ -5,7 +5,7 @@ import { zencode_exec } from '@slangroom/deps/zenroom';
 /**
  * Output of execution of a contract in Zenroom.
  */
-export type ZenroomResult = {
+export type ZenroomOutput = {
 	result: string;
 	logs: string;
 };
@@ -67,7 +67,7 @@ export const convZenParams = (params?: ZenroomParams): ZenroomStringParams => {
 export const zencodeExec = async (
 	contract: string,
 	params?: ZenroomParams
-): Promise<ZenroomResult> => {
+): Promise<ZenroomOutput> => {
 	try {
 		return await zencode_exec(contract, convZenParams(params));
 	} catch (e) {
