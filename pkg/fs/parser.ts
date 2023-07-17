@@ -19,10 +19,7 @@ class Parser extends CstParser {
 	}
 
 	fileOverrideStatement = this.RULE('fileOverrideStatement', () => {
-		this.OR([
-			{ ALT: () => this.CONSUME(Then) },
-			{ ALT: () => this.CONSUME(And) },
-		]);
+		this.OR([{ ALT: () => this.CONSUME(Then) }, { ALT: () => this.CONSUME(And) }]);
 		this.CONSUME(I);
 		this.CONSUME(SaveThe);
 		this.CONSUME(Identifier, { LABEL: 'content' });
