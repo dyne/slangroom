@@ -1,11 +1,12 @@
-import { IntoTheFile, SaveThe, Then, And, I, vocab } from './tokens';
+import { IntoTheFile, SaveThe, vocab } from './tokens';
 import { lex } from './lexer';
 
 import { CstParser, type IToken } from '@slangroom/deps/chevrotain';
-import { Identifier } from '@slangroom/shared/tokens';
+import { Then, I, Identifier } from '@slangroom/shared/tokens';
 
 export type FileOverrideStatementCtx = {
-	ThenI: [IToken];
+	Then: [IToken];
+	I: [IToken];
 	SaveThe: [IToken];
 	content: [IToken];
 	IntoTheFile: [IToken];
@@ -19,7 +20,7 @@ class Parser extends CstParser {
 	}
 
 	fileOverrideStatement = this.RULE('fileOverrideStatement', () => {
-		this.OR([{ ALT: () => this.CONSUME(Then) }, { ALT: () => this.CONSUME(And) }]);
+		this.CONSUME(Then);
 		this.CONSUME(I);
 		this.CONSUME(SaveThe);
 		this.CONSUME(Identifier, { LABEL: 'content' });

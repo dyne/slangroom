@@ -1,7 +1,7 @@
 import { lex } from './lexer';
-import { Then, I, SaveThe, IntoTheFile } from './tokens';
+import { SaveThe, IntoTheFile } from './tokens';
 
-import { Identifier } from '@slangroom/shared/tokens';
+import { Then, I, Identifier } from '@slangroom/shared/tokens';
 import { getIgnoredStatements } from '@slangroom/ignored';
 
 test('lexing works', async () => {

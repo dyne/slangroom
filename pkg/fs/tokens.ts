@@ -1,29 +1,5 @@
-import { Whitespace, Comment, Identifier } from '@slangroom/shared';
+import { Whitespace, Comment, Identifier, Then, I } from '@slangroom/shared';
 import { createToken } from '@slangroom/deps/chevrotain';
-
-/**
- * The "Then" statement.
- */
-export const Then = createToken({
-	name: 'Then',
-	pattern: /Then/,
-});
-
-/**
- * The "and" statement.
- */
-export const And = createToken({
-	name: 'and',
-	pattern: /and/,
-});
-
-/**
- * The selfish "I" statement.
- */
-export const I = createToken({
-	name: 'I',
-	pattern: /I/,
-});
 
 /**
  * The "save the" statement, used to write files to the filesystems.
@@ -45,4 +21,4 @@ export const IntoTheFile = createToken({
 /**
  * Vocabulary to perform filesystems actions.
  */
-export const vocab = [Whitespace, Comment, Then, And, I, SaveThe, IntoTheFile, Identifier];
+export const vocab = [Whitespace, Comment, Then, I, SaveThe, IntoTheFile, Identifier];
