@@ -1,5 +1,5 @@
 import { Whitespace } from '@slangroom/shared';
-import { createToken, CustomPatternMatcherFunc } from '@slangroom/deps/chevrotain';
+import { createToken, type CustomPatternMatcherFunc } from '@slangroom/deps/chevrotain';
 
 /*
  * Prevent regex-ast annoing warnings
