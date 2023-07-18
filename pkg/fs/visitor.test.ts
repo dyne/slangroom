@@ -15,11 +15,11 @@ Then I save the 'stringToWrite' into the file 'nameOfTheFile'
 		nameOfTheFile: 'hello-world.txt',
 	};
 	// When I get the ignored statements of it
-	const ignored = await getIgnoredStatements(contract, {
+	const ignoreds = await getIgnoredStatements(contract, {
 		data: data,
 	});
 	// and I generate AST of each of them
-	const asts = ignored.statements.map((x) => visit(x));
+	const asts = ignoreds.map((x) => visit(x));
 	// Then the result must contain only one item
 	expect(asts).toHaveLength(1);
 	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -57,11 +57,11 @@ Then I save the 'stringToWrite2' into the file 'nameOfTheFile2'
 		nameOfTheFile2: 'hello-world2.txt',
 	};
 	// When I get the ignored statements of it
-	const ignored = await getIgnoredStatements(contract, {
+	const ignoreds = await getIgnoredStatements(contract, {
 		data: data,
 	});
 	// and I generate AST of each of them
-	const asts = ignored.statements.map((x) => visit(x));
+	const asts = ignoreds.map((x) => visit(x));
 	// Then the result must contain 3 items
 	expect(asts).toHaveLength(3);
 	// and I get the first one

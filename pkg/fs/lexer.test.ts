@@ -8,15 +8,15 @@ test('lexing works', async () => {
 	// Given I have a contract with filesystem statements in it
 	const contract = `Rule unknown ignore
 Given I have a 'string' named 'stringToWrite0'
-Then I have a 'string' named 'nameOfTheFile0'
-Then I have a 'string' named 'stringToWrite1'
-Then I have a 'string' named 'nameOfTheFile1'
+Given I have a 'string' named 'nameOfTheFile0'
+Given I have a 'string' named 'stringToWrite1'
+Given I have a 'string' named 'nameOfTheFile1'
 
 Then I save the 'stringToWrite0' into the file 'nameOfTheFile0'
 Then I save the 'stringToWrite1' into the file 'nameOfTheFile1'
 `;
 	// When I get the ignored statements of it
-	const ignored = await getIgnoredStatements(contract, {
+	const ignoreds = await getIgnoredStatements(contract, {
 		data: {
 			stringToWrite0: 'foo0',
 			nameOfTheFile0: 'bar0',
@@ -25,7 +25,7 @@ Then I save the 'stringToWrite1' into the file 'nameOfTheFile1'
 		},
 	});
 	// and I lex each of them
-	const lexeds = ignored.statements.map((x) => lex(x));
+	const lexeds = ignoreds.map((x) => lex(x));
 	// Then the result must contain 2 items
 	expect(lexeds).toHaveLength(2);
 
