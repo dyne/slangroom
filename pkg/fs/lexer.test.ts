@@ -8,12 +8,12 @@ test('lexing works', async () => {
 	// Given I have a contract with filesystem statements in it
 	const contract = `Rule unknown ignore
 Given I have a 'string' named 'stringToWrite0'
-and I have a 'string' named 'nameOfTheFile0'
-and I have a 'string' named 'stringToWrite1'
-and I have a 'string' named 'nameOfTheFile1'
+Then I have a 'string' named 'nameOfTheFile0'
+Then I have a 'string' named 'stringToWrite1'
+Then I have a 'string' named 'nameOfTheFile1'
 
 Then I save the 'stringToWrite0' into the file 'nameOfTheFile0'
-and I save the 'stringToWrite1' into the file 'nameOfTheFile1'
+Then I save the 'stringToWrite1' into the file 'nameOfTheFile1'
 `;
 	// When I get the ignored statements of it
 	const ignored = await getIgnoredStatements(contract, {

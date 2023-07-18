@@ -6,7 +6,7 @@ test('ast is correct with one statement', async () => {
 	// Given I have a contract with one filesystems statement in it
 	const contract = `Rule unknown ignore
 Given I have a 'string' named 'stringToWrite'
-and I have a 'string' named 'nameOfTheFile'
+Given I have a 'string' named 'nameOfTheFile'
 
 Then I save the 'stringToWrite' into the file 'nameOfTheFile'
 `;
@@ -38,15 +38,15 @@ test('ast is correct with multiple statements', async () => {
 	// Given I have a contract with multiple filesystems statements in it
 	const contract = `Rule unknown ignore
 Given I have a 'string' named 'stringToWrite0'
-and I have a 'string' named 'nameOfTheFile0'
-and I have a 'string' named 'stringToWrite1'
-and I have a 'string' named 'nameOfTheFile1'
-and I have a 'string' named 'stringToWrite2'
-and I have a 'string' named 'nameOfTheFile2'
+Given I have a 'string' named 'nameOfTheFile0'
+Given I have a 'string' named 'stringToWrite1'
+Given I have a 'string' named 'nameOfTheFile1'
+Given I have a 'string' named 'stringToWrite2'
+Given I have a 'string' named 'nameOfTheFile2'
 
 Then I save the 'stringToWrite0' into the file 'nameOfTheFile0'
-and I save the 'stringToWrite1' into the file 'nameOfTheFile1'
-and I save the 'stringToWrite2' into the file 'nameOfTheFile2'
+Then I save the 'stringToWrite1' into the file 'nameOfTheFile1'
+Then I save the 'stringToWrite2' into the file 'nameOfTheFile2'
 `;
 	const data = {
 		stringToWrite0: 'hello world0',
