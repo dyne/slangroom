@@ -21,6 +21,60 @@ export const Comment = createToken({
 });
 
 /**
+ * The most selfish constants of all.  The evilful.
+ *
+ * Unlike other statements, this must be case-sensitive.
+ */
+export const I = createToken({
+	name: 'I',
+	pattern: /I/,
+});
+
+/**
+ * The statement that follows one of Given, When, or Then.
+ *
+ * It can optionally followed by itself, but the top of the list must be one of
+ * Given, When, or Then.
+ *
+ * Custom statements MUST run the And statements according to the following
+ * Given, When, or Then.
+ */
+export const And = createToken({
+	name: 'And',
+	pattern: /and/i,
+});
+
+/**
+ * The Given (initial) stage of Zenroom contracts.
+ *
+ * Custom statements MUST run before the actual execution.
+ */
+export const Given = createToken({
+	name: 'Given',
+	pattern: /given/i,
+});
+
+/**
+ * The When (middle) stage of Zenroom contracts.
+ *
+ * Custom statements MUST run before the actual execution.
+ */
+export const When = createToken({
+	name: 'When',
+	pattern: /when/i,
+});
+
+/**
+ * The Then (last) stage of Zenroom contracts.
+ *
+ * Custom statements MUST run AFTER the actual execution.
+ */
+export const Then = createToken({
+	name: 'Then',
+	pattern: /then/i,
+});
+
+/**
  * Identifiers in single quotes, such as 'foo' and 'bar'.
  *
  * Escaped characters '\b', '\f', '\n', '\r', '\t', and '\v' are also
