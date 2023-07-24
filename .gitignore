@@ -32,4 +32,3 @@ pkg/*/node_modules/
 !/pkg/*/package.json
 !/pkg/*/pnpm-lock.yaml
 !/pkg/**/*.ts
-!/pkg/**/*.test.ts
