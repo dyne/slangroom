@@ -1,12 +1,11 @@
-import { visit } from './visitor';
-
+import test from 'ava';
+import { visit } from '@slangroom/fs/visitor';
 import { getIgnoredStatements } from '@slangroom/ignored';
 import { zencodeExec } from '@slangroom/shared';
-
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 
-test('ast is correct with one statement', async () => {
+test('ast is correct with one statement', async (t) => {
 	// Given I have a contract with one filesystems statement in it
 	const contract = `Rule unknown ignore
 Given I have a 'string' named 'stringToWrite'
@@ -25,20 +24,19 @@ Then I save the 'stringToWrite' into the file 'nameOfTheFile'
 	// and I generate AST of each of them
 	const asts = ignoreds.map((x) => visit(x));
 	// Then the result must contain only one item
-	expect(asts).toHaveLength(1);
-	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	const ast = asts[0]!;
+	t.is(asts?.length, 1);
+	const ast = asts[0];
 	// and its content must be "stringToWrite"
-	expect(ast.content).toStrictEqual('stringToWrite');
+	t.is(ast?.content, 'stringToWrite');
 	// and its filename must be "nameOfTheFile"
-	expect(ast.filename).toStrictEqual('nameOfTheFile');
+	t.is(ast?.filename, 'nameOfTheFile');
 	// and the value indexed by its content in data must be data's stringToWrite
-	expect(data[ast.content as 'stringToWrite']).toStrictEqual(data.stringToWrite);
+	t.is(data[ast?.content as 'stringToWrite'], data.stringToWrite);
 	// and the value indexed by its filename in data must be data's nameOfTheFile
-	expect(data[ast.filename as 'nameOfTheFile']).toStrictEqual(data.nameOfTheFile);
+	t.is(data[ast?.filename as 'nameOfTheFile'], data.nameOfTheFile);
 });
 
-test('ast is correct with multiple statements', async () => {
+test('ast is correct with multiple statements', async (t) => {
 	// Given I have a contract with multiple filesystems statements in it
 	const contract = `Rule unknown ignore
 Given I have a 'string' named 'stringToWrite0'
@@ -64,46 +62,45 @@ Then I save the 'stringToWrite2' into the file 'nameOfTheFile2'
 	const ignoreds = await getIgnoredStatements(contract, {
 		data: data,
 	});
-	// and I generate AST of each of them
+	// And I generate AST of each of them
 	const asts = ignoreds.map((x) => visit(x));
 	// Then the result must contain 3 items
-	expect(asts).toHaveLength(3);
-	// and I get the first one
-	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	const first = asts[0]!;
+	t.is(asts.length, 3);
+	// And I get the first one
+	const first = asts[0];
+	// And the its content must be "stringToWrite0"
+	t.is(first?.content, 'stringToWrite0');
+	// And the its filename must be "nameOfTheFile"
+	t.is(first?.filename, 'nameOfTheFile0');
+	// And the value indexed by its content in data must be data's stringToWrite0
+	t.is(data[first?.content as 'stringToWrite0'], data.stringToWrite0);
+	// And the value indexed by its filename in data must be data's nameOfTheFile0
+	t.is(data[first?.filename as 'nameOfTheFile0'], data.nameOfTheFile0);
+
+	// Then get the second one
+	const second = asts[1];
 	// and the its content must be "stringToWrite0"
-	expect(first.content).toStrictEqual('stringToWrite0');
+	t.is(second?.content, 'stringToWrite1');
 	// and the its filename must be "nameOfTheFile"
-	expect(first.filename).toStrictEqual('nameOfTheFile0');
-	// and the value indexed by its content in data must be data's stringToWrite0
-	expect(data[first.content as 'stringToWrite0']).toStrictEqual(data.stringToWrite0);
-	// and the value indexed by its filename in data must be data's nameOfTheFile0
-	expect(data[first.filename as 'nameOfTheFile0']).toStrictEqual(data.nameOfTheFile0);
-	// and I get the second one
-	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	const second = asts[1]!;
-	// and the its content must be "stringToWrite0"
-	expect(second.content).toStrictEqual('stringToWrite1');
-	// and the its filename must be "nameOfTheFile"
-	expect(second.filename).toStrictEqual('nameOfTheFile1');
+	t.is(second?.filename, 'nameOfTheFile1');
 	// and the value indexed by its content in data must be data's stringToWrite1
-	expect(data[second.content as 'stringToWrite1']).toStrictEqual(data.stringToWrite1);
+	t.is(data[second?.content as 'stringToWrite1'], data.stringToWrite1);
 	// and the value indexed by its filename in data must be data's nameOfTheFile1
-	expect(data[second.filename as 'nameOfTheFile1']).toStrictEqual(data.nameOfTheFile1);
-	// and I get the third one
-	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	const third = asts[2]!;
-	// and the its content must be "stringToWrite2"
-	expect(third.content).toStrictEqual('stringToWrite2');
-	// and the its filename must be "nameOfTheFile"
-	expect(third.filename).toStrictEqual('nameOfTheFile2');
-	// and the value indexed by its content in data must be data's stringToWrite2
-	expect(data[third.content as 'stringToWrite2']).toStrictEqual(data.stringToWrite2);
-	// and the value indexed by its filename in data must be data's nameOfTheFile2
-	expect(data[third.filename as 'nameOfTheFile2']).toStrictEqual(data.nameOfTheFile2);
+	t.is(data[second?.filename as 'nameOfTheFile1'], data.nameOfTheFile1);
+
+	// Then I get the third one
+	const third = asts[2];
+	// And the its content must be "stringToWrite2"
+	t.is(third?.content, 'stringToWrite2');
+	// And the its filename must be "nameOfTheFile"
+	t.is(third?.filename, 'nameOfTheFile2');
+	// And the value indexed by its content in data must be data's stringToWrite2
+	t.is(data[third?.content as 'stringToWrite2'], data.stringToWrite2);
+	// And the value indexed by its filename in data must be data's nameOfTheFile2
+	t.is(data[third?.filename as 'nameOfTheFile2'], data.nameOfTheFile2);
 });
 
-test('keyholder works', async () => {
+test('keyholder works', async (t) => {
 	// Given I have a contract with one filesystems statement in it
 	const contract = `Rule unknown ignore
 Given I have a 'string' named 'nameOfTheFile'
@@ -115,7 +112,7 @@ Then I save the 'stringToWrite' into the file 'nameOfTheFile'
 Then I print the 'stringToWrite'
 Then I print the 'nameOfTheFile'
 `;
-	// and the params used in the contract
+	// And the params used in the contract
 	const params = { data: { nameOfTheFile: 'hello-world.txt' } };
 	// When I get the ignored statement of it
 	const ignoreds = await getIgnoredStatements(contract, params);
@@ -135,5 +132,5 @@ Then I print the 'nameOfTheFile'
 	// And write the value of stringToWrite to the file
 	const { buffer } = await fh.write(stringToWrite);
 	// Then the content of the file must be stringToWrite
-	expect(buffer).toStrictEqual(stringToWrite);
+	t.is(buffer, stringToWrite);
 });

@@ -1,7 +1,8 @@
 {
 	"name": "@slangroom/deps",
 	"exports": {
-		"*": "../../.build/deps/*.js"
+		".": "./build/src/index.js",
+		"./*": "./build/src/*.js"
 	},
 	"version": "1.0.0",
 	"type": "module",

@@ -1,5 +1,4 @@
-import { JsonableObject } from './jsonable';
-
+import { JsonableObject } from './jsonable.js';
 import { zencode_exec } from '@slangroom/deps/zenroom';
 
 /**

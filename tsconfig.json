@@ -1,14 +1,14 @@
 {
+	"include": ["src/**/*", "test/**/*"],
 	"compilerOptions": {
+		"outDir": "build",
+		"rootDir": ".",
 		"target": "es2016",
 		"module": "node16",
-		"moduleResolution": "node",
 		"incremental": true,
 		"newLine": "lf",
+		"declaration": true,
 		"forceConsistentCasingInFileNames": true,
-		"tsBuildInfoFile": ".build/tsbuildinfo",
-		"outDir": ".build/",
-		"rootDir": "pkg/",
 		"allowUnreachableCode": false,
 		"allowUnusedLabels": false,
 		"alwaysStrict": true,
@@ -33,8 +33,7 @@
 		"esModuleInterop": true,
 		"experimentalDecorators": true,
 		"sourceMap": true,
-		"types": ["node", "jest"],
+		"types": ["node"],
 		"lib": ["es6", "dom"]
-	},
-	"include": ["pkg/*/**/*.ts"]
+	}
 }

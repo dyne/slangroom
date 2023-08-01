@@ -1,5 +1,4 @@
-import { vocab } from './tokens';
-
+import { vocab } from '@slangroom/fs/tokens';
 import { Lexer } from '@slangroom/deps/chevrotain';
 
 const FsLexer = new Lexer(vocab);

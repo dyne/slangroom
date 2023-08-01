@@ -1,11 +1,8 @@
-# blacklist everything
 *
-*/
+!*/
 
-# useful stuff
 !/package.json
 
-# built files and types
-!/.build/*/*.js
-!/.build/*/*.js.map
-!/.build/*/*.d.ts
+!/build/src/**/*.js
+!/build/src/**/*.js.map
+!/build/src/**/*.d.ts
