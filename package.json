@@ -1,6 +1,6 @@
 {
 	"name": "slangroom",
-	"version": "0.0.1",
+	"version": "0.0.3",
 	"description": "Enhance zencode smart contracts with your slang dialect",
 	"repository": "https://github.com/dyne/slangroom",
 	"author": {
@@ -11,10 +11,13 @@
 	"scripts": {
 		"lint": "eslint --ext .ts pkg/*/src pkg/*/test",
 		"format": "prettier --ignore-path .gitignore --write '**/*.+(js|ts|json|html)'",
-		"test": "pnpm build && pnpm -F @slangroom/* exec ava",
+		"test": "pnpm build && pnpm -F @slangroom/* exec ava build/esm/test",
 		"coverage": "c8 -o .coverage --exclude '**/test/' pnpm test",
 		"clean": "rm -rf .coverage && pnpm -F @slangroom/* exec -- rm -rf build",
-		"build": "pnpm -F @slangroom/* exec tsc",
+		"build": "pnpm build:esm",
+		"build:dual": "pnpm build:esm && pnpm build:cjs",
+		"build:cjs": "pnpm -F @slangroom/* exec tsc --outDir build/cjs --module commonjs",
+		"build:esm": "pnpm -F @slangroom/* exec tsc --outdir build/esm --module node16",
 		"build-all": "pnpm build"
 	},
 	"devDependencies": {

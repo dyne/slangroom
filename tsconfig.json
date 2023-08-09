@@ -1,10 +1,9 @@
 {
 	"include": ["src/**/*", "test/**/*"],
 	"compilerOptions": {
-		"outDir": "build",
 		"rootDir": ".",
 		"target": "es2016",
-		"module": "node16",
+		"moduleResolution": "node16",
 		"incremental": true,
 		"newLine": "lf",
 		"declaration": true,

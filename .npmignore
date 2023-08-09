@@ -3,6 +3,10 @@
 
 !/package.json
 
-!/build/src/**/*.js
-!/build/src/**/*.js.map
-!/build/src/**/*.d.ts
+!/build/esm/src/**/*.js
+!/build/esm/src/**/*.js.map
+!/build/esm/src/**/*.d.ts
+
+!/build/cjs/src/**/*.js
+!/build/cjs/src/**/*.js.map
+!/build/cjs/src/**/*.d.ts
