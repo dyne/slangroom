@@ -10,3 +10,4 @@
 !/build/cjs/src/**/*.js
 !/build/cjs/src/**/*.js.map
 !/build/cjs/src/**/*.d.ts
+!/build/cjs/package.json

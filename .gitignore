@@ -34,3 +34,6 @@
 !/pkg/*/pnpm-lock.yaml
 !/pkg/*/tsconfig.json
 !/pkg/*/.npmignore
+
+# build script
+!/fixup.sh

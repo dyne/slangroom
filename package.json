@@ -16,7 +16,7 @@
 		"clean": "rm -rf .coverage && pnpm -F @slangroom/* exec -- rm -rf build",
 		"build": "pnpm build:esm",
 		"build:dual": "pnpm build:esm && pnpm build:cjs",
-		"build:cjs": "pnpm -F @slangroom/* exec tsc --outDir build/cjs --module commonjs",
+		"build:cjs": "pnpm -F @slangroom/* exec tsc --outDir build/cjs --module commonjs && ./fixup.sh",
 		"build:esm": "pnpm -F @slangroom/* exec tsc --outdir build/esm --module node16",
 		"build-all": "pnpm build"
 	},
