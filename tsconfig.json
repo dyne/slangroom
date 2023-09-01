@@ -27,7 +27,6 @@
 		"strictNullChecks": true,
 		"strictPropertyInitialization": true,
 		"useUnknownInCatchVariables": false,
-		"importHelpers": true,
 		"skipLibCheck": true,
 		"esModuleInterop": true,
 		"experimentalDecorators": true,
