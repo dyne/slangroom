@@ -1,6 +1,7 @@
-import { getIgnoredStatements } from './index';
+import test from 'ava';
+import { getIgnoredStatements } from '@slangroom/ignored';
 
-test("zenroom ignores statements it doesn't know in general", async () => {
+test("zenroom ignores statements it doesn't know in general", async (t) => {
 	// Given I have a contract with a general rule unknown statemets in it
 	const uknowns = [
 		'When I test the rule with a statement that does not exist 1',
@@ -16,12 +17,12 @@ When I write string 'test passed' in 'result'
 Then print the data
 `;
 	// When I get the unknown statements
-	const result = await getIgnoredStatements(contract);
+	const ignoreds = await getIgnoredStatements(contract);
 	// Then it must be the given unknown statements
-	expect(result).toStrictEqual(uknowns);
+	t.deepEqual(ignoreds, uknowns);
 });
 
-test("zenroom doesn't ignore ecdh but ignores restroom statements", async () => {
+test("zenroom doesn't ignore ecdh but ignores restroom statements", async (t) => {
 	// Given I have a contract with ecdh and restroom statements
 	const contract = `# Always use 'Rule caller restroom-mw' when using Restroom
 Rule caller restroom-mw
@@ -69,7 +70,7 @@ When I rename the 'signature' to 'outputData.signature'
 Then print the 'outputData'
 Then print the 'outputData.signature'
 `;
-	// and params to zenroom
+	// And params to zenroom
 	const data = {
 		endpoint: 'https://apiroom.net/api/dyneorg/512-bits-random-generator',
 		timeServer: 'http://showcase.api.linx.twenty57.net/UnixTime/tounix?date=now',
@@ -81,9 +82,9 @@ Then print the 'outputData.signature'
 		},
 	};
 	// When I get the ignored statements
-	const result = await getIgnoredStatements(contract, { data: data });
+	const ignoreds = await getIgnoredStatements(contract, { data: data });
 	// Then it must be equal to the statements of restroom
-	expect(result).toStrictEqual([
+	t.deepEqual(ignoreds, [
 		"Given that I have an endpoint named 'endpoint'",
 		"Given that I have an endpoint named 'timeServer'",
 		"Given I connect to 'endpoint' and save the output into 'dataFromEndpoint'",

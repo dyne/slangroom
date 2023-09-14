@@ -1,13 +1,34 @@
 {
 	"name": "@slangroom/shared",
-	"exports": {
-		"*": "../../.build/shared/*.js"
-	},
-	"version": "1.0.0",
-	"type": "module",
-	"repository": "https://github.com/dyne/slangroom",
-	"license": "AGPL-3.0-only",
+	"version": "1.0.5",
 	"dependencies": {
 		"@slangroom/deps": "workspace:*"
+	},
+	"repository": "https://github.com/dyne/slangroom",
+	"license": "AGPL-3.0-only",
+	"type": "module",
+	"main": "./build/cjs/src/index.js",
+	"types": "./build/cjs/src/index.d.ts",
+	"exports": {
+		".": {
+			"import": {
+				"types": "./build/esm/src/index.d.ts",
+				"default": "./build/esm/src/index.js"
+			},
+			"require": {
+				"types": "./build/cjs/src/index.d.ts",
+				"default": "./build/cjs/src/index.js"
+			}
+		},
+		"./*": {
+			"import": {
+				"types": "./build/esm/src/*.d.ts",
+				"default": "./build/esm/src/*.js"
+			},
+			"require": {
+				"types": "./build/cjs/src/*.d.ts",
+				"default": "./build/cjs/src/*.js"
+			}
+		}
 	}
 }

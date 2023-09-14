@@ -1,5 +1,4 @@
-import { BaseFsVisitor, parse, type FileOverrideStatementCtx } from './parser';
-
+import { BaseFsVisitor, parse, type FileOverrideStatementCtx } from '@slangroom/fs/parser';
 import type { CstNode } from '@slangroom/deps/chevrotain';
 
 export type FileOverrideStatement = {

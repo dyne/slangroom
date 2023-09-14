@@ -1,17 +1,18 @@
-import { JsonableObject } from './jsonable';
-
+import { JsonableObject } from './jsonable.js';
 import { zencode_exec } from '@slangroom/deps/zenroom';
 
 /**
  * Output of execution of a contract in Zenroom.
  */
-export type ZenroomResult = {
-	result: string;
+export type ZenroomOutput = {
+	result: JsonableObject;
 	logs: string;
 };
 
 /**
  * Error thrown by [zenroomExec] if contract execution somehow fails.
+ *
+ * The [message] contains the logs.
  */
 export class ZenroomError extends Error {
 	constructor(logs: string) {
@@ -51,7 +52,6 @@ export const convZenParams = (params?: ZenroomParams): ZenroomStringParams => {
 			if (params[k]) ret[k] = JSON.stringify(params[k]);
 		}
 	}
-	// And while we are on it, let's freeze it.
 	return ret;
 };
 
@@ -66,10 +66,18 @@ export const convZenParams = (params?: ZenroomParams): ZenroomStringParams => {
 export const zencodeExec = async (
 	contract: string,
 	params?: ZenroomParams
-): Promise<ZenroomResult> => {
+): Promise<ZenroomOutput> => {
+	let tmp: { result: string; logs: string };
 	try {
-		return await zencode_exec(contract, convZenParams(params));
+		tmp = await zencode_exec(contract, convZenParams(params));
 	} catch (e) {
 		throw new ZenroomError(e.logs);
 	}
+	// Due to the try-catch above, it is ensured that [tmp.result] is a JSON
+	// string, whoose top-level value is a JSON Object.  Thus, return's [result]
+	// is a JS Object.
+	return {
+		result: JSON.parse(tmp.result),
+		logs: tmp.logs,
+	};
 };

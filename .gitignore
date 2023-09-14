@@ -17,10 +17,10 @@
 !/package.json
 !/pnpm-lock.yaml
 !/pnpm-workspace.yaml
-!/tsconfig.json
-!/jest.config.ts
 !/.prettierrc
 !/.prettierignore
+# shared by pkgs
+!/tsconfig.json
 !/.npmignore
 
 # useful stuff
@@ -28,8 +28,9 @@
 !/.cruft.json
 
 # packages
-pkg/*/node_modules/
+!/pkg/*/src/**/*.ts
+!/pkg/*/test/**/*.ts
 !/pkg/*/package.json
 !/pkg/*/pnpm-lock.yaml
-!/pkg/**/*.ts
-!/pkg/**/*.test.ts
+!/pkg/*/tsconfig.json
+!/pkg/*/.npmignore
