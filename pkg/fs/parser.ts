@@ -1,7 +1,7 @@
 import { IntoTheFile, SaveThe, Then, And, I, vocab } from './tokens';
 import { lex } from './lexer';
 
-import { CstParser, type IToken } from '@slangroom/deps/chevrotain';
+import { CstParser, IToken } from 'chevrotain';
 import { Identifier } from '@slangroom/shared/tokens';
 
 export type FileOverrideStatementCtx = {

@@ -1,6 +1,6 @@
 import { Whitespace, Identifier, Comment } from './tokens';
 
-import { Lexer, createToken, type IToken } from '@slangroom/deps/chevrotain';
+import { Lexer, createToken, type IToken } from 'chevrotain';
 
 const skipped = 'given when then and i that valid all inside am an a'.split(' ');
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

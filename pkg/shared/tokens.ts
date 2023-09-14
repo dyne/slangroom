@@ -1,4 +1,4 @@
-import { Lexer, createToken } from '@slangroom/deps/chevrotain';
+import { Lexer, createToken } from 'chevrotain';
 
 /**
  * Whitespace of any kind (blanks, tabs, and newlines).

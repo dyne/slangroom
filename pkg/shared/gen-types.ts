@@ -2,7 +2,7 @@
 import { writeFileSync } from 'fs';
 import { resolve } from 'path';
 */
-import { generateCstDts, type CstParser } from '@slangroom/deps/chevrotain';
+import { generateCstDts, type CstParser } from 'chevrotain';
 
 /**
  * Generates typescript types, suitable for a .d.ts file, out of a

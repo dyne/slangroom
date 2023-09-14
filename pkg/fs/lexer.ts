@@ -1,6 +1,6 @@
 import { vocab } from './tokens';
 
-import { Lexer } from '@slangroom/deps/chevrotain';
+import { Lexer } from 'chevrotain';
 
 const FsLexer = new Lexer(vocab);
 

@@ -1,4 +1,4 @@
-lockfileVersion: '6.1'
+lockfileVersion: '6.0'
 
 settings:
   autoInstallPeers: true
@@ -7,6 +7,13 @@ settings:
 importers:
 
   .:
+    dependencies:
+      chevrotain:
+        specifier: ^10.5.0
+        version: 10.5.0
+      zenroom:
+        specifier: ^3.10.0
+        version: 3.10.0
     devDependencies:
       '@types/jest':
         specifier: ^29.5.2
@@ -54,20 +61,8 @@ importers:
         specifier: 4.9.5
         version: 4.9.5
 
-  pkg/deps:
-    dependencies:
-      chevrotain:
-        specifier: ^10.5.0
-        version: 10.5.0
-      zenroom:
-        specifier: ^3.10.0
-        version: 3.10.0
-
   pkg/fs:
     dependencies:
-      '@slangroom/deps':
-        specifier: workspace:*
-        version: link:../deps
       '@slangroom/ignored':
         specifier: workspace:*
         version: link:../ignored
@@ -77,18 +72,11 @@ importers:
 
   pkg/ignored:
     dependencies:
-      '@slangroom/deps':
-        specifier: workspace:*
-        version: link:../deps
       '@slangroom/shared':
         specifier: workspace:*
         version: link:../shared
 
-  pkg/shared:
-    dependencies:
-      '@slangroom/deps':
-        specifier: workspace:*
-        version: link:../deps
+  pkg/shared: {}
 
 packages:
 

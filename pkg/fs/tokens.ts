@@ -1,5 +1,5 @@
 import { Whitespace, Comment, Identifier } from '@slangroom/shared';
-import { createToken } from '@slangroom/deps/chevrotain';
+import { createToken } from 'chevrotain';
 
 /**
  * The "Then" statement.

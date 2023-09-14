@@ -1,7 +1,7 @@
 import { vocab } from './tokens';
 
 import { zencodeExec, type ZenroomParams } from '@slangroom/shared';
-import { Lexer } from '@slangroom/deps/chevrotain';
+import { Lexer } from 'chevrotain';
 
 const IgnoredLexer = new Lexer(vocab);
 

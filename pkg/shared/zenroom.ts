@@ -1,6 +1,6 @@
 import { JsonableObject } from './jsonable';
 
-import { zencode_exec } from '@slangroom/deps/zenroom';
+import { zencode_exec } from 'zenroom';
 
 /**
  * Output of execution of a contract in Zenroom.
