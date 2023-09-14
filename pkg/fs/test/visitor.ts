@@ -1,9 +1,6 @@
 import test from 'ava';
 import { visit } from '@slangroom/fs/visitor';
 import { getIgnoredStatements } from '@slangroom/ignored';
-import { zencodeExec } from '@slangroom/shared';
-import * as fs from 'node:fs/promises';
-import * as path from 'node:path';
 
 test('ast is correct with one statement', async (t) => {
 	// Given I have a contract with one filesystems statement in it
@@ -98,39 +95,4 @@ Then I save the 'stringToWrite2' into the file 'nameOfTheFile2'
 	t.is(data[third?.content as 'stringToWrite2'], data.stringToWrite2);
 	// And the value indexed by its filename in data must be data's nameOfTheFile2
 	t.is(data[third?.filename as 'nameOfTheFile2'], data.nameOfTheFile2);
-});
-
-test('keyholder works', async (t) => {
-	// Given I have a contract with one filesystems statement in it
-	const contract = `Rule unknown ignore
-Given I have a 'string' named 'nameOfTheFile'
-
-When I create the random object of '64' bits
-When I rename the 'random_object' to 'stringToWrite'
-
-Then I save the 'stringToWrite' into the file 'nameOfTheFile'
-Then I print the 'stringToWrite'
-Then I print the 'nameOfTheFile'
-`;
-	// And the params used in the contract
-	const params = { data: { nameOfTheFile: 'hello-world.txt' } };
-	// When I get the ignored statement of it
-	const ignoreds = await getIgnoredStatements(contract, params);
-	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-	const ast = visit(ignoreds[0]!);
-	// And execute the contract
-	const zout = await zencodeExec(contract, params);
-	// And get the values of the identifiers pointed by filename and content of
-	// the ignored statement
-	const nameOfTheFile = zout.result[ast.filename] as string;
-	const stringToWrite = zout.result[ast.content] as string;
-	// And create /tmp/slangroom
-	await fs.mkdir('/tmp/slangroom/', { recursive: true });
-	// And open file named after nameOfTheFile for writing (and create if it
-	// doesn't already exists
-	const fh = await fs.open(path.resolve('/tmp/slangroom/', nameOfTheFile), 'w');
-	// And write the value of stringToWrite to the file
-	const { buffer } = await fh.write(stringToWrite);
-	// Then the content of the file must be stringToWrite
-	t.is(buffer, stringToWrite);
 });

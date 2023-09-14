@@ -48,6 +48,15 @@ importers:
         specifier: 4.9.5
         version: 4.9.5
 
+  pkg/core:
+    dependencies:
+      '@slangroom/ignored':
+        specifier: workspace:*
+        version: link:../ignored
+      '@slangroom/shared':
+        specifier: workspace:*
+        version: link:../shared
+
   pkg/deps:
     dependencies:
       chevrotain:
@@ -59,6 +68,9 @@ importers:
 
   pkg/fs:
     dependencies:
+      '@slangroom/core':
+        specifier: workspace:*
+        version: link:../core
       '@slangroom/deps':
         specifier: workspace:*
         version: link:../deps
