@@ -18,7 +18,7 @@ export class Slangroom {
 	/**
 	 * A set of plugins that needs to be executed **before** the actual Zenroom execution.
 	 */
-	private _beforeExecution: Set<BeforePlugin> = new Set();
+	private _beforeExecution = new Set<BeforePlugin>();
 	get beforeExecution() {
 		return this._beforeExecution;
 	}
@@ -26,7 +26,7 @@ export class Slangroom {
 	/**
 	 * A set of plugins that needs to be executed **after** the actual Zenroom execution.
 	 */
-	private _afterExecution: Set<AfterPlugin> = new Set();
+	private _afterExecution = new Set<AfterPlugin>();
 	get afterExecution() {
 		return this._afterExecution;
 	}
