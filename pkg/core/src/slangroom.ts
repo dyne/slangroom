@@ -58,26 +58,39 @@ export class Slangroom {
 		const ignoreds = await getIgnoredStatements(contract, params);
 
 		// TODO: remove the statements when they match (decide how)
+		const befores: ReturnType<BeforePlugin['execute']>[] = [];
 		for (const b of this._beforeExecution) {
 			for (const ignored of ignoreds) {
-				await b.execute({
-					statement: ignored,
-					params: params,
-				});
+				befores.push(
+					b.execute({
+						statement: ignored,
+						params: params,
+					})
+				);
 			}
 		}
 
-		const zout = await zencodeExec(contract, params);
+		const generatedParams = await Promise.all(befores);
+		const mergedParams = generatedParams.reduce((acc: ZenroomParams, x) => {
+			acc.data = Object.assign(acc.data || {}, x?.data);
+			acc.keys = Object.assign(acc.keys || {}, x?.keys);
+			return acc;
+		}, params || {});
+		const zout = await zencodeExec(contract, mergedParams);
 
+		const afters: ReturnType<AfterPlugin['execute']>[] = [];
 		for (const a of this._afterExecution) {
 			for (const ignored of ignoreds) {
-				await a.execute({
-					statement: ignored,
-					result: zout.result,
-					params: params,
-				});
+				afters.push(
+					a.execute({
+						statement: ignored,
+						result: zout.result,
+						params: params,
+					})
+				);
 			}
 		}
+		await Promise.all(afters);
 
 		return zout;
 	}

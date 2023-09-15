@@ -63,3 +63,19 @@ Then this statement does not exist
 	t.true(hasBeforeRan);
 	t.true(hasAfterRan);
 });
+
+test('before-plugins can inject parameters', async (t) => {
+	const before = new BeforePlugin(() => {
+		console.log("foobarbra")
+		return { data: {foo: 'bar' }};
+	});
+	const slang = new Slangroom(before);
+	const contract = `Rule unknown ignore
+
+Given I have a 'string' named 'foo'
+When I need an ignored statement
+Then I print 'foo'
+`;
+	const zout = await slang.execute(contract);
+	t.is(zout.result['foo'] as string, 'bar');
+});
