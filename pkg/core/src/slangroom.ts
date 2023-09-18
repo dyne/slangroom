@@ -56,41 +56,31 @@ export class Slangroom {
 	 */
 	async execute(contract: string, params?: ZenroomParams): Promise<ZenroomOutput> {
 		const ignoreds = await getIgnoredStatements(contract, params);
+		params = params || {data: {}, keys: {}}
 
 		// TODO: remove the statements when they match (decide how)
-		const befores: ReturnType<BeforePlugin['execute']>[] = [];
 		for (const b of this._beforeExecution) {
 			for (const ignored of ignoreds) {
-				befores.push(
-					b.execute({
-						statement: ignored,
-						params: params,
-					})
-				);
+				const res = await b.execute({
+					statement: ignored,
+					params: params,
+				})
+				params.data = Object.assign(params.data || {}, res?.data)
 			}
 		}
 
-		const generatedParams = await Promise.all(befores);
-		const mergedParams = generatedParams.reduce((acc: ZenroomParams, x) => {
-			acc.data = Object.assign(acc.data || {}, x?.data);
-			acc.keys = Object.assign(acc.keys || {}, x?.keys);
-			return acc;
-		}, params || {});
-		const zout = await zencodeExec(contract, mergedParams);
+		const zout = await zencodeExec(contract, params);
 
-		const afters: ReturnType<AfterPlugin['execute']>[] = [];
 		for (const a of this._afterExecution) {
 			for (const ignored of ignoreds) {
-				afters.push(
-					a.execute({
-						statement: ignored,
-						result: zout.result,
-						params: params,
-					})
-				);
+				const res = await a.execute({
+					statement: ignored,
+					result: zout.result,
+					params: params,
+				})
+				zout.result = Object.assign(zout.result || {}, res)
 			}
 		}
-		await Promise.all(afters);
 
 		return zout;
 	}

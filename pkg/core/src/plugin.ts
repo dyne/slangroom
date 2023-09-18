@@ -24,7 +24,9 @@ export class BeforePlugin {
  * named [execute], which takes in the necessary parameters from [AfterParams].
  */
 export class AfterPlugin {
-	constructor(readonly execute: (params: AfterParams) => Promise<void> | void) { }
+	constructor(readonly execute: (params: AfterParams
+	) => Promise<void> | void | Promise<JsonableObject> | JsonableObject
+	) { }
 }
 
 /**
