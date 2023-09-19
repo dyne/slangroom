@@ -25,13 +25,10 @@ jobs:
       - name: Run the tests
         run: pnpm coverage
 
-      - name: Test Report
-        uses: dorny/test-reporter@v1
-        if: success() || failure()
-        with:
-          name: 🧪 Unit tests
-          path: .coverage/junit.xml
-          reporter: jest-junit
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Build all
         run: pnpm build-all
