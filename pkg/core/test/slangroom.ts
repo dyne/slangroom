@@ -79,3 +79,17 @@ Then I print 'foo'
 	const zout = await slang.execute(contract);
 	t.is(zout.result['foo'] as string, 'bar');
 });
+
+test('after-plugins can return values', async (t) => {
+	const before = new AfterPlugin(() => {
+		return { foo: "bar" };
+	});
+	const slang = new Slangroom(before);
+	const contract = `Rule unknown ignore
+Given nothing
+Then done
+Then I need an ignored statement
+`;
+	const zout = await slang.execute(contract);
+	t.is(zout.result['foo'] as string, 'bar');
+});
