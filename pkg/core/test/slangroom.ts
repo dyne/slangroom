@@ -93,3 +93,45 @@ Then I need an ignored statement
 	const zout = await slang.execute(contract);
 	t.is(zout.result['foo'] as string, 'bar');
 });
+
+test('check statements order', async (t) => {
+	const beforeA = new BeforePlugin((ctx) => {
+		if(!ctx.params?.data) return
+		if(ctx.statement == "Given A" && ctx.params?.data['state'] == "BEGIN") {
+			return {data: {state: "A"}}
+		}
+		return
+	});
+	const beforeB = new BeforePlugin((ctx) => {
+		if(!ctx.params?.data) return
+		if(ctx.statement == "Given B" && ctx.params?.data['state'] == "A") {
+			return {data: {state: "B"}}
+		}
+		return
+	});
+	const afterC = new BeforePlugin((ctx) => {
+		if(!ctx.params?.data) return
+		if(ctx.statement == "Then C" && ctx.params?.data['state'] == "B") {
+			return {data: {state: "C"}}
+		}
+		return
+	});
+	const afterD = new BeforePlugin((ctx) => {
+		if(!ctx.params?.data) return
+		if(ctx.statement == "Then D" && ctx.params?.data['state'] == "C") {
+			return {data: {state: "D"}}
+		}
+		return
+	});
+	const slang = new Slangroom(beforeA, beforeB, afterC, afterD);
+	const contract = `Rule unknown ignore
+Given A
+Given B
+Given I have a 'string' named 'state'
+Then print the 'state'
+Then C
+Then D
+`;
+	const zout = await slang.execute(contract, { data: { state: "BEGIN" } });
+	t.is(zout.result['state'] as string, 'D');
+});
