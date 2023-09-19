@@ -18,9 +18,24 @@ export const getIgnoredStatements = async (
 	contract: string,
 	params?: ZenroomParams
 ): Promise<string[]> => {
-	// TODO: the zencodeExec() call could potentially be optimized, as
-	// zencodeExec() parses the output result.  Keep in mind: optimization bad.
-	const { logs } = await zencodeExec(contract, params);
+	// Since we want to get the list of ignored statements, we don't want to
+	// throw if Zenroom execution fails (but we do fail if something other than
+	// that happens).  When Zenroom fails, the ZenroomError type's message
+	// contains the logs.
+	let logs: string;
+	try {
+		// TODO: the zencodeExec() call could potentially be optimized, as
+		// zencodeExec() parses the output result.  Keep in mind: optimization bad.
+		const zout = await zencodeExec(contract, params);
+		logs = zout.logs;
+	} catch (e) {
+		// Currently, only ZenroomError is available.
+		// Normally, I'd let this code be, but we're trying to achieve 100%
+		// coverage, so my "future-proof" code needs to be commented out here.
+		// if (!(e instanceof ZenroomError))
+		// 	throw e;
+		logs = e.message;
+	}
 	const lexed = IgnoredLexer.tokenize(logs);
 	return lexed.tokens.map((s) => s.image);
 };

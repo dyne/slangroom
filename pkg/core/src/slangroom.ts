@@ -56,26 +56,29 @@ export class Slangroom {
 	 */
 	async execute(contract: string, params?: ZenroomParams): Promise<ZenroomOutput> {
 		const ignoreds = await getIgnoredStatements(contract, params);
+		params = params || {data: {}}
 
 		// TODO: remove the statements when they match (decide how)
-		for (const b of this._beforeExecution) {
-			for (const ignored of ignoreds) {
-				await b.execute({
+		for (const ignored of ignoreds) {
+			for (const b of this._beforeExecution) {
+				const res = await b.execute({
 					statement: ignored,
 					params: params,
-				});
+				})
+				params.data = Object.assign(params.data || {}, res)
 			}
 		}
 
 		const zout = await zencodeExec(contract, params);
 
-		for (const a of this._afterExecution) {
-			for (const ignored of ignoreds) {
-				await a.execute({
+		for (const ignored of ignoreds) {
+			for (const a of this._afterExecution) {
+				const res = await a.execute({
 					statement: ignored,
 					result: zout.result,
 					params: params,
-				});
+				})
+				zout.result = Object.assign(zout.result || {}, res)
 			}
 		}
 

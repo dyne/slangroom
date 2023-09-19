@@ -5,10 +5,14 @@ import type { ZenroomParams, JsonableObject } from '@slangroom/shared';
  * place.
  *
  * The plugin is defined using a single parameter which is a callback,
- * named [execute], which takes in the necessary parameters from [BeforeParams].
+ * named [execute], which takes in the necessary parameters from [BeforeParams]
+ * and optionally returns a [ZenroomParams].
  */
 export class BeforePlugin {
-	constructor(readonly execute: (params: BeforeParams) => Promise<void> | void) {}
+	constructor(
+		readonly execute: (params: BeforeParams
+		) => Promise<void> | void | Promise<JsonableObject> | JsonableObject
+	) { }
 }
 
 /**
@@ -19,7 +23,9 @@ export class BeforePlugin {
  * named [execute], which takes in the necessary parameters from [AfterParams].
  */
 export class AfterPlugin {
-	constructor(readonly execute: (params: AfterParams) => Promise<void> | void) {}
+	constructor(readonly execute: (params: AfterParams
+	) => Promise<void> | void | Promise<JsonableObject> | JsonableObject
+	) { }
 }
 
 /**
