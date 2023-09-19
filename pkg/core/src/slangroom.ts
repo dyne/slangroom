@@ -59,8 +59,8 @@ export class Slangroom {
 		params = params || {data: {}}
 
 		// TODO: remove the statements when they match (decide how)
-		for (const b of this._beforeExecution) {
-			for (const ignored of ignoreds) {
+		for (const ignored of ignoreds) {
+			for (const b of this._beforeExecution) {
 				const res = await b.execute({
 					statement: ignored,
 					params: params,
@@ -71,8 +71,8 @@ export class Slangroom {
 
 		const zout = await zencodeExec(contract, params);
 
-		for (const a of this._afterExecution) {
-			for (const ignored of ignoreds) {
+		for (const ignored of ignoreds) {
+			for (const a of this._afterExecution) {
 				const res = await a.execute({
 					statement: ignored,
 					result: zout.result,

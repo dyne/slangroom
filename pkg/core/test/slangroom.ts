@@ -97,33 +97,37 @@ Then I need an ignored statement
 test('check statements order', async (t) => {
 	const beforeA = new BeforePlugin((ctx) => {
 		if(!ctx.params?.data) return
-		if(ctx.statement == "Given A" && ctx.params?.data['state'] == "BEGIN") {
+		if(ctx.statement == "Given A") {
+			t.is(ctx.params?.data['state'], "BEGIN")
 			return {state: "A"}
 		}
 		return
 	});
 	const beforeB = new BeforePlugin((ctx) => {
 		if(!ctx.params?.data) return
-		if(ctx.statement == "Given B" && ctx.params?.data['state'] == "A") {
+		if(ctx.statement == "Given B") {
+			t.is(ctx.params?.data['state'], "A")
 			return {state: "B"}
 		}
 		return
 	});
-	const afterC = new BeforePlugin((ctx) => {
+	const afterC = new AfterPlugin((ctx) => {
 		if(!ctx.params?.data) return
-		if(ctx.statement == "Then C" && ctx.params?.data['state'] == "B") {
+		if(ctx.statement == "Then C") {
+			t.is(ctx.result['state'], "B")
 			return {state: "C"}
 		}
 		return
 	});
-	const afterD = new BeforePlugin((ctx) => {
+	const afterD = new AfterPlugin((ctx) => {
 		if(!ctx.params?.data) return
-		if(ctx.statement == "Then D" && ctx.params?.data['state'] == "C") {
+		if(ctx.statement == "Then D") {
+			t.is(ctx.result['state'], "C")
 			return {state: "D"}
 		}
 		return
 	});
-	const slang = new Slangroom(beforeA, beforeB, afterC, afterD);
+	const slang = new Slangroom(beforeB, beforeA, afterD, afterC);
 	const contract = `Rule unknown ignore
 Given A
 Given B
