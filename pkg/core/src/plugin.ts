@@ -10,9 +10,8 @@ import type { ZenroomParams, JsonableObject } from '@slangroom/shared';
  */
 export class BeforePlugin {
 	constructor(
-		readonly execute: (
-			params: BeforeParams
-		) => Promise<void> | void | Promise<ZenroomParams> | ZenroomParams
+		readonly execute: (params: BeforeParams
+		) => Promise<void> | void | Promise<JsonableObject> | JsonableObject
 	) { }
 }
 

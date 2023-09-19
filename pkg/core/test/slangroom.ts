@@ -67,7 +67,7 @@ Then this statement does not exist
 test('before-plugins can inject parameters', async (t) => {
 	const before = new BeforePlugin(() => {
 		console.log("foobarbra")
-		return { data: {foo: 'bar' }};
+		return {foo: 'bar' };
 	});
 	const slang = new Slangroom(before);
 	const contract = `Rule unknown ignore
@@ -98,28 +98,28 @@ test('check statements order', async (t) => {
 	const beforeA = new BeforePlugin((ctx) => {
 		if(!ctx.params?.data) return
 		if(ctx.statement == "Given A" && ctx.params?.data['state'] == "BEGIN") {
-			return {data: {state: "A"}}
+			return {state: "A"}
 		}
 		return
 	});
 	const beforeB = new BeforePlugin((ctx) => {
 		if(!ctx.params?.data) return
 		if(ctx.statement == "Given B" && ctx.params?.data['state'] == "A") {
-			return {data: {state: "B"}}
+			return {state: "B"}
 		}
 		return
 	});
 	const afterC = new BeforePlugin((ctx) => {
 		if(!ctx.params?.data) return
 		if(ctx.statement == "Then C" && ctx.params?.data['state'] == "B") {
-			return {data: {state: "C"}}
+			return {state: "C"}
 		}
 		return
 	});
 	const afterD = new BeforePlugin((ctx) => {
 		if(!ctx.params?.data) return
 		if(ctx.statement == "Then D" && ctx.params?.data['state'] == "C") {
-			return {data: {state: "D"}}
+			return {state: "D"}
 		}
 		return
 	});
