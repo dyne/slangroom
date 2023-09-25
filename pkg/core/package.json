@@ -3,6 +3,7 @@
 	"version": "1.0.0",
 	"dependencies": {
 		"@slangroom/shared": "workspace:*",
+		"@slangroom/deps": "workspace:*",
 		"@slangroom/ignored": "workspace:*"
 	},
 	"repository": "https://github.com/dyne/slangroom",

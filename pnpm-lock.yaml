@@ -1,4 +1,4 @@
-lockfileVersion: '6.0'
+lockfileVersion: '6.1'
 
 settings:
   autoInstallPeers: true
@@ -50,6 +50,9 @@ importers:
 
   pkg/core:
     dependencies:
+      '@slangroom/deps':
+        specifier: workspace:*
+        version: link:../deps
       '@slangroom/ignored':
         specifier: workspace:*
         version: link:../ignored
