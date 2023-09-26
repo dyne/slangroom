@@ -1,5 +1,6 @@
 import { createToken, Lexer, CstParser } from "@slangroom/deps/chevrotain";
 //import { createSyntaxDiagramsCode } from "chevrotain";
+import { JsonableObject, Jsonable } from "@slangroom/shared";
 
 type Action = {
   clause: string,
@@ -255,3 +256,74 @@ export const line2AST = (text: string) => {
   };
 }
 
+type StmtContext = {
+	data: JsonableObject,
+	context: any,
+}
+
+type ReadHandler = (keys: JsonableObject, ctx: StmtContext,
+	                args: string[]) => Jsonable
+type ReadHandlers = Record<string, ReadHandler>
+type SaveHandler = (keys: JsonableObject, ctx: StmtContext,
+                    args: string[]) => void
+type SaveHandlers = Record<string, SaveHandler>
+
+export class SlangroomContext {
+	private reads: ReadHandlers = {}
+	private saves: SaveHandlers = {}
+
+	addRead(stmt: string, handler: ReadHandler) {
+		// TODO: check that it doesn't exists
+		this.reads[stmt] = handler;
+	}
+
+	addSave(stmt: string, handler: SaveHandler) {
+		// TODO: check that it doesn't exists
+		this.saves[stmt] = handler;
+	}
+
+	getRead(stmt: string): ReadHandler {
+		const read = this.reads[stmt]
+		if(!read) {
+			throw new Error("Unknown read statement")
+		}
+		return read;
+	}
+
+	getSave(stmt: string) {
+		const save = this.saves[stmt]
+		if(!save) {
+			throw new Error("Unknown read statement")
+		}
+		return save;
+	}
+}
+
+export const saveToConsole: SaveHandler = (_, ctx, []) => {
+	console.log(ctx.context.raw || "Unknown var")
+}
+
+export const readTimestamp: ReadHandler = (_, _ctx, []): Jsonable => {
+	return Math.round(Date.now() / 1000);
+}
+
+export const evaluate = (ctx: SlangroomContext, value: Stmt,
+		keys: JsonableObject, stmtCtx: StmtContext) => {
+	if (value.kind === "Into") {
+		stmtCtx.context.raw = ctx.getRead(value.read.clause)
+				(keys, stmtCtx, value.read.args)
+		stmtCtx.data[value.result] = stmtCtx.context.raw
+	} else if (value.kind === "And") {
+		if(value.read) {
+			stmtCtx.context.raw = ctx.getRead(value.read.clause)
+					(keys, stmtCtx, value.read.args)
+		}
+		if (value.save) {
+			console.log(ctx.getSave(value.save.clause))
+			ctx.getSave(value.save.clause)
+					(keys, stmtCtx, value.save.args)
+
+		}
+	}
+	return stmtCtx
+}
