@@ -2,7 +2,7 @@ import test from 'ava';
 import express from "express";
 import bodyParser from "body-parser";
 
-import { line2Ast, Method, DefaultBodyKind, evaluate } from '@slangroom/http';
+import { line2Ast, Method, DefaultBodyKind, evaluate } from '@slangroom/http/read';
 
 test.before(async (_t) => {
 	const app = express();
