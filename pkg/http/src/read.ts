@@ -2,7 +2,10 @@ import { createToken, Lexer, CstParser } from "@slangroom/deps/chevrotain";
 //import { createSyntaxDiagramsCode } from "chevrotain";
 import { JsonableObject, Jsonable, JsonableArray } from "@slangroom/shared";
 import { StmtContext } from "@slangroom/core/slangroom";
+import { Whitespace, Identifier } from "@slangroom/shared/tokens"
 import axios from "axios";
+import { createSyntaxDiagramsCode } from "@slangroom/deps/chevrotain";
+import fs from 'node:fs'
 
 export enum Method {
 	GET,
@@ -82,20 +85,8 @@ const Different = createToken({
 	pattern: /different/i,
 });
 
-const Identifier = createToken({
-	name: "Identifier",
-	pattern: /'[a-z]+'/i,
-});
-
-
-const WhiteSpace = createToken({
-	name: "WhiteSpace",
-	pattern: /\s+/,
-	group: Lexer.SKIPPED,
-});
-
 const allTokens = [
-	WhiteSpace,
+	Whitespace,
 	Get,
 	Post,
 	Endpoints,
@@ -294,3 +285,12 @@ export const evaluate = async (ast: RequestAST,
 		return results;
 	}
 }
+
+
+const serializedGrammar = parser.getSerializedGastProductions();
+
+// create the HTML Text
+const htmlText = createSyntaxDiagramsCode(serializedGrammar);
+
+// Write the HTML file to disk
+fs.writeFileSync("./generated_diagrams_http.html", htmlText);
