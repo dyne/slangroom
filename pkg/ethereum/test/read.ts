@@ -3,7 +3,7 @@ import { Web3 } from 'web3'
 
 const test = anyTest as TestFn<{web3: Web3}>;
 
-import { EthereumRequestKind, line2Ast } from '@slangroom/ethereum/read';
+import { EthereumRequestKind, line2Ast, evaluate } from '@slangroom/ethereum/read';
 
 test.before(async (t) => {
 	t.context.web3 = new Web3('http://78.47.38.223:9485')
@@ -12,6 +12,8 @@ test.before(async (t) => {
 test("Ethereum nonce", async (t) => {
 	const ast = line2Ast("Ethereum nonce for 'foo'");
 	t.deepEqual(ast.value, { address: 'foo', kind: EthereumRequestKind.EthereumNonce})
+	const res = await evaluate(ast.value, {}, {data: {foo: "0x2D010920b43aFb54f8d5fB51c9354FbC674b28Fc"}, context: t.context})
+	t.is(res, 0);
 })
 
 test("Ethereum gas price", async (t) => {

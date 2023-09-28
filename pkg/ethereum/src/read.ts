@@ -1,6 +1,6 @@
 import { createToken, Lexer, CstParser } from "@slangroom/deps/chevrotain";
-//import { JsonableObject, Jsonable, JsonableArray } from "@slangroom/shared";
-//import { StmtContext } from "@slangroom/core/slangroom";
+import { Jsonable, JsonableObject } from "@slangroom/shared";
+import { StmtContext } from "@slangroom/core/slangroom";
 import { Whitespace, Identifier } from "@slangroom/shared/tokens"
 import { createSyntaxDiagramsCode } from "@slangroom/deps/chevrotain";
 import fs from 'node:fs'
@@ -368,6 +368,44 @@ export const line2Ast = (text: string) => {
 	};
 }
 
+export const evaluate = async (ast: EthereumRequestAST,
+                keys: JsonableObject, stmtCtx: StmtContext): Promise<Jsonable> => {
+	if(!stmtCtx.context.web3) {
+		throw new Error("Web3 not inizialized");
+	}
+	const web3 = stmtCtx.context.web3;
+	if(ast.kind == EthereumRequestKind.EthereumNonce) {
+		const address = stmtCtx.data[ast.address] || keys[ast.address] || ast.address
+		const nonce = await web3.eth.getTransactionCount(address);
+		return nonce.toString()
+	}
+	if(ast.kind == EthereumRequestKind.EthereumGasPrice) {
+		const gasPrice = await web3.eth.getGasPrice();
+		return gasPrice;
+	}
+	if(ast.kind == EthereumRequestKind.EthereumBalance) {
+		const address = stmtCtx.data[ast.address] || keys[ast.address] || ast.address
+		const balance = await web3.eth.getBalance(address);
+		return balance.toString()
+	}
+	if(ast.kind == EthereumRequestKind.EthereumBytes) {
+		const tag = (stmtCtx.data[ast.transactionId] || keys[ast.transactionId]) as string
+        const receipt = await web3.eth.getTransactionReceipt(tag.startsWith("0x") ? tag : "0x" + tag)
+		if(!receipt) {
+			throw new Error("Transaction id doesn't exist")
+		}
+		if(!receipt.status) {
+			throw new Error("Failed transaction");
+		}
+		try {
+			const dataRead = receipt.logs[0].data.slice(2);
+			return dataRead
+		} catch(e) {
+			throw new Error("Empty transaction")
+		}
+	}
+	throw new Error("Should not be here")
+}
 const serializedGrammar = parser.getSerializedGastProductions();
 
 // create the HTML Text
