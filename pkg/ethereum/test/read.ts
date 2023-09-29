@@ -4,9 +4,14 @@ import { Web3 } from 'web3'
 const test = anyTest as TestFn<{web3: Web3}>;
 
 import { EthereumRequestKind, line2Ast, evaluate } from '@slangroom/ethereum/read';
+import { line2Ast as line2AstConnect, evaluate as evaluateConnect } from '@slangroom/ethereum/connect';
 
 test.before(async (t) => {
-	t.context.web3 = new Web3('http://78.47.38.223:9485')
+	const ast = line2AstConnect("to the ethereum provider 'foo'");
+	t.deepEqual(ast.value, { address: 'foo' })
+	const res = await evaluateConnect(ast.value, {}, {data: {foo: "http://78.47.38.223:9485"}, context: t.context})
+	t.is(res.name, "web3")
+	t.context.web3 = res.value
 });
 
 test("Ethereum nonce", async (t) => {
