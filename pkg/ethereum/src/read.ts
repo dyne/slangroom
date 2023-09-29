@@ -108,7 +108,7 @@ const Balance = createToken({
 	name: "Balance",
 	pattern: /balance/i,
 });
-const Array = createToken({
+const ArrayToken = createToken({
 	name: "Array",
 	pattern: /array/i,
 });
@@ -176,7 +176,7 @@ const allTokens = [
 	Bytes,
 	Hash,
 	Balance,
-	Array,
+	ArrayToken,
 	From,
 	Erc20,
 	Erc721,
@@ -216,7 +216,7 @@ class StatementParser extends CstParser {
 						this.CONSUME(Balance);
 						this.CONSUME2(For);
 						this.OPTION(() => {
-							this.CONSUME(Array)
+							this.CONSUME(ArrayToken)
 						})
 					}},
 					{ ALT: () => {
@@ -381,12 +381,16 @@ export const evaluate = async (ast: EthereumRequestAST,
 	}
 	if(ast.kind == EthereumRequestKind.EthereumGasPrice) {
 		const gasPrice = await web3.eth.getGasPrice();
-		return gasPrice;
+		return gasPrice.toString();
 	}
 	if(ast.kind == EthereumRequestKind.EthereumBalance) {
 		const address = stmtCtx.data[ast.address] || keys[ast.address] || ast.address
-		const balance = await web3.eth.getBalance(address);
-		return balance.toString()
+		if(Array.isArray(address)) {
+			const balances = await Promise.all(address.map(addr =>  web3.eth.getBalance(addr)));
+			return balances.map(b => b.toString())
+		} else {
+			return (await web3.eth.getBalance(address)).toString();
+		}
 	}
 	if(ast.kind == EthereumRequestKind.EthereumBytes) {
 		const tag = (stmtCtx.data[ast.transactionId] || keys[ast.transactionId]) as string
