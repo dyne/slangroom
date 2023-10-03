@@ -1,52 +1,105 @@
-import type { ZenroomParams, JsonableObject } from '@slangroom/shared';
+import type { Jsonable, JsonableObject, ZenroomParams } from '@slangroom/shared';
+import { Action } from '@slangroom/core/visitor';
 
-/**
- * A plugin that must be executed **before** the actual Zenroom execution takes
- * place.
- *
- * The plugin is defined using a single parameter which is a callback,
- * named [execute], which takes in the necessary parameters from [BeforeParams]
- * and optionally returns a [ZenroomParams].
- */
-export class BeforePlugin {
-	constructor(
-		readonly execute: (params: BeforeParams
-		) => Promise<void> | void | Promise<JsonableObject> | JsonableObject
-	) { }
+export class ExecContext {
+	#store = new Map<any, any>();
+
+	get(key: any): any {
+		return this.#store.get(key);
+	}
+
+	set(key: any, value: any) {
+		this.#store.set(key, value);
+	}
 }
 
-/**
- * A plugin that must be executed **after** the actual Zenroom execution takes
- * place.
- *
- * The plugin is defined using a single parameter which is a callback,
- * named [execute], which takes in the necessary parameters from [AfterParams].
- */
-export class AfterPlugin {
-	constructor(readonly execute: (params: AfterParams
-	) => Promise<void> | void | Promise<JsonableObject> | JsonableObject
-	) { }
+export class ExecParams {
+	#data: JsonableObject;
+	#keys: JsonableObject;
+
+	contsructor(params: ZenroomParams) {
+		this.#data = params.data || {};
+		this.#keys = params.keys || {};
+	}
+
+	get(key: string): Jsonable | undefined {
+		return this.#data[key] ? this.#data[key] : this.#keys[key];
+	}
+
+	set(key: string, value: Jsonable) {
+		this.#data[key] = value;
+	}
 }
 
-/**
- * The parameters passed down to [BeforePlugin]'s callback.
- *
- * [statement] is the ignored statement for each iteration.
- * [params] is the original parameters passed to Zenroom, if any.
- */
-export type BeforeParams = {
-	readonly statement: string;
-	readonly params: ZenroomParams | undefined;
-};
+export abstract class Plugin {
+	#phrase: string;
 
-/**
- * The parameters passed down to [BeforePlugin]'s callback.
- * [statement] is the ignored statement for each iteration.
- * [params] is the original parameters passed to Zenroom, if any.
- * [result] is the result of the actual Zenroom execution.
- */
-export type AfterParams = {
-	readonly statement: string;
-	readonly params: ZenroomParams | undefined;
-	readonly result: JsonableObject;
-};
+	constructor(phrase: string) {
+		this.#phrase = phrase.toLowerCase();
+	}
+
+	match(actn: Action) {
+		return actn.phrase.toLowerCase() === this.#phrase;
+	}
+
+	abstract execute(params: ExecParams, ctx: ExecContext): void | Promise<void>;
+}
+
+export class ConnectPlugin extends Plugin {
+	#execute: (params: ExecParams, ctx: ExecContext) => void;
+	constructor(phrase: string, cb: (params: ExecParams, ctx: ExecContext) => void) {
+		super(phrase);
+		// TODO: using `phrase`, fetch all the variables and put them inside
+		// `ExecParams`.
+		this.#execute = cb;
+	}
+
+	execute(params: ExecParams, ctx: ExecContext) {
+		this.#execute(params, ctx);
+	}
+}
+
+export class ReadPlugin extends Plugin {
+	#execute: (params: ExecParams, ctx: ExecContext) => void;
+
+	constructor(phrase: string, cb: (params: ExecParams, ctx: ExecContext) => void) {
+		super(phrase);
+		// TODO: using `phrase`, fetch all the variables and put them inside
+		// `ExecParams`.
+		this.#execute = cb;
+	}
+
+	execute(params: ExecParams, ctx: ExecContext) {
+		this.#execute(params, ctx);
+	}
+}
+
+export class IntoPlugin extends Plugin {
+	#execute: (params: ExecParams) => void;
+
+	constructor(phrase: string, cb: (params: ExecParams) => void) {
+		super(phrase);
+		// TODO: using `phrase`, fetch all the variables and put them inside
+		// `ExecParams`.
+		this.#execute = cb;
+	}
+
+	execute(params: ExecParams) {
+		this.#execute(params);
+	}
+}
+
+export class SavePlugin extends Plugin {
+	#execute: (params: ExecParams) => void;
+
+	constructor(phrase: string, cb: (params: ExecParams) => void) {
+		super(phrase);
+		// TODO: using `phrase`, fetch all the variables and put them inside
+		// `ExecParams`.
+		this.#execute = cb;
+	}
+
+	execute(params: ExecParams) {
+		this.#execute(params);
+	}
+}
