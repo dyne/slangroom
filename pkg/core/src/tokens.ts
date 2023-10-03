@@ -1,27 +1,33 @@
 import { createToken, Lexer } from '@slangroom/deps/chevrotain';
 
-/**
- * The verb "Save".
- */
 export const Save = createToken({
 	name: 'Save',
 	pattern: /save/i,
 });
 
-/**
- * The verb "Read"
- */
 export const Read = createToken({
 	name: 'Read',
 	pattern: /read/i,
 });
 
-/**
- * The verb "Connect"
- */
 export const Connect = createToken({
 	name: 'Connect',
 	pattern: /connect/i,
+});
+
+export const Pass = createToken({
+	name: 'Pass',
+	pattern: /pass/i,
+});
+
+export const Send = createToken({
+	name: 'Send',
+	pattern: /send/i,
+});
+
+export const To = createToken({
+	name: 'To',
+	pattern: /to/i,
 });
 
 export const And = createToken({
@@ -55,4 +61,17 @@ export const Whitespace = createToken({
 	group: Lexer.SKIPPED,
 });
 
-export const allTokens = [Whitespace, Read, Save, Connect, Into, Within, And, Identifier, Buzzword];
+export const allTokens = [
+	Whitespace,
+	Read,
+	Save,
+	Connect,
+	Into,
+	Within,
+	And,
+	To,
+	Identifier,
+	Buzzword,
+	Send,
+	Pass,
+];

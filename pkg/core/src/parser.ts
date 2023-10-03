@@ -3,8 +3,11 @@ import {
 	Read,
 	Connect,
 	Save,
+	Send,
+	Pass,
 	Within,
 	And,
+	To,
 	Into,
 	Buzzword,
 	Identifier,
@@ -17,53 +20,72 @@ const Parser = new (class extends CstParser {
 		this.performSelfAnalysis();
 	}
 
-	statement = this.RULE('statement', () => {
-		this.OR([
-			{ ALT: () => this.SUBRULE(this.#connect) },
-			{ ALT: () => this.SUBRULE(this.#read) },
-		]);
+	statements = this.RULE('statements', () => {
+		this.AT_LEAST_ONE_SEP({
+			SEP: And,
+			DEF: () => this.SUBRULE(this.#statement),
+		});
+	});
+
+	#statement = this.RULE('statement', () => {
+		this.OPTION(() => this.SUBRULE(this.#connect));
+		this.OPTION(() => this.SUBRULE(this.#sendpass));
+		this.SUBRULE(this.#readsave);
 	});
 
 	#connect = this.RULE('connect', () => {
 		this.CONSUME(Connect);
-		this.SUBRULE(this.#action);
+		this.CONSUME(To);
+		this.CONSUME(Identifier);
+		this.CONSUME(And);
+	});
+
+	#sendpass = this.RULE('sendpass', () => {
+		this.AT_LEAST_ONE_SEP({
+			SEP: And,
+			DEF() {
+				this.OR([
+					{
+						ALT: () => this.CONSUME(Send),
+					},
+					{
+						Alt: () => this.CONSUME(Pass),
+					},
+				]);
+				this.OPTION(() => this.SUBRULE(this.#buzzwords));
+				this.CONSUME(Identifier);
+				this.CONSUME(And);
+			},
+		});
+	});
+
+	#readsave = this.RULE('readsave', () => {
+		this.OR([{ ALT: () => this.SUBRULE(this.#read) }, { ALT: () => this.SUBRULE(this.#save) }]);
+	});
+
+	#save = this.RULE('save', () => {
+		this.CONSUME(Save);
+		this.SUBRULE(this.#buzzwords);
 	});
 
 	#read = this.RULE('read', () => {
 		this.CONSUME(Read);
-		this.SUBRULE(this.#action, { LABEL: 'readAction' });
-		this.OPTION(() =>
-			this.OR([
-				{ ALT: () => this.SUBRULE(this.#andSave) },
-				{ ALT: () => this.SUBRULE(this.#into) },
-			])
-		);
-	});
-
-	#andSave = this.RULE('andSave', () => {
-		this.CONSUME(And);
-		this.CONSUME(Save);
-		this.SUBRULE(this.#action, { LABEL: 'saveAction' });
+		this.OPTION(() => this.SUBRULE(this.#into));
 	});
 
 	#into = this.RULE('into', () => {
 		this.CONSUME(Into);
-		this.CONSUME(Identifier, { LABEL: 'intoIdentifier' });
+		this.CONSUME(Identifier);
 		this.OPTION(() => this.SUBRULE(this.#within));
 	});
 
 	#within = this.RULE('within', () => {
 		this.CONSUME(Within);
-		this.CONSUME(Identifier, { LABEL: 'withinIdentifier' });
+		this.CONSUME(Identifier);
 	});
 
-	#action = this.RULE('action', () => {
-		this.AT_LEAST_ONE(() => this.SUBRULE(this.#phrase));
-	});
-
-	#phrase = this.RULE('phrase', () => {
-		this.CONSUME(Buzzword);
-		this.OPTION(() => this.CONSUME(Identifier));
+	#buzzwords = this.RULE('buzzwords', () => {
+		this.AT_LEAST_ONE(() => this.CONSUME(Buzzword));
 	});
 })();
 
