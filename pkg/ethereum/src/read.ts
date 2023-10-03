@@ -1,9 +1,9 @@
 import { createToken, Lexer, CstParser } from "@slangroom/deps/chevrotain";
-import { Jsonable, JsonableObject } from "@slangroom/shared";
-import { StmtContext } from "@slangroom/core/slangroom";
+//import { Jsonable, JsonableObject } from "@slangroom/shared";
+//import { StmtContext } from "@slangroom/core/slangroom";
 import { Whitespace, Identifier } from "@slangroom/shared/tokens"
-import { createSyntaxDiagramsCode } from "@slangroom/deps/chevrotain";
-import fs from 'node:fs'
+//import { createSyntaxDiagramsCode } from "@slangroom/deps/chevrotain";
+//import fs from 'node:fs'
 
 export enum EthereumRequestKind {
 	EthereumNonce,
@@ -368,7 +368,7 @@ export const line2Ast = (text: string) => {
 	};
 }
 
-export const evaluate = async (ast: EthereumRequestAST,
+/*export const evaluate = async (ast: EthereumRequestAST,
                 keys: JsonableObject, stmtCtx: StmtContext): Promise<Jsonable> => {
 	if(!stmtCtx.context.web3) {
 		throw new Error("Web3 not inizialized");
@@ -417,3 +417,4 @@ const htmlText = createSyntaxDiagramsCode(serializedGrammar);
 
 // Write the HTML file to disk
 fs.writeFileSync("./generated_diagrams_eth.html", htmlText);
+*/

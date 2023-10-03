@@ -71,7 +71,7 @@ export const allTokens = [
 	And,
 	To,
 	Identifier,
-	Buzzword,
 	Send,
 	Pass,
+	Buzzword,
 ];

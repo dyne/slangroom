@@ -28,8 +28,10 @@ const Parser = new (class extends CstParser {
 	});
 
 	#statement = this.RULE('statement', () => {
-		this.OPTION(() => this.SUBRULE(this.#connect));
-		this.OPTION(() => this.SUBRULE(this.#sendpass));
+		this.OPTION1(() => this.SUBRULE(this.#connect));
+		this.MANY(() => {
+			this.SUBRULE(this.#sendpass);
+		});
 		this.SUBRULE(this.#readsave);
 	});
 
@@ -41,22 +43,17 @@ const Parser = new (class extends CstParser {
 	});
 
 	#sendpass = this.RULE('sendpass', () => {
-		this.AT_LEAST_ONE_SEP({
-			SEP: And,
-			DEF() {
-				this.OR([
-					{
-						ALT: () => this.CONSUME(Send),
-					},
-					{
-						Alt: () => this.CONSUME(Pass),
-					},
-				]);
-				this.OPTION(() => this.SUBRULE(this.#buzzwords));
-				this.CONSUME(Identifier);
-				this.CONSUME(And);
+		this.OR([
+			{
+				ALT: () => this.CONSUME(Send),
 			},
-		});
+			{
+				ALT: () => this.CONSUME(Pass),
+			},
+		]);
+		this.OPTION(() => this.SUBRULE(this.#buzzwords));
+		this.CONSUME(Identifier);
+		this.CONSUME(And);
 	});
 
 	#readsave = this.RULE('readsave', () => {
@@ -70,6 +67,7 @@ const Parser = new (class extends CstParser {
 
 	#read = this.RULE('read', () => {
 		this.CONSUME(Read);
+		this.SUBRULE(this.#buzzwords);
 		this.OPTION(() => this.SUBRULE(this.#into));
 	});
 
@@ -93,5 +91,8 @@ export const CstVisitor = Parser.getBaseCstVisitorConstructor();
 
 export const parse = (tokens: IToken[]) => {
 	Parser.input = tokens;
-	return Parser.statement();
+
+	const res = Parser.statements();
+	console.log(Parser.errors)
+	return res
 };

@@ -1,5 +1,4 @@
 import type { Jsonable, JsonableObject, ZenroomParams } from '@slangroom/shared';
-import { Action } from '@slangroom/core/visitor';
 
 export class ExecContext {
 	#store = new Map<any, any>();
@@ -17,7 +16,7 @@ export class ExecParams {
 	#data: JsonableObject;
 	#keys: JsonableObject;
 
-	contsructor(params: ZenroomParams) {
+	constructor(params: ZenroomParams) {
 		this.#data = params.data || {};
 		this.#keys = params.keys || {};
 	}
@@ -29,77 +28,38 @@ export class ExecParams {
 	set(key: string, value: Jsonable) {
 		this.#data[key] = value;
 	}
+
+	getKeys() {
+		return this.#keys
+	}
+	getData() {
+		return this.#data
+	}
 }
 
-export abstract class Plugin {
+export class ReadPlugin {
 	#phrase: string;
+	#params: string[];
+	#func: (...args: Jsonable[]) => Jsonable;
 
-	constructor(phrase: string) {
-		this.#phrase = phrase.toLowerCase();
+	constructor(phrase: string, params: string[], func: (...args: Jsonable[]) => Jsonable) {
+		this.#phrase = phrase;
+		this.#params = params
+		this.#func = func;
 	}
 
-	match(actn: Action) {
-		return actn.phrase.toLowerCase() === this.#phrase;
+	execute(execParams: ExecParams) {
+		const args = this.#params.map((v: any) => execParams.get(v))
+		if(args.some(v => v == undefined)) {
+			throw new Error("Some arguments are undefined") // TODO: we can do
+			// this befone executing the statement
+		} else {
+			return this.#func(...args.map(v => v || ""))
+		}
 	}
 
-	abstract execute(params: ExecParams, ctx: ExecContext): void | Promise<void>;
-}
 
-export class ConnectPlugin extends Plugin {
-	#execute: (params: ExecParams, ctx: ExecContext) => void;
-	constructor(phrase: string, cb: (params: ExecParams, ctx: ExecContext) => void) {
-		super(phrase);
-		// TODO: using `phrase`, fetch all the variables and put them inside
-		// `ExecParams`.
-		this.#execute = cb;
-	}
-
-	execute(params: ExecParams, ctx: ExecContext) {
-		this.#execute(params, ctx);
-	}
-}
-
-export class ReadPlugin extends Plugin {
-	#execute: (params: ExecParams, ctx: ExecContext) => void;
-
-	constructor(phrase: string, cb: (params: ExecParams, ctx: ExecContext) => void) {
-		super(phrase);
-		// TODO: using `phrase`, fetch all the variables and put them inside
-		// `ExecParams`.
-		this.#execute = cb;
-	}
-
-	execute(params: ExecParams, ctx: ExecContext) {
-		this.#execute(params, ctx);
-	}
-}
-
-export class IntoPlugin extends Plugin {
-	#execute: (params: ExecParams) => void;
-
-	constructor(phrase: string, cb: (params: ExecParams) => void) {
-		super(phrase);
-		// TODO: using `phrase`, fetch all the variables and put them inside
-		// `ExecParams`.
-		this.#execute = cb;
-	}
-
-	execute(params: ExecParams) {
-		this.#execute(params);
-	}
-}
-
-export class SavePlugin extends Plugin {
-	#execute: (params: ExecParams) => void;
-
-	constructor(phrase: string, cb: (params: ExecParams) => void) {
-		super(phrase);
-		// TODO: using `phrase`, fetch all the variables and put them inside
-		// `ExecParams`.
-		this.#execute = cb;
-	}
-
-	execute(params: ExecParams) {
-		this.#execute(params);
+	getPhrase() {
+		return this.#phrase
 	}
 }

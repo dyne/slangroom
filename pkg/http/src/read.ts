@@ -1,11 +1,11 @@
 import { createToken, Lexer, CstParser } from "@slangroom/deps/chevrotain";
 //import { createSyntaxDiagramsCode } from "chevrotain";
-import { JsonableObject, Jsonable, JsonableArray } from "@slangroom/shared";
-import { StmtContext } from "@slangroom/core/slangroom";
+//import { JsonableObject, Jsonable, JsonableArray } from "@slangroom/shared";
+//import { StmtContext } from "@slangroom/core/slangroom";
 import { Whitespace, Identifier } from "@slangroom/shared/tokens"
-import axios from "axios";
-import { createSyntaxDiagramsCode } from "@slangroom/deps/chevrotain";
-import fs from 'node:fs'
+//import axios from "axios";
+//import { createSyntaxDiagramsCode } from "@slangroom/deps/chevrotain";
+//import fs from 'node:fs'
 
 export enum Method {
 	GET,
@@ -225,7 +225,7 @@ export const line2Ast = (text: string) => {
 	};
 }
 
-export const evaluate = async (ast: RequestAST,
+/*export const evaluate = async (ast: RequestAST,
 		keys: JsonableObject, stmtCtx: StmtContext): Promise<JsonableObject | JsonableArray> => {
 	let body: Jsonable | undefined
 	if(ast.body) {
@@ -294,3 +294,4 @@ const htmlText = createSyntaxDiagramsCode(serializedGrammar);
 
 // Write the HTML file to disk
 fs.writeFileSync("./generated_diagrams_http.html", htmlText);
+*/

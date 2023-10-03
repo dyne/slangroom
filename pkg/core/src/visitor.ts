@@ -1,121 +1,107 @@
 import { CstVisitor } from '@slangroom/core/parser';
 import type { CstNode } from '@slangroom/deps/chevrotain';
 
-export type Statement = Read | Connect | ReadInto | ReadIntoWithin | ReadAndSave;
-
-export enum StatementType {
+export enum ActionType {
 	Read,
-	Connect,
-	ReadInto,
-	ReadIntoWithin,
-	ReadAndSave,
+	Save,
 }
 
 export type Read = {
-	type: StatementType.Read;
-	read: Action;
-};
+	kind: ActionType.Read,
+	buzzwords: string,
+	into: string[],
+}
 
-export type Connect = {
-	type: StatementType.Connect;
-	connect: Action;
-};
+export type Save = {
+	kind: ActionType.Save,
+	buzzwords: string,
+}
 
-export type ReadInto = {
-	type: StatementType.ReadInto;
-	read: Action;
-	into: string;
-};
+export type Action = Read | Save
 
-export type ReadIntoWithin = {
-	type: StatementType.ReadIntoWithin;
-	read: Action;
-	into: string;
-	within: string;
-};
+export type Statement = {
+	connect?: string,
+	bindings: Map<string, string>,
+	action: Action
+}
 
-export type ReadAndSave = {
-	type: StatementType.ReadAndSave;
-	read: Action;
-	save: Action;
-};
+export class StatementBindings {
+	#bindings: Map<string, string>;
+	constructor() {
+		this.#bindings = new Map<string, string>();
+	}
 
-export type Action = {
-	phrase: string;
-	args: string[];
-};
+	get(key: string) {
+		return this.#bindings.get(key)
+	}
+	set(key: string, val: string) {
+		if(this.#bindings.has(key)) {
+			throw new Error("Duplicate key")
+		}
+		this.#bindings.set(key, val)
+
+	}
+}
 
 export const Visitor = new (class extends CstVisitor {
 	constructor() {
 		super();
 		this.validateVisitor();
 	}
-
+	statements(ctx: any) {
+		return ctx.statement.map((v: any) => this.visit(v))
+	}
 	statement(ctx: any) {
-		if (ctx.connect) return this.visit(ctx.connect);
-		if (ctx.read) return this.visit(ctx.read);
-		throw new Error('statement: UNREACHABLE');
+		const node: Statement = {
+			action: this.visit(ctx.readsave),
+			bindings: new Map<string, string>(
+				ctx.sendpass?.map((v: any) => this.visit(v))),
+		}
+		if(ctx.connect) {
+			node.connect = this.visit(ctx.connect)
+		}
+		return node
 	}
-
 	connect(ctx: any) {
-		return {
-			type: StatementType.Connect,
-			connect: this.visit(ctx.action),
-		};
+		return ctx.Identifier[0].image.slice(1,-1)
 	}
-
+	sendpass(ctx: any) {
+		const identifier = ctx.Identifier[0].image.slice(1,-1)
+		if(ctx.buzzwords) {
+			return [this.visit(ctx.buzzwords), identifier]
+		}
+		return [identifier, identifier]
+	}
+	readsave(ctx: any) {
+		return this.visit(ctx.read || ctx.save)
+	}
+	save(ctx: any) {
+		return {
+			kind: ActionType.Save,
+			phrase: this.visit(ctx.buzzwords)
+		}
+	}
 	read(ctx: any) {
-		const ret = ctx.andSave
-			? this.visit(ctx.andSave)
-			: ctx.into
-				? this.visit(ctx.into)
-				: { type: StatementType.Read };
-		ret.read = this.visit(ctx.readAction);
-		return ret;
-	}
-
-	andSave(ctx: any) {
 		return {
-			type: StatementType.ReadAndSave,
-			save: this.visit(ctx.saveAction),
-		};
+			kind: ActionType.Read,
+			phrase: this.visit(ctx.buzzwords),
+			into: ctx.into ? this.visit(ctx.into) : []
+		}
 	}
-
 	into(ctx: any) {
-		const ret = ctx.within ? this.visit(ctx.within) : { type: StatementType.ReadInto };
-		ret.into = ctx.intoIdentifier[0].image.slice(1, -1);
-		return ret;
+		let path = [ctx.Identifier[0].image.slice(1,-1)]
+		if(ctx.within) {
+			path.concat(this.visit(ctx.within))
+		}
+		return path
 	}
-
 	within(ctx: any) {
-		return {
-			type: StatementType.ReadIntoWithin,
-			within: ctx.withinIdentifier[0].image.slice(1, -1),
-		};
+		return [ctx.Identifier[0].image.slice(1,-1)]
+	}
+	buzzwords(ctx: any) {
+		return ctx.Buzzword.map((v: any) => v.image).join(' ');
 	}
 
-	action(ctx: any) {
-		const { phrases, args } = ctx.phrase.reduce(
-			(acc: { phrases: string[]; args: string[] }, cur: any) => {
-				const [buzzword, ident] = this.visit(cur);
-				acc.phrases.push(buzzword);
-				if (ident) acc.args.push(ident);
-				return acc;
-			},
-			{ phrases: [], args: [] }
-		);
-
-		return {
-			phrase: phrases.join(' '),
-			args: args,
-		};
-	}
-
-	phrase(ctx: any) {
-		if (ctx.Identifier)
-			return [`${ctx.Buzzword[0].image} ''`, ctx.Identifier?.[0].image.slice(1, -1)];
-		return [ctx.Buzzword[0].image, null];
-	}
 })();
 
 export const visit = (cst: CstNode): Statement => Visitor.visit(cst);
