@@ -48,13 +48,10 @@ export const buildNormalizedPharse = (phrase: string) =>
 		phrase.toLowerCase().replace(' ', '_');
 
 export class Plugin {
+	#func: (...args: Jsonable[]) => Jsonable;
 	#params: string[];
 	#phrase: string;
 
-	constructor(phrase: string, params: string[]) {
-		this.#params = params
-		this.#phrase = buildNormalizedPharse(phrase)
-	}
 
 	protected buildParams(bindings: Map<string, string>, execParams: ExecParams): Jsonable[] {
 		const args = this.#params.map((v: any) => {
@@ -70,13 +67,9 @@ export class Plugin {
 	getPhrase() {
 		return this.#phrase
 	}
-}
-
-export class ReadPlugin extends Plugin {
-	#func: (...args: Jsonable[]) => Jsonable;
-
 	constructor(phrase: string, params: string[], func: (...args: Jsonable[]) => Jsonable) {
-		super(phrase, params);
+		this.#params = params
+		this.#phrase = buildNormalizedPharse(phrase)
 		this.#func = func;
 	}
 

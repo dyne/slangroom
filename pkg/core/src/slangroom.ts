@@ -3,51 +3,37 @@ import { ZenroomParams, zencodeExec } from '@slangroom/shared';
 import {
 	Plugin,
 	ExecParams,
-	ReadPlugin,
 	buildNormalizedPharse,
 } from '@slangroom/core/plugin';
 import { lex } from '@slangroom/core/lexer';
 import { parse } from '@slangroom/core/parser';
 import { visit, type Statement } from '@slangroom/core/visitor';
-import { ActionType } from './visitor.js';
-import { Jsonable } from '@slangroom/shared';
 
 type Plugins = Plugin | Set<Plugin> | Array<Plugin | Set<Plugin>>;
 
 export class Slangroom {
-	#readPlugins = new Map<string, ReadPlugin>();
+	#plugins = new Map<string, Plugin>();
 
 	constructor(first: Plugins, ...rest: Plugins[]) {
 		const recurse = (x: Plugins) => {
 			if (Array.isArray(x) || x instanceof Set) x.forEach(recurse);
 			else {
-				if (x instanceof ReadPlugin) this.#readPlugins.set(x.getPhrase(), x);
-				else throw new Error("Unknown object")
+				this.#plugins.set(x.getPhrase(), x);
 			}
 		};
 		[first, ...rest].forEach(recurse);
 	}
 
 	async executePlugin(p: Statement, params: ExecParams) {
-		if(p.action.kind == ActionType.Read) {
-			const normalizedBuzzwords = buildNormalizedPharse(p.action.buzzwords)
-			const plugin = this.#readPlugins.get(normalizedBuzzwords)
-			if(plugin) {
-				const result = plugin.execute(p.bindings, params)
-				if(p.action.into.length > 0) {
-					let val: Jsonable = {}
-					if(p.action.into.length > 1) {
-						val[p.action.into[1] || ""] = result
-					} else {
-						val = result
-					}
-					params.set(p.action.into[0] || "", val)
-				} else {
-					params.set(normalizedBuzzwords, result)
-				}
-			} else {
-				throw new Error("Unknown phrase")
+		const normalizedBuzzwords = buildNormalizedPharse(p.buzzwords)
+		const plugin = this.#plugins.get(normalizedBuzzwords)
+		if(plugin) {
+			const result = plugin.execute(p.bindings, params)
+			if(p.into) {
+				params.set(p.into, result)
 			}
+		} else {
+			throw new Error("Unknown phrase")
 		}
 	}
 
@@ -91,3 +77,4 @@ const astify = (line: string) => {
 	const cst = parse(tokens);
 	return visit(cst);
 };
+

@@ -1,16 +1,14 @@
 import {
 	allTokens,
-	Read,
-	Connect,
-	Save,
-	Send,
-	Pass,
-	Within,
 	And,
-	To,
-	Into,
 	Buzzword,
+	Connect,
 	Identifier,
+	Into,
+	Output,
+	Pass,
+	Send,
+	To,
 } from '@slangroom/core/tokens';
 import { CstParser, type IToken } from '@slangroom/deps/chevrotain';
 
@@ -20,19 +18,15 @@ const Parser = new (class extends CstParser {
 		this.performSelfAnalysis();
 	}
 
-	statements = this.RULE('statements', () => {
-		this.AT_LEAST_ONE_SEP({
-			SEP: And,
-			DEF: () => this.SUBRULE(this.#statement),
-		});
-	});
-
-	#statement = this.RULE('statement', () => {
+	statement = this.RULE('statement', () => {
 		this.OPTION1(() => this.SUBRULE(this.#connect));
 		this.MANY(() => {
 			this.SUBRULE(this.#sendpass);
 		});
-		this.SUBRULE(this.#readsave);
+		this.SUBRULE(this.#buzzwords);
+		this.OPTION(() => {
+			this.SUBRULE(this.#into);
+		});
 	});
 
 	#connect = this.RULE('connect', () => {
@@ -51,34 +45,15 @@ const Parser = new (class extends CstParser {
 				ALT: () => this.CONSUME(Pass),
 			},
 		]);
-		this.OPTION(() => this.SUBRULE(this.#buzzwords));
+		this.SUBRULE(this.#buzzwords);
 		this.CONSUME(Identifier);
 		this.CONSUME(And);
 	});
 
-	#readsave = this.RULE('readsave', () => {
-		this.OR([{ ALT: () => this.SUBRULE(this.#read) }, { ALT: () => this.SUBRULE(this.#save) }]);
-	});
-
-	#save = this.RULE('save', () => {
-		this.CONSUME(Save);
-		this.SUBRULE(this.#buzzwords);
-	});
-
-	#read = this.RULE('read', () => {
-		this.CONSUME(Read);
-		this.SUBRULE(this.#buzzwords);
-		this.OPTION(() => this.SUBRULE(this.#into));
-	});
-
 	#into = this.RULE('into', () => {
+		this.CONSUME(And);
+		this.CONSUME(Output);
 		this.CONSUME(Into);
-		this.CONSUME(Identifier);
-		this.OPTION(() => this.SUBRULE(this.#within));
-	});
-
-	#within = this.RULE('within', () => {
-		this.CONSUME(Within);
 		this.CONSUME(Identifier);
 	});
 
@@ -92,7 +67,7 @@ export const CstVisitor = Parser.getBaseCstVisitorConstructor();
 export const parse = (tokens: IToken[]) => {
 	Parser.input = tokens;
 
-	const res = Parser.statements();
+	const res = Parser.statement();
 	console.log(Parser.errors)
 	return res
 };

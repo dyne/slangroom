@@ -40,9 +40,9 @@ export const Into = createToken({
 	pattern: /into/i,
 });
 
-export const Within = createToken({
-	name: 'Within',
-	pattern: /within/i,
+export const Output = createToken({
+	name: 'Output',
+	pattern: /output/i,
 });
 
 export const Buzzword = createToken({
@@ -63,11 +63,9 @@ export const Whitespace = createToken({
 
 export const allTokens = [
 	Whitespace,
-	Read,
-	Save,
 	Connect,
 	Into,
-	Within,
+	Output,
 	And,
 	To,
 	Identifier,
