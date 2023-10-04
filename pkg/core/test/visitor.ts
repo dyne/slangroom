@@ -14,7 +14,7 @@ test('generated ast is correct', async (t) => {
 		'read the    ethereum		 balance': [{
 			action: {
 				kind: ActionType.Read,
-				phrase: "the ethereum balance",
+				buzzwords: "the ethereum balance",
 				into: []
 			},
 			bindings: new Map<string, string>()
@@ -22,7 +22,7 @@ test('generated ast is correct', async (t) => {
 		"pass address 'addr'  and send 'contract' and read the    ethereum		 balance": [{
 			action: {
 				kind: ActionType.Read,
-				phrase: "the ethereum balance",
+				buzzwords: "the ethereum balance",
 				into: []
 			},
 			bindings: new Map<string, string>([
@@ -34,7 +34,7 @@ test('generated ast is correct', async (t) => {
 			connect: 'foo',
 			action: {
 				kind: ActionType.Read,
-				phrase: "the ethereum balance",
+				buzzwords: "the ethereum balance",
 				into: []
 			},
 			bindings: new Map<string, string>()
@@ -43,7 +43,7 @@ test('generated ast is correct', async (t) => {
 			connect: 'foo',
 			action: {
 				kind: ActionType.Read,
-				phrase: "the ethereum balance",
+				buzzwords: "the ethereum balance",
 				into: []
 			},
 			bindings: new Map<string, string>([

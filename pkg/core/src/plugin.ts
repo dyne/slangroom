@@ -25,6 +25,13 @@ export class ExecParams {
 		return this.#data[key] ? this.#data[key] : this.#keys[key];
 	}
 
+	getThrow(key: string): Jsonable {
+		const res = this.#data[key] ? this.#data[key] : this.#keys[key];
+		if(!res)
+			throw new Error(`Key ${key} not found`)
+		return res
+	}
+
 	set(key: string, value: Jsonable) {
 		this.#data[key] = value;
 	}
@@ -37,25 +44,38 @@ export class ExecParams {
 	}
 }
 
-export class ReadPlugin {
-	#phrase: string;
+export class Plugin {
 	#params: string[];
+	constructor(params: string[]) {
+		this.#params = params
+	}
+
+	protected buildParams(bindings: Map<string, string>, execParams: ExecParams): Jsonable[] {
+		const args = this.#params.map((v: any) => {
+			const binding = bindings.get(v)
+			if(binding) {
+				return execParams.getThrow(binding || "")
+			} else {
+				throw new Error("Unknown binding")
+			}
+		})
+		return args
+	}
+}
+
+export class ReadPlugin extends Plugin {
+	#phrase: string;
 	#func: (...args: Jsonable[]) => Jsonable;
 
 	constructor(phrase: string, params: string[], func: (...args: Jsonable[]) => Jsonable) {
+		super(params);
 		this.#phrase = phrase;
-		this.#params = params
 		this.#func = func;
 	}
 
-	execute(execParams: ExecParams) {
-		const args = this.#params.map((v: any) => execParams.get(v))
-		if(args.some(v => v == undefined)) {
-			throw new Error("Some arguments are undefined") // TODO: we can do
-			// this befone executing the statement
-		} else {
-			return this.#func(...args.map(v => v || ""))
-		}
+	execute(bindings: Map<string, string>, execParams: ExecParams) {
+		const args = this.buildParams(bindings, execParams)
+		return this.#func(...args)
 	}
 
 

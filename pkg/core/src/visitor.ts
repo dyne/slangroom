@@ -72,19 +72,19 @@ export const Visitor = new (class extends CstVisitor {
 		}
 		return [identifier, identifier]
 	}
-	readsave(ctx: any) {
+	readsave(ctx: any): Action {
 		return this.visit(ctx.read || ctx.save)
 	}
-	save(ctx: any) {
+	save(ctx: any): Save {
 		return {
 			kind: ActionType.Save,
-			phrase: this.visit(ctx.buzzwords)
+			buzzwords: this.visit(ctx.buzzwords)
 		}
 	}
-	read(ctx: any) {
+	read(ctx: any): Read {
 		return {
 			kind: ActionType.Read,
-			phrase: this.visit(ctx.buzzwords),
+			buzzwords: this.visit(ctx.buzzwords),
 			into: ctx.into ? this.visit(ctx.into) : []
 		}
 	}
