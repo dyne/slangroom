@@ -4,6 +4,7 @@ import {
 	Plugin,
 	ExecParams,
 	ReadPlugin,
+	buildNormalizedPharse,
 } from '@slangroom/core/plugin';
 import { lex } from '@slangroom/core/lexer';
 import { parse } from '@slangroom/core/parser';
@@ -29,7 +30,7 @@ export class Slangroom {
 
 	async executePlugin(p: Statement, params: ExecParams) {
 		if(p.action.kind == ActionType.Read) {
-			const normalizedBuzzwords = p.action.buzzwords.toLowerCase()
+			const normalizedBuzzwords = buildNormalizedPharse(p.action.buzzwords)
 			const plugin = this.#readPlugins.get(normalizedBuzzwords)
 			if(plugin) {
 				const result = plugin.execute(p.bindings, params)
@@ -42,7 +43,7 @@ export class Slangroom {
 					}
 					params.set(p.action.into[0] || "", val)
 				} else {
-					params.set(normalizedBuzzwords.replace(' ', '_'), result)
+					params.set(normalizedBuzzwords, result)
 				}
 			} else {
 				throw new Error("Unknown phrase")

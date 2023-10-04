@@ -44,10 +44,16 @@ export class ExecParams {
 	}
 }
 
+export const buildNormalizedPharse = (phrase: string) =>
+		phrase.toLowerCase().replace(' ', '_');
+
 export class Plugin {
 	#params: string[];
-	constructor(params: string[]) {
+	#phrase: string;
+
+	constructor(phrase: string, params: string[]) {
 		this.#params = params
+		this.#phrase = buildNormalizedPharse(phrase)
 	}
 
 	protected buildParams(bindings: Map<string, string>, execParams: ExecParams): Jsonable[] {
@@ -61,25 +67,21 @@ export class Plugin {
 		})
 		return args
 	}
+	getPhrase() {
+		return this.#phrase
+	}
 }
 
 export class ReadPlugin extends Plugin {
-	#phrase: string;
 	#func: (...args: Jsonable[]) => Jsonable;
 
 	constructor(phrase: string, params: string[], func: (...args: Jsonable[]) => Jsonable) {
-		super(params);
-		this.#phrase = phrase;
+		super(phrase, params);
 		this.#func = func;
 	}
 
 	execute(bindings: Map<string, string>, execParams: ExecParams) {
 		const args = this.buildParams(bindings, execParams)
 		return this.#func(...args)
-	}
-
-
-	getPhrase() {
-		return this.#phrase
 	}
 }

@@ -15,7 +15,7 @@ test("Runs all unknown statements", async (t) => {
 		t.is(output, "foo")
 		return "bar"
 	})
-	const r3 = new ReadPlugin("c", ["a"], (...[output]) => {
+	const r3 = new ReadPlugin("c d", ["a"], (...[output]) => {
 		useR3 = true
 		t.is(output, "bar")
 		return "foobar"
@@ -23,15 +23,18 @@ test("Runs all unknown statements", async (t) => {
 	const script = `
 Rule caller restroom-mw
 Given I read A
+
 Given I have a 'string' named 'a'
 Then print 'a'
+
 Then I pass 'a' and read B
-Then I pass a 'b' and read c into 'mimmo'
+Then I pass a 'b' and read c D
+Then I pass a 'b' and read C d into 'mimmo'
 `
 	const slangroom = new Slangroom(r1, r2, r3);
 	const res = await slangroom.execute(script, {})
 	t.truthy(useR1, "r1 is not used")
 	t.truthy(useR2, "r2 is not used")
 	t.truthy(useR3, "r3 is not used")
-	t.deepEqual(res.result, { a: 'foo', b: 'bar', mimmo: 'foobar' }, res.logs)
+	t.deepEqual(res.result, { a: 'foo', b: 'bar', c_d: 'foobar', mimmo: 'foobar' }, res.logs)
 })
