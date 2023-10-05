@@ -1,87 +1,93 @@
-import { BeforePlugin, AfterPlugin } from '@slangroom/core/plugin';
-import { type ZenroomParams, type ZenroomOutput, zencodeExec } from '@slangroom/shared';
 import { getIgnoredStatements } from '@slangroom/ignored';
+import { ZenroomParams, zencodeExec } from '@slangroom/shared';
+import {
+	Plugin,
+	ExecParams,
+	buildNormalizedPharse,
+	EvaluationResult,
+	EvaluationResultKind,
+} from '@slangroom/core/plugin';
+import { lex } from '@slangroom/core/lexer';
+import { parse } from '@slangroom/core/parser';
+import { visit, type Statement } from '@slangroom/core/visitor';
 
-/**
- * A helper type that disallows nested arrays.
- */
-type Plugins =
-	| BeforePlugin
-	| AfterPlugin
-	| Set<BeforePlugin | AfterPlugin>
-	| Array<BeforePlugin | AfterPlugin | Set<BeforePlugin | AfterPlugin>>;
+type Plugins = Plugin | Set<Plugin> | Array<Plugin | Set<Plugin>>;
 
-/**
- * A Slangroom instance.
- */
 export class Slangroom {
-	/**
-	 * A set of plugins that needs to be executed **before** the actual Zenroom execution.
-	 */
-	private _beforeExecution = new Set<BeforePlugin>();
-	get beforeExecution() {
-		return this._beforeExecution;
-	}
-
-	/**
-	 * A set of plugins that needs to be executed **after** the actual Zenroom execution.
-	 */
-	private _afterExecution = new Set<AfterPlugin>();
-	get afterExecution() {
-		return this._afterExecution;
-	}
+	#plugins: Plugin[] = [];
 
 	constructor(first: Plugins, ...rest: Plugins[]) {
-		this.addPlugins(first, ...rest);
-	}
-
-	/**
-	 * Adds a single or a list of plugins to the Slangroom instance.
-	 */
-	addPlugins(first: Plugins, ...rest: Plugins[]) {
-		const plugins = new Set<BeforePlugin | AfterPlugin>();
-		[first, ...rest].forEach(function recurse(x: Plugins) {
+		const recurse = (x: Plugins) => {
 			if (Array.isArray(x) || x instanceof Set) x.forEach(recurse);
-			else plugins.add(x);
-		});
+			else {
+				this.#plugins.push(x);
+			}
+		};
+		[first, ...rest].forEach(recurse);
+	}
 
-		for (const p of plugins) {
-			if (p instanceof BeforePlugin) this._beforeExecution.add(p);
-			if (p instanceof AfterPlugin) this._afterExecution.add(p);
+	async executePlugin(p: Statement, params: ExecParams) {
+		const normalizedBuzzwords = buildNormalizedPharse(p.buzzwords)
+		let result: EvaluationResult = {
+			kind: EvaluationResultKind.Failure,
+			error: "No plugin executed",
+		}
+		for(let plugin of this.#plugins) {
+			const bindings = new Map(p.bindings.entries())
+			if(p.connect) {
+				bindings.set("connect", p.connect)
+			}
+			result = await plugin.execute(normalizedBuzzwords, bindings, params)
+			if(result.kind === EvaluationResultKind.Success) {
+				if(p.into) {
+					params.set(p.into, result.result)
+				}
+				break;
+			}
+		}
+		if(result.kind == EvaluationResultKind.Failure) {
+			throw new Error(result.error)
 		}
 	}
 
-	/**
-	 * Executes a contract using optional parameters with custom statements.
-	 */
-	async execute(contract: string, params?: ZenroomParams): Promise<ZenroomOutput> {
-		const ignoreds = await getIgnoredStatements(contract, params);
-		params = params || {data: {}}
+	async execute(contract: string, zparams: ZenroomParams) {
+		const ignoreds = await getIgnoredStatements(contract, zparams);
+		const { givens, thens } = ignoreds.reduce(
+			(acc, cur) => {
+				const given = cur.split(/^\s*given\s+i\s+/i);
+				if (given[1]) {
+					acc.givens.push(astify(given[1]));
+					return acc;
+				}
 
-		// TODO: remove the statements when they match (decide how)
-		for (const ignored of ignoreds) {
-			for (const b of this._beforeExecution) {
-				const res = await b.execute({
-					statement: ignored,
-					params: params,
-				})
-				params.data = Object.assign(params.data || {}, res)
-			}
+				const then = cur.split(/^\s*then\s+i\s+/i);
+				if (then[1]) acc.thens.push(astify(then[1]));
+				return acc;
+			},
+			{ givens: [] as Statement[], thens: [] as Statement[] }
+		);
+
+		const params = new ExecParams(zparams);
+
+		for (const g of givens) {
+			await this.executePlugin(g, params)
 		}
 
-		const zout = await zencodeExec(contract, params);
+		const zout = await zencodeExec(contract, {keys: params.getKeys(), data: params.getData()});
 
-		for (const ignored of ignoreds) {
-			for (const a of this._afterExecution) {
-				const res = await a.execute({
-					statement: ignored,
-					result: zout.result,
-					params: params,
-				})
-				zout.result = Object.assign(zout.result || {}, res)
-			}
+		const thenParams = new ExecParams({data: zout.result, keys: params.getKeys()})
+
+		for (const t of thens) {
+			await this.executePlugin(t, thenParams)
 		}
 
-		return zout;
+		return {result: thenParams.getData(), logs: zout.logs};
 	}
 }
+
+const astify = (line: string) => {
+	const { tokens } = lex(line);
+	const cst = parse(tokens);
+	return visit(cst);
+};
+

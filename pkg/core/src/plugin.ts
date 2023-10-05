@@ -1,52 +1,82 @@
-import type { ZenroomParams, JsonableObject } from '@slangroom/shared';
+import type { Jsonable, JsonableObject, ZenroomParams } from '@slangroom/shared';
 
-/**
- * A plugin that must be executed **before** the actual Zenroom execution takes
- * place.
- *
- * The plugin is defined using a single parameter which is a callback,
- * named [execute], which takes in the necessary parameters from [BeforeParams]
- * and optionally returns a [ZenroomParams].
- */
-export class BeforePlugin {
-	constructor(
-		readonly execute: (params: BeforeParams
-		) => Promise<void> | void | Promise<JsonableObject> | JsonableObject
-	) { }
+export class ExecParams {
+	#data: JsonableObject;
+	#keys: JsonableObject;
+
+	constructor(params: ZenroomParams) {
+		this.#data = params.data || {};
+		this.#keys = params.keys || {};
+	}
+
+	get(key: string): Jsonable | undefined {
+		return this.#data[key] ? this.#data[key] : this.#keys[key];
+	}
+
+	getThrow(key: string): Jsonable {
+		const res = this.#data[key] ? this.#data[key] : this.#keys[key];
+		if(!res)
+			throw new Error(`Key ${key} not found`)
+		return res
+	}
+
+	set(key: string, value: Jsonable) {
+		this.#data[key] = value;
+	}
+
+	getKeys() {
+		return this.#keys
+	}
+	getData() {
+		return this.#data
+	}
 }
 
-/**
- * A plugin that must be executed **after** the actual Zenroom execution takes
- * place.
- *
- * The plugin is defined using a single parameter which is a callback,
- * named [execute], which takes in the necessary parameters from [AfterParams].
- */
-export class AfterPlugin {
-	constructor(readonly execute: (params: AfterParams
-	) => Promise<void> | void | Promise<JsonableObject> | JsonableObject
-	) { }
+export const buildNormalizedPharse = (phrase: string) =>
+		phrase.toLowerCase();
+
+export enum EvaluationResultKind {
+	Success,
+	Failure,
 }
 
-/**
- * The parameters passed down to [BeforePlugin]'s callback.
- *
- * [statement] is the ignored statement for each iteration.
- * [params] is the original parameters passed to Zenroom, if any.
- */
-export type BeforeParams = {
-	readonly statement: string;
-	readonly params: ZenroomParams | undefined;
-};
+export type EvaluationSuccess = {
+	kind: EvaluationResultKind.Success,
+	result: Jsonable
+}
 
-/**
- * The parameters passed down to [BeforePlugin]'s callback.
- * [statement] is the ignored statement for each iteration.
- * [params] is the original parameters passed to Zenroom, if any.
- * [result] is the result of the actual Zenroom execution.
- */
-export type AfterParams = {
-	readonly statement: string;
-	readonly params: ZenroomParams | undefined;
-	readonly result: JsonableObject;
-};
+export type EvaluationFailure = {
+	kind: EvaluationResultKind.Failure,
+	error: any
+}
+export type EvaluationResult = EvaluationSuccess | EvaluationFailure
+
+export abstract class Plugin {
+	#bindings: Map<string, string> = new Map()
+	#execParams: ExecParams = new ExecParams({})
+
+	// params: are the optional/mandatory params
+	protected buildParams(params: Map<string,boolean>): Map<string, Jsonable> {
+		const args = new Map<string, Jsonable>()
+		params.forEach((required, param) => {
+			const binding = this.#bindings.get(param)
+			if(binding) {
+				return args.set(param,
+					this.#execParams.getThrow(binding || ""))
+			} else if(required) {
+				throw new Error("Unknown binding")
+			}
+			return
+		})
+		return new Map<string, Jsonable>(args)
+	}
+
+	async execute(phrase: string, bindings: Map<string, string>,
+			execParams: ExecParams) {
+		this.#bindings = bindings
+		this.#execParams = execParams
+		return await this.evaluate(phrase);
+	}
+
+	abstract evaluate(phrase: string): Promise<EvaluationResult> | EvaluationResult;
+}
