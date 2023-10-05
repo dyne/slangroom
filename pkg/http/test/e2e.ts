@@ -4,7 +4,7 @@ import bodyParser from "body-parser";
 import { Slangroom } from "@slangroom/core/slangroom"
 import httpPlugin from "@slangroom/http"
 
-test.before(async (_t) => {
+test.before(async () => {
 	const app = express();
 	app.use(bodyParser.json());
 	app.get("/greeting-es", (_req: any, res: any) => {

@@ -32,7 +32,7 @@ export class Slangroom {
 			kind: EvaluationResultKind.Failure,
 			error: "No plugin executed",
 		}
-		for(let plugin of this.#plugins) {
+		for(const plugin of this.#plugins) {
 			const bindings = new Map(p.bindings.entries())
 			if(p.connect) {
 				bindings.set("connect", p.connect)

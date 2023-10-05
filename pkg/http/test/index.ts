@@ -11,7 +11,7 @@ import {
 	RequestMethod,
 } from '@slangroom/http';
 
-test.before(async (_t) => {
+test.before(async () => {
 	const app = express();
 	app.use(bodyParser.json());
 	app.get("/normaljson", (_req: any, res: any) => {

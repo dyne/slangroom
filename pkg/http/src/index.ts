@@ -168,12 +168,12 @@ export const evaluate = async (ast: RequestAST,
 		};
 	} else {
 		// TODO: check type of urls, body, ... all data from zenroom
-		let dataFz = (_i: number) => args.get("object");
+		let dataFz = (_i: number) => {_i; return args.get("object"); }
 		if(ast.kind == RequestKind.Parallel || ast.kind == RequestKind.Sequential) {
 			dataFz = (i: number) => (args.get("object") as JsonableArray)[i]
 		}
 		const urls = args.get("connect") as string[]
-		let reqs_promises = []
+		const reqs_promises = []
 
 		if(ast.kind == RequestKind.Sequential) {
 			throw new Error("Not yet implemented")
@@ -186,8 +186,8 @@ export const evaluate = async (ast: RequestAST,
 					validateStatus: () => true,
 				}))
 			}
-			let results: JsonableArray = new Array(reqs_promises.length)
-			let errors: { [key: number]: any} = {};
+			const results: JsonableArray = new Array(reqs_promises.length)
+			const errors: { [key: number]: any} = {};
 			const parallel_with_catch = reqs_promises.map((v, i) => v.catch(
 			  (e) => errors[i] = e
 			))
