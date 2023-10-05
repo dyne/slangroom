@@ -1,25 +1,67 @@
 import test from 'ava';
 import { Plugin } from '../src/plugin.js';
 import { Slangroom } from '../src/slangroom.js';
+import { EvaluationResult, EvaluationResultKind } from '../src/plugin.js'
 
 test("Runs all unknown statements", async (t) => {
 	let useR1 = false;
 	let useR2 = false;
 	let useR3 = false;
-	const r1 = new Plugin("a", [], (...[]) => {
-		useR1 = true;
-		return "foo"
-	})
-	const r2 = new Plugin("b", ["a"], (...[a]) => {
-		useR2 = true
-		t.is(a, "foo")
-		return "bar"
-	})
-	const r3 = new Plugin("c d", ["a"], (...[a]) => {
-		useR3 = true
-		t.is(a, "bar")
-		return "foobar"
-	})
+
+	class PluginA extends Plugin {
+		async evaluate(phrase: string): Promise<EvaluationResult> {
+			if(phrase == "a") {
+				useR1 = true;
+				return {
+					kind: EvaluationResultKind.Success,
+					result: "foo"
+				}
+			}
+			return {
+				kind: EvaluationResultKind.Failure,
+				error: "Unknown phrase"
+			}
+		}
+	}
+	class PluginB extends Plugin {
+		async evaluate(phrase: string): Promise<EvaluationResult> {
+			const args = this.buildParams(new Map<string,boolean>([["a", true]]))
+			if(phrase == "b") {
+				useR2 = true
+				t.is(args.get("a"), "foo")
+				return {
+					kind: EvaluationResultKind.Success,
+					result: "bar"
+				}
+			}
+			return {
+				kind: EvaluationResultKind.Failure,
+				error: "Unknown phrase"
+			}
+		}
+	}
+	class PluginCD extends Plugin {
+		async evaluate(phrase: string): Promise<EvaluationResult> {
+			const args = this.buildParams(new Map<string,boolean>([["a", true]]))
+			if(phrase == "c d") {
+				useR3 = true
+				t.is(args.get("a"), "bar")
+				return {
+					kind: EvaluationResultKind.Success,
+					result: "foobar"
+				}
+			}
+			return {
+				kind: EvaluationResultKind.Failure,
+				error: "Unknown phrase"
+			}
+		}
+	}
+
+	const r1 = new PluginA()
+	const r2 = new PluginB()
+	const r3 = new PluginCD()
+
 	const script = `
 Rule caller restroom-mw
 Given I A and output into 'a'

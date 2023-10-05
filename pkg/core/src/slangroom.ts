@@ -4,6 +4,8 @@ import {
 	Plugin,
 	ExecParams,
 	buildNormalizedPharse,
+	EvaluationResult,
+	EvaluationResultKind,
 } from '@slangroom/core/plugin';
 import { lex } from '@slangroom/core/lexer';
 import { parse } from '@slangroom/core/parser';
@@ -12,13 +14,13 @@ import { visit, type Statement } from '@slangroom/core/visitor';
 type Plugins = Plugin | Set<Plugin> | Array<Plugin | Set<Plugin>>;
 
 export class Slangroom {
-	#plugins = new Map<string, Plugin>();
+	#plugins: Plugin[] = [];
 
 	constructor(first: Plugins, ...rest: Plugins[]) {
 		const recurse = (x: Plugins) => {
 			if (Array.isArray(x) || x instanceof Set) x.forEach(recurse);
 			else {
-				this.#plugins.set(x.getPhrase(), x);
+				this.#plugins.push(x);
 			}
 		};
 		[first, ...rest].forEach(recurse);
@@ -26,14 +28,25 @@ export class Slangroom {
 
 	async executePlugin(p: Statement, params: ExecParams) {
 		const normalizedBuzzwords = buildNormalizedPharse(p.buzzwords)
-		const plugin = this.#plugins.get(normalizedBuzzwords)
-		if(plugin) {
-			const result = plugin.execute(p.bindings, params)
-			if(p.into) {
-				params.set(p.into, result)
+		let result: EvaluationResult = {
+			kind: EvaluationResultKind.Failure,
+			error: "No plugin executed",
+		}
+		for(let plugin of this.#plugins) {
+			const bindings = new Map(p.bindings.entries())
+			if(p.connect) {
+				bindings.set("connect", p.connect)
 			}
-		} else {
-			throw new Error("Unknown phrase")
+			result = await plugin.execute(normalizedBuzzwords, bindings, params)
+			if(result.kind === EvaluationResultKind.Success) {
+				if(p.into) {
+					params.set(p.into, result.result)
+				}
+				break;
+			}
+		}
+		if(result.kind == EvaluationResultKind.Failure) {
+			throw new Error(result.error)
 		}
 	}
 
@@ -43,12 +56,12 @@ export class Slangroom {
 			(acc, cur) => {
 				const given = cur.split(/^\s*given\s+i\s+/i);
 				if (given[1]) {
-					acc.givens = acc.givens.concat(astify(given[1]));
+					acc.givens.push(astify(given[1]));
 					return acc;
 				}
 
 				const then = cur.split(/^\s*then\s+i\s+/i);
-				if (then[1]) acc.thens = acc.thens.concat(astify(then[1]));
+				if (then[1]) acc.thens.push(astify(then[1]));
 				return acc;
 			},
 			{ givens: [] as Statement[], thens: [] as Statement[] }
@@ -57,7 +70,7 @@ export class Slangroom {
 		const params = new ExecParams(zparams);
 
 		for (const g of givens) {
-			this.executePlugin(g, params)
+			await this.executePlugin(g, params)
 		}
 
 		const zout = await zencodeExec(contract, {keys: params.getKeys(), data: params.getData()});
@@ -65,7 +78,7 @@ export class Slangroom {
 		const thenParams = new ExecParams({data: zout.result, keys: params.getKeys()})
 
 		for (const t of thens) {
-			this.executePlugin(t, thenParams)
+			await this.executePlugin(t, thenParams)
 		}
 
 		return {result: thenParams.getData(), logs: zout.logs};

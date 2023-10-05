@@ -1,17 +1,5 @@
 import type { Jsonable, JsonableObject, ZenroomParams } from '@slangroom/shared';
 
-export class ExecContext {
-	#store = new Map<any, any>();
-
-	get(key: any): any {
-		return this.#store.get(key);
-	}
-
-	set(key: any, value: any) {
-		this.#store.set(key, value);
-	}
-}
-
 export class ExecParams {
 	#data: JsonableObject;
 	#keys: JsonableObject;
@@ -45,36 +33,50 @@ export class ExecParams {
 }
 
 export const buildNormalizedPharse = (phrase: string) =>
-		phrase.toLowerCase().replace(' ', '_');
+		phrase.toLowerCase();
 
-export class Plugin {
-	#func: (...args: Jsonable[]) => Jsonable;
-	#params: string[];
-	#phrase: string;
+export enum EvaluationResultKind {
+	Success,
+	Failure,
+}
 
+export type EvaluationSuccess = {
+	kind: EvaluationResultKind.Success,
+	result: Jsonable
+}
 
-	protected buildParams(bindings: Map<string, string>, execParams: ExecParams): Jsonable[] {
-		const args = this.#params.map((v: any) => {
-			const binding = bindings.get(v)
+export type EvaluationFailure = {
+	kind: EvaluationResultKind.Failure,
+	error: any
+}
+export type EvaluationResult = EvaluationSuccess | EvaluationFailure
+
+export abstract class Plugin {
+	#bindings: Map<string, string> = new Map()
+	#execParams: ExecParams = new ExecParams({})
+
+	// params: are the optional/mandatory params
+	protected buildParams(params: Map<string,boolean>): Map<string, Jsonable> {
+		const args = new Map<string, Jsonable>()
+		params.forEach((required, param) => {
+			const binding = this.#bindings.get(param)
 			if(binding) {
-				return execParams.getThrow(binding || "")
-			} else {
+				return args.set(param,
+					this.#execParams.getThrow(binding || ""))
+			} else if(required) {
 				throw new Error("Unknown binding")
 			}
+			return
 		})
-		return args
-	}
-	getPhrase() {
-		return this.#phrase
-	}
-	constructor(phrase: string, params: string[], func: (...args: Jsonable[]) => Jsonable) {
-		this.#params = params
-		this.#phrase = buildNormalizedPharse(phrase)
-		this.#func = func;
+		return new Map<string, Jsonable>(args)
 	}
 
-	execute(bindings: Map<string, string>, execParams: ExecParams) {
-		const args = this.buildParams(bindings, execParams)
-		return this.#func(...args)
+	async execute(phrase: string, bindings: Map<string, string>,
+			execParams: ExecParams) {
+		this.#bindings = bindings
+		this.#execParams = execParams
+		return await this.evaluate(phrase);
 	}
+
+	abstract evaluate(phrase: string): Promise<EvaluationResult> | EvaluationResult;
 }
