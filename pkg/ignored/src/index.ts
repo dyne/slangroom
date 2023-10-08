@@ -1,6 +1,6 @@
 import { Lexer } from '@slangroom/deps/chevrotain';
 import { vocab } from '@slangroom/ignored/tokens';
-import { zencodeExec, type ZenroomParams } from '@slangroom/shared';
+import { zencodeExec, type ZenParams } from '@slangroom/shared';
 
 const IgnoredLexer = new Lexer(vocab);
 
@@ -16,7 +16,7 @@ const IgnoredLexer = new Lexer(vocab);
  */
 export const getIgnoredStatements = async (
 	contract: string,
-	params?: ZenroomParams
+	params: ZenParams
 ): Promise<string[]> => {
 	// Since we want to get the list of ignored statements, we don't want to
 	// throw if Zenroom execution fails (but we do fail if something other than
@@ -29,7 +29,7 @@ export const getIgnoredStatements = async (
 		const zout = await zencodeExec(contract, params);
 		logs = zout.logs;
 	} catch (e) {
-		// Currently, only ZenroomError is available.
+		// Currently, only ZenError is available.
 		// Normally, I'd let this code be, but we're trying to achieve 100%
 		// coverage, so my "future-proof" code needs to be commented out here.
 		// if (!(e instanceof ZenroomError))

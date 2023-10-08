@@ -1,66 +1,36 @@
 import test from 'ava';
-import { Plugin } from '../src/plugin.js';
-import { Slangroom } from '../src/slangroom.js';
-import { EvaluationResult, EvaluationResultKind } from '../src/plugin.js'
+import { Slangroom, type PluginContext, type PluginResult } from '@slangroom/core';
 
-test("Runs all unknown statements", async (t) => {
-	let useR1 = false;
-	let useR2 = false;
-	let useR3 = false;
+test('runs all unknown statements', async (t) => {
+	let usedP0 = false;
+	let usedP1 = false;
+	let usedP2 = false;
 
-	class PluginA extends Plugin {
-		async evaluate(phrase: string): Promise<EvaluationResult> {
-			if(phrase == "a") {
-				useR1 = true;
-				return {
-					kind: EvaluationResultKind.Success,
-					result: "foo"
-				}
-			}
-			return {
-				kind: EvaluationResultKind.Failure,
-				error: "Unknown phrase"
-			}
+	const p0 = (ctx: PluginContext): PluginResult => {
+		if (ctx.phrase === 'a') {
+			usedP0 = true;
+			return ctx.pass('foo');
 		}
-	}
-	class PluginB extends Plugin {
-		async evaluate(phrase: string): Promise<EvaluationResult> {
-			const args = this.buildParams(new Map<string,boolean>([["a", true]]))
-			if(phrase == "b") {
-				useR2 = true
-				t.is(args.get("a"), "foo")
-				return {
-					kind: EvaluationResultKind.Success,
-					result: "bar"
-				}
-			}
-			return {
-				kind: EvaluationResultKind.Failure,
-				error: "Unknown phrase"
-			}
-		}
-	}
-	class PluginCD extends Plugin {
-		async evaluate(phrase: string): Promise<EvaluationResult> {
-			const args = this.buildParams(new Map<string,boolean>([["a", true]]))
-			if(phrase == "c d") {
-				useR3 = true
-				t.is(args.get("a"), "bar")
-				return {
-					kind: EvaluationResultKind.Success,
-					result: "foobar"
-				}
-			}
-			return {
-				kind: EvaluationResultKind.Failure,
-				error: "Unknown phrase"
-			}
-		}
-	}
+		return ctx.fail('Unkown phrase');
+	};
 
-	const r1 = new PluginA()
-	const r2 = new PluginB()
-	const r3 = new PluginCD()
+	const p1 = (ctx: PluginContext): PluginResult => {
+		if (ctx.phrase === 'b') {
+			usedP1 = true;
+			t.is(ctx.fetch('a'), 'foo');
+			return ctx.pass('bar');
+		}
+		return ctx.fail('Unknown phrase');
+	};
+
+	const p2 = (ctx: PluginContext): PluginResult => {
+		if (ctx.phrase === 'c d') {
+			usedP2 = true;
+			t.is(ctx.fetch('a'), 'bar');
+			return ctx.pass('foobar');
+		}
+		return ctx.fail('Unkown phrase');
+	};
 
 	const script = `
 Rule caller restroom-mw
@@ -72,11 +42,11 @@ Then print 'a'
 Then I pass a 'a' and B and output into 'b'
 Then I pass a 'b' and  c D
 Then I pass a 'b' and  C d and output into 'mimmo'
-`
-	const slangroom = new Slangroom(r1, [r2, r3]);
-	const res = await slangroom.execute(script, {})
-	t.truthy(useR1, "r1 is not used")
-	t.truthy(useR2, "r2 is not used")
-	t.truthy(useR3, "r3 is not used")
-	t.deepEqual(res.result, { a: 'foo', b: 'bar', mimmo: 'foobar' }, res.logs)
-})
+`;
+	const slangroom = new Slangroom(p0, [p1, new Set([p2])]);
+	const res = await slangroom.execute(script);
+	t.true(usedP0);
+	t.true(usedP1);
+	t.true(usedP2);
+	t.deepEqual(res.result, { a: 'foo', b: 'bar', mimmo: 'foobar' }, res.logs);
+});

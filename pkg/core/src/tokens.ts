@@ -1,49 +1,7 @@
-import { createToken, Lexer } from '@slangroom/deps/chevrotain';
+import { Whitespace, Comment } from '@slangroom/shared';
+import { createToken } from '@slangroom/deps/chevrotain';
 
-export const Save = createToken({
-	name: 'Save',
-	pattern: /save/i,
-});
-
-export const Read = createToken({
-	name: 'Read',
-	pattern: /read/i,
-});
-
-export const Connect = createToken({
-	name: 'Connect',
-	pattern: /connect/i,
-});
-
-export const Pass = createToken({
-	name: 'Pass',
-	pattern: /pass/i,
-});
-
-export const Send = createToken({
-	name: 'Send',
-	pattern: /send/i,
-});
-
-export const To = createToken({
-	name: 'To',
-	pattern: /to/i,
-});
-
-export const And = createToken({
-	name: 'And',
-	pattern: /and/i,
-});
-
-export const Into = createToken({
-	name: 'Into',
-	pattern: /into/i,
-});
-
-export const Output = createToken({
-	name: 'Output',
-	pattern: /output/i,
-});
+export { Whitespace } from '@slangroom/shared';
 
 export const Buzzword = createToken({
 	name: 'Buzzword',
@@ -55,10 +13,39 @@ export const Identifier = createToken({
 	pattern: /'(?:[^\\']|\\(?:[bfnrtv'\\/]|u[0-9a-fA-F]{4}))*'/,
 });
 
-export const Whitespace = createToken({
-	name: 'Whitespace',
-	pattern: /\s+/,
-	group: Lexer.SKIPPED,
+export const Connect = createToken({
+	name: 'Connect',
+	pattern: /connect/i,
+});
+
+export const To = createToken({
+	name: 'To',
+	pattern: /to/i,
+});
+
+export const Send = createToken({
+	name: 'Send',
+	pattern: /send/i,
+});
+
+export const Pass = createToken({
+	name: 'Pass',
+	pattern: /pass/i,
+});
+
+export const Output = createToken({
+	name: 'Output',
+	pattern: /output/i,
+});
+
+export const Into = createToken({
+	name: 'Into',
+	pattern: /into/i,
+});
+
+export const And = createToken({
+	name: 'And',
+	pattern: /and/i,
 });
 
 export const allTokens = [
@@ -72,4 +59,5 @@ export const allTokens = [
 	Send,
 	Pass,
 	Buzzword,
+	Comment,
 ];

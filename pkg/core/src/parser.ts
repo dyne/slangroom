@@ -10,7 +10,37 @@ import {
 	Send,
 	To,
 } from '@slangroom/core/tokens';
-import { CstParser, type IToken } from '@slangroom/deps/chevrotain';
+import { CstParser, type IToken, type CstNode } from '@slangroom/deps/chevrotain';
+
+export type StatementCst = CstNode & {
+	children: {
+		connect?: ConnectCst;
+		sendpass: SendpassCst[];
+		phrase: PhraseCst;
+		into?: IntoCst;
+	};
+};
+
+export type ConnectCst = CstNode & {
+	children: { Identifier: [IToken] };
+};
+
+export type SendpassCst = CstNode & {
+	children: ({ Send: [IToken] } | { Pass: [IToken] }) & {
+		phrase: PhraseCst;
+		Identifier: [IToken];
+	};
+};
+
+export type PhraseCst = CstNode & {
+	children: {
+		Buzzword: [IToken, ...IToken[]];
+	};
+};
+
+export type IntoCst = CstNode & {
+	children: { Identifier: [IToken] };
+};
 
 const Parser = new (class extends CstParser {
 	constructor() {
@@ -20,13 +50,9 @@ const Parser = new (class extends CstParser {
 
 	statement = this.RULE('statement', () => {
 		this.OPTION1(() => this.SUBRULE(this.#connect));
-		this.MANY(() => {
-			this.SUBRULE(this.#sendpass);
-		});
-		this.SUBRULE(this.#buzzwords);
-		this.OPTION(() => {
-			this.SUBRULE(this.#into);
-		});
+		this.MANY(() => this.SUBRULE(this.#sendpass));
+		this.SUBRULE(this.#phrase);
+		this.OPTION2(() => this.SUBRULE(this.#into));
 	});
 
 	#connect = this.RULE('connect', () => {
@@ -37,17 +63,14 @@ const Parser = new (class extends CstParser {
 	});
 
 	#sendpass = this.RULE('sendpass', () => {
-		this.OR([
-			{
-				ALT: () => this.CONSUME(Send),
-			},
-			{
-				ALT: () => this.CONSUME(Pass),
-			},
-		]);
-		this.SUBRULE(this.#buzzwords);
+		this.OR([{ ALT: () => this.CONSUME(Send) }, { ALT: () => this.CONSUME(Pass) }]);
+		this.SUBRULE(this.#phrase);
 		this.CONSUME(Identifier);
 		this.CONSUME(And);
+	});
+
+	#phrase = this.RULE('phrase', () => {
+		this.AT_LEAST_ONE(() => this.CONSUME(Buzzword));
 	});
 
 	#into = this.RULE('into', () => {
@@ -56,18 +79,14 @@ const Parser = new (class extends CstParser {
 		this.CONSUME(Into);
 		this.CONSUME(Identifier);
 	});
-
-	#buzzwords = this.RULE('buzzwords', () => {
-		this.AT_LEAST_ONE(() => this.CONSUME(Buzzword));
-	});
 })();
 
 export const CstVisitor = Parser.getBaseCstVisitorConstructor();
 
 export const parse = (tokens: IToken[]) => {
 	Parser.input = tokens;
-
-	const res = Parser.statement();
-	console.log(Parser.errors)
-	return res
+	return {
+		cst: Parser.statement(),
+		errors: Parser.errors,
+	};
 };
