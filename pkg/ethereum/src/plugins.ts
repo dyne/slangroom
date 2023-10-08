@@ -24,18 +24,18 @@ export const execute = async (
 ): Promise<PluginResult> => {
 	const web3 = new Web3(ctx.fetchConnect()[0]);
 
-	if (kind == EthereumRequestKind.EthereumNonce) {
+	if (kind === EthereumRequestKind.EthereumNonce) {
 		const address = ctx.fetch('address') as string;
 		const nonce = await web3.eth.getTransactionCount(address);
 		return ctx.pass(nonce.toString());
 	}
 
-	if (kind == EthereumRequestKind.EthereumGasPrice) {
+	if (kind === EthereumRequestKind.EthereumGasPrice) {
 		const gasPrice = await web3.eth.getGasPrice();
 		return ctx.pass(gasPrice.toString());
 	}
 
-	if (kind == EthereumRequestKind.EthereumBalance) {
+	if (kind === EthereumRequestKind.EthereumBalance) {
 		// TODO: different statement for string and array
 		const address = ctx.fetch('address');
 		if (Array.isArray(address)) {
@@ -43,11 +43,10 @@ export const execute = async (
 				address.map((addr) => web3.eth.getBalance(addr as string))
 			);
 			return ctx.pass(balances.map((b) => b.toString()));
-		} else {
-			return ctx.pass((await web3.eth.getBalance(address as string)).toString());
 		}
+		return ctx.pass((await web3.eth.getBalance(address as string)).toString());
 	}
-	// if (kind == EthereumRequestKind.EthereumBytes) {
+	// if (kind === EthereumRequestKind.EthereumBytes) {
 	// 	const tag = ctx.fetch('transaction_id') as string;
 	// 	const receipt = await web3.eth.getTransactionReceipt(
 	// 		tag.startsWith('0x') ? tag : '0x' + tag
