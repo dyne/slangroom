@@ -65,9 +65,6 @@ importers:
 
   pkg/core:
     dependencies:
-      '@slangroom/core':
-        specifier: workspace:*
-        version: 'link:'
       '@slangroom/deps':
         specifier: workspace:*
         version: link:../deps
