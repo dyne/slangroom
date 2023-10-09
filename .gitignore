@@ -15,6 +15,7 @@
 
 # js stuff
 !/package.json
+!/lerna.json
 !/pnpm-lock.yaml
 !/pnpm-workspace.yaml
 !/.prettierrc
