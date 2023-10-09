@@ -10,6 +10,7 @@ import axios from "axios";
 import { createSyntaxDiagramsCode } from "@slangroom/deps/chevrotain";
 import fs from 'node:fs'
 
+// AST
 export enum RequestMethod {
 	Get,
 	Post
