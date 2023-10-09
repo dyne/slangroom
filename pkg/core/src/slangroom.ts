@@ -1,93 +1,84 @@
 import { getIgnoredStatements } from '@slangroom/ignored';
-import { ZenroomParams, zencodeExec } from '@slangroom/shared';
+import { type ZenOutput, ZenParams, zencodeExec } from '@slangroom/shared';
 import {
-	Plugin,
-	ExecParams,
-	buildNormalizedPharse,
-	EvaluationResult,
-	EvaluationResultKind,
-} from '@slangroom/core/plugin';
-import { lex } from '@slangroom/core/lexer';
-import { parse } from '@slangroom/core/parser';
-import { visit, type Statement } from '@slangroom/core/visitor';
+	lex,
+	parse,
+	visit,
+	PluginContextImpl,
+	type Plugin,
+	type StatementCst,
+	type Statement,
+} from '@slangroom/core';
 
 type Plugins = Plugin | Set<Plugin> | Array<Plugin | Set<Plugin>>;
 
 export class Slangroom {
-	#plugins: Plugin[] = [];
+	#plugins = new Set<Plugin>();
 
 	constructor(first: Plugins, ...rest: Plugins[]) {
 		const recurse = (x: Plugins) => {
 			if (Array.isArray(x) || x instanceof Set) x.forEach(recurse);
-			else {
-				this.#plugins.push(x);
-			}
+			else this.#plugins.add(x);
 		};
 		[first, ...rest].forEach(recurse);
 	}
 
-	async executePlugin(p: Statement, params: ExecParams) {
-		const normalizedBuzzwords = buildNormalizedPharse(p.buzzwords)
-		let result: EvaluationResult = {
-			kind: EvaluationResultKind.Failure,
-			error: "No plugin executed",
-		}
-		for(const plugin of this.#plugins) {
-			const bindings = new Map(p.bindings.entries())
-			if(p.connect) {
-				bindings.set("connect", p.connect)
+	async execute(contract: string, optParams?: Partial<ZenParams>): Promise<ZenOutput> {
+		const zparams = requirifyZenParams(optParams);
+		const givens: Statement[] = [];
+		const thens: Statement[] = [];
+		const ignoreds = await getIgnoredStatements(contract, zparams);
+		ignoreds.forEach((x: string) => {
+			const given = x.split(/^\s*given\s+i\s+/i);
+			if (given[1]) {
+				const { ast, errors } = astify(given[1]);
+				if (!ast) throw errors;
+				givens.push(ast);
+				return;
 			}
-			result = await plugin.execute(normalizedBuzzwords, bindings, params)
-			if(result.kind === EvaluationResultKind.Success) {
-				if(p.into) {
-					params.set(p.into, result.result)
-				}
-				break;
+
+			const then = x.split(/^\s*then\s+i\s+/i);
+			if (then[1]) {
+				const { ast, errors } = astify(then[1]);
+				if (!ast) throw errors;
+				thens.push(ast);
 			}
-		}
-		if(result.kind == EvaluationResultKind.Failure) {
-			throw new Error(result.error)
-		}
+		});
+
+		for (const g of givens) await this.#execute(g, zparams);
+
+		const zout = await zencodeExec(contract, zparams);
+
+		const params: ZenParams = { data: zout.result, keys: zparams.keys };
+		for (const t of thens) await this.#execute(t, params);
+
+		return { result: params.data, logs: zout.logs };
 	}
 
-	async execute(contract: string, zparams: ZenroomParams) {
-		const ignoreds = await getIgnoredStatements(contract, zparams);
-		const { givens, thens } = ignoreds.reduce(
-			(acc, cur) => {
-				const given = cur.split(/^\s*given\s+i\s+/i);
-				if (given[1]) {
-					acc.givens.push(astify(given[1]));
-					return acc;
-				}
-
-				const then = cur.split(/^\s*then\s+i\s+/i);
-				if (then[1]) acc.thens.push(astify(then[1]));
-				return acc;
-			},
-			{ givens: [] as Statement[], thens: [] as Statement[] }
-		);
-
-		const params = new ExecParams(zparams);
-
-		for (const g of givens) {
-			await this.executePlugin(g, params)
+	async #execute(stmt: Statement, zparams: ZenParams) {
+		const ctx = new PluginContextImpl(stmt, zparams);
+		for (const p of this.#plugins) {
+			const result = await p(ctx);
+			if (result.ok) {
+				if (stmt.into) zparams.data[stmt.into] = result.value;
+				return;
+			}
 		}
-
-		const zout = await zencodeExec(contract, {keys: params.getKeys(), data: params.getData()});
-
-		const thenParams = new ExecParams({data: zout.result, keys: params.getKeys()})
-
-		for (const t of thens) {
-			await this.executePlugin(t, thenParams)
-		}
-
-		return {result: thenParams.getData(), logs: zout.logs};
+		throw new Error('no statements matched');
 	}
 }
 
-const astify = (line: string) => {
-	const { tokens } = lex(line);
-	const cst = parse(tokens);
-	return visit(cst);
+const requirifyZenParams = (params?: Partial<ZenParams>): Required<ZenParams> => {
+	if (!params) return { data: {}, keys: {} };
+	if (!params.data) params.data = {};
+	if (!params.keys) params.keys = {};
+	return params as ZenParams;
 };
 
+export const astify = (line: string) => {
+	const lexed = lex(line);
+	if (lexed.errors.length) return { errors: lexed.errors };
+	const parsed = parse(lexed.tokens);
+	if (parsed.errors.length) return { errors: parsed.errors };
+	return { ast: visit(parsed.cst as StatementCst) };
+};

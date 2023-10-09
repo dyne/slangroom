@@ -17,7 +17,7 @@ When I write string 'test passed' in 'result'
 Then print the data
 `;
 	// When I get the unknown statements
-	const ignoreds = await getIgnoredStatements(contract);
+	const ignoreds = await getIgnoredStatements(contract, { data: {}, keys: {} });
 	// Then it must be the given unknown statements
 	t.deepEqual(ignoreds, uknowns);
 });
@@ -82,7 +82,7 @@ Then print the 'outputData.signature'
 		},
 	};
 	// When I get the ignored statements
-	const ignoreds = await getIgnoredStatements(contract, { data: data });
+	const ignoreds = await getIgnoredStatements(contract, { data: data, keys: {} });
 	// Then it must be equal to the statements of restroom
 	t.deepEqual(ignoreds, [
 		"Given that I have an endpoint named 'endpoint'",

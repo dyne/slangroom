@@ -1,69 +1,74 @@
-import { CstVisitor } from '@slangroom/core/parser';
-import type { CstNode } from '@slangroom/deps/chevrotain';
-
-export enum ActionType {
-	Read,
-	Save,
-}
+import {
+	CstVisitor,
+	type StatementCst,
+	type PhraseCst,
+	type IntoCst,
+	type SendpassCst,
+	type ConnectCst,
+} from '@slangroom/core';
+import type { IToken } from '@slangroom/deps/chevrotain';
 
 export type Statement = {
-	connect?: string,
-	bindings: Map<string, string>,
-	buzzwords: string,
-	into?: string,
-}
+	connect?: string;
+	bindings: Map<string, string>;
+	phrase: string;
+	into?: string;
+};
 
-export class StatementBindings {
-	#bindings: Map<string, string>;
-	constructor() {
-		this.#bindings = new Map<string, string>();
-	}
-
-	get(key: string) {
-		return this.#bindings.get(key)
-	}
-	set(key: string, val: string) {
-		if(this.#bindings.has(key)) {
-			throw new Error("Duplicate key")
-		}
-		this.#bindings.set(key, val)
-
+export class ErrorKeyExists extends Error {
+	constructor(key: string) {
+		super(`key already exists: ${key}`);
+		this.name = 'ErrorKeyExists';
 	}
 }
 
-export const Visitor = new (class extends CstVisitor {
+// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+interface V {
+	visit(cst: StatementCst): ReturnType<this['statement']>;
+	visit(cst: PhraseCst): ReturnType<this['phrase']>;
+	visit(cst: SendpassCst): ReturnType<this['sendpass']>;
+	visit(cst: ConnectCst): ReturnType<this['connect']>;
+	visit(cst: IntoCst): ReturnType<this['into']>;
+}
+
+class V extends CstVisitor {
 	constructor() {
 		super();
 		this.validateVisitor();
 	}
-	statement(ctx: any) {
-		const node: Statement = {
-			buzzwords: this.visit(ctx.buzzwords),
-			bindings: new Map<string, string>(
-				ctx.sendpass?.map((v: any) => this.visit(v))),
-		}
-		if(ctx.connect) {
-			node.connect = this.visit(ctx.connect)
-		}
-		if(ctx.into) {
-			node.into = this.visit(ctx.into)
-		}
-		return node
-	}
-	connect(ctx: any) {
-		return ctx.Identifier[0].image.slice(1,-1)
-	}
-	sendpass(ctx: any) {
-		const identifier = ctx.Identifier[0].image.slice(1,-1)
-		return [this.visit(ctx.buzzwords), identifier]
-	}
-	into(ctx: any) {
-		return ctx.Identifier[0].image.slice(1,-1)
-	}
-	buzzwords(ctx: any) {
-		return ctx.Buzzword.map((v: any) => v.image).join(' ');
+
+	statement(ctx: StatementCst['children']): Statement {
+		const stmt: Statement = {
+			phrase: this.visit(ctx.phrase),
+			bindings: new Map<string, string>(),
+		};
+		ctx.sendpass?.forEach((x: SendpassCst) => {
+			const [key, value] = this.visit(x);
+			if (stmt.bindings.has(key)) throw new ErrorKeyExists(key);
+			stmt.bindings.set(key, value);
+		});
+		if (ctx.connect) stmt.connect = this.visit(ctx.connect);
+		if (ctx.into) stmt.into = this.visit(ctx.into);
+		return stmt;
 	}
 
-})();
+	phrase(ctx: PhraseCst['children']): string {
+		return ctx.Buzzword.map((x: IToken) => x.image).join(' ');
+	}
 
-export const visit = (cst: CstNode): Statement => Visitor.visit(cst);
+	sendpass(ctx: SendpassCst['children']): [string, string] {
+		return [this.visit(ctx.phrase), ctx.Identifier[0].image.slice(1, -1)];
+	}
+
+	connect(ctx: ConnectCst['children']): string {
+		return ctx.Identifier[0].image.slice(1, -1);
+	}
+
+	into(ctx: IntoCst['children']): string {
+		return ctx.Identifier[0].image.slice(1, -1);
+	}
+}
+
+export const Visitor = new V();
+
+export const visit = (cst: StatementCst): Statement => Visitor.visit(cst);
