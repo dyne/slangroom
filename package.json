@@ -19,9 +19,11 @@
 		"build:cjs": "pnpm -F @slangroom/* exec tsc --outDir build/cjs --module commonjs && pnpm cjs-fixup",
 		"build:esm": "pnpm -F @slangroom/* exec tsc --outdir build/esm --module node16",
 		"build-all": "pnpm build",
-		"cjs-fixup": "pnpm -F @slangroom/* exec sh -c \"echo '{\\\"type\\\":\\\"commonjs\\\"}' >build/cjs/package.json\""
+		"cjs-fixup": "pnpm -F @slangroom/* exec sh -c \"echo '{\\\"type\\\":\\\"commonjs\\\"}' >build/cjs/package.json\"",
+		"publish:ci": "lerna publish from-package --no-git-tag-version --yes"
 	},
 	"devDependencies": {
+		"@lerna-lite/publish": "^2.5.1",
 		"@types/body-parser": "^1.19.3",
 		"@types/express": "^4.17.18",
 		"@types/node": "^20.3.1",
