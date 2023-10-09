@@ -30,5 +30,8 @@
 				"default": "./build/cjs/src/*.js"
 			}
 		}
+	},
+	"publishConfig": {
+		"access": "public"
 	}
 }
