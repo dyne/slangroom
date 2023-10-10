@@ -64,6 +64,11 @@ class V extends CstVisitor {
 		if (ctx.id) return EthereumRequestKind.Erc721Id;
 		throw new Error('Should not be here!!');
 	}
+
+	broadcast() {}
+	gasPrice() {}
+	totalSupply() {}
+	id() {}
 }
 
 const Visitor = new V();

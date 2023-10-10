@@ -1,4 +1,5 @@
 import { PluginContext, PluginResult } from '@slangroom/core/plugin';
+import {JsonableArray } from '@slangroom/shared/jsonable';
 import { lex, parse, visit, EthereumRequestKind, type PhraseCst } from '@slangroom/ethereum';
 import { Web3 } from 'web3';
 
@@ -37,29 +38,34 @@ export const execute = async (
 
 	if (kind === EthereumRequestKind.EthereumBalance) {
 		// TODO: different statement for string and array
-		const address = ctx.fetch('address');
-		if (Array.isArray(address)) {
-			const balances = await Promise.all(
-				address.map((addr) => web3.eth.getBalance(addr as string))
-			);
-			return ctx.pass(balances.map((b) => b.toString()));
+		const address = ctx.get('address');
+		if(address) {
+			return ctx.pass((await web3.eth.getBalance(address as string)).toString());
 		}
-		return ctx.pass((await web3.eth.getBalance(address as string)).toString());
+		const addresses = ctx.fetch('addresses');
+		if (Array.isArray(addresses)) {
+			const balances = await Promise.all(
+				addresses.map((addr) => web3.eth.getBalance(addr as string))
+			);
+			return ctx.pass(balances.map((b) => b.toString()) as JsonableArray);
+		} else {
+			throw new Error("Undefined argument")
+		}
 	}
-	// if (kind === EthereumRequestKind.EthereumBytes) {
-	// 	const tag = ctx.fetch('transaction_id') as string;
-	// 	const receipt = await web3.eth.getTransactionReceipt(
-	// 		tag.startsWith('0x') ? tag : '0x' + tag
-	// 	);
-	// 	if (!receipt) return ctx.fail("Transaction id doesn't exist");
-	// 	if (!receipt.status) return ctx.fail('Failed transaction');
-	// 	try {
-	// 		const dataRead = receipt.logs[0]?.data?.slice(2);
-	// 		return ctx.pass(dataRead);
-	// 	} catch (e) {
-	// 		return ctx.fail('Empty transaction');
-	// 	}
-	// }
+	if (kind === EthereumRequestKind.EthereumBytes) {
+		const tag = ctx.fetch('transaction_id') as string;
+		const receipt = await web3.eth.getTransactionReceipt(
+			tag.startsWith('0x') ? tag : '0x' + tag
+		);
+		if (!receipt) return ctx.fail("Transaction id doesn't exist");
+		if (!receipt.status) return ctx.fail('Failed transaction');
+		try {
+			const dataRead = receipt.logs[0]?.data?.slice(2);
+			return ctx.pass(dataRead?.toString() || "");
+		} catch (e) {
+			return ctx.fail('Empty transaction');
+		}
+	}
 	return ctx.fail('Should not be here');
 };
 
