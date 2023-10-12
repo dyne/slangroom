@@ -5,8 +5,15 @@ import * as os from 'node:os';
 import axios from 'axios';
 import extractZip from 'extract-zip';
 
-export const SandboxDir = process.env['FILES_DIR'];
-if (!SandboxDir) throw new Error('$FILE_DIR must be provided');
+/**
+ * @internal
+ */
+export const sandboxDir = () => {
+	// TODO: sanitize sandboxDir
+	const ret = process.env['FILES_DIR'];
+	if (!ret) throw new Error('$FILES_DIR must be provided');
+	return ret;
+};
 
 const resolveDirPath = (unsafe: string) => {
 	const normalized = path.normalize(unsafe);
@@ -14,7 +21,7 @@ const resolveDirPath = (unsafe: string) => {
 	const doesDirectoryTraversal = normalized.startsWith('/') || normalized.startsWith('..');
 	// Unlike `resolveFilepath`, we allow `.` to be used here, obviously.
 	if (doesDirectoryTraversal) return { error: `dirpath is unsafe: ${unsafe}` };
-	return { dirpath: path.dirname(path.join(SandboxDir, normalized)) };
+	return { dirpath: path.join(sandboxDir(), normalized) };
 };
 
 const resolveFilepath = (unsafe: string) => {
@@ -26,7 +33,7 @@ const resolveFilepath = (unsafe: string) => {
 	const DoesntProvideFile = normalized.startsWith('.');
 	if (doesDirectoryTraversal || DoesntProvideFile)
 		return { error: `filepath is unsafe: ${unsafe}` };
-	return { filepath: path.join(SandboxDir, normalized) };
+	return { filepath: path.join(sandboxDir(), normalized) };
 };
 
 const readFile = async (safePath: string) => {
