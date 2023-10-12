@@ -2,7 +2,7 @@ import test from 'ava';
 import { Slangroom } from '@slangroom/core/slangroom';
 import { ethereumPlugins } from '@slangroom/ethereum';
 
-test.skip('Retrieve a zenroom object', async (t) => {
+test('Retrieve a zenroom object', async (t) => {
 	const script = `
 Rule caller restroom-mw
 Scenario ethereum
