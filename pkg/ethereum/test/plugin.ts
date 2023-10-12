@@ -96,19 +96,29 @@ test("Ethereum transaction id after broadcast", async (t) => {
 })
 */
 test('Erc20 method without arg', async (t) => {
-	const { ast, errors } = astify('read the erc20 symbol');
-	if (errors) {
-		t.fail(errors?.toString());
-		return;
+	const tokenResult = {
+		'symbol': 'NMT',
+		'name': 'Non movable token',
+		'totalSupply': '1000',
+		'decimals': '18',
 	}
-	const ctx = new PluginContextTest('http://78.47.38.223:9485', {
-		sc: '0x720F72765775bb85EAAa08BB74442F106d3ffA03',
-	});
-	const res = await execute(ctx, ast);
-	t.deepEqual(res, {
-		ok: true,
-		value: 'NMT',
-	});
+	let k: keyof typeof tokenResult;
+	for(k in tokenResult) {
+		const { ast, errors } = astify(`read the erc20 ${k}`);
+		if (errors) {
+			t.fail(errors?.toString());
+			return;
+		}
+		const ctx = new PluginContextTest('http://78.47.38.223:9485', {
+			sc: '0x720F72765775bb85EAAa08BB74442F106d3ffA03',
+		});
+		const res = await execute(ctx, ast);
+		t.deepEqual(res, {
+			ok: true,
+			value: tokenResult[k],
+		});
+
+	}
 });
 
 /*test("Erc20 method with arg", async (t) => {
