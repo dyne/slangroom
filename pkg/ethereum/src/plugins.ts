@@ -54,8 +54,6 @@ export const execute = async (
 				addresses.map((addr) => web3.eth.getBalance(addr as string))
 			);
 			return ctx.pass(balances.map((b) => b.toString()) as JsonableArray);
-		} else {
-			throw new Error('Undefined argument');
 		}
 	}
 	if (kind === EthereumRequestKind.EthereumBytes) {

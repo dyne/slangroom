@@ -5,6 +5,19 @@ import { astify, execute } from '@slangroom/ethereum';
 
 const test = anyTest as TestFn<{ web3: Web3 }>;
 
+test('unknown token', async (t) => {
+	const { errors } = astify('ouisdhfaiuo');
+	if(!errors) {
+		t.fail()
+		return;
+	}
+	const { errors: errors2 } = astify('read read read');
+	if(!errors2) {
+		t.fail()
+		return;
+	}
+	t.truthy(true);
+})
 test('read the ethereum nonce', async (t) => {
 	const { ast, errors } = astify('read the ethereum nonce');
 	if (errors) {
@@ -119,6 +132,24 @@ test('Erc20 method without arg', async (t) => {
 		});
 
 	}
+});
+
+test('erc20 with invalid address', async (t) => {
+	const { ast, errors } = astify(`read the erc20 symbol`);
+	if (errors) {
+		t.fail(errors?.toString());
+		return;
+	}
+	const ctx = new PluginContextTest('http://78.47.38.223:9485', {
+		sc: '0x720765775bb85EAAa08BB74442F106d3ffA03',
+	});
+	try {
+		await execute(ctx, ast);
+	} catch(e) {
+		t.truthy(true);
+		return;
+	}
+	t.falsy(true);
 });
 
 /*test("Erc20 method with arg", async (t) => {
