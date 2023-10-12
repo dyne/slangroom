@@ -65,10 +65,10 @@ class V extends CstVisitor {
 		throw new Error('Should not be here!! (erc721)');
 	}
 
-	broadcast() {}
-	gasPrice() {}
-	totalSupply() {}
-	id() {}
+	broadcast(ctx: any) {ctx;}
+	gasPrice(ctx: any) {ctx;}
+	totalSupply(ctx: any) {ctx;}
+	id(ctx: any) {ctx;}
 }
 
 const Visitor = new V();
