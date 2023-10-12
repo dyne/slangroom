@@ -46,7 +46,7 @@ class V extends CstVisitor {
 		if (ctx.Bytes) return EthereumRequestKind.EthereumBytes;
 		if (ctx.gasPrice) return EthereumRequestKind.EthereumGasPrice;
 		if (ctx.broadcast) return EthereumRequestKind.EthereumBroadcast;
-		throw new Error('Should not be here!!');
+		throw new Error('Should not be here!! (ethereum)');
 	}
 
 	erc20(ctx: Erc20Cst['children']): EthereumRequestKind {
@@ -55,14 +55,14 @@ class V extends CstVisitor {
 		if (ctx.Name) return EthereumRequestKind.Erc20Name;
 		if (ctx.Balance) return EthereumRequestKind.Erc20Balance;
 		if (ctx.totalSupply) return EthereumRequestKind.Erc20TotalSupply;
-		throw new Error('Should not be here!!');
+		throw new Error('Should not be here!! (erc20)');
 	}
 
 	erc721(ctx: Erc721Cst['children']): EthereumRequestKind {
 		if (ctx.Asset) return EthereumRequestKind.Erc721Asset;
 		if (ctx.Owner) return EthereumRequestKind.Erc721Owner;
 		if (ctx.id) return EthereumRequestKind.Erc721Id;
-		throw new Error('Should not be here!!');
+		throw new Error('Should not be here!! (erc721)');
 	}
 
 	broadcast() {}

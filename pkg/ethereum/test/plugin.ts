@@ -95,22 +95,56 @@ test("Ethereum transaction id after broadcast", async (t) => {
 	const ast = line2Ast("Ethereum transaction id after broadcast of 'signed tx'");
 	t.deepEqual(ast.value, { kind: EthereumRequestKind.EthereumBroadcast, rawTransaction: 'signed tx'})
 })
-
+*/
 test("Erc20 method without arg", async (t) => {
-	const ast = line2Ast("erc20 'symbol' for 'foo'");
-	t.deepEqual(ast.value, { kind: EthereumRequestKind.Erc20Method, address: 'foo' })
+	const { ast, errors } = astify("read the erc20 symbol");
+	if (errors) {
+		t.fail(errors?.toString());
+		return;
+	}
+	const ctx = new PluginContextTest('http://78.47.38.223:9485', {
+		sc: "0x720F72765775bb85EAAa08BB74442F106d3ffA03",
+	});
+	const res = await execute(ctx, ast);
+	t.deepEqual(res, {
+		ok: true,
+		value: "NMT",
+	});
 })
 
-test("Erc20 method with arg", async (t) => {
-	const ast = line2Ast("erc20 'balance' of 'address' for 'foo'");
-	t.deepEqual(ast.value, { kind: EthereumRequestKind.Erc20Method, address: 'foo', arg: 'address' })
-})
+/*test("Erc20 method with arg", async (t) => {
+	const { ast, errors } = astify("read the erc20 balance");
+	if (errors) {
+		t.fail(errors?.toString());
+		return;
+	}
+	const ctx = new PluginContextTest('http://78.47.38.223:9485', {
+		sc: "0x720F72765775bb85EAAa08BB74442F106d3ffA03",
+		address: "0x7d6df85bDBCe99151c813fd1DDE6BC007c523C27"
+	});
+	const res = await execute(ctx, ast);
+	t.deepEqual(res, {
+		ok: true,
+		value: "100",
+	});
+})*/
 
-test("Erc721 id", async (t) => {
-	const ast = line2Ast("erc721 id in transaction 'tx id'");
-	t.deepEqual(ast.value, { kind: EthereumRequestKind.Erc721Id, transactionId: 'tx id' })
-})
-
+/*test("Erc721 id", async (t) => {
+	const { ast, errors } = astify("read the erc721 id in transaction");
+	if (errors) {
+		t.fail(errors?.toString());
+		return;
+	}
+	const ctx = new PluginContextTest('http://test.fabchain.net:8545', {
+		transaction_id: "0xd91928b513cd71f8077e7d8a300761a105102f718eef232e2efaa87f13e129b6"
+	});
+	const res = await execute(ctx, ast);
+	t.deepEqual(res, {
+		ok: true,
+		value: "NMT",
+	});
+})*/
+/*
 test("Erc721 asset", async (t) => {
 	const ast = line2Ast("erc721 asset in 'nft_id' for 'address'");
 	t.deepEqual(ast.value, { kind: EthereumRequestKind.Erc721Asset, address: 'address', nftId: 'nft_id' })

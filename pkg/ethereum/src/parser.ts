@@ -77,6 +77,8 @@ const Parser = new (class extends CstParser {
 	}
 
 	phrase = this.RULE('phrase', () => {
+		this.CONSUME(Read);
+		this.CONSUME(The);
 		this.OR([
 			{ ALT: () => this.SUBRULE(this.#ethereum) },
 			{ ALT: () => this.SUBRULE(this.#erc20) },
@@ -85,8 +87,6 @@ const Parser = new (class extends CstParser {
 	});
 
 	#ethereum = this.RULE('ethereum', () => {
-		this.CONSUME(Read);
-		this.CONSUME(The);
 		this.CONSUME(Ethereum);
 		this.OR([
 			{ ALT: () => this.CONSUME(Nonce) },

@@ -6,7 +6,6 @@ import {
 	Identifier,
 	Into,
 	Output,
-	Pass,
 	Send,
 	To,
 } from '@slangroom/core/tokens';
@@ -63,7 +62,7 @@ const Parser = new (class extends CstParser {
 	});
 
 	#sendpass = this.RULE('sendpass', () => {
-		this.OR([{ ALT: () => this.CONSUME(Send) }, { ALT: () => this.CONSUME(Pass) }]);
+		this.CONSUME(Send);
 		this.SUBRULE(this.#phrase);
 		this.CONSUME(Identifier);
 		this.CONSUME(And);

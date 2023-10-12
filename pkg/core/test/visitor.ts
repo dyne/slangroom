@@ -13,7 +13,7 @@ test('generated ast is correct', async (t) => {
 			phrase: 'read the ethereum balance',
 			bindings: new Map<string, string>(),
 		},
-		"pass address 'addr'  and send contract 'contract' and read the    ethereum		 balance": {
+		"send address 'addr'  and send contract 'contract' and read the    ethereum		 balance": {
 			phrase: 'read the ethereum balance',
 			bindings: new Map<string, string>([
 				['address', 'addr'],
@@ -25,7 +25,7 @@ test('generated ast is correct', async (t) => {
 			phrase: 'read the ethereum balance',
 			bindings: new Map<string, string>(),
 		},
-		"connect to 'foo' and pass address 'addr'  and send contract 'contract' and read the    ethereum		 balance":
+		"connect to 'foo' and send address 'addr'  and send contract 'contract' and read the    ethereum		 balance":
 			{
 				connect: 'foo',
 				phrase: 'read the ethereum balance',
@@ -34,7 +34,7 @@ test('generated ast is correct', async (t) => {
 					['contract', 'contract'],
 				]),
 			},
-		"connect to 'foo' and pass address 'addr'  and send contract 'contract' and read the    ethereum		 balance and output into 'var'":
+		"connect to 'foo' and send address 'addr'  and send contract 'contract' and read the    ethereum		 balance and output into 'var'":
 			{
 				connect: 'foo',
 				phrase: 'read the ethereum balance',
@@ -51,7 +51,7 @@ test('generated ast is correct', async (t) => {
 		t.deepEqual(astHave, astWant);
 	}
 
-	const err = t.throws(() => astify("pass same 'x' and pass same 'y' and does not matter"), {
+	const err = t.throws(() => astify("send same 'x' and send same 'y' and does not matter"), {
 		instanceOf: ErrorKeyExists,
 	}) as ErrorKeyExists;
 	t.is(err.message, 'key already exists: same');

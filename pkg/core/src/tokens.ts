@@ -5,7 +5,7 @@ export { Whitespace } from '@slangroom/shared';
 
 export const Buzzword = createToken({
 	name: 'Buzzword',
-	pattern: /[a-z0-9]+/i,
+	pattern: /[a-z0-9_]+/i,
 });
 
 export const Identifier = createToken({
