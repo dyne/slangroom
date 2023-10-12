@@ -135,7 +135,7 @@ const fsPlugin = async (ctx: PluginContext): Promise<PluginResult> => {
 		case 'list directory content':
 			return await executeListDirectoryContent(ctx);
 		default:
-			return ctx.fail('no math');
+			return ctx.fail('no match')
 	}
 };
 
