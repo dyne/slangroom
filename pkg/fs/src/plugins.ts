@@ -77,7 +77,7 @@ export const executeReadFileContent = async (ctx: PluginContext): Promise<Plugin
 	const { filepath, error } = resolveFilepath(unsafe);
 	if (!filepath) return ctx.fail(error);
 
-	return ctx.pass(await readFile(unsafe));
+	return ctx.pass(await readFile(filepath));
 };
 
 /**
@@ -94,8 +94,7 @@ export const executeStoreInFile = async (ctx: PluginContext): Promise<PluginResu
 
 	await fs.mkdir(path.dirname(filepath), { recursive: true });
 	await fs.writeFile(filepath, content);
-
-	return ctx.fail('TODO');
+	return ctx.pass(null)
 };
 
 /**
@@ -142,7 +141,7 @@ const fsPlugin = async (ctx: PluginContext): Promise<PluginResult> => {
 		case 'list directory content':
 			return await executeListDirectoryContent(ctx);
 		default:
-			return ctx.fail('no match')
+			return ctx.fail('no match');
 	}
 };
 
