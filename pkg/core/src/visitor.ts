@@ -4,12 +4,12 @@ import {
 	type PhraseCst,
 	type IntoCst,
 	type SendpassCst,
-	type ConnectCst,
+	type OpenconnectCst,
 } from '@slangroom/core';
 import type { IToken } from '@slangroom/deps/chevrotain';
 
 export type Statement = {
-	connect?: string;
+	openconnect?: string;
 	bindings: Map<string, string>;
 	phrase: string;
 	into?: string;
@@ -27,7 +27,7 @@ interface V {
 	visit(cst: StatementCst): ReturnType<this['statement']>;
 	visit(cst: PhraseCst): ReturnType<this['phrase']>;
 	visit(cst: SendpassCst): ReturnType<this['sendpass']>;
-	visit(cst: ConnectCst): ReturnType<this['connect']>;
+	visit(cst: OpenconnectCst): ReturnType<this['openconnect']>;
 	visit(cst: IntoCst): ReturnType<this['into']>;
 }
 
@@ -47,7 +47,7 @@ class V extends CstVisitor {
 			if (stmt.bindings.has(key)) throw new ErrorKeyExists(key);
 			stmt.bindings.set(key, value);
 		});
-		if (ctx.connect) stmt.connect = this.visit(ctx.connect);
+		if (ctx.openconnect) stmt.openconnect = this.visit(ctx.openconnect);
 		if (ctx.into) stmt.into = this.visit(ctx.into);
 		return stmt;
 	}
@@ -60,7 +60,7 @@ class V extends CstVisitor {
 		return [this.visit(ctx.phrase), ctx.Identifier[0].image.slice(1, -1)];
 	}
 
-	connect(ctx: ConnectCst['children']): string {
+	openconnect(ctx: OpenconnectCst['children']): string {
 		return ctx.Identifier[0].image.slice(1, -1);
 	}
 

@@ -40,7 +40,7 @@ test('Simple GET', async (t) => {
 		return;
 	}
 
-	const ctx = PluginContextTest.connect('http://localhost/normaljson');
+	const ctx = PluginContextTest.openconnect('http://localhost/normaljson');
 	const res = await execute(ctx, ast.kind, ast.method);
 	t.deepEqual(res, {
 		ok: true,
