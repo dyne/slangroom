@@ -5,7 +5,6 @@ import {
 	createSyntaxDiagramsCode,
 } from '@slangroom/deps/chevrotain';
 import { allTokens, Do, Get, Post, Sequential, Parallel, Same } from '@slangroom/http';
-import fs from 'node:fs';
 
 
 export type PhraseCst = CstNode & {
@@ -57,8 +56,3 @@ export const parse = (tokens: IToken[]) => {
 		errors: Parser.errors,
 	};
 };
-
-// TODO: get rid of these lines:
-export const SerializedGrammar = Parser.getSerializedGastProductions();
-const htmlText = createSyntaxDiagramsCode(SerializedGrammar);
-fs.writeFileSync('./generated_diagrams_http.html', htmlText);
