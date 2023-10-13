@@ -60,7 +60,7 @@ export const executeDownloadExtract = async (ctx: PluginContext): Promise<Plugin
 		await fs.writeFile(tempfile, resp.data);
 		await extractZip(tempfile, { dir: dirPath });
 		await fs.rm(tempdir, { recursive: true });
-		return ctx.pass('yes');
+		return ctx.pass(null);
 	} catch (e) {
 		if (e instanceof Error) return ctx.fail(e.message);
 		return ctx.fail(`unknown error: ${e}`);
@@ -94,7 +94,7 @@ export const executeStoreInFile = async (ctx: PluginContext): Promise<PluginResu
 
 	await fs.mkdir(path.dirname(filepath), { recursive: true });
 	await fs.writeFile(filepath, content);
-	return ctx.pass(null)
+	return ctx.pass(null);
 };
 
 /**
