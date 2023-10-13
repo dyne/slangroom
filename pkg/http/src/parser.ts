@@ -1,11 +1,5 @@
-import {
-	CstParser,
-	type IToken,
-	type CstNode,
-	createSyntaxDiagramsCode,
-} from '@slangroom/deps/chevrotain';
+import { CstParser, type IToken, type CstNode } from '@slangroom/deps/chevrotain';
 import { allTokens, Do, Get, Post, Sequential, Parallel, Same } from '@slangroom/http';
-
 
 export type PhraseCst = CstNode & {
 	children: {
