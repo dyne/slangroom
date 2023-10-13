@@ -43,20 +43,32 @@ export type PluginContext = {
 	phrase: string;
 
 	/**
-	 * Gets the value of the Connect part of a Statement« if available.
+	 * Gets the value of the Open or Connect part of a Statement, if available.
 	 *
-	 * @returns The array of values of the Connect part (might be empty).
+	 * @returns The array of values of the Open or Connect part (might be
+	 * empty).
 	 */
 	getConnect(): string[];
 
 	/**
 	 * Basically the same as {@link getConnect}, but throws if unavailable or empty.
 	 *
-	 * @returns The array of values of the Connect part (has at least one item);
+	 * @returns The array of values of the Open or Connect part (has at least
+	 * one item).
 	 *
 	 * @throws {@link Error} if the part is unavailable.
 	 */
 	fetchConnect(): [string, ...string[]];
+
+	/**
+	 * {@inheritDoc getConnect}
+	 */
+	getOpen(): string[];
+
+	/**
+	 * {@inheritDoc fetchConnect}
+	 */
+	fetchOpen(): [string, ...string[]];
 
 	/**
 	 * Gets the value of the parameter needed by the Plugin, if available.
@@ -106,10 +118,10 @@ export class PluginContextImpl implements PluginContext {
 	readonly phrase: string;
 
 	/**
-	 * The name of the identifier used to reference the Connection parameters
-	 * (via {@link #zparams}).  It is an rhs value.
+	 * The name of the identifier used to reference the Open or Connect
+	 * parameters (via {@link #zparams}).  It is an rhs value.
 	 */
-	#connect: string | undefined = undefined;
+	#openconnect: string | undefined = undefined;
 
 	/**
 	 * A map between parameters that should be provided to a statetment and
@@ -129,7 +141,7 @@ export class PluginContextImpl implements PluginContext {
 
 	constructor(stmt: Statement, zparams: ZenParams) {
 		this.phrase = stmt.phrase.toLowerCase();
-		this.#connect = stmt.connect;
+		this.#openconnect = stmt.openconnect;
 		this.#bindings = stmt.bindings;
 		this.#zparams = zparams;
 	}
@@ -159,14 +171,14 @@ export class PluginContextImpl implements PluginContext {
 	 * {@inheritDoc PluginContext.getConnect}
 	 */
 	getConnect(): string[] {
-		if (!this.#connect) return [];
-		const val = this.#getDataKeys(this.#connect);
+		if (!this.#openconnect) return [];
+		const val = this.#getDataKeys(this.#openconnect);
 		if (typeof val === 'string') return [val];
 		if (Array.isArray(val)) {
 			if (val.every((x) => typeof x === 'string')) return val as string[];
 			else
 				throw new Error(
-					`the array referenced by ${this.#connect} must solely composed of strings`
+					`the array referenced by ${this.#openconnect} must solely composed of strings`
 				);
 		}
 		return [];
@@ -179,6 +191,20 @@ export class PluginContextImpl implements PluginContext {
 		const val = this.getConnect();
 		if (val.length === 0) throw new Error('a connect is required');
 		return val as [string, ...string[]];
+	}
+
+	/**
+	 * {@inheritDoc PluginContext.getOpen}
+	 */
+	getOpen(): string[] {
+		return this.getConnect();
+	}
+
+	/**
+	 * {@inheritDoc PluginContext.fetchOpen}
+	 */
+	fetchOpen(): [string, ...string[]] {
+		return this.fetchConnect();
 	}
 
 	/**
@@ -210,20 +236,20 @@ export class PluginContextImpl implements PluginContext {
  * @internal
  */
 export class PluginContextTest implements PluginContext {
-	#connect: string[] = [];
+	#openconnect: string[] = [];
 	#params = new Map<string, Jsonable>();
 	readonly phrase: string = ''; // not used but required by the interface
 
-	constructor(connect: string | string[], params: Record<string, Jsonable>) {
-		this.#connect = typeof connect === 'string' ? [connect] : connect;
+	constructor(openconnect: string | string[], params: Record<string, Jsonable>) {
+		this.#openconnect = typeof openconnect === 'string' ? [openconnect] : openconnect;
 		this.#params = new Map(Object.entries(params));
 	}
 
 	/**
 	 * @constructor
 	 */
-	static connect(connect: string | string[]) {
-		return new this(connect, {});
+	static openconnect(openconnect: string | string[]) {
+		return new this(openconnect, {});
 	}
 
 	/**
@@ -251,7 +277,7 @@ export class PluginContextTest implements PluginContext {
 	 * {@inheritDoc PluginContext.getConnect}
 	 */
 	getConnect(): string[] {
-		return this.#connect;
+		return this.#openconnect;
 	}
 
 	/**
@@ -261,6 +287,20 @@ export class PluginContextTest implements PluginContext {
 		const val = this.getConnect();
 		if (val.length === 0) throw new Error('a connect is required');
 		return val as [string, ...string[]];
+	}
+
+	/**
+	 * {@inheritDoc PluginContext.getOpen}
+	 */
+	getOpen(): string[] {
+		return this.getConnect();
+	}
+
+	/**
+	 * {@inheritDoc PluginContext.fetchOpen}
+	 */
+	fetchOpen(): [string, ...string[]] {
+		return this.fetchConnect();
 	}
 
 	/**

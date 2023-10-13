@@ -3,6 +3,7 @@ import {
 	And,
 	Buzzword,
 	Connect,
+	Open,
 	Identifier,
 	Into,
 	Output,
@@ -14,14 +15,14 @@ import { CstParser, type IToken, type CstNode } from '@slangroom/deps/chevrotain
 
 export type StatementCst = CstNode & {
 	children: {
-		connect?: ConnectCst;
+		openconnect?: OpenconnectCst;
 		sendpass: SendpassCst[];
 		phrase: PhraseCst;
 		into?: IntoCst;
 	};
 };
 
-export type ConnectCst = CstNode & {
+export type OpenconnectCst = CstNode & {
 	children: { Identifier: [IToken] };
 };
 
@@ -49,15 +50,22 @@ const Parser = new (class extends CstParser {
 	}
 
 	statement = this.RULE('statement', () => {
-		this.OPTION1(() => this.SUBRULE(this.#connect));
+		this.OPTION1(() => this.SUBRULE(this.#openconnect));
 		this.MANY(() => this.SUBRULE(this.#sendpass));
 		this.SUBRULE(this.#phrase);
 		this.OPTION2(() => this.SUBRULE(this.#into));
 	});
 
-	#connect = this.RULE('connect', () => {
-		this.CONSUME(Connect);
-		this.CONSUME(To);
+	#openconnect = this.RULE('openconnect', () => {
+		this.OR([
+			{ ALT: () => this.CONSUME(Open) },
+			{
+				ALT: () => {
+					this.CONSUME(Connect);
+					this.CONSUME(To);
+				},
+			},
+		]);
 		this.CONSUME(Identifier);
 		this.CONSUME(And);
 	});
