@@ -7,17 +7,17 @@ const test = anyTest as TestFn<{ web3: Web3 }>;
 
 test('unknown token', async (t) => {
 	const { errors } = astify('ouisdhfaiuo');
-	if(!errors) {
-		t.fail()
+	if (!errors) {
+		t.fail();
 		return;
 	}
 	const { errors: errors2 } = astify('read read read');
-	if(!errors2) {
-		t.fail()
+	if (!errors2) {
+		t.fail();
 		return;
 	}
 	t.truthy(true);
-})
+});
 test('read the ethereum nonce', async (t) => {
 	const { ast, errors } = astify('read the ethereum nonce');
 	if (errors) {
@@ -110,13 +110,13 @@ test("Ethereum transaction id after broadcast", async (t) => {
 */
 test('Erc20 method without arg', async (t) => {
 	const tokenResult = {
-		'symbol': 'NMT',
-		'name': 'Non movable token',
-		'totalSupply': '1000',
-		'decimals': '18',
-	}
+		symbol: 'NMT',
+		name: 'Non movable token',
+		totalSupply: '1000',
+		decimals: '18',
+	};
 	let k: keyof typeof tokenResult;
-	for(k in tokenResult) {
+	for (k in tokenResult) {
 		const { ast, errors } = astify(`read the erc20 ${k}`);
 		if (errors) {
 			t.fail(errors?.toString());
@@ -130,7 +130,6 @@ test('Erc20 method without arg', async (t) => {
 			ok: true,
 			value: tokenResult[k],
 		});
-
 	}
 });
 
@@ -145,7 +144,7 @@ test('erc20 with invalid address', async (t) => {
 	});
 	try {
 		await execute(ctx, ast);
-	} catch(e) {
+	} catch (e) {
 		t.truthy(true);
 		return;
 	}

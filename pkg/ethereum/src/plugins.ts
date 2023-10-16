@@ -118,7 +118,9 @@ export const execute = async (
 			throw new Error(`Not an ethereum address ${sc}`);
 		}
 		const erc20 = new web3.eth.Contract(erc20Abi, sc);
-		return ctx.pass((await erc20.methods[erc20_0.get(kind) || '']?.().call())?.toString() || '');
+		return ctx.pass(
+			(await erc20.methods[erc20_0.get(kind) || '']?.().call())?.toString() || ''
+		);
 	}
 	return ctx.fail('Should not be here');
 };

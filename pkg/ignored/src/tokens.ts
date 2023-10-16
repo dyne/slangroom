@@ -25,7 +25,7 @@ const wrap = (regex: RegExp): CustomPatternMatcherFunc => {
 export const IgnoredStatements = createToken({
 	name: 'IgnoredStatements',
 	// eslint-disable-next-line no-regex-spaces
-	pattern: wrap(/(?<=\[W\]  Zencode pattern ignored: ).*/),
+	pattern: wrap(/(?<=\[W\]  Zencode line [0-9]+ pattern ignored: ).*/),
 	line_breaks: false,
 });
 

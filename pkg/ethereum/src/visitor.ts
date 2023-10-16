@@ -6,6 +6,11 @@ import {
 	type PhraseCst,
 } from '@slangroom/ethereum';
 
+import {
+	type CstNode,
+	type CstElement,
+} from '@slangroom/deps/chevrotain';
+
 export enum EthereumRequestKind {
 	EthereumNonce,
 	EthereumGasPrice,
@@ -28,6 +33,7 @@ interface V {
 	visit(cst: EthereumCst): ReturnType<this['ethereum']>;
 	visit(cst: Erc20Cst): ReturnType<this['erc20']>;
 	visit(cst: Erc721Cst): ReturnType<this['erc721']>;
+	visit(cst: CstNode | CstElement[]): EthereumRequestKind;
 }
 
 class V extends CstVisitor {
@@ -44,8 +50,8 @@ class V extends CstVisitor {
 		if (ctx.Nonce) return EthereumRequestKind.EthereumNonce;
 		if (ctx.Balance) return EthereumRequestKind.EthereumBalance;
 		if (ctx.Bytes) return EthereumRequestKind.EthereumBytes;
-		if (ctx.gasPrice) return EthereumRequestKind.EthereumGasPrice;
-		if (ctx.broadcast) return EthereumRequestKind.EthereumBroadcast;
+		if (ctx.gasPrice) return this.visit(ctx.gasPrice);
+		if (ctx.broadcast) return this.visit(ctx.broadcast);
 		throw new Error('Should not be here!! (ethereum)');
 	}
 
@@ -53,8 +59,8 @@ class V extends CstVisitor {
 		if (ctx.Decimals) return EthereumRequestKind.Erc20Decimals;
 		if (ctx.Symbol) return EthereumRequestKind.Erc20Symbol;
 		if (ctx.Name) return EthereumRequestKind.Erc20Name;
-		if (ctx.Balance) return EthereumRequestKind.Erc20Balance;
-		if (ctx.totalSupply) return EthereumRequestKind.Erc20TotalSupply;
+		//if (ctx.Balance) return EthereumRequestKind.Erc20Balance;
+		if (ctx.totalSupply) return this.visit(ctx.totalSupply);
 		throw new Error('Should not be here!! (erc20)');
 	}
 
@@ -65,10 +71,16 @@ class V extends CstVisitor {
 		throw new Error('Should not be here!! (erc721)');
 	}
 
-	broadcast(ctx: any) {ctx;}
-	gasPrice(ctx: any) {ctx;}
-	totalSupply(ctx: any) {ctx;}
-	id(ctx: any) {ctx;}
+	broadcast() {
+		return EthereumRequestKind.EthereumBroadcast;
+	}
+	gasPrice() {
+		return EthereumRequestKind.EthereumGasPrice;
+	}
+	totalSupply() {
+		return EthereumRequestKind.Erc20TotalSupply;
+	}
+	id(ctx: any) { ctx; }
 }
 
 const Visitor = new V();
