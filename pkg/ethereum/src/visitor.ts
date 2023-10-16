@@ -80,9 +80,7 @@ class V extends CstVisitor {
 	totalSupply() {
 		return EthereumRequestKind.Erc20TotalSupply;
 	}
-	id() {
-		return EthereumRequestKind.Erc721Id
-	}
+	id(ctx: any) { ctx; }
 }
 
 const Visitor = new V();
