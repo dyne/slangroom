@@ -50,7 +50,7 @@ class V extends CstVisitor {
 		if (ctx.Nonce) return EthereumRequestKind.EthereumNonce;
 		if (ctx.Balance) return EthereumRequestKind.EthereumBalance;
 		if (ctx.Bytes) return EthereumRequestKind.EthereumBytes;
-		if (ctx.gasPrice) return EthereumRequestKind.EthereumGasPrice;
+		if (ctx.gasPrice) return this.visit(ctx.gasPrice);
 		if (ctx.broadcast) return this.visit(ctx.broadcast);
 		throw new Error('Should not be here!! (ethereum)');
 	}
