@@ -3,7 +3,7 @@
 	"version": "1.2.3",
 	"dependencies": {
 		"chevrotain": "^10.5.0",
-		"zenroom": "^3.10.0"
+		"zenroom": "latest"
 	},
 	"repository": "https://github.com/dyne/slangroom",
 	"license": "AGPL-3.0-only",

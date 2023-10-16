@@ -1,13 +1,11 @@
 {
-  "$schema": "node_modules/@lerna-lite/cli/schemas/lerna-schema.json",
-  "version": "1.3.0",
-  "command": {
-    "publish": {
-      "conventionalCommits": true
-    }
-  },
-  "packages": [
-    "pkg/*"
-  ],
-  "npmClient": "pnpm"
+	"$schema": "node_modules/@lerna-lite/cli/schemas/lerna-schema.json",
+	"version": "1.3.0",
+	"command": {
+		"publish": {
+			"conventionalCommits": true
+		}
+	},
+	"packages": ["pkg/*"],
+	"npmClient": "pnpm"
 }
