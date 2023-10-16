@@ -39,9 +39,9 @@ Given I A and output into 'a'
 Given I have a 'string' named 'a'
 Then print 'a'
 
-Then I pass a 'a' and B and output into 'b'
-Then I pass a 'b' and  c D
-Then I pass a 'b' and  C d and output into 'mimmo'
+Then I send a 'a' and B and output into 'b'
+Then I send a 'b' and  c D
+Then I send a 'b' and  C d and output into 'mimmo'
 `;
 	const slangroom = new Slangroom(p0, [p1, new Set([p2])]);
 	const res = await slangroom.execute(script);
