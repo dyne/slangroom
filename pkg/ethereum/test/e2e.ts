@@ -70,3 +70,28 @@ Then I connect to 'fabchain' and send transaction 'signed_ethereum_transaction' 
 
 	t.truthy(typeof res.result['transaction_id'] == 'string', res.logs);
 });
+
+test('Make slangroom fail', async (t) => {
+	const script = `
+Rule caller restroom-mw
+Scenario ethereum
+Given I connect to 'fabchain' and send address 'my_address' and read the ethereum  and output into 'ethereum_nonce'
+Given nothing
+Then print data
+`;
+	const slangroom = new Slangroom(ethereumPlugins);
+	try {
+		await slangroom.execute(script, {
+			data: {
+				my_address: '0x7d6df85bDBCe99151c813fd1DDE6BC007c523C27',
+				fabchain: 'http://78.47.38.223:9485',
+			},
+		});
+	} catch {
+		t.truthy(true);
+		return;
+	}
+	t.falsy(false);
+	return;
+
+});
