@@ -59,7 +59,7 @@ class V extends CstVisitor {
 		if (ctx.Decimals) return EthereumRequestKind.Erc20Decimals;
 		if (ctx.Symbol) return EthereumRequestKind.Erc20Symbol;
 		if (ctx.Name) return EthereumRequestKind.Erc20Name;
-		if (ctx.Balance) return EthereumRequestKind.Erc20Balance;
+		//if (ctx.Balance) return EthereumRequestKind.Erc20Balance;
 		if (ctx.totalSupply) return this.visit(ctx.totalSupply);
 		throw new Error('Should not be here!! (erc20)');
 	}
