@@ -35,3 +35,8 @@
 !/pkg/*/pnpm-lock.yaml
 !/pkg/*/tsconfig.json
 !/pkg/*/.npmignore
+
+#playwright test
+!/pkg/browser/playwright.config.ts
+!/pkg/browser/tests/**
+!/pkg/browser/public/index.html
