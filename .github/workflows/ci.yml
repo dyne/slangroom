@@ -24,6 +24,7 @@ jobs:
           version: 8
 
       - run: pnpm recursive install
+
       - name: Linting
         continue-on-error: true
         run: pnpm lint
