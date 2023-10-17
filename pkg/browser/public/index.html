@@ -1,0 +1,29 @@
+<html>
+	<head>
+		<script src="slangroom.js"></script>
+	</head>
+	<body>
+		<h1>Test http</h1>
+		<div id="test1"></div>
+		<script>
+const script = `
+Rule caller restroom-mw
+Given I connect to 'did_url' and do get and output into 'did'
+Given I have a 'string dictionary' named 'did'
+Given I have a 'string' named 'foo'
+Then print data
+`;
+
+const resDiv = document.getElementById('test1');
+
+slangroom.execute(script, {
+  data: {
+    foo: "bar",
+    did_url: "https://did.dyne.org/dids/did:dyne:sandbox.test:pEn78CGNEKvMR7DJQ1yvUVUpAHKzsBz45mQw3zD2js9",
+  }
+}).then((r) => {
+	resDiv.innerText = JSON.stringify(r.result);
+});
+		</script>
+	</body>
+</html>
