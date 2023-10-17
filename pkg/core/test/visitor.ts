@@ -21,29 +21,29 @@ test('generated ast is correct', async (t) => {
 			]),
 		},
 		"connect to 'foo' and read the    ethereum		 balance": {
-			connect: 'foo',
+			openconnect: 'foo',
 			phrase: 'read the ethereum balance',
 			bindings: new Map<string, string>(),
 		},
-		"connect to 'foo' and send address 'addr'  and send contract 'contract' and read the    ethereum		 balance":
-			{
-				connect: 'foo',
-				phrase: 'read the ethereum balance',
-				bindings: new Map<string, string>([
-					['address', 'addr'],
-					['contract', 'contract'],
-				]),
-			},
-		"connect to 'foo' and send address 'addr'  and send contract 'contract' and read the    ethereum		 balance and output into 'var'":
-			{
-				connect: 'foo',
-				phrase: 'read the ethereum balance',
-				bindings: new Map<string, string>([
-					['address', 'addr'],
-					['contract', 'contract'],
-				]),
-				into: 'var',
-			},
+		"connect to 'foo' and pass address 'addr'  and send contract 'contract' and read the    ethereum		 balance":
+		{
+			openconnect: 'foo',
+			phrase: 'read the ethereum balance',
+			bindings: new Map<string, string>([
+				['address', 'addr'],
+				['contract', 'contract'],
+			]),
+		},
+		"open 'foo' and pass address 'addr'  and send contract 'contract' and read the    ethereum		 balance and output into 'var'":
+		{
+			openconnect: 'foo',
+			phrase: 'read the ethereum balance',
+			bindings: new Map<string, string>([
+				['address', 'addr'],
+				['contract', 'contract'],
+			]),
+			into: 'var',
+		},
 	};
 
 	for (const [line, astWant] of Object.entries(cases)) {

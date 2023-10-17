@@ -18,6 +18,11 @@ export const Connect = createToken({
 	pattern: /connect/i,
 });
 
+export const Open = createToken({
+	name: 'Open',
+	pattern: /open/i,
+});
+
 export const To = createToken({
 	name: 'To',
 	pattern: /to/i,
@@ -51,6 +56,7 @@ export const And = createToken({
 export const allTokens = [
 	Whitespace,
 	Connect,
+	Open,
 	Into,
 	Output,
 	And,
