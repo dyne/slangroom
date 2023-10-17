@@ -248,9 +248,17 @@ export class PluginContextTest implements PluginContext {
 	/**
 	 * @constructor
 	 */
-	static openconnect(openconnect: string | string[]) {
-		return new this(openconnect, {});
+	static open(open: string | string[]) {
+		return new this(open, {});
 	}
+
+	/**
+	 * @constructor
+	 */
+	static connect(connect: string | string[]) {
+		return new this(connect, {});
+	}
+
 
 	/**
 	 * @constructor
