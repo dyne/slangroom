@@ -31,6 +31,14 @@ jobs:
       - name: Run the tests
         run: pnpm coverage
 
+      - name: Setup playwright
+        run: |
+          npx playwright install
+          npx playwright install-deps
+          pnpm build
+          pnpm exec playwright
+        working-directory: ./pkg/browser
+
 #       - name: Upload coverage reports to Codecov
 #         uses: codecov/codecov-action@v3
 #         env:

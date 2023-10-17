@@ -36,9 +36,10 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.39.0",
-    "@types/node": "^20.3.1"
+    "@types/node": "^20.3.1",
+    "esbuild": "^0.18.4"
   },
   "scripts": {
-    "build": "esbuild --bundle src/index.ts --outfile=public/slangroom.js --external:fs --external:path --external:crypto"
+    "build": "pnpm exec esbuild --bundle src/index.ts --outfile=public/slangroom.js --external:fs --external:path --external:crypto"
   }
 }
