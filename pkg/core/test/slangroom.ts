@@ -60,7 +60,7 @@ Given I have a 'string' named 'a'
 Then print 'a'
 
 Then I send a 'a' and B and output into 'b'
-Then I pass a 'b' and  c D
+Then I send a 'b' and  c D
 Then I send a 'b' and  C d and output into 'mimmo'
 Then I open 'b' and e F
 Then I connect to 'a' and F g
