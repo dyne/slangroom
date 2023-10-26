@@ -25,7 +25,7 @@ test('generated ast is correct', async (t) => {
 			phrase: 'read the ethereum balance',
 			bindings: new Map<string, string>(),
 		},
-		"connect to 'foo' and pass address 'addr'  and send contract 'contract' and read the    ethereum		 balance":
+		"connect to 'foo' and send address 'addr'  and send contract 'contract' and read the    ethereum		 balance":
 		{
 			openconnect: 'foo',
 			phrase: 'read the ethereum balance',
@@ -34,7 +34,7 @@ test('generated ast is correct', async (t) => {
 				['contract', 'contract'],
 			]),
 		},
-		"open 'foo' and pass address 'addr'  and send contract 'contract' and read the    ethereum		 balance and output into 'var'":
+		"open 'foo' and send address 'addr'  and send contract 'contract' and read the    ethereum		 balance and output into 'var'":
 		{
 			openconnect: 'foo',
 			phrase: 'read the ethereum balance',

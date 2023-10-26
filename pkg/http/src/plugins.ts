@@ -1,7 +1,7 @@
 import { JsonableArray } from '@slangroom/shared';
 import type { PluginContext, PluginResult } from '@slangroom/core';
 import { lex, parse, visit, RequestKind, RequestMethod, type PhraseCst } from '@slangroom/http';
-import axios from 'axios';
+import axios, { type AxiosRequestConfig } from 'axios';
 
 /**
  * The default timeout of an HTTP request in milliseconds.
@@ -36,13 +36,18 @@ export const execute = async (
 	method: RequestMethod
 ): Promise<PluginResult> => {
 	const url = ctx.fetchConnect()[0];
+	const headers = ctx.get('headers');
 	if (kind === RequestKind.Default) {
 		let error: any = null;
-		const req = await request({
+		let requestData: AxiosRequestConfig = {
 			url: url,
 			method: method,
-			data: ctx.get('object'),
-		}).catch((e) => (error = e));
+			data: ctx.get('object') as any,
+		}
+		if(headers) {
+			requestData['headers'] = headers as any;
+		}
+		const req = await request(requestData).catch((e) => (error = e));
 		const zenResult = error
 			? { status: error.code, error: '' }
 			: { status: req.status, result: req.data || '' };
@@ -56,12 +61,31 @@ export const execute = async (
 			// TODO: check type of body (needs to be JsonableArray of
 			// JsonableObject)
 			const objects = ctx.fetch('object') as JsonableArray;
-			for (const [i, u] of urls.entries())
-				reqs.push(request({ url: u, method: method, data: objects[i] }));
+			for (const [i, u] of urls.entries()) {
+				let requestData: AxiosRequestConfig = {
+					url: u,
+					method: method,
+					data: objects[i],
+				}
+				if(headers) {
+					requestData['headers'] = headers as any;
+				}
+				reqs.push(request(requestData));
+			}
 		} else {
 			// TODO: check type of body (needs to be JsonableObject)
 			const object = ctx.fetch('object') as JsonableArray;
-			for (const u of urls) reqs.push(request({ url: u, method: method, data: object }));
+			for (const u of urls) {
+				let requestData: AxiosRequestConfig = {
+					url: u,
+					method: method,
+					data: object,
+				}
+				if(headers) {
+					requestData['headers'] = headers as any;
+				}
+				reqs.push(request(requestData));
+			}
 		}
 		const results: JsonableArray = new Array(reqs.length);
 		const errors: { [key: number]: any } = {};
