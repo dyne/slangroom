@@ -31,6 +31,11 @@ nock('http://localhost')
 		if (body['myData']) return [200, 'received result'];
 		return [500, 'Did not receive the result'];
 	})
+	.put('/sendresultwithput')
+	.reply((_, body: any) => {
+		if (body['myData']) return [200, 'received result'];
+		return [500, 'Did not receive the result'];
+	})
 	.persist();
 
 test('Simple GET', async (t) => {
@@ -67,6 +72,23 @@ test('single post with data', async (t) => {
 	}
 
 	const ctx = new PluginContextTest('http://localhost/sendresult', {
+		object: { myData: 'foobar' },
+	});
+	const res = await execute(ctx, ast.kind, ast.method);
+	t.deepEqual(res, {
+		ok: true,
+		value: { status: 200, result: 'received result' },
+	});
+});
+
+test('single put with data', async (t) => {
+	const { ast } = astify('do put');
+	if (!ast) {
+		t.fail();
+		return;
+	}
+
+	const ctx = new PluginContextTest('http://localhost/sendresultwithput', {
 		object: { myData: 'foobar' },
 	});
 	const res = await execute(ctx, ast.kind, ast.method);

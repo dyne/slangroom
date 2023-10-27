@@ -8,6 +8,9 @@ export type RequestAst = {
 export enum RequestMethod {
 	Get = 'get',
 	Post = 'post',
+	Patch = 'patch',
+	Put = 'put',
+	Delete = 'delete',
 }
 
 export enum RequestKind {
@@ -47,6 +50,9 @@ class V extends CstVisitor {
 	method(ctx: MethodCst['children']): RequestMethod {
 		if (ctx.Post) return RequestMethod.Post;
 		if (ctx.Get) return RequestMethod.Get;
+		if (ctx.Patch) return RequestMethod.Patch;
+		if (ctx.Put) return RequestMethod.Put;
+		if (ctx.Delete) return RequestMethod.Delete;
 		throw new Error('Should not be here: unknown request method');
 	}
 }

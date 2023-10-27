@@ -1,5 +1,5 @@
 import { CstParser, type IToken, type CstNode } from '@slangroom/deps/chevrotain';
-import { allTokens, Do, Get, Post, Sequential, Parallel, Same } from '@slangroom/http';
+import { allTokens, Do, Get, Post, Patch, Put, Delete, Sequential, Parallel, Same } from '@slangroom/http';
 
 export type PhraseCst = CstNode & {
 	children: {
@@ -13,7 +13,11 @@ export type KindCst = CstNode & {
 };
 
 export type MethodCst = CstNode & {
-	children: { Get: [IToken] } | { Post: [IToken] };
+	children: { Get: [IToken] }
+    | { Post: [IToken] }
+    | { Patch: [IToken] }
+    | { Put: [IToken] }
+    | { Delete: [IToken] };
 };
 
 const Parser = new (class extends CstParser {
@@ -29,7 +33,13 @@ const Parser = new (class extends CstParser {
 	});
 
 	#method = this.RULE('method', () => {
-		this.OR([{ ALT: () => this.CONSUME(Get) }, { ALT: () => this.CONSUME(Post) }]);
+		this.OR([
+			{ ALT: () => this.CONSUME(Get) },
+			{ ALT: () => this.CONSUME(Post) },
+			{ ALT: () => this.CONSUME(Patch) },
+			{ ALT: () => this.CONSUME(Put) },
+			{ ALT: () => this.CONSUME(Delete) },
+		]);
 	});
 
 	#kind = this.RULE('kind', () => {
