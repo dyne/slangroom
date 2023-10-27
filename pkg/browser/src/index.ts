@@ -1,5 +1,5 @@
-import { Slangroom } from "@slangroom/core";
-import { httpPlugins } from "@slangroom/http";
+import { Slangroom } from '@slangroom/core';
+import { httpPlugins } from '@slangroom/http';
 const slangroom = new Slangroom(httpPlugins);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

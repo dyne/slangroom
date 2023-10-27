@@ -1,5 +1,16 @@
 import { CstParser, type IToken, type CstNode } from '@slangroom/deps/chevrotain';
-import { allTokens, Do, Get, Post, Patch, Put, Delete, Sequential, Parallel, Same } from '@slangroom/http';
+import {
+	allTokens,
+	Do,
+	Get,
+	Post,
+	Patch,
+	Put,
+	Delete,
+	Sequential,
+	Parallel,
+	Same,
+} from '@slangroom/http';
 
 export type PhraseCst = CstNode & {
 	children: {
@@ -13,11 +24,12 @@ export type KindCst = CstNode & {
 };
 
 export type MethodCst = CstNode & {
-	children: { Get: [IToken] }
-    | { Post: [IToken] }
-    | { Patch: [IToken] }
-    | { Put: [IToken] }
-    | { Delete: [IToken] };
+	children:
+		| { Get: [IToken] }
+		| { Post: [IToken] }
+		| { Patch: [IToken] }
+		| { Put: [IToken] }
+		| { Delete: [IToken] };
 };
 
 const Parser = new (class extends CstParser {

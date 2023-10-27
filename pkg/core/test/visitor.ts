@@ -26,24 +26,24 @@ test('generated ast is correct', async (t) => {
 			bindings: new Map<string, string>(),
 		},
 		"connect to 'foo' and send address 'addr'  and send contract 'contract' and read the    ethereum		 balance":
-		{
-			openconnect: 'foo',
-			phrase: 'read the ethereum balance',
-			bindings: new Map<string, string>([
-				['address', 'addr'],
-				['contract', 'contract'],
-			]),
-		},
+			{
+				openconnect: 'foo',
+				phrase: 'read the ethereum balance',
+				bindings: new Map<string, string>([
+					['address', 'addr'],
+					['contract', 'contract'],
+				]),
+			},
 		"open 'foo' and send address 'addr'  and send contract 'contract' and read the    ethereum		 balance and output into 'var'":
-		{
-			openconnect: 'foo',
-			phrase: 'read the ethereum balance',
-			bindings: new Map<string, string>([
-				['address', 'addr'],
-				['contract', 'contract'],
-			]),
-			into: 'var',
-		},
+			{
+				openconnect: 'foo',
+				phrase: 'read the ethereum balance',
+				bindings: new Map<string, string>([
+					['address', 'addr'],
+					['contract', 'contract'],
+				]),
+				into: 'var',
+			},
 	};
 
 	for (const [line, astWant] of Object.entries(cases)) {

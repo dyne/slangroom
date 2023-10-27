@@ -6,10 +6,7 @@ import {
 	type PhraseCst,
 } from '@slangroom/ethereum';
 
-import {
-	type CstNode,
-	type CstElement,
-} from '@slangroom/deps/chevrotain';
+import { type CstNode, type CstElement } from '@slangroom/deps/chevrotain';
 
 export enum EthereumRequestKind {
 	EthereumNonce,
@@ -80,7 +77,9 @@ class V extends CstVisitor {
 	totalSupply() {
 		return EthereumRequestKind.Erc20TotalSupply;
 	}
-	id(ctx: any) { ctx; }
+	id(ctx: any) {
+		ctx;
+	}
 }
 
 const Visitor = new V();
