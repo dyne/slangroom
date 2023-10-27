@@ -74,8 +74,8 @@ Then print data
 		data: {
 			auth_url: 'http://localhost/auth-required',
 			headers: {
-				authorization: 'Basic Auth test'
-			}
+				authorization: 'Basic Auth test',
+			},
 		},
 	});
 	t.deepEqual(

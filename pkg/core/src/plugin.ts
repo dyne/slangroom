@@ -259,7 +259,6 @@ export class PluginContextTest implements PluginContext {
 		return new this(connect, {});
 	}
 
-
 	/**
 	 * @constructor
 	 */

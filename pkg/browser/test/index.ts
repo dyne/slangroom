@@ -1,3 +1,3 @@
-import test from 'ava'
+import test from 'ava';
 
-test("make ava happpy", (t) => t.truthy(true));
+test('make ava happpy', (t) => t.truthy(true));

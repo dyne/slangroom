@@ -46,4 +46,15 @@ export const Sequential = createToken({
 	pattern: /sequential/i,
 });
 
-export const allTokens = [Whitespace, Get, Post, Patch, Put, Delete, Parallel, Sequential, Same, Do];
+export const allTokens = [
+	Whitespace,
+	Get,
+	Post,
+	Patch,
+	Put,
+	Delete,
+	Parallel,
+	Sequential,
+	Same,
+	Do,
+];

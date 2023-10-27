@@ -39,12 +39,12 @@ export const execute = async (
 	const headers = ctx.get('headers');
 	if (kind === RequestKind.Default) {
 		let error: any = null;
-		let requestData: AxiosRequestConfig = {
+		const requestData: AxiosRequestConfig = {
 			url: url,
 			method: method,
 			data: ctx.get('object') as any,
-		}
-		if(headers) {
+		};
+		if (headers) {
 			requestData['headers'] = headers as any;
 		}
 		const req = await request(requestData).catch((e) => (error = e));
@@ -62,12 +62,12 @@ export const execute = async (
 			// JsonableObject)
 			const objects = ctx.fetch('object') as JsonableArray;
 			for (const [i, u] of urls.entries()) {
-				let requestData: AxiosRequestConfig = {
+				const requestData: AxiosRequestConfig = {
 					url: u,
 					method: method,
 					data: objects[i],
-				}
-				if(headers) {
+				};
+				if (headers) {
 					requestData['headers'] = headers as any;
 				}
 				reqs.push(request(requestData));
@@ -76,12 +76,12 @@ export const execute = async (
 			// TODO: check type of body (needs to be JsonableObject)
 			const object = ctx.fetch('object') as JsonableArray;
 			for (const u of urls) {
-				let requestData: AxiosRequestConfig = {
+				const requestData: AxiosRequestConfig = {
 					url: u,
 					method: method,
 					data: object,
-				}
-				if(headers) {
+				};
+				if (headers) {
 					requestData['headers'] = headers as any;
 				}
 				reqs.push(request(requestData));
