@@ -11,6 +11,21 @@ export const Post = createToken({
 	pattern: /post/i,
 });
 
+export const Put = createToken({
+	name: 'Put',
+	pattern: /put/i,
+});
+
+export const Patch = createToken({
+	name: 'Patch',
+	pattern: /patch/i,
+});
+
+export const Delete = createToken({
+	name: 'Delete',
+	pattern: /delete/i,
+});
+
 export const Do = createToken({
 	name: 'Do',
 	pattern: /do/i,
@@ -31,4 +46,4 @@ export const Sequential = createToken({
 	pattern: /sequential/i,
 });
 
-export const allTokens = [Whitespace, Get, Post, Parallel, Sequential, Same, Do];
+export const allTokens = [Whitespace, Get, Post, Patch, Put, Delete, Parallel, Sequential, Same, Do];
