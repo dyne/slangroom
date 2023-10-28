@@ -14,6 +14,9 @@ nock('http://localhost')
 		if (req?.includes('Hola') || req?.includes('Hi')) return [200, 'received result'];
 		return [500, 'Did not receive the result'];
 	})
+	.get('/auth-required')
+	.matchHeader('authorization', 'Basic Auth test')
+	.reply(200, 'Yes, you can!')
 	.persist();
 
 test('Full script that uses http plugin', async (t) => {
@@ -52,6 +55,36 @@ Then I connect to 'final_endpoints' and send object 'string_array' and do parall
 				{ status: 200, result: 'received result' },
 				{ status: 200, result: 'received result' },
 			],
+		},
+		res.logs
+	);
+});
+
+test('Send auth header', async (t) => {
+	const script = `
+Rule caller restroom-mw
+Given I connect to 'auth_url' and send headers 'headers' and do get and output into 'auth'
+
+Given I have a 'string dictionary' named 'auth'
+
+Then print data
+`;
+	const slangroom = new Slangroom(http);
+	const res = await slangroom.execute(script, {
+		data: {
+			auth_url: 'http://localhost/auth-required',
+			headers: {
+				authorization: 'Basic Auth test',
+			},
+		},
+	});
+	t.deepEqual(
+		res.result,
+		{
+			auth: {
+				result: 'Yes, you can!',
+				status: 200,
+			},
 		},
 		res.logs
 	);

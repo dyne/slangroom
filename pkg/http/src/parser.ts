@@ -4,8 +4,9 @@ export function parser(this: Parser) {
 	this.RULE('httpPhrase', () => {
 		this.connect();
 		this.OPTION(() => this.sendpass('object'));
+		this.OPTION1(() => this.sendpass1('headers'));
 		this.token('do');
-		this.OPTION1(() => this.SUBRULE(kind));
+		this.OPTION2(() => this.SUBRULE(kind));
 		this.SUBRULE(method);
 		this.into();
 	});
