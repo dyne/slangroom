@@ -1,58 +1,137 @@
 import test from 'ava';
-import { lex, parse, visit, ErrorKeyExists, type StatementCst } from '@slangroom/core';
+import { Parser, Lexicon, parse, lex, visit } from '@slangroom/core';
 
-const astify = (line: string) => {
-	const { tokens } = lex(line);
-	const { cst } = parse(tokens);
-	return visit(cst as StatementCst);
+const astify = (line: string, parser: (this: Parser) => void) => {
+	const lxcon = new Lexicon();
+	const p = new Parser(lxcon, [parser]);
+	const lexed = lex(lxcon, line);
+	if (lexed.errors.length) throw lexed.errors;
+	const parsed = parse(p, lexed.tokens);
+	if (parsed.errors.length) throw parsed.errors;
+	return visit(p, parsed.cst as Parameters<typeof visit>[1]);
 };
 
-test('generated ast is correct', async (t) => {
-	const cases = {
-		'read the    ethereum		 balance': {
-			phrase: 'read the ethereum balance',
-			bindings: new Map<string, string>(),
-		},
-		"send address 'addr'  and send contract 'contract' and read the    ethereum		 balance": {
-			phrase: 'read the ethereum balance',
-			bindings: new Map<string, string>([
-				['address', 'addr'],
-				['contract', 'contract'],
-			]),
-		},
-		"connect to 'foo' and read the    ethereum		 balance": {
-			openconnect: 'foo',
-			phrase: 'read the ethereum balance',
-			bindings: new Map<string, string>(),
-		},
-		"connect to 'foo' and pass address 'addr'  and send contract 'contract' and read the    ethereum		 balance":
-		{
-			openconnect: 'foo',
-			phrase: 'read the ethereum balance',
-			bindings: new Map<string, string>([
-				['address', 'addr'],
-				['contract', 'contract'],
-			]),
-		},
-		"open 'foo' and pass address 'addr'  and send contract 'contract' and read the    ethereum		 balance and output into 'var'":
-		{
-			openconnect: 'foo',
-			phrase: 'read the ethereum balance',
-			bindings: new Map<string, string>([
-				['address', 'addr'],
-				['contract', 'contract'],
-			]),
-			into: 'var',
-		},
-	};
+test('ast is okay: only phrase is given', (t) => {
+	const ast = astify('read the    ethereum		 balance', function (this: Parser) {
+		this.RULE('testPhrase', () => {
+			this.token('read');
+			this.token('the');
+			this.token('ethereum');
+			this.token('balance');
+		});
+	});
+	t.deepEqual(ast, {
+		phrase: 'read the ethereum balance',
+		bindings: new Map<string, string>(),
+	});
+});
 
-	for (const [line, astWant] of Object.entries(cases)) {
-		const astHave = astify(line);
-		t.deepEqual(astHave, astWant);
-	}
+test('ast is okay: phrase and connect are given', (t) => {
+	const ast = astify(
+		"connect to 'foo' and read the    ethereum		 balance",
+		function (this: Parser) {
+			this.RULE('testPhrase', () => {
+				this.connect();
+				this.token('read');
+				this.token('the');
+				this.token('ethereum');
+				this.token('balance');
+			});
+		}
+	);
+	t.deepEqual(ast, {
+		openconnect: 'foo',
+		phrase: 'read the ethereum balance',
+		bindings: new Map<string, string>(),
+	});
+});
 
-	const err = t.throws(() => astify("send same 'x' and send same 'y' and does not matter"), {
-		instanceOf: ErrorKeyExists,
-	}) as ErrorKeyExists;
-	t.is(err.message, 'key already exists: same');
+test('ast is okay: phrase and open are given', (t) => {
+	const ast = astify("open 'foo' and read the    ethereum		 balance", function (this: Parser) {
+		this.RULE('testPhrase', () => {
+			this.open();
+			this.token('read');
+			this.token('the');
+			this.token('ethereum');
+			this.token('balance');
+		});
+	});
+	t.deepEqual(ast, {
+		openconnect: 'foo',
+		phrase: 'read the ethereum balance',
+		bindings: new Map<string, string>(),
+	});
+});
+
+test('ast is okay: phrase and bindings are given', (t) => {
+	const ast = astify(
+		"send address 'addr'  and pass contract 'contract' and read the    ethereum		 balance",
+		function (this: Parser) {
+			this.RULE('testPhrase', () => {
+				this.sendpass('address');
+				this.sendpass1('contract');
+				this.token('read');
+				this.token('the');
+				this.token('ethereum');
+				this.token('balance');
+			});
+		}
+	);
+	t.deepEqual(ast, {
+		phrase: 'read the ethereum balance',
+		bindings: new Map<string, string>([
+			['address', 'addr'],
+			['contract', 'contract'],
+		]),
+	});
+});
+
+test('ast is okay: phrase and connect and bindings are all given', (t) => {
+	const ast = astify(
+		"connect to 'foo' and pass address 'addr'  and send contract 'contract' and read the    ethereum		 balance",
+		function (this: Parser) {
+			this.RULE('testPhrase', () => {
+				this.connect();
+				this.sendpass('address');
+				this.sendpass1('contract');
+				this.token('read');
+				this.token('the');
+				this.token('ethereum');
+				this.token('balance');
+			});
+		}
+	);
+	t.deepEqual(ast, {
+		openconnect: 'foo',
+		phrase: 'read the ethereum balance',
+		bindings: new Map<string, string>([
+			['address', 'addr'],
+			['contract', 'contract'],
+		]),
+	});
+});
+
+test('ast is okay: phrase and open and bindings are all given', (t) => {
+	const ast = astify(
+		"open 'foo' and pass address 'addr'  and send contract 'contract' and read the    ethereum		 balance",
+		function (this: Parser) {
+			this.RULE('testPhrase', () => {
+				this.open();
+				this.sendpass('address');
+				this.sendpass1('contract');
+				this.token('read');
+				this.token('the');
+				this.token('ethereum');
+				this.token('balance');
+			});
+		}
+	);
+	t.deepEqual(ast, {
+		openconnect: 'foo',
+		phrase: 'read the ethereum balance',
+		bindings: new Map<string, string>([
+			['address', 'addr'],
+			['contract', 'contract'],
+		]),
+	});
 });

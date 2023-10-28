@@ -1,6 +1,6 @@
 import test from 'ava';
-import { Slangroom } from '@slangroom/core/slangroom';
-import { ethereumPlugins } from '@slangroom/ethereum';
+import { Slangroom } from '@slangroom/core';
+import { ethereum } from '@slangroom/ethereum';
 
 test('Retrieve a zenroom object', async (t) => {
 	const script = `
@@ -13,7 +13,7 @@ When I rename the 'string' to 'poem'
 
 Then print data
 `;
-	const slangroom = new Slangroom(ethereumPlugins);
+	const slangroom = new Slangroom(ethereum);
 	const res = await slangroom.execute(script, {
 		data: {
 			fabchain: 'http://78.47.38.223:9485',
@@ -52,7 +52,7 @@ Then print the 'signed ethereum transaction'
 Then print data
 Then I connect to 'fabchain' and send transaction 'signed_ethereum_transaction' and read the ethereum transaction id after broadcast and output into 'transaction_id'
 `;
-	const slangroom = new Slangroom(ethereumPlugins);
+	const slangroom = new Slangroom(ethereum);
 	const res = await slangroom.execute(script, {
 		data: {
 			keyring: {
@@ -79,7 +79,7 @@ Given I connect to 'fabchain' and send address 'my_address' and read the ethereu
 Given nothing
 Then print data
 `;
-	const slangroom = new Slangroom(ethereumPlugins);
+	const slangroom = new Slangroom(ethereum);
 	try {
 		await slangroom.execute(script, {
 			data: {
@@ -93,5 +93,4 @@ Then print data
 	}
 	t.falsy(false);
 	return;
-
 });

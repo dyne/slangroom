@@ -1,99 +1,119 @@
+import { Lexicon } from '@slangroom/core';
 import {
-	allTokens,
-	And,
-	Buzzword,
-	Connect,
-	Open,
-	Identifier,
-	Into,
-	Output,
-	Send,
-	To,
-} from '@slangroom/core/tokens';
-import { CstParser, type IToken, type CstNode } from '@slangroom/deps/chevrotain';
+	CstParser,
+	type IToken,
+	type CstNode,
+	type IOrAlt,
+	type ConsumeMethodOpts,
+} from '@slangroom/deps/chevrotain';
 
 export type StatementCst = CstNode & {
-	children: {
-		openconnect?: OpenconnectCst;
-		sendpass: SendpassCst[];
-		phrase: PhraseCst;
-		into?: IntoCst;
-	};
-};
-
-export type OpenconnectCst = CstNode & {
-	children: { Identifier: [IToken] };
-};
-
-export type SendpassCst = CstNode & {
-	children: ({ Send: [IToken] } | { Pass: [IToken] }) & {
-		phrase: PhraseCst;
-		Identifier: [IToken];
-	};
+	children: { [K in string]: [PhraseCst] };
 };
 
 export type PhraseCst = CstNode & {
 	children: {
-		Buzzword: [IToken, ...IToken[]];
+		connect?: [IToken];
+	} & { open?: [IToken] } & { into?: [IToken] } & {
+		[K in string]: [IToken | PhraseCst];
 	};
 };
 
-export type IntoCst = CstNode & {
-	children: { Identifier: [IToken] };
-};
+export class Parser extends CstParser {
+	#phrases: IOrAlt<unknown>[];
+	#lexicon: Lexicon;
 
-const Parser = new (class extends CstParser {
-	constructor() {
-		super(allTokens);
+	constructor(lexicon: Lexicon, parsers: ((this: Parser) => void)[]) {
+		super(lexicon.tokens, { maxLookahead: 1024 });
+		this.#lexicon = lexicon;
+		parsers = [...new Set(parsers)];
+		parsers.forEach((p) => p.apply(this));
+		this.#phrases = Object.entries(this).reduce((acc, [k, v]) => {
+			if (k.endsWith('Phrase') && typeof v === 'function')
+				acc.push({ ALT: () => this.SUBRULE(v) });
+			return acc;
+		}, [] as IOrAlt<unknown>[]);
 		this.performSelfAnalysis();
 	}
 
+	/**
+	 * {@inheritDoc Lexicon.token}
+	 */
+	#token(name: string) {
+		return this.#lexicon.token(name);
+	}
+
+	tokenn(idx: number, name: string, opts?: ConsumeMethodOpts) {
+		this.consume(idx, this.#token(name), opts);
+	}
+
+	token(name: string, opts?: ConsumeMethodOpts) {
+		this.tokenn(0, name, opts);
+	}
+
+	token1(name: string, opts?: ConsumeMethodOpts) {
+		this.tokenn(1, name, opts);
+	}
+
+	token2(name: string, opts?: ConsumeMethodOpts) {
+		this.tokenn(2, name, opts);
+	}
+
+	token3(name: string, opts?: ConsumeMethodOpts) {
+		this.tokenn(3, name, opts);
+	}
+
 	statement = this.RULE('statement', () => {
-		this.OPTION1(() => this.SUBRULE(this.#openconnect));
-		this.MANY(() => this.SUBRULE(this.#sendpass));
-		this.SUBRULE(this.#phrase);
-		this.OPTION2(() => this.SUBRULE(this.#into));
+		this.OR(this.#phrases);
 	});
 
-	#openconnect = this.RULE('openconnect', () => {
-		this.OR([
-			{ ALT: () => this.CONSUME(Open) },
-			{
-				ALT: () => {
-					this.CONSUME(Connect);
-					this.CONSUME(To);
-				},
-			},
+	connect() {
+		this.tokenn(255, 'connect');
+		this.tokenn(255, 'to');
+		this.tokenn(255, 'identifier', { LABEL: 'connect' });
+		this.tokenn(255, 'and');
+	}
+
+	open() {
+		this.tokenn(255, 'open');
+		this.tokenn(255, 'identifier', { LABEL: 'open' });
+		this.tokenn(255, 'and');
+	}
+
+	into() {
+		this.tokenn(254, 'and');
+		this.tokenn(254, 'output');
+		this.tokenn(254, 'into');
+		this.tokenn(254, 'identifier', { LABEL: 'into' });
+	}
+
+	sendpassn(idx: number, parameter: string) {
+		this.or(idx, [
+			{ ALT: () => this.tokenn(idx, 'send', { LABEL: `sendpass${idx}` }) },
+			{ ALT: () => this.tokenn(idx, 'pass', { LABEL: `sendpass${idx}` }) },
 		]);
-		this.CONSUME(Identifier);
-		this.CONSUME(And);
-	});
+		this.tokenn(idx, parameter, { LABEL: `sendpass${idx}.parameter` });
+		this.tokenn(idx, 'identifier', { LABEL: `sendpass${idx}.identifier` });
+		this.tokenn(idx, 'and', { LABEL: `sendpass${idx}.and` });
+	}
 
-	#sendpass = this.RULE('sendpass', () => {
-		this.CONSUME(Send);
-		this.SUBRULE(this.#phrase);
-		this.CONSUME(Identifier);
-		this.CONSUME(And);
-	});
+	sendpass(parameter: string) {
+		this.sendpassn(0, parameter);
+	}
 
-	#phrase = this.RULE('phrase', () => {
-		this.AT_LEAST_ONE(() => this.CONSUME(Buzzword));
-	});
+	sendpass1(parameter: string) {
+		this.sendpassn(1, parameter);
+	}
 
-	#into = this.RULE('into', () => {
-		this.CONSUME(And);
-		this.CONSUME(Output);
-		this.CONSUME(Into);
-		this.CONSUME(Identifier);
-	});
-})();
+	sendpass2(parameter: string) {
+		this.sendpassn(2, parameter);
+	}
+}
 
-export const CstVisitor = Parser.getBaseCstVisitorConstructor();
-
-export const parse = (tokens: IToken[]) => {
-	Parser.input = tokens;
+export const parse = (parser: Parser, tokens: IToken[]) => {
+	parser.input = tokens;
 	return {
-		cst: Parser.statement(),
-		errors: Parser.errors,
+		cst: parser.statement(),
+		errors: parser.errors,
 	};
 };
