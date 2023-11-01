@@ -3,10 +3,10 @@
 	"version": "1.5.0",
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
-		"@slangroom/deps": "workspace:*",
 		"@slangroom/shared": "workspace:*",
 		"axios": "^1.5.1",
-		"web3": "^4.1.2"
+		"web3": "^4.2.1",
+		"web3-validator": "^2.0.3"
 	},
 	"repository": "https://github.com/dyne/slangroom",
 	"license": "AGPL-3.0-only",

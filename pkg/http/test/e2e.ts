@@ -1,7 +1,7 @@
 import test from 'ava';
 import nock from 'nock';
-import { Slangroom } from '@slangroom/core/slangroom';
-import { httpPlugins } from '@slangroom/http';
+import { Slangroom } from '@slangroom/core';
+import { http } from '@slangroom/http';
 
 nock('http://localhost')
 	.get('/greeting-es')
@@ -38,7 +38,7 @@ When I move 'result_en' in 'string array'
 Then print data
 Then I connect to 'final_endpoints' and send object 'string_array' and do parallel post and output into 'results'
 `;
-	const slangroom = new Slangroom(httpPlugins);
+	const slangroom = new Slangroom(http);
 	const res = await slangroom.execute(script, {
 		data: {
 			greeting_es: 'http://localhost/greeting-es',
@@ -69,7 +69,7 @@ Given I have a 'string dictionary' named 'auth'
 
 Then print data
 `;
-	const slangroom = new Slangroom(httpPlugins);
+	const slangroom = new Slangroom(http);
 	const res = await slangroom.execute(script, {
 		data: {
 			auth_url: 'http://localhost/auth-required',

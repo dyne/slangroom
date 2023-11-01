@@ -1,9 +1,10 @@
-import { allTokens } from '@slangroom/core/tokens';
-import { Lexer as L } from '@slangroom/deps/chevrotain';
-
-const Lexer = new L(allTokens);
+import { Lexicon } from '@slangroom/core';
+import { Lexer } from '@slangroom/deps/chevrotain';
 
 /**
  * Lexes the given line.
  */
-export const lex = (line: string) => Lexer.tokenize(line);
+export const lex = (lexicon: Lexicon, line: string) => {
+	const lexer = new Lexer(lexicon.tokens);
+	return lexer.tokenize(line);
+};

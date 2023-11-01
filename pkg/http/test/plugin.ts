@@ -1,6 +1,6 @@
 import test from 'ava';
 import { PluginContextTest } from '@slangroom/core';
-import { astify, execute } from '@slangroom/http';
+import { execute } from '@slangroom/http';
 import nock from 'nock';
 
 nock('http://localhost')
@@ -39,14 +39,8 @@ nock('http://localhost')
 	.persist();
 
 test('Simple GET', async (t) => {
-	const { ast } = astify('do get');
-	if (!ast) {
-		t.fail();
-		return;
-	}
-
 	const ctx = PluginContextTest.connect('http://localhost/normaljson');
-	const res = await execute(ctx, ast.kind, ast.method);
+	const res = await execute(ctx, 'default', 'get');
 	t.deepEqual(res, {
 		ok: true,
 		value: {
@@ -64,34 +58,22 @@ test('Simple GET', async (t) => {
 	});
 });
 
-test('single post with data', async (t) => {
-	const { ast } = astify('do post');
-	if (!ast) {
-		t.fail();
-		return;
-	}
-
-	const ctx = new PluginContextTest('http://localhost/sendresult', {
+test('single put with data', async (t) => {
+	const ctx = new PluginContextTest('http://localhost/sendresultwithput', {
 		object: { myData: 'foobar' },
 	});
-	const res = await execute(ctx, ast.kind, ast.method);
+	const res = await execute(ctx, 'default', 'put');
 	t.deepEqual(res, {
 		ok: true,
 		value: { status: 200, result: 'received result' },
 	});
 });
 
-test('single put with data', async (t) => {
-	const { ast } = astify('do put');
-	if (!ast) {
-		t.fail();
-		return;
-	}
-
-	const ctx = new PluginContextTest('http://localhost/sendresultwithput', {
+test('single post with data', async (t) => {
+	const ctx = new PluginContextTest('http://localhost/sendresult', {
 		object: { myData: 'foobar' },
 	});
-	const res = await execute(ctx, ast.kind, ast.method);
+	const res = await execute(ctx, 'default', 'post');
 	t.deepEqual(res, {
 		ok: true,
 		value: { status: 200, result: 'received result' },
@@ -99,19 +81,11 @@ test('single put with data', async (t) => {
 });
 
 test('multiple post with data', async (t) => {
-	const { ast } = astify('do same post');
-	if (!ast) {
-		t.fail();
-		return;
-	}
-
 	const ctx = new PluginContextTest(
 		['http://localhost/sendresult', 'http://localhost/normaljson'],
-		{
-			object: { myData: 'foobar' },
-		}
+		{ object: { myData: 'foobar' } }
 	);
-	const res = await execute(ctx, ast.kind, ast.method);
+	const res = await execute(ctx, 'same', 'post');
 	t.deepEqual(res, {
 		ok: true,
 		value: [
@@ -122,12 +96,6 @@ test('multiple post with data', async (t) => {
 });
 
 test('POSTs with custom different', async (t) => {
-	const { ast } = astify('do parallel post');
-	if (!ast) {
-		t.fail();
-		return;
-	}
-
 	const ctx = new PluginContextTest(
 		[
 			'http://localhost/sendresult',
@@ -136,7 +104,7 @@ test('POSTs with custom different', async (t) => {
 		],
 		{ object: [{ myData: 'foobar' }, { myData: 'foobar' }, { mData: 'foobar' }] }
 	);
-	const res = await execute(ctx, ast.kind, ast.method);
+	const res = await execute(ctx, 'parallel', 'post');
 	t.deepEqual(res, {
 		ok: true,
 		value: [

@@ -5,22 +5,41 @@ import {
 	parse,
 	visit,
 	PluginContextImpl,
+	Parser,
+	Lexicon,
 	type Plugin,
 	type StatementCst,
 	type Statement,
+	type PluginExecutor,
 } from '@slangroom/core';
 
-type Plugins = Plugin | Set<Plugin> | Array<Plugin | Set<Plugin>>;
+type Plugins = Plugin | Array<Plugin>;
 
 export class Slangroom {
-	#plugins = new Set<Plugin>();
+	#lexicon = new Lexicon();
+	#parser: Parser;
+	#executors: PluginExecutor[] = [];
 
 	constructor(first: Plugins, ...rest: Plugins[]) {
+		const parsers: ((this: Parser) => void)[] = [];
 		const recurse = (x: Plugins) => {
-			if (Array.isArray(x) || x instanceof Set) x.forEach(recurse);
-			else this.#plugins.add(x);
+			if (Array.isArray(x)) {
+				x.forEach(recurse);
+			} else {
+				parsers.push(x.parser);
+				this.#executors.push(x.executor);
+			}
 		};
 		[first, ...rest].forEach(recurse);
+		this.#parser = new Parser(this.#lexicon, parsers);
+	}
+
+	#astify(line: string) {
+		const lexed = lex(this.#lexicon, line);
+		if (lexed.errors.length) return { errors: lexed.errors };
+		const parsed = parse(this.#parser, lexed.tokens);
+		if (parsed.errors.length) return { errors: parsed.errors };
+		return { ast: visit(this.#parser, parsed.cst as StatementCst) };
 	}
 
 	async execute(contract: string, optParams?: Partial<ZenParams>): Promise<ZenOutput> {
@@ -31,7 +50,7 @@ export class Slangroom {
 		ignoreds.forEach((x: string) => {
 			const given = x.split(/^\s*given\s+i\s+/i);
 			if (given[1]) {
-				const { ast, errors } = astify(given[1]);
+				const { ast, errors } = this.#astify(given[1]);
 				if (!ast) throw errors;
 				givens.push(ast);
 				return;
@@ -39,7 +58,7 @@ export class Slangroom {
 
 			const then = x.split(/^\s*then\s+i\s+/i);
 			if (then[1]) {
-				const { ast, errors } = astify(then[1]);
+				const { ast, errors } = this.#astify(then[1]);
 				if (!ast) throw errors;
 				thens.push(ast);
 			}
@@ -57,7 +76,7 @@ export class Slangroom {
 
 	async #execute(stmt: Statement, zparams: ZenParams) {
 		const ctx = new PluginContextImpl(stmt, zparams);
-		for (const p of this.#plugins) {
+		for (const p of this.#executors) {
 			const result = await p(ctx);
 			if (result.ok) {
 				if (stmt.into) zparams.data[stmt.into] = result.value;
@@ -73,12 +92,4 @@ const requirifyZenParams = (params?: Partial<ZenParams>): Required<ZenParams> =>
 	if (!params.data) params.data = {};
 	if (!params.keys) params.keys = {};
 	return params as ZenParams;
-};
-
-export const astify = (line: string) => {
-	const lexed = lex(line);
-	if (lexed.errors.length) return { errors: lexed.errors };
-	const parsed = parse(lexed.tokens);
-	if (parsed.errors.length) return { errors: parsed.errors };
-	return { ast: visit(parsed.cst as StatementCst) };
 };

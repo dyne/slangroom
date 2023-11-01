@@ -1,74 +1,31 @@
-import { CstParser, type IToken, type CstNode } from '@slangroom/deps/chevrotain';
-import {
-	allTokens,
-	Do,
-	Get,
-	Post,
-	Patch,
-	Put,
-	Delete,
-	Sequential,
-	Parallel,
-	Same,
-} from '@slangroom/http';
+import { Parser } from '@slangroom/core';
 
-export type PhraseCst = CstNode & {
-	children: {
-		kind: KindCst;
-		method: MethodCst;
-	};
-};
-
-export type KindCst = CstNode & {
-	children: { Sequential: [IToken] } | { Parallel: [IToken] } | { Same: [IToken] };
-};
-
-export type MethodCst = CstNode & {
-	children:
-		| { Get: [IToken] }
-		| { Post: [IToken] }
-		| { Patch: [IToken] }
-		| { Put: [IToken] }
-		| { Delete: [IToken] };
-};
-
-const Parser = new (class extends CstParser {
-	constructor() {
-		super(allTokens);
-		this.performSelfAnalysis();
-	}
-
-	phrase = this.RULE('phrase', () => {
-		this.CONSUME(Do);
-		this.OPTION(() => this.SUBRULE(this.#kind));
-		this.SUBRULE(this.#method);
+export function parser(this: Parser) {
+	this.RULE('httpPhrase', () => {
+		this.connect();
+		this.OPTION(() => this.sendpass('object'));
+		this.OPTION1(() => this.sendpass1('headers'));
+		this.token('do');
+		this.OPTION2(() => this.SUBRULE(kind));
+		this.SUBRULE(method);
+		this.into();
 	});
 
-	#method = this.RULE('method', () => {
+	const method = this.RULE('httpMethod', () => {
 		this.OR([
-			{ ALT: () => this.CONSUME(Get) },
-			{ ALT: () => this.CONSUME(Post) },
-			{ ALT: () => this.CONSUME(Patch) },
-			{ ALT: () => this.CONSUME(Put) },
-			{ ALT: () => this.CONSUME(Delete) },
+			{ ALT: () => this.token('get') },
+			{ ALT: () => this.token('post') },
+			{ ALT: () => this.token('patch') },
+			{ ALT: () => this.token('put') },
+			{ ALT: () => this.token('delete') },
 		]);
 	});
 
-	#kind = this.RULE('kind', () => {
+	const kind = this.RULE('httpKind', () => {
 		this.OR([
-			{ ALT: () => this.CONSUME(Sequential) },
-			{ ALT: () => this.CONSUME(Parallel) },
-			{ ALT: () => this.CONSUME(Same) },
+			{ ALT: () => this.token('sequential') },
+			{ ALT: () => this.token('parallel') },
+			{ ALT: () => this.token('same') },
 		]);
 	});
-})();
-
-export const CstVisitor = Parser.getBaseCstVisitorConstructor();
-
-export const parse = (tokens: IToken[]) => {
-	Parser.input = tokens;
-	return {
-		cst: Parser.phrase(),
-		errors: Parser.errors,
-	};
-};
+}

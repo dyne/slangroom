@@ -1,12 +1,18 @@
 import type { Jsonable, ZenParams } from '@slangroom/shared';
-import type { Statement } from '@slangroom/core';
+import { Parser, type Statement } from '@slangroom/core';
 
 /**
  * A Plugin definition.
- *
+ */
+export type Plugin = {
+	parser: (this: Parser) => void;
+	executor: PluginExecutor;
+};
+
+/**
  * @example
  * ```ts
- * const myPlugin = async (ctx: PluginContext) => Promise<PluginContext> {
+ * const myPlugin = async (ctx: PluginContext) => Promise<PluginResult> {
  *	if (ctx.phrase !== "doesn't match with my definition")
  *		return ctx.fail("syntax error");
  *
@@ -22,7 +28,7 @@ import type { Statement } from '@slangroom/core';
  * }
  * ```
  */
-export type Plugin = (ctx: PluginContext) => PluginResult | Promise<PluginResult>;
+export type PluginExecutor = (ctx: PluginContext) => PluginResult | Promise<PluginResult>;
 
 // Todo: Maybe we should adapt some sort of monad library.
 
@@ -140,7 +146,7 @@ export class PluginContextImpl implements PluginContext {
 	#zparams: ZenParams = { data: {}, keys: {} };
 
 	constructor(stmt: Statement, zparams: ZenParams) {
-		this.phrase = stmt.phrase.toLowerCase();
+		this.phrase = stmt.phrase;
 		this.#openconnect = stmt.openconnect;
 		this.#bindings = stmt.bindings;
 		this.#zparams = zparams;
