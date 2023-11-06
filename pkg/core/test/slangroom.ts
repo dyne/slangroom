@@ -104,7 +104,7 @@ test('runs all unknown statements', async (t) => {
 	};
 
 	const script = `
-Rule caller restroom-mw
+Rule unknown ignore
 Given I A and output into 'a'
 
 Given I have a 'string' named 'a'
