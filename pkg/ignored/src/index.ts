@@ -1,8 +1,4 @@
-import { Lexer } from '@slangroom/deps/chevrotain';
-import { vocab } from '@slangroom/ignored/tokens';
 import { zencodeExec, type ZenParams } from '@slangroom/shared';
-
-const IgnoredLexer = new Lexer(vocab);
 
 /**
  * Finds statements ignored by Zenroom in the provided contract.
@@ -22,20 +18,21 @@ export const getIgnoredStatements = async (
 	// throw if Zenroom execution fails (but we do fail if something other than
 	// that happens).  When Zenroom fails, the ZenroomError type's message
 	// contains the logs.
-	let logs: string;
+	let logs: string[];
 	try {
 		// TODO: the zencodeExec() call could potentially be optimized, as
 		// zencodeExec() parses the output result.  Keep in mind: optimization bad.
 		const zout = await zencodeExec(contract, params);
-		logs = zout.logs;
+		logs = JSON.parse(zout.logs);
 	} catch (e) {
 		// Currently, only ZenError is available.
 		// Normally, I'd let this code be, but we're trying to achieve 100%
 		// coverage, so my "future-proof" code needs to be commented out here.
 		// if (!(e instanceof ZenroomError))
 		// 	throw e;
-		logs = e.message;
+		logs = JSON.parse(e.message);
 	}
-	const lexed = IgnoredLexer.tokenize(logs);
-	return lexed.tokens.map((s) => s.image);
+	const regexIgnored = /(?<=\[W\] Zencode line [0-9]+ pattern ignored: ).*/
+	return logs.flatMap(log => log.match(regexIgnored) || [])
 };
+
