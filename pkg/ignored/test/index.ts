@@ -24,7 +24,7 @@ Then print the data
 
 test("zenroom doesn't ignore ecdh but ignores restroom statements", async (t) => {
 	// Given I have a contract with ecdh and restroom statements
-	const contract = `# Always use 'Rule caller restroom-mw' when using Restroom
+	const contract = `# Always use 'Rule unknown ignore' when using Restroom
 Rule unknown ignore
 # we'll need to create a keyring to produce an ECDSA signature later
 Scenario 'ecdh': Create the keyring

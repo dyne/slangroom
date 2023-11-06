@@ -4,7 +4,7 @@ import { ethereum } from '@slangroom/ethereum';
 
 test('Retrieve a zenroom object', async (t) => {
 	const script = `
-Rule caller restroom-mw
+Rule unknown ignore
 Scenario ethereum
 Given I connect to 'fabchain' and send transaction_id 'my_tag' and read the ethereum bytes and output into 'poem_bytes'
 Given I have a 'hex' named 'poem bytes'
@@ -33,7 +33,7 @@ Then print data
 
 test('Store an object on eth', async (t) => {
 	const script = `
-Rule caller restroom-mw
+Rule unknown ignore
 Scenario ethereum
 Given I connect to 'fabchain' and send address 'my_address' and read the ethereum nonce and output into 'ethereum_nonce'
 Given I have the 'keyring'
@@ -73,7 +73,7 @@ Then I connect to 'fabchain' and send transaction 'signed_ethereum_transaction' 
 
 test('Make slangroom fail', async (t) => {
 	const script = `
-Rule caller restroom-mw
+Rule unknown ignore
 Scenario ethereum
 Given I connect to 'fabchain' and send address 'my_address' and read the ethereum  and output into 'ethereum_nonce'
 Given nothing

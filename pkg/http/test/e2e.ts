@@ -21,7 +21,7 @@ nock('http://localhost')
 
 test('Full script that uses http plugin', async (t) => {
 	const script = `
-Rule caller restroom-mw
+Rule unknown ignore
 Given I connect to 'greeting_es' and do get and output into 'es'
 Given I connect to 'greeting_en' and do get and output into 'en'
 
@@ -62,7 +62,7 @@ Then I connect to 'final_endpoints' and send object 'string_array' and do parall
 
 test('Send auth header', async (t) => {
 	const script = `
-Rule caller restroom-mw
+Rule unknown ignore
 Given I connect to 'auth_url' and send headers 'headers' and do get and output into 'auth'
 
 Given I have a 'string dictionary' named 'auth'
