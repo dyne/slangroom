@@ -4,7 +4,7 @@ import { parser } from '@slangroom/wallet';
 import bs58 from 'bs58'
 import { DisclosureFrame, Hasher, Signer, base64encode } from '@meeco/sd-jwt';
 import { createHash } from 'crypto';
-import { JWTHeaderParameters, JWTPayload, KeyLike, SignJWT, exportJWK, importJWK } from 'jose';
+import { JWTHeaderParameters, JWTPayload, KeyLike, SignJWT, exportJWK, generateKeyPair } from 'jose';
 import {
 	CreateSDJWTPayload,
 	HasherConfig,
@@ -34,15 +34,14 @@ const hasher: HasherConfig = {
   };
 
 const createVCSDJWT = async (ctx: PluginContext): Promise<PluginResult> => {
-	const jwk = ctx.fetch('jwk') as JsonableObject
 	const object = ctx.fetch('object') as JsonableObject
 	const holder = ctx.fetch('holder') as string
 	const fields = ctx.fetch('fields') as JsonableArray
 	// TODO: generate in another statement
-	const sk = await importJWK(jwk)
+	const keyPair = await generateKeyPair(supportedAlgorithm.EdDSA);
 	const signer: SignerConfig = {
 		alg: supportedAlgorithm.EdDSA,
-		callback: signerCallbackFn(sk),
+		callback: signerCallbackFn(keyPair.privateKey),
 	};
 	const issuer = new Issuer(signer, hasher);
 
