@@ -85,6 +85,10 @@ export class Slangroom {
 		}
 		throw new Error('no statements matched');
 	}
+
+	getParser() {
+		return this.#parser;
+	}
 }
 
 const requirifyZenParams = (params?: Partial<ZenParams>): Required<ZenParams> => {

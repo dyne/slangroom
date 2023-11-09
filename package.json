@@ -14,6 +14,7 @@
 		"test": "pnpm build && pnpm -F @slangroom/* exec ava build/esm/test",
 		"coverage": "c8 -r text -r lcov -o .coverage --exclude '**/test/' pnpm test",
 		"clean": "rm -rf .coverage && pnpm -F @slangroom/* exec -- rm -rf build",
+    "docs": "node docs/generate_syntax.mjs",
 		"build": "pnpm build:esm",
 		"build:dual": "pnpm build:esm && pnpm build:cjs",
 		"build:cjs": "pnpm -F @slangroom/* exec tsc --outDir build/cjs --module commonjs && pnpm cjs-fixup",
