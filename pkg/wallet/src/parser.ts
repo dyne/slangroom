@@ -8,6 +8,7 @@ export function parser(this: Parser) {
 			{ ALT: () => this.SUBRULE(verifyVcSdJwt), },
 			{ ALT: () => this.SUBRULE(keyGen), },
 			{ ALT: () => this.SUBRULE(pkGen), },
+			{ ALT: () => this.SUBRULE(prettyPrintSdJwt), },
 		])
 		this.into();
 	});
@@ -52,6 +53,13 @@ export function parser(this: Parser) {
 		this.sendpassn(3, 'issuer');
 		this.token('verify');
 		this.token('vc');
+		this.token('sd');
+		this.token('jwt');
+	})
+	const prettyPrintSdJwt = this.RULE('prettyPrintSdJwt', () => {
+		this.sendpass('token');
+		this.token('pretty');
+		this.token('print');
 		this.token('sd');
 		this.token('jwt');
 	})

@@ -79,14 +79,14 @@ function kbVeriferCallbackFn(expectedAud: string, expectedNonce: string): KeyBin
 }
 
 const createVCSDJWT = async (ctx: PluginContext): Promise<PluginResult> => {
+	const sk = ctx.fetch('jwk') as JsonableObject
 	const object = ctx.fetch('object') as JsonableObject
 	const holder = ctx.fetch('holder') as JsonableObject
 	const fields = ctx.fetch('fields') as JsonableArray
 	// TODO: generate in another statement
-	const keyPair = await generateKeyPair(supportedAlgorithm.EdDSA);
 	const signer: SignerConfig = {
 		alg: supportedAlgorithm.ES256,
-		callback: signerCallbackFn(sk),
+		callback: signerCallbackFn(await importJWK(sk)),
 	};
 	const issuer = new Issuer(signer, hasher);
 
@@ -141,15 +141,7 @@ const presentVCSDJWT = async (ctx: PluginContext): Promise<PluginResult> => {
 			value: disclose[2],
 			disclosure: encoded,
 		})
-		/*
-		disclosureList.push({
-			key: disclosed[i]?.['key']?.toString() || "",
-			value: disclosed[i]?.['value']?.toString() || "",
-			disclosure: '',
-		})
-		*/
 	}
-	console.log(disclosureList)
 
 	const signer: SignerConfig = {
 		alg: supportedAlgorithm.ES256,
@@ -174,18 +166,13 @@ const verifyVCSDJWT = async (ctx: PluginContext): Promise<PluginResult> => {
 
 	const verifier = new Verifier();
 
-	console.log(issuer)
-	console.log(nonce)
-	console.log(issuedVc)
 	const result = await verifier.verifyVCSDJWT(
 		issuedVc,
 		verifierCallbackFn(issuerPubKey),
 		hasherCallbackFn(defaultHashAlgorithm),
 		kbVeriferCallbackFn(verifierUrl, nonce),
 	);
-	console.log(result)
-
-	return ctx.fail("Fuffa")
+	return ctx.pass(result as JsonableObject)
 }
 
 const keyGen = async (ctx: PluginContext) : Promise<PluginResult> => {
@@ -213,6 +200,32 @@ const pubGen = async (ctx: PluginContext) : Promise<PluginResult> => {
 		crv: (sk['crv'] as string) || "",
 	})
 }
+
+const prettyPrintSdJwt = async (ctx: PluginContext) : Promise<PluginResult> => {
+	const jwt = ctx.fetch('token') as string;
+	const tokens = jwt.split("~");
+	const result = []
+	const tryDecode = (s: string) => {
+		try {
+			return JSON.parse(atob(s));
+		} catch (e) {
+			return s;
+		}
+	}
+	for(let i=0; i<tokens.length; i++) {
+		if(tokens[i]) {
+			const parts = tokens[i]?.split(".") || []
+			if(parts.length == 1) {
+				result.push(tryDecode(parts[0] || ""))
+			} else {
+				result.push(parts.map(tryDecode) || [])
+			}
+		}
+	}
+	return ctx.pass(result);
+
+}
+
 export const wallet: Plugin = {
 	parser: parser,
 	executor: async (ctx) => {
@@ -227,6 +240,8 @@ export const wallet: Plugin = {
 				return await keyGen(ctx);
 			case 'create p-256 public key':
 				return await pubGen(ctx);
+			case 'pretty print sd jwt':
+				return await prettyPrintSdJwt(ctx);
 			default:
 				return ctx.fail('no match');
 		}
