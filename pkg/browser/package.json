@@ -4,7 +4,7 @@
 		"@slangroom/core": "workspace:*",
 		"@slangroom/http": "workspace:*"
 	},
-	"version": "1.7.1",
+	"version": "1.8.0",
 	"repository": "https://github.com/dyne/slangroom",
 	"license": "AGPL-3.0-only",
 	"type": "module",
