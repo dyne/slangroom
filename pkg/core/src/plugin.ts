@@ -1,34 +1,150 @@
-import type { Jsonable, ZenParams } from '@slangroom/shared';
-import { Parser, type Statement } from '@slangroom/core';
+import type { Jsonable } from '@slangroom/shared';
+import type { Ast } from '@slangroom/core';
 
-/**
- * A Plugin definition.
- */
-export type Plugin = {
-	parser: (this: Parser) => void;
-	executor: PluginExecutor;
+export type PluginMapKey = {
+	phrase: string;
+	params?: string[];
+	openconnect?: 'open' | 'connect';
 };
 
-/**
- * @example
- * ```ts
- * const myPlugin = async (ctx: PluginContext) => Promise<PluginResult> {
- *	if (ctx.phrase !== "doesn't match with my definition")
- *		return ctx.fail("syntax error");
- *
- *	const filePath = ctx.fetch("path");
- *	if (typeof filePath !== "string")
- *		return ctx.fail("file must be string")$
- *
- *	const [err, result] = writeFile(filePath, "hello, world!");
- *	if (err)
- *		return ctx.fail(err);
- *
- *	return ctx.pass(result);
- * }
- * ```
- */
+export class DuplicatePluginError extends Error {
+	constructor({ openconnect, params, phrase }: PluginMapKey) {
+		super(
+			`duplicated plugin with key: openconnect=${openconnect ?? ''} params=${[
+				...(params ?? []),
+			].join(', ')} phrase="${phrase}"`
+		);
+		this.name = 'DubplicatePluginError';
+	}
+}
+
+export class PluginMap {
+	#store: [PluginMapKey, PluginExecutor][] = [];
+
+	#index(their: PluginMapKey) {
+		return this.#store.findIndex(([our]) => {
+			const openconn = their.openconnect === our.openconnect;
+			const params =
+				their.params?.length === our.params?.length &&
+				(their.params ?? []).every((v, i) => v === our.params?.[i]);
+			const phrase = their.phrase === our.phrase;
+			return openconn && params && phrase;
+		});
+	}
+
+	forEach(cb: (value: [PluginMapKey, PluginExecutor]) => void) {
+		this.#store.forEach(cb);
+	}
+
+	get(k: PluginMapKey) {
+		return this.#store[this.#index(k)]?.[1];
+	}
+
+	has(k: PluginMapKey) {
+		return this.#index(k) !== -1;
+	}
+
+	set(k: PluginMapKey, v: PluginExecutor) {
+		if (this.has(k)) throw new DuplicatePluginError(k);
+		this.#store.push([k, v]);
+	}
+}
+
 export type PluginExecutor = (ctx: PluginContext) => PluginResult | Promise<PluginResult>;
+
+export class Plugin {
+	store = new PluginMap();
+
+	new(phrase: string, executor: PluginExecutor): PluginExecutor;
+	new(params: string[], phrase: string, executor: PluginExecutor): PluginExecutor;
+	new(openconnect: 'open' | 'connect', phrase: string, executor: PluginExecutor): PluginExecutor;
+	new(
+		openconnect: 'open' | 'connect',
+		params: string[],
+		phrase: string,
+		executor: PluginExecutor
+	): PluginExecutor;
+	new(
+		phraseOrParamsOrOpenconnect: string | string[] | 'open' | 'connect',
+		executorOrPhraseOrParams: PluginExecutor | string | string[],
+		executorOrPhrase?: PluginExecutor | string,
+		executor?: PluginExecutor
+	): PluginExecutor {
+		let openconnect: PluginMapKey['openconnect'];
+		let params: undefined | string[];
+		let phrase: string;
+
+		if (
+			// The 4th clause:
+			typeof phraseOrParamsOrOpenconnect === 'string' &&
+			(phraseOrParamsOrOpenconnect === 'open' || phraseOrParamsOrOpenconnect === 'connect') &&
+			Array.isArray(executorOrPhraseOrParams) &&
+			typeof executorOrPhrase === 'string' &&
+			executor
+		) {
+			openconnect = phraseOrParamsOrOpenconnect;
+			params = executorOrPhraseOrParams;
+			phrase = executorOrPhrase;
+		} else if (
+			// The 3rd clause:
+			typeof phraseOrParamsOrOpenconnect === 'string' &&
+			(phraseOrParamsOrOpenconnect === 'open' || phraseOrParamsOrOpenconnect === 'connect') &&
+			typeof executorOrPhraseOrParams === 'string' &&
+			typeof executorOrPhrase === 'function'
+		) {
+			openconnect = phraseOrParamsOrOpenconnect;
+			phrase = executorOrPhraseOrParams;
+			executor = executorOrPhrase;
+		} else if (
+			// The 2nd clause:
+			Array.isArray(phraseOrParamsOrOpenconnect) &&
+			typeof executorOrPhraseOrParams === 'string' &&
+			typeof executorOrPhrase === 'function'
+		) {
+			params = phraseOrParamsOrOpenconnect;
+			phrase = executorOrPhraseOrParams;
+			executor = executorOrPhrase;
+		} else if (
+			// The 1st clause:
+			typeof phraseOrParamsOrOpenconnect === 'string' &&
+			typeof executorOrPhraseOrParams === 'function'
+		) {
+			phrase = phraseOrParamsOrOpenconnect;
+			executor = executorOrPhraseOrParams;
+		} else {
+			throw new Error('unreachable');
+		}
+
+		if (phrase.split(' ').some((x) => !x.match(/^[0-9a-z]+$/)))
+			throw new Error(
+				'phrase must composed of alpha-numerical values split by a single space'
+			);
+
+		const key: PluginMapKey = { phrase: phrase };
+		if (openconnect) key.openconnect = openconnect;
+		if (params) {
+			// TODO: allow underscore only in between words
+			if (params.some((x) => !x.match(/^[0-9a-z_]+$/)))
+				throw new Error('params must composed of alpha-numerical and underscore values');
+			const duplicates = [
+				...params.reduce((acc, cur) => {
+					const found = acc.get(cur);
+					if (found) acc.set(cur, found + 1);
+					else acc.set(cur, 1);
+					return acc;
+				}, new Map<string, number>()),
+			].reduce((acc, cur) => {
+				if (cur[1] > 1) acc.push(cur[0]);
+				return acc;
+			}, [] as string[]);
+			if (duplicates.length)
+				throw new Error(`params must not have duplicate values: ${duplicates.join(', ')}`);
+			key.params = params;
+		}
+		this.store.set(key, executor);
+		return executor;
+	}
+}
 
 // Todo: Maybe we should adapt some sort of monad library.
 
@@ -43,11 +159,6 @@ export type ResultErr = { ok: false; error: any };
  * The Plugin Context.  It has every info a Plugin needs, plus some utilities.
  */
 export type PluginContext = {
-	/**
-	 * The Phrase part of a Statement.
-	 */
-	phrase: string;
-
 	/**
 	 * Gets the value of the Open or Connect part of a Statement, if available.
 	 *
@@ -118,45 +229,10 @@ export type PluginContext = {
  * `'myProxy'`.
  */
 export class PluginContextImpl implements PluginContext {
-	/**
-	 * {@inheritDoc PluginContext.phrase}
-	 */
-	readonly phrase: string;
+	#ast: Ast;
 
-	/**
-	 * The name of the identifier used to reference the Open or Connect
-	 * parameters (via {@link #zparams}).  It is an rhs value.
-	 */
-	#openconnect: string | undefined = undefined;
-
-	/**
-	 * A map between parameters that should be provided to a statetment and
-	 * identifiers.
-	 *
-	 * @remarks
-	 * Such as `address => 'myAddress'` and `proxy => 'foobar'`.  The ones on
-	 * the lhs are what the statement needs, and the ones on the rhs are the
-	 * identifiers provided to the contract (via [[#data]] or [[#keys]]).
-	 */
-	#bindings = new Map<string, string>();
-
-	/**
-	 * The ZenParams.
-	 */
-	#zparams: ZenParams = { data: {}, keys: {} };
-
-	constructor(stmt: Statement, zparams: ZenParams) {
-		this.phrase = stmt.phrase;
-		this.#openconnect = stmt.openconnect;
-		this.#bindings = stmt.bindings;
-		this.#zparams = zparams;
-	}
-
-	/**
-	 * Gets the value referenced by {@link name} from {@link #zparams}.
-	 */
-	#getDataKeys(rhs: string): undefined | Jsonable {
-		return this.#zparams.data[rhs] ? this.#zparams.data[rhs] : this.#zparams.keys[rhs];
+	constructor(ast: Ast) {
+		this.#ast = ast;
 	}
 
 	/**
@@ -177,17 +253,7 @@ export class PluginContextImpl implements PluginContext {
 	 * {@inheritDoc PluginContext.getConnect}
 	 */
 	getConnect(): string[] {
-		if (!this.#openconnect) return [];
-		const val = this.#getDataKeys(this.#openconnect);
-		if (typeof val === 'string') return [val];
-		if (Array.isArray(val)) {
-			if (val.every((x) => typeof x === 'string')) return val as string[];
-			else
-				throw new Error(
-					`the array referenced by ${this.#openconnect} must solely composed of strings`
-				);
-		}
-		return [];
+		return this.#ast.connect || [];
 	}
 
 	/**
@@ -203,23 +269,23 @@ export class PluginContextImpl implements PluginContext {
 	 * {@inheritDoc PluginContext.getOpen}
 	 */
 	getOpen(): string[] {
-		return this.getConnect();
+		return this.#ast.open || [];
 	}
 
 	/**
 	 * {@inheritDoc PluginContext.fetchOpen}
 	 */
 	fetchOpen(): [string, ...string[]] {
-		return this.fetchConnect();
+		const val = this.getOpen();
+		if (val.length === 0) throw new Error('a connect is required');
+		return val as [string, ...string[]];
 	}
 
 	/**
 	 * {@inheritDoc PluginContext.get}
 	 */
 	get(lhs: string): undefined | Jsonable {
-		const rhs = this.#bindings.get(lhs);
-		if (!rhs) return undefined;
-		return this.#getDataKeys(rhs);
+		return this.#ast.params.get(lhs);
 	}
 
 	/**
