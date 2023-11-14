@@ -4,7 +4,7 @@
 		"@slangroom/core": "workspace:*",
 		"@slangroom/http": "workspace:*"
 	},
-	"version": "1.8.2",
+	"version": "1.9.1",
 	"repository": "https://github.com/dyne/slangroom",
 	"license": "AGPL-3.0-only",
 	"type": "module",
@@ -34,6 +34,6 @@
 		"esbuild": "^0.18.4"
 	},
 	"scripts": {
-		"build": "pnpm exec esbuild --bundle src/index.ts --outfile=build/slangroom.js --target=es2016 --external:fs --external:path --external:crypto && cp build/slangroom.js public/"
+		"build": "pnpm exec esbuild --bundle src/index.ts --outfile=build/slangroom.js --target=es2016 --external:fs --external:path --external:crypto && cp build/slangroom.js public"
 	}
 }
