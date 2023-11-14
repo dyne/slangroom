@@ -2,6 +2,8 @@ name: 🧪 Lint and test
 
 on:
   push:
+    branches:
+      - main
   pull_request:
 
 concurrency:
@@ -63,7 +65,7 @@ jobs:
     - name: Build all
       run: pnpm i
     - name: Build all
-      run: pnpm build-all
+      run: pnpm build
     - name: Release
       run: |
         git config --global user.email "dev@dyne.org" && git config --global user.name "Dev Dyne.org"

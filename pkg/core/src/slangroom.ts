@@ -11,10 +11,7 @@ export class Slangroom {
 		const p = this.#plugins;
 		[first, ...rest].forEach(function recurse(x) {
 			if (Array.isArray(x)) x.forEach(recurse);
-			else
-				x.store.forEach(([k, v]) => {
-					p.set(k, v);
-				});
+			else x.store.forEach(([k, v]) => p.set(k, v));
 		});
 	}
 
@@ -55,8 +52,8 @@ export class Slangroom {
 }
 
 const requirifyZenParams = (params?: Partial<ZenParams>): Required<ZenParams> => {
-	if (!params) return { data: {}, keys: {} };
+	if (!params) return { data: {}, keys: {}, conf: '', extra: {} };
 	if (!params.data) params.data = {};
 	if (!params.keys) params.keys = {};
-	return params as ZenParams;
+	return { extra: {}, conf: '', ...params } as Required<ZenParams>;
 };

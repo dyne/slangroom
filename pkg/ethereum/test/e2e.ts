@@ -63,7 +63,7 @@ Then I connect to 'fabchain' and send transaction 'signed_ethereum_transaction' 
 			'gas limit': '100000',
 			'gas price': '1000000000',
 			'gwei value': '0',
-			storage_contract: '0x662c4017c01ba23c94257289dab8c2757b472b81',
+			storage_contract: '0x662c4017C01bA23c94257289Dab8C2757b472B81',
 			data: 'Nel mezzo del cammin di nostra vita\nmi ritrovai per una selva oscura,\nché la diritta via era smarrita.',
 		},
 	});

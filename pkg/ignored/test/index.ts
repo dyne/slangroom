@@ -4,15 +4,15 @@ import { getIgnoredStatements } from '@slangroom/ignored';
 test("zenroom ignores statements it doesn't know in general", async (t) => {
 	// Given I have a contract with a general rule unknown statemets in it
 	const uknowns = [
-		'When I test the rule with a statement that does not exist 1',
-		'When I test the rule with a statement that does not exist 2',
-		'When I test the rule with a statement that does not exist 2',
-		'When I test the rule with a statement that does not exist 3',
+		'Given I test the rule with a statement that does not exist 1',
+		'Given I test the rule with a statement that does not exist 2',
+		'Given I test the rule with a statement that does not exist 2',
+		'Given I test the rule with a statement that does not exist 3',
 	];
 	const contract = `Rule unknown ignore
 
-Given nothing
 ${uknowns.join('\n')}
+Given nothing
 When I write string 'test passed' in 'result'
 Then print the data
 `;
@@ -24,25 +24,24 @@ Then print the data
 
 test("zenroom doesn't ignore ecdh but ignores restroom statements", async (t) => {
 	// Given I have a contract with ecdh and restroom statements
-	const contract = `# Always use 'Rule caller restroom-mw' when using Restroom
-Rule caller restroom-mw
-
-
+	const contract = `# Always use 'Rule unknown ignore' when using Restroom
+Rule unknown ignore
 # we'll need to create a keyring to produce an ECDSA signature later
 Scenario 'ecdh': Create the keyring
-Given that I am known as 'Alice'
 
 # Those are restroom-mw statements: define the endpoints
 Given that I have an endpoint named 'endpoint'
 Given that I have an endpoint named 'timeServer'
 
-# We need those object to store the output of the endpoints
-Given I have a 'string dictionary' named 'dataFromEndpoint'
-Given I have a 'string dictionary' named 'timestamp-output'
-
 # Those are restroom-mw statements: connect to endpoints and store their output into Zenroom's objects
 Given I connect to 'endpoint' and save the output into 'dataFromEndpoint'
 Given I connect to 'timeServer' and save the output into 'timestamp-output'
+
+Given that I am known as 'Alice'
+
+# We need those object to store the output of the endpoints
+Given I have a 'string dictionary' named 'dataFromEndpoint'
+Given I have a 'string dictionary' named 'timestamp-output'
 
 # The output of a GET is always an object containing the string 'status' (200, 404, 500 etc)
 # as well as the output of the query, named 'result' which can be meaningful data or an error message.

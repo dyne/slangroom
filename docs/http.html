@@ -1,0 +1,386 @@
+
+<!-- This is a generated file -->
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+  body {
+    background-color: hsl(30, 20%, 95%)
+  }
+</style>
+
+
+<link rel='stylesheet' href='https://unpkg.com/chevrotain@10.5.0/diagrams/diagrams.css'>
+
+<script src='https://unpkg.com/chevrotain@10.5.0/diagrams/vendor/railroad-diagrams.js'></script>
+<script src='https://unpkg.com/chevrotain@10.5.0/diagrams/src/diagrams_builder.js'></script>
+<script src='https://unpkg.com/chevrotain@10.5.0/diagrams/src/diagrams_behavior.js'></script>
+<script src='https://unpkg.com/chevrotain@10.5.0/diagrams/src/main.js'></script>
+
+<div id="diagrams" align="center"></div>    
+
+<script>
+    window.serializedGrammar = [
+  {
+    "type": "Rule",
+    "name": "statement",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "NonTerminal",
+                "name": "httpPhrase",
+                "idx": 0
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "httpPhrase",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "Terminal",
+        "name": "Connect",
+        "label": "Connect",
+        "idx": 255,
+        "pattern": "connect"
+      },
+      {
+        "type": "Terminal",
+        "name": "To",
+        "label": "To",
+        "idx": 255,
+        "pattern": "to"
+      },
+      {
+        "type": "Terminal",
+        "name": "Identifier",
+        "label": "Identifier",
+        "idx": 255,
+        "terminalLabel": "connect",
+        "pattern": "'(?:[^\\\\']|\\\\(?:[bfnrtv'\\\\/]|u[0-9a-fA-F]{4}))*'"
+      },
+      {
+        "type": "Terminal",
+        "name": "And",
+        "label": "And",
+        "idx": 255,
+        "pattern": "and"
+      },
+      {
+        "type": "Option",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Alternation",
+            "idx": 0,
+            "definition": [
+              {
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "Terminal",
+                    "name": "Send",
+                    "label": "Send",
+                    "idx": 0,
+                    "terminalLabel": "sendpass0",
+                    "pattern": "send"
+                  }
+                ]
+              },
+              {
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "Terminal",
+                    "name": "Pass",
+                    "label": "Pass",
+                    "idx": 0,
+                    "terminalLabel": "sendpass0",
+                    "pattern": "pass"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "Terminal",
+            "name": "Object",
+            "label": "Object",
+            "idx": 0,
+            "terminalLabel": "sendpass0.parameter",
+            "pattern": "object"
+          },
+          {
+            "type": "Terminal",
+            "name": "Identifier",
+            "label": "Identifier",
+            "idx": 0,
+            "terminalLabel": "sendpass0.identifier",
+            "pattern": "'(?:[^\\\\']|\\\\(?:[bfnrtv'\\\\/]|u[0-9a-fA-F]{4}))*'"
+          },
+          {
+            "type": "Terminal",
+            "name": "And",
+            "label": "And",
+            "idx": 0,
+            "terminalLabel": "sendpass0.and",
+            "pattern": "and"
+          }
+        ]
+      },
+      {
+        "type": "Option",
+        "idx": 1,
+        "definition": [
+          {
+            "type": "Alternation",
+            "idx": 1,
+            "definition": [
+              {
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "Terminal",
+                    "name": "Send",
+                    "label": "Send",
+                    "idx": 1,
+                    "terminalLabel": "sendpass1",
+                    "pattern": "send"
+                  }
+                ]
+              },
+              {
+                "type": "Alternative",
+                "definition": [
+                  {
+                    "type": "Terminal",
+                    "name": "Pass",
+                    "label": "Pass",
+                    "idx": 1,
+                    "terminalLabel": "sendpass1",
+                    "pattern": "pass"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "Terminal",
+            "name": "Headers",
+            "label": "Headers",
+            "idx": 1,
+            "terminalLabel": "sendpass1.parameter",
+            "pattern": "headers"
+          },
+          {
+            "type": "Terminal",
+            "name": "Identifier",
+            "label": "Identifier",
+            "idx": 1,
+            "terminalLabel": "sendpass1.identifier",
+            "pattern": "'(?:[^\\\\']|\\\\(?:[bfnrtv'\\\\/]|u[0-9a-fA-F]{4}))*'"
+          },
+          {
+            "type": "Terminal",
+            "name": "And",
+            "label": "And",
+            "idx": 1,
+            "terminalLabel": "sendpass1.and",
+            "pattern": "and"
+          }
+        ]
+      },
+      {
+        "type": "Terminal",
+        "name": "Do",
+        "label": "Do",
+        "idx": 0,
+        "pattern": "do"
+      },
+      {
+        "type": "Option",
+        "idx": 2,
+        "definition": [
+          {
+            "type": "NonTerminal",
+            "name": "httpKind",
+            "idx": 0
+          }
+        ]
+      },
+      {
+        "type": "NonTerminal",
+        "name": "httpMethod",
+        "idx": 0
+      },
+      {
+        "type": "Terminal",
+        "name": "And",
+        "label": "And",
+        "idx": 254,
+        "pattern": "and"
+      },
+      {
+        "type": "Terminal",
+        "name": "Output",
+        "label": "Output",
+        "idx": 254,
+        "pattern": "output"
+      },
+      {
+        "type": "Terminal",
+        "name": "Into",
+        "label": "Into",
+        "idx": 254,
+        "pattern": "into"
+      },
+      {
+        "type": "Terminal",
+        "name": "Identifier",
+        "label": "Identifier",
+        "idx": 254,
+        "terminalLabel": "into",
+        "pattern": "'(?:[^\\\\']|\\\\(?:[bfnrtv'\\\\/]|u[0-9a-fA-F]{4}))*'"
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "httpMethod",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "Get",
+                "label": "Get",
+                "idx": 0,
+                "pattern": "get"
+              }
+            ]
+          },
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "Post",
+                "label": "Post",
+                "idx": 0,
+                "pattern": "post"
+              }
+            ]
+          },
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "Patch",
+                "label": "Patch",
+                "idx": 0,
+                "pattern": "patch"
+              }
+            ]
+          },
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "Put",
+                "label": "Put",
+                "idx": 0,
+                "pattern": "put"
+              }
+            ]
+          },
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "Delete",
+                "label": "Delete",
+                "idx": 0,
+                "pattern": "delete"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "Rule",
+    "name": "httpKind",
+    "orgText": "",
+    "definition": [
+      {
+        "type": "Alternation",
+        "idx": 0,
+        "definition": [
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "Sequential",
+                "label": "Sequential",
+                "idx": 0,
+                "pattern": "sequential"
+              }
+            ]
+          },
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "Parallel",
+                "label": "Parallel",
+                "idx": 0,
+                "pattern": "parallel"
+              }
+            ]
+          },
+          {
+            "type": "Alternative",
+            "definition": [
+              {
+                "type": "Terminal",
+                "name": "Same",
+                "label": "Same",
+                "idx": 0,
+                "pattern": "same"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+];
+</script>
+
+<script>
+    var diagramsDiv = document.getElementById("diagrams");
+    main.drawDiagramsFromSerializedGrammar(serializedGrammar, diagramsDiv);
+</script>

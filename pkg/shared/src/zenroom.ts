@@ -25,12 +25,19 @@ export class ZenError extends Error {
  * Zenroom parameters suitable for [[zencode_exec]] (after the values of data
  * and keys have been piped to [[JSON.stringify]])
  */
-export type ZenParams = { data: JsonableObject; keys: JsonableObject };
+export type ZenParams = {
+	data: JsonableObject;
+	keys: JsonableObject;
+	extra?: JsonableObject;
+	conf?: string;
+};
 
 const stringify = (params: ZenParams) => {
 	return {
 		data: JSON.stringify(params.data),
 		keys: JSON.stringify(params.keys),
+		extra: JSON.stringify(params.extra || {}),
+		conf: params.conf || "",
 	};
 };
 

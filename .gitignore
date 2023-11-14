@@ -40,3 +40,9 @@
 !/pkg/browser/playwright.config.ts
 !/pkg/browser/tests/**
 !/pkg/browser/public/index.html
+
+# shitdocs
+!/docs/*.html
+!/docs/*.mjs
+!/docs/*.json
+

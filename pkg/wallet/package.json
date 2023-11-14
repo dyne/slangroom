@@ -1,10 +1,14 @@
 {
-	"name": "@slangroom/browser",
-	"dependencies": {
-		"@slangroom/core": "workspace:*",
-		"@slangroom/http": "workspace:*"
-	},
+	"name": "@slangroom/wallet",
 	"version": "1.8.0",
+	"dependencies": {
+		"@meeco/sd-jwt": "^0.0.3",
+		"@meeco/sd-jwt-vc": "^0.0.4",
+		"@slangroom/core": "workspace:*",
+		"@slangroom/shared": "workspace:*",
+		"bs58": "^5.0.0",
+		"jose": "^5.1.0"
+	},
 	"repository": "https://github.com/dyne/slangroom",
 	"license": "AGPL-3.0-only",
 	"type": "module",
@@ -26,13 +30,5 @@
 	},
 	"publishConfig": {
 		"access": "public"
-	},
-	"devDependencies": {
-		"@playwright/test": "^1.39.0",
-		"@types/node": "^20.3.1",
-		"esbuild": "^0.18.4"
-	},
-	"scripts": {
-		"build": "pnpm exec esbuild --bundle src/index.ts --outfile=public/slangroom.js --target=es2016 --external:fs --external:path --external:crypto"
 	}
 }
