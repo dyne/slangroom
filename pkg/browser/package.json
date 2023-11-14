@@ -15,12 +15,14 @@
 		".": {
 			"import": {
 				"types": "./build/esm/src/index.d.ts",
+	"browser": "./build/slangroom.js",
 				"default": "./build/esm/src/index.js"
 			}
 		},
 		"./*": {
 			"import": {
 				"types": "./build/esm/src/*.d.ts",
+	"browser": "./build/slangroom.js",
 				"default": "./build/esm/src/*.js"
 			}
 		}
