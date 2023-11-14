@@ -4,16 +4,16 @@
 		"@slangroom/core": "workspace:*",
 		"@slangroom/http": "workspace:*"
 	},
-	"version": "1.9.2",
+	"version": "1.9.3",
 	"repository": "https://github.com/dyne/slangroom",
 	"license": "AGPL-3.0-only",
 	"type": "module",
 	"main": "./build/esm/src/index.js",
 	"browser": "./build/slangroom.js",
 	"types": "./build/esm/src/index.d.ts",
-  "files": [
-    "./build/**/*.js"
-  ],
+	"files": [
+		"./build/**/*.js"
+	],
 	"exports": {
 		".": {
 			"import": {
