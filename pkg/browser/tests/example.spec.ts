@@ -5,6 +5,6 @@ test('check results of slangroom', async ({ page }) => {
 
 	// Expects page to have a heading with the name of Installation.
 	await expect(page.locator('#test1')).toContainText(
-		'did:dyne:sandbox.test:pEn78CGNEKvMR7DJQ1yvUVUpAHKzsBz45mQw3zD2js9'
+		'did:dyne:sandbox.test:pEn78CGNEKvMR7DJQ1yvUVUpAHKzsBz45mQw3zD2js9',
 	);
 });
