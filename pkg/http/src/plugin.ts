@@ -1,7 +1,10 @@
-import { JsonableArray } from '@slangroom/shared';
-import type { Plugin, PluginContext, PluginResult } from '@slangroom/core';
-import { parser } from '@slangroom/http';
+import type { JsonableArray } from '@slangroom/shared';
+import { Plugin, type PluginExecutor } from '@slangroom/core';
 import axios, { type AxiosRequestConfig } from 'axios';
+
+export type HttpMethod = 'get' | 'post' | 'put' | 'patch' | 'delete';
+
+const p = new Plugin();
 
 /**
  * The default timeout of an HTTP request in milliseconds.
@@ -14,64 +17,39 @@ const { request } = axios.create({
 	timeout: DefaultTimeoutMs,
 });
 
-/**
- * @internal
- */
-export const execute = async (
-	ctx: PluginContext,
-	kind: 'default' | 'sequential' | 'parallel' | 'same',
-	method: 'get' | 'post' | 'put' | 'patch' | 'delete'
-): Promise<PluginResult> => {
-	const url = ctx.fetchConnect()[0];
-	const headers = ctx.get('headers');
-	if (kind === 'default') {
+const defaultRequest = (m: HttpMethod): PluginExecutor => {
+	return async (ctx) => {
+		const url = ctx.fetchConnect()[0];
+		// TODO: typecheck headers
+		const headers = ctx.get('headers') as any;
+		const object = ctx.get('object');
 		let error: any = null;
-		const requestData: AxiosRequestConfig = {
-			url: url,
-			method: method,
-			data: ctx.get('object') as any,
-		};
-		if (headers) requestData['headers'] = headers as any;
-		const req = await request(requestData).catch((e) => (error = e));
+		const conf: AxiosRequestConfig = { url: url, method: m };
+		if (object) conf.data = object;
+		if (headers) conf.headers = headers;
+		const req = await request(conf).catch((e) => (error = e));
 		const zenResult = error
 			? { status: error.code, error: '' }
 			: { status: req.status, result: req.data || '' };
 		return ctx.pass(zenResult);
-	} else if (kind === 'sequential') {
-		throw new Error('Not yet implemented');
-	} else {
+	};
+};
+
+const parallelRequest = (m: HttpMethod): PluginExecutor => {
+	return async (ctx) => {
 		const reqs = [];
 		const urls = ctx.fetchConnect();
-		if (kind === 'parallel') {
-			// TODO: check type of body (needs to be JsonableArray of
-			// JsonableObject)
-			const objects = ctx.fetch('object') as JsonableArray;
-			for (const [i, u] of urls.entries()) {
-				const requestData: AxiosRequestConfig = {
-					url: u,
-					method: method,
-					data: objects[i],
-				};
-				if (headers) {
-					requestData['headers'] = headers as any;
-				}
-				reqs.push(request(requestData));
-			}
-		} else {
-			// TODO: check type of body (needs to be JsonableObject)
-			const object = ctx.fetch('object') as JsonableArray;
-			for (const u of urls) {
-				const requestData: AxiosRequestConfig = {
-					url: u,
-					method: method,
-					data: object,
-				};
-				if (headers) {
-					requestData['headers'] = headers as any;
-				}
-				reqs.push(request(requestData));
-			}
+		// TODO: typecheck object (JsonableArray of JsonableObject)
+		const objects = ctx.get('object') as undefined | JsonableArray;
+		// TODO: typecheck headers
+		const headers = ctx.get('headers') as any;
+		for (const [i, u] of urls.entries()) {
+			const conf: AxiosRequestConfig = { url: u, method: m };
+			if (objects) conf.data = objects[i];
+			if (headers) conf.headers = headers;
+			reqs.push(request(conf));
 		}
+
 		const results: JsonableArray = new Array(reqs.length);
 		const errors: { [key: number]: any } = {};
 		const parallelWithCatch = reqs.map((v, i) => v.catch((e) => (errors[i] = e)));
@@ -83,31 +61,88 @@ export const execute = async (
 			results[i] = zenResult;
 		});
 		return ctx.pass(results);
-	}
+	};
 };
 
-export const http: Plugin = {
-	parser: parser,
-	executor: async (ctx) => {
-		switch (ctx.phrase) {
-			case 'do get':
-				return await execute(ctx, 'default', 'get');
-			case 'do sequential get':
-				return await execute(ctx, 'sequential', 'get');
-			case 'do parallel get':
-				return await execute(ctx, 'parallel', 'get');
-			case 'do same get':
-				return await execute(ctx, 'same', 'get');
-			case 'do post':
-				return await execute(ctx, 'default', 'post');
-			case 'do sequential post':
-				return await execute(ctx, 'sequential', 'post');
-			case 'do parallel post':
-				return await execute(ctx, 'parallel', 'post');
-			case 'do same post':
-				return await execute(ctx, 'same', 'post');
-			default:
-				return ctx.fail('no match');
+const sameRequest = (m: HttpMethod): PluginExecutor => {
+	return async (ctx) => {
+		const reqs = [];
+		const urls = ctx.fetchConnect();
+		// TODO: typecheck object (JsonableArray of JsonableObject)
+		const object = ctx.get('object') as undefined | JsonableArray;
+		// TODO: typecheck headers
+		const headers = ctx.get('headers') as any;
+		for (const u of urls) {
+			const conf: AxiosRequestConfig = { url: u, method: m };
+			if (object) conf.data = object;
+			if (headers) conf.headers = headers;
+			reqs.push(request(conf));
 		}
-	},
+
+		const results: JsonableArray = new Array(reqs.length);
+		const errors: { [key: number]: any } = {};
+		const parallelWithCatch = reqs.map((v, i) => v.catch((e) => (errors[i] = e)));
+		const parallelResults = await axios.all(parallelWithCatch);
+		parallelResults.map((r, i) => {
+			const zenResult = errors[i]
+				? { status: errors[i].code, result: '' }
+				: { status: r.status, result: r.data || '' };
+			results[i] = zenResult;
+		});
+		return ctx.pass(results);
+	};
 };
+
+/**
+ * @internal
+ */
+export const defaults = {} as {
+	[K in
+		| HttpMethod
+		| `${HttpMethod}Object`
+		| `${HttpMethod}Headers`
+		| `${HttpMethod}ObjectHeaders`]: PluginExecutor;
+};
+
+/*
+ * @internal
+ */
+export const sequentials = {} as typeof defaults;
+
+/**
+ * @internal
+ */
+export const parallels = {} as typeof defaults;
+
+/**
+ * @internal
+ */
+export const sames = {} as typeof defaults;
+
+(['get', 'post', 'put', 'patch', 'delete'] as HttpMethod[]).forEach((m) => {
+	[defaults, sequentials, parallels, sames].forEach((x) => {
+		let phrase: string, cb: PluginExecutor;
+		if (x === defaults) {
+			phrase = `do ${m}`;
+			cb = defaultRequest(m);
+		} else if (x === sequentials) {
+			phrase = `do sequential ${m}`;
+			cb = (ctx) => ctx.fail('not implemented');
+		} else if (x === parallels) {
+			phrase = `do parallel ${m}`;
+			cb = parallelRequest(m);
+		} else if (x === sames) {
+			phrase = `do same ${m}`;
+			cb = sameRequest(m);
+		} else {
+			throw new Error('unreachable');
+		}
+
+		x[m] = p.new('connect', phrase, cb);
+		x[`${m}Object`] = p.new('connect', ['object'], phrase, cb);
+		x[`${m}Headers`] = p.new('connect', ['headers'], phrase, cb);
+		x[`${m}ObjectHeaders`] = p.new('connect', ['object', 'headers'], phrase, cb);
+	});
+});
+
+export const http = p;
