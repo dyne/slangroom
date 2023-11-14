@@ -21,7 +21,7 @@ Given I have a 'string' named 'vcsdjwt'
 Given I have a 'string dictionary' named 'pretty_jwt'
 Then print data
 `;
-	const nonce = 'nIdBbNgRqCXBl8YOkfVdg=='
+	const nonce = 'nIdBbNgRqCXBl8YOkfVdg==';
 	const slangroom = new Slangroom(wallet);
 	const res = await slangroom.execute(scriptCreate, {
 		keys: {
@@ -29,12 +29,11 @@ Then print data
 				name: 'test person',
 				age: 25,
 			},
-			fields: ['name', 'age']
-		}
+			fields: ['name', 'age'],
+		},
 	});
 	t.truthy(res.result['vcsdjwt']);
 	t.is((res.result['pretty_jwt'] as JsonableArray).length, 3);
-
 
 	const scriptPrepare = `
 Rule unknown ignore
@@ -45,12 +44,12 @@ Then print data
 `;
 	const res2 = await slangroom.execute(scriptPrepare, {
 		keys: {
-			disclosed: ["name"],
+			disclosed: ['name'],
 			nonce,
 			verifier_url: 'https://valid.verifier.url',
 			holder_jwk: res.result['holder_jwk'] || {},
-			issued_vc: res.result['vcsdjwt'] || "",
-		}
+			issued_vc: res.result['vcsdjwt'] || '',
+		},
 	});
 	t.truthy(res2.result['presentation']);
 
@@ -66,9 +65,8 @@ Then print data
 			nonce,
 			verifier_url: 'https://valid.verifier.url',
 			issuer_jwk: res.result['issuer_public_jwk'] || {},
-			presentation: res2.result['presentation'] || "",
-		}
+			presentation: res2.result['presentation'] || '',
+		},
 	});
 	t.truthy(res3.result['verification']);
-
 });

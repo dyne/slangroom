@@ -16,7 +16,7 @@ export class Lexicon {
 				name: 'Whitespace',
 				pattern: /\s+/,
 				group: Lexer.SKIPPED,
-			})
+			}),
 		);
 
 		this.#store.set(
@@ -25,7 +25,7 @@ export class Lexicon {
 				name: 'Comment',
 				pattern: /#[^\n\r]*/,
 				group: 'comments',
-			})
+			}),
 		);
 
 		this.#store.set(
@@ -33,7 +33,7 @@ export class Lexicon {
 			createToken({
 				name: 'Identifier',
 				pattern: /'(?:[^\\']|\\(?:[bfnrtv'\\/]|u[0-9a-fA-F]{4}))*'/,
-			})
+			}),
 		);
 	}
 

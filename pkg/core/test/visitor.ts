@@ -37,7 +37,7 @@ test('ast is okay: phrase and connect are given', (t) => {
 				this.token('ethereum');
 				this.token('balance');
 			});
-		}
+		},
 	);
 	t.deepEqual(ast, {
 		openconnect: 'foo',
@@ -75,7 +75,7 @@ test('ast is okay: phrase and bindings are given', (t) => {
 				this.token('ethereum');
 				this.token('balance');
 			});
-		}
+		},
 	);
 	t.deepEqual(ast, {
 		phrase: 'read the ethereum balance',
@@ -99,7 +99,7 @@ test('ast is okay: phrase and connect and bindings are all given', (t) => {
 				this.token('ethereum');
 				this.token('balance');
 			});
-		}
+		},
 	);
 	t.deepEqual(ast, {
 		openconnect: 'foo',
@@ -124,7 +124,7 @@ test('ast is okay: phrase and open and bindings are all given', (t) => {
 				this.token('ethereum');
 				this.token('balance');
 			});
-		}
+		},
 	);
 	t.deepEqual(ast, {
 		openconnect: 'foo',

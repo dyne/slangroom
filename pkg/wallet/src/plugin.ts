@@ -1,9 +1,26 @@
 import type { Plugin, PluginContext, PluginResult } from '@slangroom/core';
 import { parser } from '@slangroom/wallet';
 
-import { DisclosureFrame, Hasher, KeyBindingVerifier, Signer, base64encode, decodeJWT } from '@meeco/sd-jwt';
+import {
+	DisclosureFrame,
+	Hasher,
+	KeyBindingVerifier,
+	Signer,
+	base64encode,
+	decodeJWT,
+} from '@meeco/sd-jwt';
 import { createHash } from 'crypto';
-import { JWTHeaderParameters, JWTPayload, KeyLike, SignJWT, exportJWK, importJWK, generateKeyPair, JWK, jwtVerify } from 'jose';
+import {
+	JWTHeaderParameters,
+	JWTPayload,
+	KeyLike,
+	SignJWT,
+	exportJWK,
+	importJWK,
+	generateKeyPair,
+	JWK,
+	jwtVerify,
+} from 'jose';
 import {
 	CreateSDJWTPayload,
 	HasherConfig,
@@ -26,12 +43,16 @@ const hasherCallbackFn = function (alg: string = defaultHashAlgorithm): Hasher {
 
 const signerCallbackFn = function (privateKey: Uint8Array | KeyLike): Signer {
 	return async (protectedHeader: JWTHeaderParameters, payload: JWTPayload): Promise<string> => {
-		return (await new SignJWT(payload).setProtectedHeader(protectedHeader).sign(privateKey)).split('.').pop() || "";
+		return (
+			(await new SignJWT(payload).setProtectedHeader(protectedHeader).sign(privateKey))
+				.split('.')
+				.pop() || ''
+		);
 	};
 };
 const hasher: HasherConfig = {
-    alg: 'sha256',
-    callback: hasherCallbackFn('sha256'),
+	alg: 'sha256',
+	callback: hasherCallbackFn('sha256'),
 };
 
 const keyBindingVerifierCallbackFn = function (): KeyBindingVerifier {
@@ -79,17 +100,16 @@ function kbVeriferCallbackFn(expectedAud: string, expectedNonce: string): KeyBin
 }
 
 const createVCSDJWT = async (ctx: PluginContext): Promise<PluginResult> => {
-	const sk = ctx.fetch('jwk') as JsonableObject
-	const object = ctx.fetch('object') as JsonableObject
-	const holder = ctx.fetch('holder') as JsonableObject
-	const fields = ctx.fetch('fields') as JsonableArray
+	const sk = ctx.fetch('jwk') as JsonableObject;
+	const object = ctx.fetch('object') as JsonableObject;
+	const holder = ctx.fetch('holder') as JsonableObject;
+	const fields = ctx.fetch('fields') as JsonableArray;
 	// TODO: generate in another statement
 	const signer: SignerConfig = {
 		alg: supportedAlgorithm.ES256,
 		callback: signerCallbackFn(await importJWK(sk)),
 	};
 	const issuer = new Issuer(signer, hasher);
-
 
 	const payload: CreateSDJWTPayload = {
 		iat: Date.now(),
@@ -101,10 +121,10 @@ const createVCSDJWT = async (ctx: PluginContext): Promise<PluginResult> => {
 	const vcClaims: VCClaims = {
 		type: 'VerifiableCredential',
 		status: {
-		idx: 'statusIndex',
-		uri: 'https://valid.status.url',
+			idx: 'statusIndex',
+			uri: 'https://valid.status.url',
 		},
-		object
+		object,
 	};
 
 	const sdVCClaimsDisclosureFrame: DisclosureFrame = { object: { _sd: fields } };
@@ -112,35 +132,34 @@ const createVCSDJWT = async (ctx: PluginContext): Promise<PluginResult> => {
 	const result = await issuer.createVCSDJWT(vcClaims, payload, sdVCClaimsDisclosureFrame);
 
 	return ctx.pass(result);
-}
-
+};
 
 const presentVCSDJWT = async (ctx: PluginContext): Promise<PluginResult> => {
-	const verifierUrl = ctx.fetch('verifier url') as string
-	const issuedVc = ctx.fetch('issued vc') as string
-	const disclosed = ctx.fetch('disclosed') as JsonableObject[]
-	const nonce = ctx.fetch('nonce') as string
-	const holderSk = ctx.fetch('holder') as JsonableObject
+	const verifierUrl = ctx.fetch('verifier url') as string;
+	const issuedVc = ctx.fetch('issued vc') as string;
+	const disclosed = ctx.fetch('disclosed') as JsonableObject[];
+	const nonce = ctx.fetch('nonce') as string;
+	const holderSk = ctx.fetch('holder') as JsonableObject;
 
 	const pk = await importJWK(holderSk);
-	const disclosureList = []
+	const disclosureList = [];
 
-	const tildeTokens = issuedVc.split("~")
+	const tildeTokens = issuedVc.split('~');
 
-	for(let i = 1; i < tildeTokens.length; i++) {
-		const encoded = tildeTokens[i] || "";
-		if(!encoded) {
-			continue
+	for (let i = 1; i < tildeTokens.length; i++) {
+		const encoded = tildeTokens[i] || '';
+		if (!encoded) {
+			continue;
 		}
-		const disclose = JSON.parse(atob(encoded))
-		if(!disclosed.includes(disclose[1])) {
-			continue
+		const disclose = JSON.parse(atob(encoded));
+		if (!disclosed.includes(disclose[1])) {
+			continue;
 		}
 		disclosureList.push({
 			key: disclose[1],
 			value: disclose[2],
 			disclosure: encoded,
-		})
+		});
 	}
 
 	const signer: SignerConfig = {
@@ -155,14 +174,14 @@ const presentVCSDJWT = async (ctx: PluginContext): Promise<PluginResult> => {
 		keyBindingVerifyCallbackFn: keyBindingVerifierCallbackFn(),
 	});
 	return ctx.pass(vcSDJWTWithkeyBindingJWT);
-}
+};
 
 const verifyVCSDJWT = async (ctx: PluginContext): Promise<PluginResult> => {
-	const verifierUrl = ctx.fetch('verifier url') as string
-	const issuedVc = ctx.fetch('issued vc') as string
-	const nonce = ctx.fetch('nonce') as string
-	const issuer = ctx.fetch('issuer') as JsonableObject
-	const issuerPubKey = await importJWK(issuer)
+	const verifierUrl = ctx.fetch('verifier url') as string;
+	const issuedVc = ctx.fetch('issued vc') as string;
+	const nonce = ctx.fetch('nonce') as string;
+	const issuer = ctx.fetch('issuer') as JsonableObject;
+	const issuerPubKey = await importJWK(issuer);
 
 	const verifier = new Verifier();
 
@@ -172,59 +191,58 @@ const verifyVCSDJWT = async (ctx: PluginContext): Promise<PluginResult> => {
 		hasherCallbackFn(defaultHashAlgorithm),
 		kbVeriferCallbackFn(verifierUrl, nonce),
 	);
-	return ctx.pass(result as JsonableObject)
-}
+	return ctx.pass(result as JsonableObject);
+};
 
-const keyGen = async (ctx: PluginContext) : Promise<PluginResult> => {
+const keyGen = async (ctx: PluginContext): Promise<PluginResult> => {
 	// Elliptic Curve Digital Signature Algorithm with the P-256 curve and the SHA-256 hash function
 	const keyPair = await generateKeyPair(supportedAlgorithm.ES256);
 
-	const sk = await exportJWK(keyPair.privateKey)
+	const sk = await exportJWK(keyPair.privateKey);
 
 	return ctx.pass({
-		kty: sk.kty || "EC",
-		crv: sk.crv || "P-256",
-		x: sk.x || "",
-		y: sk.y || "",
-		d: sk.d || ""
-	})
-}
+		kty: sk.kty || 'EC',
+		crv: sk.crv || 'P-256',
+		x: sk.x || '',
+		y: sk.y || '',
+		d: sk.d || '',
+	});
+};
 
-const pubGen = async (ctx: PluginContext) : Promise<PluginResult> => {
-	const sk = ctx.fetch('sk') as JsonableObject
+const pubGen = async (ctx: PluginContext): Promise<PluginResult> => {
+	const sk = ctx.fetch('sk') as JsonableObject;
 
 	return ctx.pass({
-		kty: (sk['kty'] as string) || "",
-		x: (sk['x'] as string) || "",
-		y: (sk['y'] as string) || "",
-		crv: (sk['crv'] as string) || "",
-	})
-}
+		kty: (sk['kty'] as string) || '',
+		x: (sk['x'] as string) || '',
+		y: (sk['y'] as string) || '',
+		crv: (sk['crv'] as string) || '',
+	});
+};
 
-const prettyPrintSdJwt = async (ctx: PluginContext) : Promise<PluginResult> => {
+const prettyPrintSdJwt = async (ctx: PluginContext): Promise<PluginResult> => {
 	const jwt = ctx.fetch('token') as string;
-	const tokens = jwt.split("~");
-	const result = []
+	const tokens = jwt.split('~');
+	const result = [];
 	const tryDecode = (s: string) => {
 		try {
 			return JSON.parse(atob(s));
 		} catch (e) {
 			return s;
 		}
-	}
-	for(let i=0; i<tokens.length; i++) {
-		if(tokens[i]) {
-			const parts = tokens[i]?.split(".") || []
-			if(parts.length == 1) {
-				result.push(tryDecode(parts[0] || ""))
+	};
+	for (let i = 0; i < tokens.length; i++) {
+		if (tokens[i]) {
+			const parts = tokens[i]?.split('.') || [];
+			if (parts.length == 1) {
+				result.push(tryDecode(parts[0] || ''));
 			} else {
-				result.push(parts.map(tryDecode) || [])
+				result.push(parts.map(tryDecode) || []);
 			}
 		}
 	}
 	return ctx.pass(result);
-
-}
+};
 
 export const wallet: Plugin = {
 	parser: parser,

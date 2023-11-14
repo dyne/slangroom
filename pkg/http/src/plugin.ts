@@ -20,7 +20,7 @@ const { request } = axios.create({
 export const execute = async (
 	ctx: PluginContext,
 	kind: 'default' | 'sequential' | 'parallel' | 'same',
-	method: 'get' | 'post' | 'put' | 'patch' | 'delete'
+	method: 'get' | 'post' | 'put' | 'patch' | 'delete',
 ): Promise<PluginResult> => {
 	const url = ctx.fetchConnect()[0];
 	const headers = ctx.get('headers');

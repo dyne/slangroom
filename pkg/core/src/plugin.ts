@@ -184,7 +184,7 @@ export class PluginContextImpl implements PluginContext {
 			if (val.every((x) => typeof x === 'string')) return val as string[];
 			else
 				throw new Error(
-					`the array referenced by ${this.#openconnect} must solely composed of strings`
+					`the array referenced by ${this.#openconnect} must solely composed of strings`,
 				);
 		}
 		return [];

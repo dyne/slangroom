@@ -92,8 +92,8 @@ export class Slangroom {
 }
 
 const requirifyZenParams = (params?: Partial<ZenParams>): Required<ZenParams> => {
-	if (!params) return { data: {}, keys: {}, conf: "", extra: {} };
+	if (!params) return { data: {}, keys: {}, conf: '', extra: {} };
 	if (!params.data) params.data = {};
 	if (!params.keys) params.keys = {};
-	return {extra: {}, conf: "", ...params} as Required<ZenParams>;
+	return { extra: {}, conf: '', ...params } as Required<ZenParams>;
 };

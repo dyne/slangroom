@@ -83,7 +83,7 @@ test('single post with data', async (t) => {
 test('multiple post with data', async (t) => {
 	const ctx = new PluginContextTest(
 		['http://localhost/sendresult', 'http://localhost/normaljson'],
-		{ object: { myData: 'foobar' } }
+		{ object: { myData: 'foobar' } },
 	);
 	const res = await execute(ctx, 'same', 'post');
 	t.deepEqual(res, {
@@ -102,7 +102,7 @@ test('POSTs with custom different', async (t) => {
 			'http://localhost/normaljson',
 			'http://localhost/sendresult',
 		],
-		{ object: [{ myData: 'foobar' }, { myData: 'foobar' }, { mData: 'foobar' }] }
+		{ object: [{ myData: 'foobar' }, { myData: 'foobar' }, { mData: 'foobar' }] },
 	);
 	const res = await execute(ctx, 'parallel', 'post');
 	t.deepEqual(res, {

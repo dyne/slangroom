@@ -73,7 +73,7 @@ export const visit = (parser: Parser, cst: StatementCst): Statement => {
 					} else {
 						phraseAcc.push(v.image.toLowerCase());
 					}
-				})(phrase, x)
+				})(phrase, x),
 			);
 
 			const stmt: Statement = {

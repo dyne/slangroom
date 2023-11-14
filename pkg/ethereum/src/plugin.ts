@@ -22,7 +22,7 @@ export const execute = async (
 		| 'erc20symbol'
 		| 'erc20decimals'
 		| 'erc20name'
-		| 'erc20totalSupply'
+		| 'erc20totalSupply',
 ): Promise<PluginResult> => {
 	const web3 = new Web3(ctx.fetchConnect()[0]);
 
@@ -44,7 +44,7 @@ export const execute = async (
 		const addresses = ctx.fetch('addresses');
 		if (Array.isArray(addresses)) {
 			const balances = await Promise.all(
-				addresses.map((addr) => web3.eth.getBalance(addr as string))
+				addresses.map((addr) => web3.eth.getBalance(addr as string)),
 			);
 			return ctx.pass(balances.map((b) => b.toString()) as JsonableArray);
 		}
@@ -53,7 +53,7 @@ export const execute = async (
 	if (kind === 'ethBytes') {
 		const tag = ctx.fetch('transaction_id') as string;
 		const receipt = await web3.eth.getTransactionReceipt(
-			tag.startsWith('0x') ? tag : '0x' + tag
+			tag.startsWith('0x') ? tag : '0x' + tag,
 		);
 		if (!receipt) return ctx.fail("Transaction id doesn't exist");
 		if (!receipt.status) return ctx.fail('Failed transaction');
@@ -68,7 +68,7 @@ export const execute = async (
 	if (kind === 'ethBroadcast') {
 		const rawtx = ctx.fetch('transaction') as string;
 		const receipt = await web3.eth.sendSignedTransaction(
-			rawtx.startsWith('0x') ? rawtx : '0x' + rawtx
+			rawtx.startsWith('0x') ? rawtx : '0x' + rawtx,
 		);
 		if (receipt.status) {
 			return ctx.pass(receipt.transactionHash.toString().substring(2)); // Remove 0x
@@ -113,7 +113,7 @@ export const execute = async (
 		if (!isAddress(sc)) throw new Error(`Not an ethereum address ${sc}`);
 		const erc20 = new web3.eth.Contract(erc20abi, sc);
 		return ctx.pass(
-			(await erc20.methods[erc20_0.get(kind) || '']?.().call())?.toString() || ''
+			(await erc20.methods[erc20_0.get(kind) || '']?.().call())?.toString() || '',
 		);
 	}
 
