@@ -11,18 +11,19 @@
 	"main": "./build/esm/src/index.js",
 	"browser": "./build/slangroom.js",
 	"types": "./build/esm/src/index.d.ts",
+  "files": [
+    "./build/**/*.js"
+  ],
 	"exports": {
 		".": {
 			"import": {
 				"types": "./build/esm/src/index.d.ts",
-				"browser": "./build/slangroom.js",
 				"default": "./build/esm/src/index.js"
 			}
 		},
 		"./*": {
 			"import": {
 				"types": "./build/esm/src/*.d.ts",
-				"browser": "./build/slangroom.js",
 				"default": "./build/esm/src/*.js"
 			}
 		}
