@@ -115,17 +115,18 @@ export class Plugin {
 			throw new Error('unreachable');
 		}
 
-		if (phrase.split(' ').some((x) => !x.match(/^[0-9a-z]+$/)))
+		// TODO: allow dashes only in between words
+		if (phrase.split(' ').some((x) => !x.match(/^[0-9a-z-]+$/)))
 			throw new Error(
-				'phrase must composed of alpha-numerical values split by a single space'
+				'phrase must composed of alpha-numerical and dashes values split by a single space'
 			);
 
 		const key: PluginMapKey = { phrase: phrase };
 		if (openconnect) key.openconnect = openconnect;
 		if (params) {
-			// TODO: allow underscore only in between words
-			if (params.some((x) => !x.match(/^[0-9a-z_]+$/)))
-				throw new Error('params must composed of alpha-numerical and underscore values');
+			// TODO: allow underscore and spaces (only one) only in between words
+			if (params.some((x) => !x.match(/^[0-9a-z_ ]+$/)))
+				throw new Error('params must composed of alpha-numerical, underscore, and space values');
 			const duplicates = [
 				...params.reduce((acc, cur) => {
 					const found = acc.get(cur);

@@ -18,12 +18,11 @@ test('Plugin.new() phrase alpha-numerical checks work', (t) => {
 		'trailing tabs	',
 		'	leading and trailing tabs	',
 		"some 'identifiers' in between",
-		'non-word stuff!',
 	].forEach((x) => {
 		const err = t.throws(() => new Plugin().new(x, (ctx) => ctx.pass(null)), {
 			instanceOf: Error,
 		}) as Error;
-		t.is(err.message, 'phrase must composed of alpha-numerical values split by a single space');
+		t.is(err.message, 'phrase must composed of alpha-numerical and dashes values split by a single space');
 	});
 });
 
@@ -61,16 +60,16 @@ test('Plugin.new() params duplicates detected', (t) => {
 test('Plugin.new() params alpha-numerical checks work', (t) => {
 	[
 		'',
-		' ',
-		'	',
+		// ' ',
+		// '	',
 		'\n',
 		'NoN Lower cAse',
-		'double  spacing',
+		// 'double  spacing',
 		'tabs	in between',
 		'new\nlines',
-		' leading spaces',
-		'trailing spaces ',
-		' leading and trailing spaces ',
+		// ' leading spaces',
+		// 'trailing spaces ',
+		// ' leading and trailing spaces ',
 		'	leading tabs',
 		'trailing tabs	',
 		'	leading and trailing tabs	',
@@ -81,7 +80,7 @@ test('Plugin.new() params alpha-numerical checks work', (t) => {
 			() => new Plugin().new([x], 'doesnt matter', (ctx) => ctx.pass(null)),
 			{ instanceOf: Error }
 		) as Error;
-		t.is(err.message, 'params must composed of alpha-numerical and underscore values');
+		t.is(err.message, 'params must composed of alpha-numerical, underscore, and space values');
 	});
 
 	// underscore is allowed
