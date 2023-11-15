@@ -4,7 +4,9 @@ export class ParseError extends Error {
 	static wrong(have: Token, wantFirst: string, ...wantRest: string[]) {
 		const wants = [wantFirst, ...wantRest];
 		return new ParseError(
-			`"${have.raw}" between (${have.start}, ${have.end}) must be one of: ${wants.join(', ')}`
+			`"${have.raw}" between (${have.start}, ${have.end}) must be one of: ${wants.join(
+				', ',
+			)}`,
 		);
 	}
 
@@ -96,13 +98,16 @@ export const parse = (p: PluginMap, t: Token[]): Cst => {
 				if (t[++i]?.name !== 'and') newErr(t[i], 'and');
 			}
 
-			// Send $buzzword 'ident'
+			// Send $buzzword 'ident' And
+			// TODO: allow spaces in between params
 			const params = new Set(k.params);
 			k.params?.forEach((name) => {
 				if (t[++i]?.name !== 'send') newErr(t[i], 'send');
+
 				const tokName = t[++i];
 				if (tokName && params.has(tokName.name)) params.delete(tokName.name);
 				else newErr(t[i], name);
+
 				const ident = t[++i];
 				if (ident?.isIdent) m.bindings.set(name, ident.raw.slice(1, -1));
 				else newErr(ident, '<identifier>');

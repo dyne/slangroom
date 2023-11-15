@@ -12,7 +12,7 @@ export class DuplicatePluginError extends Error {
 		super(
 			`duplicated plugin with key: openconnect=${openconnect ?? ''} params=${[
 				...(params ?? []),
-			].join(', ')} phrase="${phrase}"`
+			].join(', ')} phrase="${phrase}"`,
 		);
 		this.name = 'DubplicatePluginError';
 	}
@@ -62,13 +62,13 @@ export class Plugin {
 		openconnect: 'open' | 'connect',
 		params: string[],
 		phrase: string,
-		executor: PluginExecutor
+		executor: PluginExecutor,
 	): PluginExecutor;
 	new(
 		phraseOrParamsOrOpenconnect: string | string[] | 'open' | 'connect',
 		executorOrPhraseOrParams: PluginExecutor | string | string[],
 		executorOrPhrase?: PluginExecutor | string,
-		executor?: PluginExecutor
+		executor?: PluginExecutor,
 	): PluginExecutor {
 		let openconnect: PluginMapKey['openconnect'];
 		let params: undefined | string[];
@@ -115,18 +115,20 @@ export class Plugin {
 			throw new Error('unreachable');
 		}
 
-		// TODO: allow dashes only in between words
-		if (phrase.split(' ').some((x) => !x.match(/^[0-9a-z-]+$/)))
+		// TODO: allow dashes and underscores only in between words
+		if (phrase.split(' ').some((x) => !x.match(/^[0-9a-z_-]+$/)))
 			throw new Error(
-				'phrase must composed of alpha-numerical and dashes values split by a single space'
+				'phrase must composed of alpha-numerical, underscore, and dash values split by a single space',
 			);
 
 		const key: PluginMapKey = { phrase: phrase };
 		if (openconnect) key.openconnect = openconnect;
 		if (params) {
-			// TODO: allow underscore and spaces (only one) only in between words
-			if (params.some((x) => !x.match(/^[0-9a-z_ ]+$/)))
-				throw new Error('params must composed of alpha-numerical, underscore, and space values');
+			// TODO: allow dashes and underscores and only in between words
+			if (params.some((x) => !x.match(/^[0-9a-z_-]+$/)))
+				throw new Error(
+					'each params must composed of alpha-numerical values, optionally split by dashes or underscores',
+				);
 			const duplicates = [
 				...params.reduce((acc, cur) => {
 					const found = acc.get(cur);
