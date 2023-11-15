@@ -38,7 +38,7 @@ Then print data
 	const scriptPrepare = `
 Rule unknown ignore
 
-Given I send verifier url 'verifier_url' and send issued vc 'issued_vc' and send disclosed 'disclosed' and send nonce 'nonce' and send holder 'holder_jwk' and present vc sd jwt and output into 'presentation'
+Given I send verifier_url 'verifier_url' and send issued_vc 'issued_vc' and send disclosed 'disclosed' and send nonce 'nonce' and send holder 'holder_jwk' and present vc sd jwt and output into 'presentation'
 Given I have a 'string' named 'presentation'
 Then print data
 `;
@@ -56,7 +56,7 @@ Then print data
 	const scriptVerify = `
 Rule unknown ignore
 
-Given I send verifier url 'verifier_url' and send issued vc 'presentation' and send nonce 'nonce' and send issuer 'issuer_jwk' and verify vc sd jwt and output into 'verification'
+Given I send verifier_url 'verifier_url' and send issued_vc 'presentation' and send nonce 'nonce' and send issuer 'issuer_jwk' and verify vc sd jwt and output into 'verification'
 Given I have a 'string dictionary' named 'verification'
 Then print data
 `;

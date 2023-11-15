@@ -120,6 +120,7 @@ export const createVcSdJwt = p.new(
 			alg: supportedAlgorithm.ES256,
 			callback: signerCallbackFn(await importJWK(sk)),
 		};
+
 		const issuer = new Issuer(signer, hasher);
 
 		const payload: CreateSDJWTPayload = {
@@ -145,13 +146,13 @@ export const createVcSdJwt = p.new(
  * @internal
  */
 export const presentVcSdJwt = p.new(
-	['verified url', 'issued vc', 'disclosed', 'nonce', 'holder'],
+	['verified_url', 'issued_vc', 'disclosed', 'nonce', 'holder'],
 	'present vc sd jwt',
 	async (ctx) => {
-		const verifierUrl = ctx.fetch('verifier url');
-		if (typeof verifierUrl !== 'string') return ctx.fail('verifier url must be string');
-		const issuedVc = ctx.fetch('issued vc');
-		if (typeof issuedVc !== 'string') return ctx.fail('issued vc must be string');
+		const verifierUrl = ctx.fetch('verifier_url');
+		if (typeof verifierUrl !== 'string') return ctx.fail('verifier_url must be string');
+		const issuedVc = ctx.fetch('issued_vc');
+		if (typeof issuedVc !== 'string') return ctx.fail('issued_vc must be string');
 		const nonce = ctx.fetch('nonce') as string;
 		if (typeof nonce !== 'string') return ctx.fail('nonce must be string');
 		// TODO: typecheck disclosed
@@ -195,13 +196,13 @@ export const presentVcSdJwt = p.new(
  * @internal
  */
 export const verifyVcSdJwt = p.new(
-	['verify url', 'issued vc', 'nonce', 'issuer'],
+	['verify_url', 'issued_vc', 'nonce', 'issuer'],
 	'verify vc sd jwt',
 	async (ctx) => {
-		const verifierUrl = ctx.fetch('verifier url');
-		if (typeof verifierUrl !== 'string') return ctx.fail('verifier url must be string');
-		const issuedVc = ctx.fetch('issued vc');
-		if (typeof issuedVc !== 'string') return ctx.fail('issued vc must be string');
+		const verifierUrl = ctx.fetch('verifier_url');
+		if (typeof verifierUrl !== 'string') return ctx.fail('verifier_url must be string');
+		const issuedVc = ctx.fetch('issued_vc');
+		if (typeof issuedVc !== 'string') return ctx.fail('issued_vc must be string');
 		const nonce = ctx.fetch('nonce');
 		if (typeof nonce !== 'string') return ctx.fail('nonce must be string');
 		// TODO: typecheck issuer
