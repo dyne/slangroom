@@ -498,8 +498,8 @@ test('parser works', (t) => {
 						phrase: 'testing params order',
 					},
 					bindings: new Map([
-						['foo', 'ident'],
 						['bar', 'ident'],
+						['foo', 'ident'],
 					]),
 					err: [],
 				},
