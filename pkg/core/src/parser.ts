@@ -109,7 +109,7 @@ export const parse = (p: PluginMap, t: Token[]): Cst => {
 				else newErr(t[i], name);
 
 				const ident = t[++i];
-				if (ident?.isIdent) m.bindings.set(name, ident.raw.slice(1, -1));
+				if (ident?.isIdent) m.bindings.set(tokName?.name || '', ident.raw.slice(1, -1));
 				else newErr(ident, '<identifier>');
 				if (t[++i]?.name !== 'and') newErr(t[i], 'and');
 			});
