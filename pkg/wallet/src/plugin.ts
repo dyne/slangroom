@@ -146,7 +146,7 @@ export const createVcSdJwt = p.new(
  * @internal
  */
 export const presentVcSdJwt = p.new(
-	['verified_url', 'issued_vc', 'disclosed', 'nonce', 'holder'],
+	['verifier_url', 'issued_vc', 'disclosed', 'nonce', 'holder'],
 	'present vc sd jwt',
 	async (ctx) => {
 		const verifierUrl = ctx.fetch('verifier_url');
@@ -196,7 +196,7 @@ export const presentVcSdJwt = p.new(
  * @internal
  */
 export const verifyVcSdJwt = p.new(
-	['verify_url', 'issued_vc', 'nonce', 'issuer'],
+	['verifier_url', 'issued_vc', 'nonce', 'issuer'],
 	'verify vc sd jwt',
 	async (ctx) => {
 		const verifierUrl = ctx.fetch('verifier_url');
