@@ -488,7 +488,7 @@ test('parser works', (t) => {
 					},
 				],
 			},
-		"Given I send bar 'ident' and send foo 'ident' and testing params order": {
+		"Given I send bar 'bar_ident' and send foo 'foo_ident' and testing params order": {
 			givenThen: 'given',
 			errors: [],
 			matches: [
@@ -498,8 +498,8 @@ test('parser works', (t) => {
 						phrase: 'testing params order',
 					},
 					bindings: new Map([
-						['foo', 'ident'],
-						['bar', 'ident'],
+						['bar', 'bar_ident'],
+						['foo', 'foo_ident'],
 					]),
 					err: [],
 				},

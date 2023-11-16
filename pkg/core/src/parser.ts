@@ -40,15 +40,15 @@ export type Match = {
 	err: ParseError[];
 	into?: string;
 } & (
-	| {
+		| {
 			open?: string;
 			connect?: never;
-	  }
-	| {
+		}
+		| {
 			open?: never;
 			connect?: string;
-	  }
-);
+		}
+	);
 
 export const parse = (p: PluginMap, t: Token[]): Cst => {
 	const cst: Cst = {
@@ -101,16 +101,23 @@ export const parse = (p: PluginMap, t: Token[]): Cst => {
 			// Send $buzzword 'ident' And
 			// TODO: allow spaces in between params
 			const params = new Set(k.params);
-			k.params?.forEach((name) => {
+			k.params?.forEach(() => {
 				if (t[++i]?.name !== 'send') newErr(t[i], 'send');
 
 				const tokName = t[++i];
-				if (tokName && params.has(tokName.name)) params.delete(tokName.name);
-				else newErr(t[i], name);
+				if (tokName && params.has(tokName.name)) {
+					params.delete(tokName.name);
+				} else {
+					const [first, ...rest] = [...params.values()] as [string, ...string[]];
+					newErr(t[i], first, ...rest);
+				}
 
 				const ident = t[++i];
-				if (ident?.isIdent) m.bindings.set(name, ident.raw.slice(1, -1));
-				else newErr(ident, '<identifier>');
+				if (ident?.isIdent) {
+					if (tokName) m.bindings.set(tokName.name, ident.raw.slice(1, -1));
+				} else {
+					newErr(ident, '<identifier>');
+				}
 				if (t[++i]?.name !== 'and') newErr(t[i], 'and');
 			});
 
