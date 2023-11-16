@@ -2,7 +2,11 @@ export class Token {
 	readonly name: string;
 	readonly isIdent: boolean;
 
-	constructor(readonly raw: string, readonly start: number, readonly end: number) {
+	constructor(
+		readonly raw: string,
+		readonly start: number,
+		readonly end: number,
+	) {
 		this.name = this.raw.toLowerCase();
 		this.isIdent = this.raw.charAt(0) === "'";
 	}

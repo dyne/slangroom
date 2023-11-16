@@ -28,7 +28,7 @@ export const ethBytes = p.new(
 		const tag = ctx.fetch('transaction_id');
 		if (typeof tag !== 'string') return ctx.fail('tag must be string');
 		const receipt = await web3.eth.getTransactionReceipt(
-			tag.startsWith('0x') ? tag : '0x' + tag
+			tag.startsWith('0x') ? tag : '0x' + tag,
 		);
 		if (!receipt) return ctx.fail("Transaction id doesn't exist");
 		if (!receipt.status) return ctx.fail('Failed transaction');
@@ -38,7 +38,7 @@ export const ethBytes = p.new(
 		} catch (e) {
 			return ctx.fail('Empty transaction');
 		}
-	}
+	},
 );
 
 /**
@@ -53,7 +53,7 @@ export const ethBalanceAddr = p.new(
 		const addr = ctx.get('address');
 		if (typeof addr !== 'string') return ctx.fail('address must be string');
 		return ctx.pass((await web3.eth.getBalance(addr)).toString());
-	}
+	},
 );
 
 /**
@@ -70,7 +70,7 @@ export const ethBalanceAddrs = p.new(
 			return ctx.fail('addresses must be string array');
 		const balances = await Promise.all(addrs.map((addr) => web3.eth.getBalance(addr)));
 		return ctx.pass(balances.map((b) => b.toString()));
-	}
+	},
 );
 
 /**
@@ -83,7 +83,7 @@ export const ethGasPrice = p.new(
 		const web3 = new Web3(ctx.fetchConnect()[0]);
 		const gasPrice = await web3.eth.getGasPrice();
 		return ctx.pass(gasPrice.toString());
-	}
+	},
 );
 
 /**
@@ -98,15 +98,15 @@ export const ethBrodcast = p.new(
 		const rawtx = ctx.fetch('transaction');
 		if (typeof rawtx !== 'string') return ctx.fail('transaction must be string');
 		const receipt = await web3.eth.sendSignedTransaction(
-			rawtx.startsWith('0x') ? rawtx : '0x' + rawtx
+			rawtx.startsWith('0x') ? rawtx : '0x' + rawtx,
 		);
 		if (!receipt.status) ctx.fail('transaction failed');
 		return ctx.pass(receipt.transactionHash.toString().substring(2)); // remove 0x
-	}
+	},
 );
 
 const erc20helper = (
-	name: 'symbol()' | 'decimals()' | 'name()' | 'totalSupply()' | 'balanceOf()'
+	name: 'symbol()' | 'decimals()' | 'name()' | 'totalSupply()' | 'balanceOf()',
 ): PluginExecutor => {
 	return async (ctx) => {
 		const web3 = new Web3(ctx.fetchConnect()[0]);
@@ -127,7 +127,7 @@ export const erc20decimals = p.new(
 	'connect',
 	['sc'],
 	'read the erc20 decimals',
-	erc20helper('decimals()')
+	erc20helper('decimals()'),
 );
 
 /**
@@ -142,7 +142,7 @@ export const erc20symbol = p.new(
 	'connect',
 	['sc'],
 	'read the erc20 symbol',
-	erc20helper('symbol()')
+	erc20helper('symbol()'),
 );
 
 /**
@@ -152,7 +152,7 @@ export const erc20balance = p.new(
 	'connect',
 	['sc', 'address'],
 	'read the erc20 balance',
-	erc20helper('balanceOf()')
+	erc20helper('balanceOf()'),
 );
 
 /**
@@ -162,7 +162,7 @@ export const erc20totalSupply = p.new(
 	'connect',
 	['sc'],
 	'read the erc20 total supply',
-	erc20helper('totalSupply()')
+	erc20helper('totalSupply()'),
 );
 
 /**
@@ -178,14 +178,14 @@ export const erc721id = p.new(
 		const web3 = new Web3(ctx.fetchConnect()[0]);
 		const tag = ctx.fetch('transaction_id') as string;
 		const receipt = await web3.eth.getTransactionReceipt(
-			tag.startsWith('0x') ? tag : '0x' + tag
+			tag.startsWith('0x') ? tag : '0x' + tag,
 		);
 		const log = receipt.logs.find(
-			(v) => v && v.topics && v.topics.length > 0 && v.topics[0] === ERC721_TRANSFER_EVENT
+			(v) => v && v.topics && v.topics.length > 0 && v.topics[0] === ERC721_TRANSFER_EVENT,
 		);
 		if (!log || !log.topics) return ctx.fail('Token Id not found');
 		return ctx.pass(parseInt(log.topics[3]?.toString() || '', 16));
-	}
+	},
 );
 
 /**
