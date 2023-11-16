@@ -6,15 +6,15 @@ export type Ast = {
 	params: Map<string, Jsonable>;
 	into?: string;
 } & (
-		| {
+	| {
 			open?: [string, ...string[]];
 			connect?: never;
-		}
-		| {
+	  }
+	| {
 			open?: never;
 			connect?: [string, ...string[]];
-		}
-	);
+	  }
+);
 
 export const visit = (cst: Cst, params: ZenParams): Ast => {
 	if (cst.errors.length) throw new Error('cst must not have any general errors');

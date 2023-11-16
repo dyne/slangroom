@@ -12,7 +12,7 @@ test("doesn't allow duplicated plugins", (t) => {
 				instanceOf: DuplicatePluginError,
 			}) as DuplicatePluginError
 		).message,
-		`duplicated plugin with key: openconnect= params= phrase="love asche"`
+		`duplicated plugin with key: openconnect= params= phrase="love asche"`,
 	);
 });
 

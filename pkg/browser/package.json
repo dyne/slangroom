@@ -4,12 +4,16 @@
 		"@slangroom/core": "workspace:*",
 		"@slangroom/http": "workspace:*"
 	},
-	"version": "1.8.0",
+	"version": "1.9.5",
 	"repository": "https://github.com/dyne/slangroom",
 	"license": "AGPL-3.0-only",
 	"type": "module",
 	"main": "./build/esm/src/index.js",
+	"browser": "./build/slangroom.js",
 	"types": "./build/esm/src/index.d.ts",
+	"files": [
+		"./build/**/*.js"
+	],
 	"exports": {
 		".": {
 			"import": {
@@ -33,6 +37,6 @@
 		"esbuild": "^0.18.4"
 	},
 	"scripts": {
-		"build": "pnpm exec esbuild --bundle src/index.ts --outfile=public/slangroom.js --target=es2016 --external:fs --external:path --external:crypto"
+		"build": "pnpm exec esbuild --bundle src/index.ts --outfile=build/slangroom.js --target=es2016 --external:fs --external:path --external:crypto && cp build/slangroom.js public"
 	}
 }

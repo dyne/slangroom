@@ -12,7 +12,7 @@ import { zencodeExec, type ZenParams } from '@slangroom/shared';
  */
 export const getIgnoredStatements = async (
 	contract: string,
-	params: ZenParams
+	params: ZenParams,
 ): Promise<string[]> => {
 	// Since we want to get the list of ignored statements, we don't want to
 	// throw if Zenroom execution fails (but we do fail if something other than
@@ -32,7 +32,6 @@ export const getIgnoredStatements = async (
 		// 	throw e;
 		logs = JSON.parse(e.message);
 	}
-	const regexIgnored = /(?<=\[W\] Zencode line [0-9]+ pattern ignored: ).*/
-	return logs.flatMap(log => log.match(regexIgnored) || [])
+	const regexIgnored = /(?<=\[W\] Zencode line [0-9]+ pattern ignored: ).*/;
+	return logs.flatMap((log) => log.match(regexIgnored) || []);
 };
-
