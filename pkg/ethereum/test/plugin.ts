@@ -1,7 +1,17 @@
 import ava, { TestFn } from 'ava';
 import { Web3 } from 'web3';
 import { PluginContextTest } from '@slangroom/core';
-import { execute } from '@slangroom/ethereum';
+import {
+	erc20decimals,
+	erc20name,
+	erc20symbol,
+	erc20totalSupply,
+	ethBalanceAddr,
+	ethBalanceAddrs,
+	ethBytes,
+	ethGasPrice,
+	ethNonce,
+} from '@slangroom/ethereum';
 
 const test = ava as TestFn<{ web3: Web3 }>;
 
@@ -9,7 +19,7 @@ test('read the ethereum nonce', async (t) => {
 	const ctx = new PluginContextTest('http://78.47.38.223:9485', {
 		address: '0x2D010920b43aFb54f8d5fB51c9354FbC674b28Fc',
 	});
-	const res = await execute(ctx, 'ethNonce');
+	const res = await ethNonce(ctx);
 	t.deepEqual(res, {
 		ok: true,
 		value: '0',
@@ -18,7 +28,7 @@ test('read the ethereum nonce', async (t) => {
 
 test('Ethereum gas price', async (t) => {
 	const ctx = PluginContextTest.connect('http://78.47.38.223:9485');
-	const res = await execute(ctx, 'ethGasPrice');
+	const res = await ethGasPrice(ctx);
 	t.truthy(res.ok);
 	if (res.ok) t.is(typeof res.value, 'string');
 });
@@ -29,7 +39,7 @@ test('Retrieve a zenroom object', async (t) => {
 	const ctx = new PluginContextTest('http://78.47.38.223:9485', {
 		transaction_id: '0x0467636a2557a1ccdaf10ce17ee74340096c510acfa9181c85756d43a8bed522',
 	});
-	const res = await execute(ctx, 'ethBytes');
+	const res = await ethBytes(ctx);
 	t.deepEqual(res, {
 		ok: true,
 		value: poem,
@@ -40,7 +50,7 @@ test('Ethereum balance', async (t) => {
 	const ctx = new PluginContextTest('http://78.47.38.223:9485', {
 		address: '0x2D010920b43aFb54f8d5fB51c9354FbC674b28Fc',
 	});
-	const res = await execute(ctx, 'ethBalance');
+	const res = await ethBalanceAddr(ctx);
 	t.deepEqual(res, {
 		ok: true,
 		value: '1000000000000000000000',
@@ -55,52 +65,64 @@ test('Read the balance of an array of addresses', async (t) => {
 			'0x4743879F5e9dc3fcE41E30380365441E8D14CCEc',
 		],
 	});
-	const res = await execute(ctx, 'ethBalance');
+	const res = await ethBalanceAddrs(ctx);
 	t.truthy(res.ok);
 	if (res.ok) for (const v of res.value as string[]) t.is(typeof v, 'string');
 });
 
-/*
-test("Ethereum transaction id after broadcast", async (t) => {
-	const ast = line2Ast("Ethereum transaction id after broadcast of 'signed tx'");
-	t.deepEqual(ast.value, { kind: EthereumRequestKind.EthereumBroadcast, rawTransaction: 'signed tx'})
-})
-*/
+test('erc20 symbol()', async (t) => {
+	const ctx = new PluginContextTest('http://78.47.38.223:9485', {
+		sc: '0x720F72765775bb85EAAa08BB74442F106d3ffA03',
+	});
+	const res = await erc20symbol(ctx);
+	t.deepEqual(res, {
+		ok: true,
+		value: 'NMT',
+	});
+});
 
-test('Erc20 method without arg', async (t) => {
-	const tokenResult: Partial<{
-		[K in Parameters<typeof execute>[1]]: string;
-	}> = {
-		erc20symbol: 'NMT',
-		erc20name: 'Non movable token',
-		erc20totalSupply: '1000',
-		erc20decimals: '18',
-	};
+test('erc20 name()', async (t) => {
+	const ctx = new PluginContextTest('http://78.47.38.223:9485', {
+		sc: '0x720F72765775bb85EAAa08BB74442F106d3ffA03',
+	});
+	const res = await erc20name(ctx);
+	t.deepEqual(res, {
+		ok: true,
+		value: 'Non movable token',
+	});
+});
 
-	for (const [k, v] of Object.entries(tokenResult)) {
-		const ctx = new PluginContextTest('http://78.47.38.223:9485', {
-			sc: '0x720F72765775bb85EAAa08BB74442F106d3ffA03',
-		});
-		const res = await execute(ctx, k as keyof typeof tokenResult);
-		t.deepEqual(res, {
-			ok: true,
-			value: v,
-		});
-	}
+test('erc20 totalSupply()', async (t) => {
+	const ctx = new PluginContextTest('http://78.47.38.223:9485', {
+		sc: '0x720F72765775bb85EAAa08BB74442F106d3ffA03',
+	});
+	const res = await erc20totalSupply(ctx);
+	t.deepEqual(res, {
+		ok: true,
+		value: '1000',
+	});
+});
+
+test('erc20 decimals()', async (t) => {
+	const ctx = new PluginContextTest('http://78.47.38.223:9485', {
+		sc: '0x720F72765775bb85EAAa08BB74442F106d3ffA03',
+	});
+	const res = await erc20decimals(ctx);
+	t.deepEqual(res, {
+		ok: true,
+		value: '18',
+	});
 });
 
 test('erc20 with invalid address', async (t) => {
-	const ctx = new PluginContextTest('http://78.47.38.223:9485', {
-		sc: '0x720765775bb85EAAa08BB74442F106d3ffA03',
-	});
+	const sc = '0x720765775bb85EAAa08BB74442F106d3ffA03';
+	const ctx = new PluginContextTest('http://78.47.38.223:9485', { sc: sc });
 
-	try {
-		await execute(ctx, 'erc20symbol');
-	} catch (e) {
-		t.truthy(true);
-		return;
-	}
-	t.falsy(true);
+	const res = await erc20symbol(ctx);
+	t.deepEqual(res, {
+		ok: false,
+		error: `sc must be a valid ethereum address: ${sc}`,
+	});
 });
 
 /*test("Erc20 method with arg", async (t) => {

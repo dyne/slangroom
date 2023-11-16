@@ -22,8 +22,13 @@ Given nothing
 When I create the ecdh key
 Then print the 'keyring'
 `;
-	const res = await zencodeExec(contract, { data: {}, extra: {}, keys: {}, conf: "debug=3, rngseed=hex:74eeeab870a394175fae808dd5dd3b047f3ee2d6a8d01e14bff94271565625e98a63babe8dd6cbea6fedf3e19de4bc80314b861599522e44409fdd20f7cd6cfc" });
+	const res = await zencodeExec(contract, {
+		data: {},
+		extra: {},
+		keys: {},
+		conf: 'debug=3, rngseed=hex:74eeeab870a394175fae808dd5dd3b047f3ee2d6a8d01e14bff94271565625e98a63babe8dd6cbea6fedf3e19de4bc80314b861599522e44409fdd20f7cd6cfc',
+	});
 	t.deepEqual(res.result, {
-		keyring: { ecdh: "Aku7vkJ7K01gQehKELav3qaQfTeTMZKgK+5VhaR3Ui0=" }
-	})
+		keyring: { ecdh: 'Aku7vkJ7K01gQehKELav3qaQfTeTMZKgK+5VhaR3Ui0=' },
+	});
 });

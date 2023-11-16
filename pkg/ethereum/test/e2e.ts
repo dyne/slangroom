@@ -3,7 +3,7 @@ import { Slangroom } from '@slangroom/core';
 import { ethereum } from '@slangroom/ethereum';
 
 test('Retrieve a zenroom object', async (t) => {
-	const script = `
+	const contract = `
 Rule unknown ignore
 Scenario ethereum
 Given I connect to 'fabchain' and send transaction_id 'my_tag' and read the ethereum bytes and output into 'poem_bytes'
@@ -13,8 +13,8 @@ When I rename the 'string' to 'poem'
 
 Then print data
 `;
-	const slangroom = new Slangroom(ethereum);
-	const res = await slangroom.execute(script, {
+	const sl = new Slangroom(ethereum);
+	const res = await sl.execute(contract, {
 		data: {
 			fabchain: 'http://78.47.38.223:9485',
 			my_tag: '0467636a2557a1ccdaf10ce17ee74340096c510acfa9181c85756d43a8bed522',
@@ -27,12 +27,12 @@ Then print data
 			poem_bytes:
 				'000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000674e656c206d657a7a6f2064656c2063616d6d696e206469206e6f7374726120766974610a6d6920726974726f7661692070657220756e612073656c7661206f73637572612c0a6368c3a9206c612064697269747461207669612065726120736d6172726974612e00000000000000000000000000000000000000000000000000',
 		},
-		res.logs
+		res.logs,
 	);
 });
 
 test('Store an object on eth', async (t) => {
-	const script = `
+	const contract = `
 Rule unknown ignore
 Scenario ethereum
 Given I connect to 'fabchain' and send address 'my_address' and read the ethereum nonce and output into 'ethereum_nonce'
@@ -52,8 +52,8 @@ Then print the 'signed ethereum transaction'
 Then print data
 Then I connect to 'fabchain' and send transaction 'signed_ethereum_transaction' and read the ethereum transaction id after broadcast and output into 'transaction_id'
 `;
-	const slangroom = new Slangroom(ethereum);
-	const res = await slangroom.execute(script, {
+	const sl = new Slangroom(ethereum);
+	const res = await sl.execute(contract, {
 		data: {
 			keyring: {
 				ethereum: '52268bd5befb5e375f231c16a0614ff97ce81b105190c293a482efe9745c95ae',
@@ -68,29 +68,25 @@ Then I connect to 'fabchain' and send transaction 'signed_ethereum_transaction' 
 		},
 	});
 
-	t.truthy(typeof res.result['transaction_id'] == 'string', res.logs);
+	t.truthy(typeof res.result['transaction_id'] === 'string', res.logs);
 });
 
 test('Make slangroom fail', async (t) => {
-	const script = `
+	const contract = `
 Rule unknown ignore
 Scenario ethereum
 Given I connect to 'fabchain' and send address 'my_address' and read the ethereum  and output into 'ethereum_nonce'
 Given nothing
 Then print data
 `;
-	const slangroom = new Slangroom(ethereum);
-	try {
-		await slangroom.execute(script, {
-			data: {
-				my_address: '0x7d6df85bDBCe99151c813fd1DDE6BC007c523C27',
-				fabchain: 'http://78.47.38.223:9485',
-			},
-		});
-	} catch {
-		t.truthy(true);
-		return;
-	}
-	t.falsy(false);
-	return;
+	const sl = new Slangroom(ethereum);
+	await t.throwsAsync(
+		async () =>
+			await sl.execute(contract, {
+				data: {
+					my_address: '0x7d6df85bDBCe99151c813fd1DDE6BC007c523C27',
+					fabchain: 'http://78.47.38.223:9485',
+				},
+			}),
+	);
 });

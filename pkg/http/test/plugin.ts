@@ -1,6 +1,6 @@
 import test from 'ava';
 import { PluginContextTest } from '@slangroom/core';
-import { execute } from '@slangroom/http';
+import { defaults, sames, parallels } from '@slangroom/http';
 import nock from 'nock';
 
 nock('http://localhost')
@@ -40,7 +40,7 @@ nock('http://localhost')
 
 test('Simple GET', async (t) => {
 	const ctx = PluginContextTest.connect('http://localhost/normaljson');
-	const res = await execute(ctx, 'default', 'get');
+	const res = await defaults.get(ctx);
 	t.deepEqual(res, {
 		ok: true,
 		value: {
@@ -62,7 +62,7 @@ test('single put with data', async (t) => {
 	const ctx = new PluginContextTest('http://localhost/sendresultwithput', {
 		object: { myData: 'foobar' },
 	});
-	const res = await execute(ctx, 'default', 'put');
+	const res = await defaults.putObject(ctx);
 	t.deepEqual(res, {
 		ok: true,
 		value: { status: 200, result: 'received result' },
@@ -73,7 +73,7 @@ test('single post with data', async (t) => {
 	const ctx = new PluginContextTest('http://localhost/sendresult', {
 		object: { myData: 'foobar' },
 	});
-	const res = await execute(ctx, 'default', 'post');
+	const res = await defaults.postObject(ctx);
 	t.deepEqual(res, {
 		ok: true,
 		value: { status: 200, result: 'received result' },
@@ -83,9 +83,9 @@ test('single post with data', async (t) => {
 test('multiple post with data', async (t) => {
 	const ctx = new PluginContextTest(
 		['http://localhost/sendresult', 'http://localhost/normaljson'],
-		{ object: { myData: 'foobar' } }
+		{ object: { myData: 'foobar' } },
 	);
-	const res = await execute(ctx, 'same', 'post');
+	const res = await sames.postObject(ctx);
 	t.deepEqual(res, {
 		ok: true,
 		value: [
@@ -102,9 +102,9 @@ test('POSTs with custom different', async (t) => {
 			'http://localhost/normaljson',
 			'http://localhost/sendresult',
 		],
-		{ object: [{ myData: 'foobar' }, { myData: 'foobar' }, { mData: 'foobar' }] }
+		{ object: [{ myData: 'foobar' }, { myData: 'foobar' }, { mData: 'foobar' }] },
 	);
-	const res = await execute(ctx, 'parallel', 'post');
+	const res = await parallels.postObject(ctx);
 	t.deepEqual(res, {
 		ok: true,
 		value: [

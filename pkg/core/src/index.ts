@@ -1,4 +1,4 @@
-export * from '@slangroom/core/lexicon';
+export * from '@slangroom/core/lexer';
 export * from '@slangroom/core/parser';
 export * from '@slangroom/core/lexer';
 export * from '@slangroom/core/visitor';

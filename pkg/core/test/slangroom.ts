@@ -1,11 +1,20 @@
 import test from 'ava';
-import {
-	Slangroom,
-	Parser,
-	type PluginContext,
-	type PluginResult,
-	type Plugin,
-} from '@slangroom/core';
+import { DuplicatePluginError, Plugin, Slangroom } from '@slangroom/core';
+
+test("doesn't allow duplicated plugins", (t) => {
+	const p0 = new Plugin();
+	p0.new('love asche', (ctx) => ctx.pass(null));
+	const p1 = new Plugin();
+	p1.new('love asche', (ctx) => ctx.pass(null));
+	t.is(
+		(
+			t.throws(() => new Slangroom(p0, p1), {
+				instanceOf: DuplicatePluginError,
+			}) as DuplicatePluginError
+		).message,
+		`duplicated plugin with key: openconnect= params= phrase="love asche"`,
+	);
+});
 
 test('runs all unknown statements', async (t) => {
 	let usedP0 = false;
@@ -14,94 +23,39 @@ test('runs all unknown statements', async (t) => {
 	let usedP3 = false;
 	let usedP4 = false;
 
-	const p0: Plugin = {
-		parser: function (this: Parser) {
-			this.RULE('p0Phrase', () => {
-				this.token('a');
-				this.into();
-			});
-		},
-		executor: (ctx: PluginContext): PluginResult => {
-			if (ctx.phrase === 'a') {
-				usedP0 = true;
-				return ctx.pass('foo');
-			}
-			return ctx.fail('Unkown phrase');
-		},
-	};
+	const p0 = new Plugin();
+	p0.new('a', (ctx) => {
+		usedP0 = true;
+		return ctx.pass('foo');
+	});
 
-	const p1: Plugin = {
-		parser: function (this: Parser) {
-			this.RULE('p1Phrase', () => {
-				this.sendpass('a');
-				this.token('b');
-				this.into();
-			});
-		},
-		executor: (ctx: PluginContext): PluginResult => {
-			if (ctx.phrase === 'b') {
-				usedP1 = true;
-				t.is(ctx.fetch('a'), 'foo');
-				return ctx.pass('bar');
-			}
-			return ctx.fail('Unknown phrase');
-		},
-	};
+	const p1 = new Plugin();
+	p1.new(['a'], 'b', (ctx) => {
+		usedP1 = true;
+		t.is(ctx.fetch('a'), 'foo');
+		return ctx.pass('bar');
+	});
 
-	const p2: Plugin = {
-		parser: function (this: Parser) {
-			this.RULE('p2Phrase', () => {
-				this.sendpass('a');
-				this.token('c');
-				this.token('d');
-				this.into();
-			});
-		},
-		executor: (ctx: PluginContext): PluginResult => {
-			if (ctx.phrase === 'c d') {
-				usedP2 = true;
-				t.is(ctx.fetch('a'), 'bar');
-				return ctx.pass('foobar');
-			}
-			return ctx.fail('Unkown phrase');
-		},
-	};
+	const p2 = new Plugin();
+	p2.new(['a'], 'c d', (ctx) => {
+		usedP2 = true;
+		t.is(ctx.fetch('a'), 'bar');
+		return ctx.pass('foobar');
+	});
 
-	const p3: Plugin = {
-		parser: function (this: Parser) {
-			this.RULE('p3Phrase', () => {
-				this.open();
-				this.token('e');
-				this.token('f');
-			});
-		},
-		executor: (ctx) => {
-			if (ctx.phrase === 'e f') {
-				usedP3 = true;
-				t.is(ctx.fetchOpen()[0], 'bar');
-				return ctx.pass(null);
-			}
-			return ctx.fail('Unkown phrase');
-		},
-	};
+	const p3 = new Plugin();
+	p3.new('open', 'e f', (ctx) => {
+		usedP3 = true;
+		t.is(ctx.fetchOpen()[0], 'bar');
+		return ctx.pass(null);
+	});
 
-	const p4: Plugin = {
-		parser: function (this: Parser) {
-			this.RULE('p4Phrase', () => {
-				this.connect();
-				this.token('f');
-				this.token('g');
-			});
-		},
-		executor: (ctx) => {
-			if (ctx.phrase === 'f g') {
-				usedP4 = true;
-				t.is(ctx.fetchConnect()[0], 'foo');
-				return ctx.pass(null);
-			}
-			return ctx.fail('Unkown phrase');
-		},
-	};
+	const p4 = new Plugin();
+	p4.new('connect', 'f g', (ctx) => {
+		usedP4 = true;
+		t.is(ctx.fetchConnect()[0], 'foo');
+		return ctx.pass(null);
+	});
 
 	const script = `
 Rule unknown ignore

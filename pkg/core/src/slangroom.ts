@@ -1,99 +1,59 @@
 import { getIgnoredStatements } from '@slangroom/ignored';
 import { type ZenOutput, ZenParams, zencodeExec } from '@slangroom/shared';
-import {
-	lex,
-	parse,
-	visit,
-	PluginContextImpl,
-	Parser,
-	Lexicon,
-	type Plugin,
-	type StatementCst,
-	type Statement,
-	type PluginExecutor,
-} from '@slangroom/core';
+import { lex, parse, visit, Plugin, PluginMap, PluginContextImpl } from '@slangroom/core';
 
-type Plugins = Plugin | Array<Plugin>;
+export type Plugins = Plugin | Plugin[];
 
 export class Slangroom {
-	#lexicon = new Lexicon();
-	#parser: Parser;
-	#executors: PluginExecutor[] = [];
+	#plugins = new PluginMap();
 
 	constructor(first: Plugins, ...rest: Plugins[]) {
-		const parsers: ((this: Parser) => void)[] = [];
-		const recurse = (x: Plugins) => {
-			if (Array.isArray(x)) {
-				x.forEach(recurse);
-			} else {
-				parsers.push(x.parser);
-				this.#executors.push(x.executor);
-			}
-		};
-		[first, ...rest].forEach(recurse);
-		this.#parser = new Parser(this.#lexicon, parsers);
-	}
-
-	#astify(line: string) {
-		const lexed = lex(this.#lexicon, line);
-		if (lexed.errors.length) return { errors: lexed.errors };
-		const parsed = parse(this.#parser, lexed.tokens);
-		if (parsed.errors.length) return { errors: parsed.errors };
-		return { ast: visit(this.#parser, parsed.cst as StatementCst) };
+		const p = this.#plugins;
+		[first, ...rest].forEach(function recurse(x) {
+			if (Array.isArray(x)) x.forEach(recurse);
+			else x.store.forEach(([k, v]) => p.set(k, v));
+		});
 	}
 
 	async execute(contract: string, optParams?: Partial<ZenParams>): Promise<ZenOutput> {
-		const zparams = requirifyZenParams(optParams);
-		const givens: Statement[] = [];
-		const thens: Statement[] = [];
-		const ignoreds = await getIgnoredStatements(contract, zparams);
-		ignoreds.forEach((x: string) => {
-			const given = x.split(/^\s*given\s+i\s+/i);
-			if (given[1]) {
-				const { ast, errors } = this.#astify(given[1]);
-				if (!ast) throw errors;
-				givens.push(ast);
-				return;
-			}
-
-			const then = x.split(/^\s*then\s+i\s+/i);
-			if (then[1]) {
-				const { ast, errors } = this.#astify(then[1]);
-				if (!ast) throw errors;
-				thens.push(ast);
-			}
+		const paramsGiven = requirifyZenParams(optParams);
+		const ignoredLines = await getIgnoredStatements(contract, paramsGiven);
+		const lexedLines = ignoredLines.map(lex);
+		const parsedLines = lexedLines.map((x) => parse(this.#plugins, x));
+		parsedLines.forEach((x) => {
+			if (x.errors.length) throw new Error(`general errors: ${x.errors.join('\n')}`);
+			if (x.matches[0]?.err.length)
+				throw new Error(`${x.matches.map((y) => y.err).join('\n')}`);
 		});
 
-		for (const g of givens) await this.#execute(g, zparams);
-
-		const zout = await zencodeExec(contract, zparams);
-
-		const params: ZenParams = { data: zout.result, keys: zparams.keys };
-		for (const t of thens) await this.#execute(t, params);
-
-		return { result: params.data, logs: zout.logs };
-	}
-
-	async #execute(stmt: Statement, zparams: ZenParams) {
-		const ctx = new PluginContextImpl(stmt, zparams);
-		for (const p of this.#executors) {
-			const result = await p(ctx);
-			if (result.ok) {
-				if (stmt.into) zparams.data[stmt.into] = result.value;
-				return;
-			}
+		const cstGivens = parsedLines.filter((x) => x.givenThen === 'given');
+		for (const cst of cstGivens) {
+			const ast = visit(cst, paramsGiven);
+			const exec = this.#plugins.get(ast.key);
+			if (!exec) throw new Error('no statements matched');
+			const res = await exec(new PluginContextImpl(ast));
+			if (res.ok && ast.into) paramsGiven.data[ast.into] = res.value;
 		}
-		throw new Error('no statements matched');
-	}
 
-	getParser() {
-		return this.#parser;
+		const zout = await zencodeExec(contract, paramsGiven);
+		const paramsThen: ZenParams = { data: zout.result, keys: paramsGiven.keys };
+
+		const cstThens = parsedLines.filter((x) => x.givenThen === 'then');
+		for (const cst of cstThens) {
+			const ast = visit(cst, paramsThen);
+			const exec = this.#plugins.get(ast.key);
+			if (!exec) throw new Error('no statements matched');
+			const res = await exec(new PluginContextImpl(ast));
+			if (res.ok && ast.into) paramsThen.data[ast.into] = res.value;
+		}
+
+		return { result: paramsThen.data, logs: zout.logs };
 	}
 }
 
 const requirifyZenParams = (params?: Partial<ZenParams>): Required<ZenParams> => {
-	if (!params) return { data: {}, keys: {}, conf: "", extra: {} };
+	if (!params) return { data: {}, keys: {}, conf: '', extra: {} };
 	if (!params.data) params.data = {};
 	if (!params.keys) params.keys = {};
-	return {extra: {}, conf: "", ...params} as Required<ZenParams>;
+	return { extra: {}, conf: '', ...params } as Required<ZenParams>;
 };

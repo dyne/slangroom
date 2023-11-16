@@ -56,7 +56,7 @@ Then I connect to 'final_endpoints' and send object 'string_array' and do parall
 				{ status: 200, result: 'received result' },
 			],
 		},
-		res.logs
+		res.logs,
 	);
 });
 
@@ -86,6 +86,6 @@ Then print data
 				status: 200,
 			},
 		},
-		res.logs
+		res.logs,
 	);
 });

@@ -37,7 +37,7 @@ const stringify = (params: ZenParams) => {
 		data: JSON.stringify(params.data),
 		keys: JSON.stringify(params.keys),
 		extra: JSON.stringify(params.extra || {}),
-		conf: params.conf || "",
+		conf: params.conf || '',
 	};
 };
 
