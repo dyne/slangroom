@@ -8,7 +8,7 @@ const p = new Plugin();
  */
 export const write = p.new('connect',
 	['key', 'object'],
-	'write to redis',
+	'write object into key in redis',
 	async (ctx: PluginContext) => {
 		const redisUrl = ctx.fetchConnect()[0];
 		const client = redisClient.createClient({ url: redisUrl });
@@ -23,7 +23,7 @@ export const write = p.new('connect',
 
 export const read = p.new('connect',
 	['key'],
-	'read from redis',
+	'read key from redis',
 	async (ctx: PluginContext) => {
 		const redisUrl = ctx.fetchConnect()[0];
 		const client = redisClient.createClient({ url: redisUrl });
@@ -37,7 +37,7 @@ export const read = p.new('connect',
 );
 export const deleteRedis = p.new('connect',
 	['key'],
-	'delete from redis',
+	'delete key from redis',
 	async (ctx: PluginContext) => {
 		const redisUrl = ctx.fetchConnect()[0];
 		const client = redisClient.createClient({ url: redisUrl });
