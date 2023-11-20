@@ -25,7 +25,7 @@ Then I connect to 'redis' and send key 'key1' and read key from redis and output
 			key1: 'persona'
 		},
 	});
-	t.deepEqual(obj, res["result"]["read1"]);
-	t.deepEqual({}, res["result"]["read2"]);
+	t.deepEqual(res["result"]["read1"], obj);
+	t.deepEqual(res["result"]["read2"], {});
 });
 

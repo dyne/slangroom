@@ -1,6 +1,7 @@
 import { Plugin, PluginContext } from '@slangroom/core';
-import { JsonableObject } from '@slangroom/shared';
+import type { JsonableObject } from '@slangroom/shared';
 import * as redisClient from "@redis/client";
+
 const p = new Plugin();
 
 /**
