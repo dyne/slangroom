@@ -8,7 +8,8 @@ const p = new Plugin()
  * @internal
  */
 export const generateQr = p.new(['text'],'create qr code', async (ctx) => {
-    const textToEncode = ctx.fetch('text') as string
+    const textToEncode = ctx.fetch('text')
+    if (typeof textToEncode !== 'string') return {ok:false, error: "you should provide a text to encode"}
     
     return await QRCode.toDataURL(textToEncode, {
         errorCorrectionLevel: 'L',
