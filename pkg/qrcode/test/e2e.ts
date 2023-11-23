@@ -34,5 +34,6 @@ const slangroom = new Slangroom(qrcode);
 			text: "i am a pony!"
 		},
 	});
-    t.truthy(res.result["qrcode"] == expectedDataURL)
+    t.deepEqual(res.result["qrcode"],  expectedDataURL, res.logs)
 });
+
