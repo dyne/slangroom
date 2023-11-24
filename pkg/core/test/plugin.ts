@@ -24,7 +24,7 @@ test('Plugin.new() phrase alpha-numerical checks work', (t) => {
 		}) as Error;
 		t.is(
 			err.message,
-			'phrase must composed of alpha-numerical, underscore, and dash values split by a single space',
+			'phrase must be composed of alpha-numerical, underscore, and dash values split by a single space',
 		);
 	});
 
@@ -60,7 +60,7 @@ test('Plugin.new() params alpha-numerical checks work', (t) => {
 		) as Error;
 		t.is(
 			err.message,
-			'each params must composed of alpha-numerical values, optionally split by dashes or underscores',
+			'each params must be composed of alpha-numerical values, optionally split by dashes or underscores',
 		);
 	});
 
