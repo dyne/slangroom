@@ -22,15 +22,15 @@ export * from '@slangroom/core/slangroom';
  *   what needs to be provided to which plugin definition.
  *
  * - The plugin module defines the plugins subsystem, where a plugin can define
- *   multiple plugin definitions, each of which is defines a unique plugin
+ *   multiple plugin definitions, each of which defines a unique plugin
  *   definition inside of that parcitular plugin.
  *
- * - The slangroom module is the entrypoint to the whole system.  It uses a list
+ * - The Slangroom module is the entrypoint to the whole system.  It uses a list
  *   of plugins to execute a contract as if the custom statements defined in a
  *   contract is actually run by Zenroom itself, a seamless experience.
  *
  * @example
- * Lets define an example plugin with a single, simple plugin definitons:
+ * Let's define an example plugin with a single, simple plugin definitons:
  * ```ts
  * // file: my-plugin.ts
  * import {Plugin} from "@slangroom/core";
@@ -47,7 +47,6 @@ export * from '@slangroom/core/slangroom';
  * The callback function of the plugin definition above would be ran when a
  * custom statements of the following possible forms are matched (everything but
  * the "I" is case-insensitive):
- *
  * ```
  * Given I love Asche
  * Then I love Asche
@@ -59,7 +58,7 @@ export * from '@slangroom/core/slangroom';
  * execution takes place, and statements starting with Then are executed after
  * the actual execution takes place.
  *
- * We can later use that definion with a Slangroom:
+ * We can later use that definion with a Slangroom instance:
  * ```ts
  * import {Slangroom} from '@slangroom/core';
  * import {myPlugin} from "my-plugin";
@@ -70,7 +69,7 @@ export * from '@slangroom/core/slangroom';
  * ```
  *
  * @example
- * Lets define an example plugin with parameters now.
+ * Let's define an example plugin with parameters now:
  * ```ts
  * // file: my-plugin.ts
  * import {Plugin} from "@slangroom/core";
@@ -93,7 +92,6 @@ export * from '@slangroom/core/slangroom';
  * The callback function of the plugin definition above would be ran when a
  * custom statements of the following possible forms are matched (everything but
  * the "I" is case-insensitive):
- *
  * ```
  * Given I send first_number 'ident1' and send second_number 'ident2' and add up
  * Then I send first_number 'ident1' and send second_number 'ident2' and add up
@@ -108,10 +106,10 @@ export * from '@slangroom/core/slangroom';
  * The statements starting with Given are executed before the actual Zenroom
  * execution takes place, and statements starting with Then are executed after
  * the actual execution takes place.  The first four statements don't make much
- * much sense, as the whole reason we created this plugin is to use its return
- * value, but this is allowed by design.
+ * sense, as the whole reason we created this plugin is to use its return value,
+ * but, but this is allowed by design.
  *
- * We can later use that definion with a Slangroom:
+ * We can later use that definion with a Slangroom instance:
  * ```ts
  * import {Slangroom} from '@slangroom/core';
  * import {myPlugin} from "my-plugin";
@@ -122,7 +120,7 @@ export * from '@slangroom/core/slangroom';
  * ```
  *
  * @example
- * Lets define an example plugin with parameters and open now.
+ * Let's define an example plugin with parameters and open now:
  * ```ts
  * // file: my-plugin.ts
  * import {Plugin} from "@slangroom/core";
@@ -146,7 +144,6 @@ export * from '@slangroom/core/slangroom';
  * The callback function of the plugin definition above would be ran when a
  * custom statements of the following possible forms are matched (everything but
  * the "I" is case-insensitive):
- *
  * ```
  * Given I open 'ident1' and send content 'ident1' and write to file
  * Then I open 'ident1' and send content 'ident1' and write to file
@@ -158,7 +155,7 @@ export * from '@slangroom/core/slangroom';
  * execution takes place, and statements starting with Then are executed after
  * the actual execution takes place.
  *
- * We can later use that definion with a Slangroom:
+ * We can later use that definion with a Slangroom instance:
  * ```ts
  * import {Slangroom} from '@slangroom/core';
  * import {myPlugin} from "my-plugin";
@@ -190,7 +187,6 @@ export * from '@slangroom/core/slangroom';
  * The callback function of the plugin definition above would be ran when a
  * custom statements of the following possible forms are matched (everything but
  * the "I" is case-insensitive):
- *
  * ```
  * Given I connect to 'ident1' and ping once
  * Then I connect to 'ident1' and ping once
@@ -202,7 +198,7 @@ export * from '@slangroom/core/slangroom';
  * execution takes place, and statements starting with Then are executed after
  * the actual execution takes place.
  *
- * We can later use that definion with a Slangroom:
+ * We can later use that definion with a Slangroom instance:
  * ```ts
  * import {Slangroom} from '@slangroom/core';
  * import {myPlugin} from "my-plugin";
