@@ -2,7 +2,8 @@
 	"name": "@slangroom/browser",
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
-		"@slangroom/http": "workspace:*"
+		"@slangroom/http": "workspace:*",
+		"@slangroom/qrcode": "workspace:*"
 	},
 	"version": "1.9.6",
 	"repository": "https://github.com/dyne/slangroom",

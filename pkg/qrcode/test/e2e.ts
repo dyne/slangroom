@@ -29,11 +29,11 @@ const expectedDataURL = [
     'UqxRijXKP0OHEepgrecVAAAAAElFTkSuQmCC'].join('')
 
 const slangroom = new Slangroom(qrcode);
-	const res = await slangroom.execute(scriptCreate, {
-		data: {
-			text: "i am a pony!"
-		},
-	});
-    t.deepEqual(res.result["qrcode"],  expectedDataURL, res.logs)
+const res = await slangroom.execute(scriptCreate, {
+    data: {
+        text: "i am a pony!"
+    },
+});
+t.deepEqual(res.result["qrcode"],  expectedDataURL, res.logs)
 });
 

@@ -5,11 +5,6 @@
 		"@slangroom/core": "workspace:*",
 		"qrcode": "^1.5.3"
 	},
-	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1"
-	},
-	"keywords": [],
-	"author": "",
 	"repository": "https://github.com/dyne/slangroom",
 	"license": "AGPL-3.0-only",
 	"type": "module",
