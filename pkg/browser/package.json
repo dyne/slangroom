@@ -5,7 +5,7 @@
 		"@slangroom/http": "workspace:*",
 		"@slangroom/qrcode": "workspace:*"
 	},
-	"version": "1.9.6",
+	"version": "1.10.0",
 	"repository": "https://github.com/dyne/slangroom",
 	"license": "AGPL-3.0-only",
 	"type": "module",

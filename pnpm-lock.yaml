@@ -182,7 +182,6 @@ importers:
         specifier: workspace:*
         version: link:../shared
 
-
   pkg/shared:
     dependencies:
       '@slangroom/deps':
