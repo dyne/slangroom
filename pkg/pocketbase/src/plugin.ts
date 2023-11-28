@@ -88,6 +88,15 @@ const isPbRunning = async () => {
 	return res.code === 200;
 };
 
+const createRecordOptions = (p: RecordBaseParameters) => {
+	const { expand, fields, requestKey } = p;
+	const options: RecordOptions = {};
+	if (expand) options.expand = expand;
+	if (fields) options.fields = fields;
+	if (requestKey) options.requestKey = requestKey;
+	return options;
+};
+
 /**
  * @internal
  */
@@ -96,8 +105,7 @@ export const setupClient = p.new(['pb_address'], 'create pb_client', async (ctx)
 	if (typeof address !== 'string') return ctx.fail('Invalid address');
 	try {
 		pb = new PocketBase(address);
-		const res = await pb.health.check({ requestKey: null });
-		if (res.code !== 200) ctx.fail('server error');
+		if (!(await isPbRunning())) return ctx.fail('Client is not running');
 		return ctx.pass('pb client successfully created');
 	} catch (e) {
 		return ctx.fail('Invalid address');
@@ -149,7 +157,7 @@ export const getList = p.new(['list_parameters'], 'ask records', async (ctx) => 
 	} else {
 		res = await pb.collection(collection).getFirstListItem(filter, options);
 	}
-	//@ts-expect-error JsonableObject should take also ListResult
+	//@ts-expect-error Jsonable should take also ListResult
 	return ctx.pass({ records: res });
 });
 
@@ -161,11 +169,8 @@ export const showRecord = p.new(['show_parameters'], 'ask record', async (ctx) =
 	const validation = showParametersSchema.safeParse(p);
 	if (!validation.success) return ctx.fail(validation.error);
 
-	const { expand, fields, requestKey } = p;
-	const options: RecordOptions = {};
-	if (expand) options.expand = expand;
-	if (fields) options.fields = fields;
-	if (requestKey) options.requestKey = requestKey;
+	const options = createRecordOptions(p);
+
 	try {
 		const res = await pb.collection(p.collection).getOne(p.id, options);
 		return ctx.pass(res);
@@ -189,13 +194,9 @@ export const createRecord = p.new(
 		if (!validateCreateParams.success) return ctx.fail(validateCreateParams.error);
 		if (!validateRecordParams.success) return ctx.fail(validateRecordParams.error);
 
-		const { expand, fields, requestKey } = r;
 		const { collection, record } = p;
+		const options = createRecordOptions(p);
 
-		const options: RecordOptions = {};
-		if (expand) options.expand = expand;
-		if (fields) options.fields = fields;
-		if (requestKey) options.requestKey = requestKey;
 		try {
 			const res = await pb.collection(collection).create(record, options);
 			return ctx.pass(res);
@@ -220,13 +221,9 @@ export const updateRecord = p.new(
 		if (!validateUpdateParams.success) return ctx.fail(validateUpdateParams.error);
 		if (!validateRecordParams.success) return ctx.fail(validateRecordParams.error);
 
-		const { expand, fields, requestKey } = r;
 		const { collection, record, id } = p;
+		const options = createRecordOptions(p);
 
-		const options: RecordOptions = {};
-		if (expand) options.expand = expand;
-		if (fields) options.fields = fields;
-		if (requestKey) options.requestKey = requestKey;
 		try {
 			const res = await pb.collection(collection).update(id, record, options);
 			return ctx.pass(res);
