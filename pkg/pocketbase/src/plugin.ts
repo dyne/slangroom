@@ -15,17 +15,24 @@ const credentialsSchema = z.object({
 
 export type Credentials = z.infer<typeof credentialsSchema> 
 
-const paginationSchema = z.object({
-        page: z.number().int(),
-        perPage: z.number().int(),
-    })
-
-const listParametersBaseSchema = z.object({
-    collection: z.string(),
-    sort: z.string().default('-created').optional(),
+const baseRecordParametersSchema = z.object({
     expand: z.string().optional(),
     requestKey: z.string().optional(),
-});
+    fields: z.string().optional()
+})
+
+export type RecordBaseParameters = z.infer<typeof baseRecordParametersSchema>
+
+const baseFetchRecordParametersSchema = baseRecordParametersSchema.extend({collection: z.string()})
+
+const paginationSchema = z.object({
+    page: z.number().int(),
+    perPage: z.number().int(),
+})
+
+const listParametersBaseSchema = z.object({
+    sort: z.string().default('-created').optional(),
+}).merge(baseFetchRecordParametersSchema)
 
 const listParametersSchema = z.discriminatedUnion("type", [
     listParametersBaseSchema.extend({ type: z.literal('all'), filter: z.string().optional() }),
@@ -36,15 +43,16 @@ const listParametersSchema = z.discriminatedUnion("type", [
 export type ListParameters = z.input<typeof listParametersSchema>
 
 const showParametersSchema = z.object({
-    collection: z.string(),
-    id: z.string(),
-    expand: z.string().optional(),
-    requestKey: z.string().optional(),
-    fields: z.string().optional()
-});
+    id: z.string()
+}).merge(baseFetchRecordParametersSchema)
 
 export type ShowRecordParameters = z.infer<typeof showParametersSchema>
 
+const createRecordParametersSchema = z.object({
+    record: z.record(z.string(), z.any())
+}).merge(baseFetchRecordParametersSchema)
+
+export type CreateRecordParameters = z.infer<typeof createRecordParametersSchema>
 
 const isPbRunning = async () => {
     const res = await pb.health.check({ requestKey: null })
@@ -79,7 +87,7 @@ export const authWithPassword = p.new(['my_credentials'], 'login', async (ctx) =
     if (!(await isPbRunning())) return ctx.fail("Client is not running")
     
     try {
-        const res = await pb.collection('users').authWithPassword(credentials!.email, credentials!.password)
+        const res = await pb.collection('users').authWithPassword(credentials!.email, credentials!.password, { requestKey: null })
         return ctx.pass({token:res.token, record: res.record})
     } catch (err) {
         return ctx.fail(err)
@@ -135,6 +143,32 @@ export const showRecord = p.new(['show_parameters'], 'ask record', async (ctx) =
         return ctx.pass(res)
     } catch (err) {
         return ctx.fail(err)
+    }
+})
+
+/**
+ * @internal
+ */
+export const createRecord = p.new(['create_parameters', 'record_parameters'], 'create record', async (ctx) => {
+    const p = ctx.fetch('create_parameters') as CreateRecordParameters
+    const r = ctx.fetch('record_parameters') as RecordBaseParameters
+    const validateCreateParams = createRecordParametersSchema.safeParse(p)
+    const validateRecordParams = baseRecordParametersSchema.safeParse(r)
+    if (!validateCreateParams.success) return ctx.fail(validateCreateParams.error)
+    if (!validateRecordParams.success) return ctx.fail(validateRecordParams.error)
+
+    const { expand, fields, requestKey } = r
+    const {collection, record } = p
+    
+    const options: RecordOptions = {}
+    if (expand) options.expand = expand
+    if (fields) options.fields = fields
+    if (requestKey) options.requestKey = requestKey
+    try {
+        const res = await pb.collection(collection).create(record, options)
+        return ctx.pass(res)
+    } catch (err) {
+        return ctx.fail(err.message)
     }
 })
 

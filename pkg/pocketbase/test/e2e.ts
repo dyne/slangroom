@@ -1,7 +1,10 @@
-import { ServerUrl, ListParameters, pocketbase } from '@slangroom/pocketbase';
+import { ServerUrl, ListParameters, pocketbase, CreateRecordParameters, Credentials, RecordBaseParameters } from '@slangroom/pocketbase';
 import test from 'ava';
 import { Slangroom } from '@slangroom/core';
 import { ShowRecordParameters } from '../src/plugin.js';
+
+const email = 'p@p.pp'
+const password = 'pppppppp'
 
 test('should create a new slangroom client', async (t) => {
     const script = `
@@ -20,8 +23,7 @@ test('should create a new slangroom client', async (t) => {
 });
 
 test('should login with credentials', async (t) => {
-    const email = 'p@p.pp'
-    const password = 'pppppppp'
+    
     const script = `
     Rule unknown ignore
     Given I send pb_address 'pb_address' and create pb_client
@@ -146,7 +148,43 @@ test('should retrieve one record', async (t) => {
     t.truthy(res.result)
 })
 
+test('should create a record', async (t) => {
+    const randomString = (Math.random() + 1).toString(36).substring(7);
 
-// test('create a collection', async (t) => {
-//     // 
-// })
+    const script = `
+    Rule unknown ignore
+    Given I send pb_address 'pb_address' and create pb_client
+    Given I send my_credentials 'my_credentials' and login
+    Given I send create_parameters 'create_parameters' and send record_parameters 'record_parameters' and create record and output into 'output'
+    Given I have a 'string dictionary' named 'output'
+    Then print data
+    `
+    const slangroom = new Slangroom(pocketbase)
+
+    type Data = { pb_address:ServerUrl, 
+        create_parameters: CreateRecordParameters, 
+        my_credentials:Credentials, 
+        record_parameters:RecordBaseParameters
+    }
+    const data: Data = {
+        pb_address: 'http://127.0.0.1:8090/',
+        create_parameters: {
+            collection: 'organizations',
+            record: {
+                name: `test-${randomString}`
+            },
+        },
+        record_parameters: {
+        },
+        my_credentials: {
+            email,
+            password
+        }
+    }
+    const res = await slangroom.execute(script, {
+		data
+	});
+    t.truthy(res.result)
+    t.truthy(true)
+})
+
