@@ -23,7 +23,8 @@ const paginationSchema = z.object({
 const listParametersBaseSchema = z.object({
     collection: z.string(),
     sort: z.string().default('-created').optional(),
-    expand: z.string().optional()
+    expand: z.string().optional(),
+    requestKey: z.string().optional(),
 });
 
 const listParametersSchema = z.discriminatedUnion("type", [
@@ -80,19 +81,18 @@ export const authWithPassword = p.new(['my_credentials'], 'login', async (ctx) =
  */
 export const getList = p.new(['list_parameters'], 'ask records', async (ctx) =>{
     const params = ctx.fetch('list_parameters') as ListParameters
-    console.log(params)
     const validation = listParametersSchema.safeParse(params)
-    console.log(validation)
     if (!validation.success) return ctx.fail(validation.error)
 
-    const {collection, sort, filter, expand, type } = params
+    const {collection, sort, filter, expand, type, requestKey } = params
     if (!(await isPbRunning())) return ctx.fail("client is not working")
     
-    let res: RecordModel | RecordModel[] | ListResult<RecordModel>
-    const options:FullListOptions = {}
+    const options:FullListOptions = { requestKey: requestKey || type }
     if (sort) options.sort = sort
     if (filter) options.filter = filter
     if (expand) options['expand'] = expand
+    
+    let res: RecordModel | RecordModel[] | ListResult<RecordModel>
     if (type === "all") {
         res = await pb.collection(collection).getFullList(options)
     }
