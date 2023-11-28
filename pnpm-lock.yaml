@@ -154,6 +154,21 @@ importers:
         specifier: workspace:*
         version: link:../shared
 
+  pkg/pocketbase:
+    dependencies:
+      '@slangroom/core':
+        specifier: workspace:*
+        version: link:../core
+      '@slangroom/shared':
+        specifier: workspace:*
+        version: link:../shared
+      pocketbase:
+        specifier: ^0.19.0
+        version: 0.19.0
+      zod:
+        specifier: ^3.22.4
+        version: 3.22.4
+
   pkg/shared:
     dependencies:
       '@slangroom/deps':
@@ -4935,6 +4950,10 @@ packages:
     dependencies:
       irregular-plurals: 3.5.0
     dev: true
+
+  /pocketbase@0.19.0:
+    resolution: {integrity: sha512-bUVZfVdD17K8GnwbeDMZPEdREVg2YE0F8uHPDC0zer4VtwXUqoPCCeudTy3fhUE7pfuKnfpuPxeBSYsBY3AGIQ==}
+    dev: false
 
   /postcss-selector-parser@6.0.13:
     resolution: {integrity: sha512-EaV1Gl4mUEV4ddhDnv/xtj7sxwrwxdetHdWUGnT4VJQf+4d05v6lHYZr8N573k5Z0BViss7BDhfWtKS3+sfAqQ==}
