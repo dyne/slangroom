@@ -1,20 +1,15 @@
 {
-	"name": "@slangroom/browser",
+	"name": "@slangroom/qrcode",
+	"version": "1.10.0",
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
-		"@slangroom/http": "workspace:*",
-		"@slangroom/qrcode": "workspace:*"
+		"qrcode": "^1.5.3"
 	},
-	"version": "1.10.0",
 	"repository": "https://github.com/dyne/slangroom",
 	"license": "AGPL-3.0-only",
 	"type": "module",
 	"main": "./build/esm/src/index.js",
-	"browser": "./build/slangroom.js",
 	"types": "./build/esm/src/index.d.ts",
-	"files": [
-		"./build/**/*.js"
-	],
 	"exports": {
 		".": {
 			"import": {
@@ -33,11 +28,6 @@
 		"access": "public"
 	},
 	"devDependencies": {
-		"@playwright/test": "^1.39.0",
-		"@types/node": "^20.3.1",
-		"esbuild": "^0.18.4"
-	},
-	"scripts": {
-		"build": "pnpm exec esbuild --bundle src/index.ts --outfile=build/slangroom.js --target=es2016 --external:fs --external:path --external:crypto && cp build/slangroom.js public"
+		"@types/qrcode": "^1.5.5"
 	}
 }
