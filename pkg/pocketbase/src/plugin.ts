@@ -1,4 +1,4 @@
-import PocketBase, { FullListOptions, ListResult, RecordModel } from 'pocketbase'
+import PocketBase, { FullListOptions, ListResult, RecordModel, RecordOptions } from 'pocketbase'
 import { Plugin } from '@slangroom/core'
 import { z } from 'zod'
 
@@ -34,6 +34,16 @@ const listParametersSchema = z.discriminatedUnion("type", [
 ])
 
 export type ListParameters = z.input<typeof listParametersSchema>
+
+const showParametersSchema = z.object({
+    collection: z.string(),
+    id: z.string(),
+    expand: z.string().optional(),
+    requestKey: z.string().optional(),
+    fields: z.string().optional()
+});
+
+export type ShowRecordParameters = z.infer<typeof showParametersSchema>
 
 
 const isPbRunning = async () => {
@@ -105,6 +115,27 @@ export const getList = p.new(['list_parameters'], 'ask records', async (ctx) =>{
     }
     //@ts-expect-error JsonableObject should take also ListResult
     return ctx.pass({records:res})
+})
+
+/**
+ * @internal
+ */
+export const showRecord = p.new(['show_parameters'], 'ask record', async (ctx) => {
+    const p = ctx.fetch('show_parameters') as ShowRecordParameters
+    const validation = showParametersSchema.safeParse(p)
+    if (!validation.success) return ctx.fail(validation.error)
+
+    const { expand, fields, requestKey} = p
+    const options: RecordOptions = {}
+    if (expand) options.expand = expand
+    if (fields) options.fields = fields
+    if (requestKey) options.requestKey = requestKey
+    try {
+        const res = await pb.collection(p.collection).getOne(p.id, options)
+        return ctx.pass(res)
+    } catch (err) {
+        return ctx.fail(err)
+    }
 })
 
 export const pocketbase = p

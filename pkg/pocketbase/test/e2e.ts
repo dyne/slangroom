@@ -1,6 +1,7 @@
 import { ServerUrl, ListParameters, pocketbase } from '@slangroom/pocketbase';
 import test from 'ava';
 import { Slangroom } from '@slangroom/core';
+import { ShowRecordParameters } from '../src/plugin.js';
 
 test('should create a new slangroom client', async (t) => {
     const script = `
@@ -120,6 +121,30 @@ test('should retrieve first record that match filters', async (t) => {
     t.truthy(res.result)
 })
 
+test('should retrieve one record', async (t) => {
+    const script = `
+    Rule unknown ignore
+    Given I send pb_address 'pb_address' and create pb_client
+    Given I send show_parameters 'show_parameters' and ask record and output into 'output'
+    Given I have a 'string dictionary' named 'output'
+    Then print data
+    `
+    const slangroom = new Slangroom(pocketbase)
+
+    const data:{ pb_address:ServerUrl, show_parameters: ShowRecordParameters} = {
+        pb_address: 'http://127.0.0.1:8090/',
+        show_parameters: {
+            collection: 'organizations',
+            id: 'ouja6pwgxuyn2sd',
+            fields: 'name',
+        }
+    }
+    const res = await slangroom.execute(script, {
+		data
+	});
+    console.log(res.result['output']);
+    t.truthy(res.result)
+})
 
 
 // test('create a collection', async (t) => {
