@@ -5,6 +5,8 @@ import {
 	CreateRecordParameters,
 	Credentials,
 	RecordBaseParameters,
+	DeleteRecordParameters,
+	UpdateRecordParameters,
 } from '@slangroom/pocketbase';
 import test from 'ava';
 import { Slangroom } from '@slangroom/core';
@@ -124,8 +126,6 @@ test('should retrieve first record that match filters', async (t) => {
 	const res = await slangroom.execute(script, {
 		data,
 	});
-	//@ts-expect-error mm bib
-	console.log(res.result['output']!.records);
 	t.truthy(res.result);
 });
 
@@ -150,11 +150,12 @@ test('should retrieve one record', async (t) => {
 	const res = await slangroom.execute(script, {
 		data,
 	});
-	console.log(res.result['output']);
 	t.truthy(res.result);
 });
 
-test('should create a record', async (t) => {
+let recordId: string;
+
+test.serial('should create a record', async (t) => {
 	const randomString = (Math.random() + 1).toString(36).substring(7);
 
 	const script = `
@@ -190,6 +191,81 @@ test('should create a record', async (t) => {
 	const res = await slangroom.execute(script, {
 		data,
 	});
+	const output = res.result['output'] as { id?: string; name?: string };
+	t.is(output.name, `test-${randomString}`, res.logs);
+	recordId = output.id!;
+});
+
+test.serial('should update a record', async (t) => {
+	const randomString = (Math.random() + 1).toString(36).substring(7);
+
+	const script = `
+    Rule unknown ignore
+    Given I send pb_address 'pb_address' and create pb_client
+    Given I send my_credentials 'my_credentials' and login
+    Given I send update_parameters 'update_parameters' and send record_parameters 'record_parameters' and update record and output into 'output'
+    Given I have a 'string dictionary' named 'output'
+    Then print data
+    `;
+	const slangroom = new Slangroom(pocketbase);
+
+	type Data = {
+		pb_address: ServerUrl;
+		update_parameters: UpdateRecordParameters;
+		my_credentials: Credentials;
+		record_parameters: RecordBaseParameters;
+	};
+	const data: Data = {
+		pb_address: 'http://127.0.0.1:8090/',
+		update_parameters: {
+			id: recordId,
+			collection: 'organizations',
+			record: {
+				name: `test-${randomString}`,
+			},
+		},
+		record_parameters: {},
+		my_credentials: {
+			email,
+			password,
+		},
+	};
+	const res = await slangroom.execute(script, {
+		data,
+	});
+	const output = res.result['output'] as { id?: string; name?: string };
+	t.is(output.name, `test-${randomString}`, res.logs);
+});
+
+test.serial('should delete a record', async (t) => {
+	const script = `
+    Rule unknown ignore
+    Given I send pb_address 'pb_address' and create pb_client
+    Given I send my_credentials 'my_credentials' and login
+    Given I send delete_parameters 'delete_parameters' and delete record and output into 'output'
+    Given I have a 'string dictionary' named 'output'
+    Then print data
+    `;
+	const slangroom = new Slangroom(pocketbase);
+
+	type Data = {
+		pb_address: ServerUrl;
+		delete_parameters: DeleteRecordParameters;
+		my_credentials: Credentials;
+	};
+	const data: Data = {
+		pb_address: 'http://127.0.0.1:8090/',
+		delete_parameters: {
+			collection: 'organizations',
+			id: recordId,
+		},
+		my_credentials: {
+			email,
+			password,
+		},
+	};
+	const res = await slangroom.execute(script, {
+		data,
+	});
 	t.truthy(res.result);
-	t.truthy(true);
 });

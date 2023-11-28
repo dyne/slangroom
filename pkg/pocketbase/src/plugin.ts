@@ -68,10 +68,24 @@ const createRecordParametersSchema = z
 
 export type CreateRecordParameters = z.infer<typeof createRecordParametersSchema>;
 
+const updateRecordParametersSchema = z
+	.object({
+		id: z.string(),
+	})
+	.merge(createRecordParametersSchema);
+
+export type UpdateRecordParameters = z.infer<typeof updateRecordParametersSchema>;
+
+const deleteParametersSchema = z.object({
+	collection: z.string(),
+	id: z.string(),
+});
+
+export type DeleteRecordParameters = z.infer<typeof deleteParametersSchema>;
+
 const isPbRunning = async () => {
 	const res = await pb.health.check({ requestKey: null });
-	if (res.code !== 200) return false;
-	return true;
+	return res.code === 200;
 };
 
 /**
@@ -190,5 +204,51 @@ export const createRecord = p.new(
 		}
 	},
 );
+
+/**
+ * @internal
+ */
+export const updateRecord = p.new(
+	['update_parameters', 'record_parameters'],
+	'update record',
+	async (ctx) => {
+		const p = ctx.fetch('update_parameters') as UpdateRecordParameters;
+		const r = ctx.fetch('record_parameters') as RecordBaseParameters;
+
+		const validateUpdateParams = updateRecordParametersSchema.safeParse(p);
+		const validateRecordParams = baseRecordParametersSchema.safeParse(r);
+		if (!validateUpdateParams.success) return ctx.fail(validateUpdateParams.error);
+		if (!validateRecordParams.success) return ctx.fail(validateRecordParams.error);
+
+		const { expand, fields, requestKey } = r;
+		const { collection, record, id } = p;
+
+		const options: RecordOptions = {};
+		if (expand) options.expand = expand;
+		if (fields) options.fields = fields;
+		if (requestKey) options.requestKey = requestKey;
+		try {
+			const res = await pb.collection(collection).update(id, record, options);
+			return ctx.pass(res);
+		} catch (err) {
+			return ctx.fail(err.message);
+		}
+	},
+);
+
+/**
+ * @internal
+ */
+export const deleteRecord = p.new(['delete_parameters'], 'delete record', async (ctx) => {
+	const p = ctx.fetch('delete_parameters') as DeleteRecordParameters;
+
+	const validation = deleteParametersSchema.safeParse(p);
+	if (!validation.success) return ctx.fail(validation.error);
+
+	const { collection, id } = p;
+	const res = await pb.collection(collection).delete(id);
+	if (res) return ctx.pass('deleted');
+	return ctx.fail('shit happened');
+});
 
 export const pocketbase = p;
