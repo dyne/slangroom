@@ -76,7 +76,7 @@ test('should retrieve full list of records', async (t) => {
 	const res = await slangroom.execute(script, {
 		data,
 	});
-	t.truthy(res.result);
+	t.truthy(res.result['output']);
 });
 
 test('should retrieve paginated list of records', async (t) => {
@@ -103,7 +103,12 @@ test('should retrieve paginated list of records', async (t) => {
 	const res = await slangroom.execute(script, {
 		data,
 	});
-	t.truthy(res.result);
+	const output = res.result['output'] as {
+		records?: { items?: []; page?: number; perPage?: number };
+	};
+	t.truthy(Array.isArray(output.records?.items));
+    t.is(output.records?.page, 2)
+    t.is(output.records?.perPage, 20)
 });
 
 test('should retrieve first record that match filters', async (t) => {
@@ -128,7 +133,7 @@ test('should retrieve first record that match filters', async (t) => {
 	const res = await slangroom.execute(script, {
 		data,
 	});
-	t.truthy(res.result);
+	t.truthy(res.result['output']);
 });
 
 test('should retrieve one record', async (t) => {
@@ -152,7 +157,8 @@ test('should retrieve one record', async (t) => {
 	const res = await slangroom.execute(script, {
 		data,
 	});
-	t.truthy(res.result);
+	const output = res.result['output'] as { name?: string };
+	t.truthy(output.name);
 });
 
 let recordId: string;
@@ -245,7 +251,7 @@ test.serial('should delete a record', async (t) => {
     Given I send pb_address 'pb_address' and create pb_client
     Given I send my_credentials 'my_credentials' and login
     Given I send delete_parameters 'delete_parameters' and delete record and output into 'output'
-    Given I have a 'string dictionary' named 'output'
+    Given I have a 'string' named 'output'
     Then print data
     `;
 	const slangroom = new Slangroom(pocketbase);
@@ -269,5 +275,5 @@ test.serial('should delete a record', async (t) => {
 	const res = await slangroom.execute(script, {
 		data,
 	});
-	t.truthy(res.result);
+	t.is(res.result['output'], 'deleted');
 });
