@@ -64,7 +64,7 @@ test.serial('storeInFile works', async (t) => {
 	t.is(buf.toString(), jsonify(content));
 });
 
-test.serial.skip('listDirectoryContent works', async (t) => {
+test.serial('listDirectoryContent works', async (t) => {
 	const path = join('foo', 'bar');
 	const dir = join(t.context, path);
 	await fs.mkdir(dir, { recursive: true });

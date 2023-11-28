@@ -13,7 +13,7 @@ export type JsonablePrimitive = string | number | boolean | null | undefined;
  * Any object that is convertable to a JSON string that ends up being
  * an object.
  */
-export type JsonableObject = { [K: string ]: Jsonable };
+export type JsonableObject = { [K: string]: Jsonable };
 
 /**
  * Any object that is convertable to a JSON string that ends up being
