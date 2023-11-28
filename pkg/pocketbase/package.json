@@ -4,6 +4,7 @@
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
 		"@slangroom/shared": "workspace:*",
+		"dotenv": "^16.3.1",
 		"pocketbase": "^0.19.0",
 		"zod": "^3.22.4"
 	},

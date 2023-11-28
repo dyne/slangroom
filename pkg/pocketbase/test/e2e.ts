@@ -11,9 +11,11 @@ import {
 import test from 'ava';
 import { Slangroom } from '@slangroom/core';
 import { ShowRecordParameters } from '../src/plugin.js';
+import 'dotenv/config';
 
-const email = 'p@p.pp';
-const password = 'pppppppp';
+const email = process.env['EMAIL']!;
+const password = process.env['PASSWORD']!;
+const pb_address = process.env['PB_ADDRESS']! as ServerUrl;
 
 test('should create a new slangroom client', async (t) => {
 	const script = `
@@ -25,7 +27,7 @@ test('should create a new slangroom client', async (t) => {
 	const slangroom = new Slangroom(pocketbase);
 	const res = await slangroom.execute(script, {
 		data: {
-			pb_address: 'http://127.0.0.1:8090/',
+			pb_address,
 		},
 	});
 	t.is(res.result['res'], 'pb client successfully created');
@@ -42,7 +44,7 @@ test('should login with credentials', async (t) => {
 	const slangroom = new Slangroom(pocketbase);
 	const res = await slangroom.execute(script, {
 		data: {
-			pb_address: 'http://127.0.0.1:8090/',
+			pb_address,
 			my_credentials: {
 				email,
 				password,
@@ -65,7 +67,7 @@ test('should retrieve full list of records', async (t) => {
 	const slangroom = new Slangroom(pocketbase);
 
 	const data: { pb_address: ServerUrl; list_parameters: ListParameters } = {
-		pb_address: 'http://127.0.0.1:8090/',
+		pb_address,
 		list_parameters: {
 			type: 'all',
 			collection: 'organizations',
@@ -88,7 +90,7 @@ test('should retrieve paginated list of records', async (t) => {
 	const slangroom = new Slangroom(pocketbase);
 
 	const data: { pb_address: ServerUrl; list_parameters: ListParameters } = {
-		pb_address: 'http://127.0.0.1:8090/',
+		pb_address,
 		list_parameters: {
 			type: 'list',
 			pagination: {
@@ -115,7 +117,7 @@ test('should retrieve first record that match filters', async (t) => {
 	const slangroom = new Slangroom(pocketbase);
 
 	const data: { pb_address: ServerUrl; list_parameters: ListParameters } = {
-		pb_address: 'http://127.0.0.1:8090/',
+		pb_address,
 		list_parameters: {
 			type: 'first',
 			collection: 'organizations',
@@ -140,7 +142,7 @@ test('should retrieve one record', async (t) => {
 	const slangroom = new Slangroom(pocketbase);
 
 	const data: { pb_address: ServerUrl; show_parameters: ShowRecordParameters } = {
-		pb_address: 'http://127.0.0.1:8090/',
+		pb_address,
 		show_parameters: {
 			collection: 'organizations',
 			id: 'ouja6pwgxuyn2sd',
@@ -175,7 +177,7 @@ test.serial('should create a record', async (t) => {
 		record_parameters: RecordBaseParameters;
 	};
 	const data: Data = {
-		pb_address: 'http://127.0.0.1:8090/',
+		pb_address,
 		create_parameters: {
 			collection: 'organizations',
 			record: {
@@ -216,7 +218,7 @@ test.serial('should update a record', async (t) => {
 		record_parameters: RecordBaseParameters;
 	};
 	const data: Data = {
-		pb_address: 'http://127.0.0.1:8090/',
+		pb_address,
 		update_parameters: {
 			id: recordId,
 			collection: 'organizations',
@@ -254,7 +256,7 @@ test.serial('should delete a record', async (t) => {
 		my_credentials: Credentials;
 	};
 	const data: Data = {
-		pb_address: 'http://127.0.0.1:8090/',
+		pb_address,
 		delete_parameters: {
 			collection: 'organizations',
 			id: recordId,
