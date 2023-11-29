@@ -1,4 +1,5 @@
-import PocketBase, { FullListOptions, ListResult, RecordModel, RecordOptions } from 'pocketbase';
+import PocketBase from 'pocketbase';
+import type { FullListOptions, ListResult, RecordModel, RecordOptions } from 'pocketbase';
 import { Plugin } from '@slangroom/core';
 import { z } from 'zod';
 
@@ -14,7 +15,6 @@ const credentialsSchema = z.object({
 	email: z.string().email(),
 	password: z.string(),
 });
-
 export type Credentials = z.infer<typeof credentialsSchema>;
 
 const baseRecordParametersSchema = z.object({
@@ -22,7 +22,6 @@ const baseRecordParametersSchema = z.object({
 	requestKey: z.string().optional(),
 	fields: z.string().optional(),
 });
-
 export type RecordBaseParameters = z.infer<typeof baseRecordParametersSchema>;
 
 const baseFetchRecordParametersSchema = baseRecordParametersSchema.extend({
@@ -49,7 +48,6 @@ const listParametersSchema = z.discriminatedUnion('type', [
 	}),
 	listParametersBaseSchema.extend({ type: z.literal('first'), filter: z.string() }),
 ]);
-
 export type ListParameters = z.input<typeof listParametersSchema>;
 
 const showParametersSchema = z
@@ -57,7 +55,6 @@ const showParametersSchema = z
 		id: z.string(),
 	})
 	.merge(baseFetchRecordParametersSchema);
-
 export type ShowRecordParameters = z.infer<typeof showParametersSchema>;
 
 const createRecordParametersSchema = z
@@ -65,7 +62,6 @@ const createRecordParametersSchema = z
 		record: z.record(z.string(), z.any()),
 	})
 	.merge(baseFetchRecordParametersSchema);
-
 export type CreateRecordParameters = z.infer<typeof createRecordParametersSchema>;
 
 const updateRecordParametersSchema = z
@@ -73,14 +69,12 @@ const updateRecordParametersSchema = z
 		id: z.string(),
 	})
 	.merge(createRecordParametersSchema);
-
 export type UpdateRecordParameters = z.infer<typeof updateRecordParametersSchema>;
 
 const deleteParametersSchema = z.object({
 	collection: z.string(),
 	id: z.string(),
 });
-
 export type DeleteRecordParameters = z.infer<typeof deleteParametersSchema>;
 
 const isPbRunning = async () => {

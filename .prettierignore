@@ -1,6 +1,6 @@
 # blacklist everything
-# *
-# */
+*
+*/
 
 # shithub
 !/.github/workflows/*.yml

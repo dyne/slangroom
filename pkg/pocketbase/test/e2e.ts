@@ -1,16 +1,16 @@
-import {
+import type {
 	ServerUrl,
 	ListParameters,
-	pocketbase,
 	CreateRecordParameters,
 	Credentials,
 	RecordBaseParameters,
 	DeleteRecordParameters,
 	UpdateRecordParameters,
+	ShowRecordParameters,
 } from '@slangroom/pocketbase';
+import { pocketbase } from '@slangroom/pocketbase';
 import test from 'ava';
 import { Slangroom } from '@slangroom/core';
-import { ShowRecordParameters } from '../src/plugin.js';
 import 'dotenv/config';
 
 const email = process.env['EMAIL']!;
@@ -107,8 +107,8 @@ test('should retrieve paginated list of records', async (t) => {
 		records?: { items?: []; page?: number; perPage?: number };
 	};
 	t.truthy(Array.isArray(output.records?.items));
-    t.is(output.records?.page, 2)
-    t.is(output.records?.perPage, 20)
+	t.is(output.records?.page, 2);
+	t.is(output.records?.perPage, 20);
 });
 
 test('should retrieve first record that match filters', async (t) => {
