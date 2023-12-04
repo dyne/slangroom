@@ -1,72 +1,81 @@
-// import test from 'ava';
-// import { Slangroom } from '@slangroom/core';
-// import { json } from '@slangroom/json';
-// import { JsonableArray } from '@slangroom/shared';
+import test from 'ava';
+import { Slangroom } from '@slangroom/core';
+import { json, SENTENCE_VALIDATE_JSON, ValidationError } from '@slangroom/json';
 
-// test('Create VC SD JWT', async (t) => {
-// 	const scriptCreate = `
-// Rule unknown ignore
+const KEY_DATA = 'data';
+const KEY_SCHEMA = 'schema';
+const KEY_OUTPUT = 'out';
+const SENTENCE = SENTENCE_VALIDATE_JSON(KEY_DATA, KEY_SCHEMA, KEY_OUTPUT);
 
-// Given I create p-256 key and output into 'issuer_jwk'
-// Given I create p-256 key and output into 'holder_jwk'
-// Given I send sk 'holder_jwk' and create p-256 public key and output into 'holder_public_jwk'
-// Given I send sk 'issuer_jwk' and create p-256 public key and output into 'issuer_public_jwk'
-// Given I send jwk 'issuer_jwk' and send holder 'holder_public_jwk' and send object 'object' and send fields 'fields' and create vc sd jwt and output into 'vcsdjwt'
-// Given I send token 'vcsdjwt' and pretty print sd jwt and output into 'pretty_jwt'
-// Given I have a 'string dictionary' named 'issuer_jwk'
-// Given I have a 'string dictionary' named 'holder_jwk'
-// Given I have a 'string dictionary' named 'holder_public_jwk'
-// Given I have a 'string dictionary' named 'issuer_public_jwk'
-// Given I have a 'string' named 'vcsdjwt'
-// Given I have a 'string dictionary' named 'pretty_jwt'
-// Then print data
-// `;
-// 	const nonce = 'nIdBbNgRqCXBl8YOkfVdg==';
-// 	const slangroom = new Slangroom(wallet);
-// 	const res = await slangroom.execute(scriptCreate, {
-// 		keys: {
-// 			object: {
-// 				name: 'test person',
-// 				age: 25,
-// 			},
-// 			fields: ['name', 'age'],
-// 		},
-// 	});
-// 	t.truthy(res.result['vcsdjwt']);
-// 	t.is((res.result['pretty_jwt'] as JsonableArray).length, 3);
+test('validate valid data with valid schema', async (t) => {
+	const script = `
+	Rule unknown ignore
 
-// 	const scriptPrepare = `
-// Rule unknown ignore
+	${SENTENCE}
+	Then print data
+	`;
 
-// Given I send verifier_url 'verifier_url' and send issued_vc 'issued_vc' and send disclosed 'disclosed' and send nonce 'nonce' and send holder 'holder_jwk' and present vc sd jwt and output into 'presentation'
-// Given I have a 'string' named 'presentation'
-// Then print data
-// `;
-// 	const res2 = await slangroom.execute(scriptPrepare, {
-// 		keys: {
-// 			disclosed: ['name'],
-// 			nonce,
-// 			verifier_url: 'https://valid.verifier.url',
-// 			holder_jwk: res.result['holder_jwk'] || {},
-// 			issued_vc: res.result['vcsdjwt'] || '',
-// 		},
-// 	});
-// 	t.truthy(res2.result['presentation']);
+	const slangroom = new Slangroom(json);
 
-// 	const scriptVerify = `
-// Rule unknown ignore
+	const res = await slangroom.execute(script, {
+		data: {
+			[KEY_DATA]: 'nice',
+			[KEY_SCHEMA]: {
+				type: 'string',
+			},
+		},
+	});
 
-// Given I send verifier_url 'verifier_url' and send issued_vc 'presentation' and send nonce 'nonce' and send issuer 'issuer_jwk' and verify vc sd jwt and output into 'verification'
-// Given I have a 'string dictionary' named 'verification'
-// Then print data
-// `;
-// 	const res3 = await slangroom.execute(scriptVerify, {
-// 		keys: {
-// 			nonce,
-// 			verifier_url: 'https://valid.verifier.url',
-// 			issuer_jwk: res.result['issuer_public_jwk'] || {},
-// 			presentation: res2.result['presentation'] || '',
-// 		},
-// 	});
-// 	t.truthy(res3.result['verification']);
-// });
+	const output = res.result[KEY_OUTPUT] as unknown as { errors: ValidationError[] };
+	t.deepEqual(output.errors, []);
+});
+
+test('validate invalid data with valid schema', async (t) => {
+	const script = `
+	Rule unknown ignore
+
+	${SENTENCE}
+	Then print data
+	`;
+
+	const slangroom = new Slangroom(json);
+
+	const res = await slangroom.execute(script, {
+		data: {
+			[KEY_DATA]: 12,
+			[KEY_SCHEMA]: {
+				type: 'string',
+			},
+		},
+	});
+
+	const output = res.result[KEY_OUTPUT] as unknown as { errors: ValidationError[] };
+	t.true(Array.isArray(output.errors) && output.errors.length > 0);
+});
+
+test('load invalid schema', async (t) => {
+	const script = `
+	Rule unknown ignore
+
+	${SENTENCE}
+	Then print data
+	`;
+
+	const slangroom = new Slangroom(json);
+
+	let error;
+	try {
+		await slangroom.execute(script, {
+			data: {
+				[KEY_DATA]: 12,
+				[KEY_SCHEMA]: {
+					invalid_key: 'string',
+				},
+			},
+		});
+	} catch (e) {
+		error = 'Invalid JSON schema';
+	}
+
+	t.assert(error);
+});

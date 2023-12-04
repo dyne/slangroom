@@ -16,7 +16,9 @@
 		"clean": "rm -rf .coverage && pnpm -F @slangroom/* exec -- rm -rf build",
 		"docs": "node docs/generate_syntax.mjs",
 		"build": "pnpm -F @slangroom/* exec tsc --outdir build/esm --module node16",
-		"publish:ci": "lerna version --no-changelog --conventional-commits --yes && pnpm publish -r --no-git-checks"
+		"publish:ci": "lerna version --no-changelog --conventional-commits --yes && pnpm publish -r --no-git-checks",
+		"build:json": "pnpm -F @slangroom/json exec tsc --outdir build/esm --module node16",
+		"test:json": "pnpm build:json && pnpm -F @slangroom/json exec ava build/esm/test"
 	},
 	"devDependencies": {
 		"@lerna-lite/publish": "^2.6.0",

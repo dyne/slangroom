@@ -1,49 +1,45 @@
 import { Plugin } from '@slangroom/core';
-// import type { JsonableArray, JsonableObject } from '@slangroom/shared';
+import Ajv, { type ValidationError } from 'ajv';
 
-// 
+export { ValidationError };
+
+//
 
 const p = new Plugin();
+
+export const ARG_JSON_DATA = 'json_data';
+export const ARG_JSON_SCHEMA = 'json_schema';
+export const PHRASE_VALIDATE_JSON = 'validate json';
+
+export const SENTENCE_VALIDATE_JSON = (dataKey: string, schemaKey: string, outputKey: string) =>
+	`Given I send ${ARG_JSON_DATA} '${dataKey}' and send ${ARG_JSON_SCHEMA} '${schemaKey}' and ${PHRASE_VALIDATE_JSON} and output into '${outputKey}'
+Given I have a 'string dictionary' named '${outputKey}'`;
 
 /**
  * @internal
  */
-export const createVcSdJwt = p.new(
-	['jwk', 'object', 'holder', 'fields'],
-	'create vc sd jwt',
+export const validateJSON = p.new(
+	[ARG_JSON_DATA, ARG_JSON_SCHEMA],
+	PHRASE_VALIDATE_JSON,
 	async (ctx) => {
-		// // TODO: typecheck jwt
-		// const sk = ctx.fetch('jwk') as JsonableObject;
-		// // TODO: typecheck object
-		// const object = ctx.fetch('object') as JsonableObject;
-		// // TODO: typecheck holder
-		// const holder = ctx.fetch('holder') as JsonableObject;
-		// // TODO: typecheck fields
-		// const fields = ctx.fetch('fields') as JsonableArray;
-		// // TODO: generate in another statement
-		// const signer: SignerConfig = {
-		// 	alg: supportedAlgorithm.ES256,
-		// 	callback: signerCallbackFn(await importJWK(sk)),
-		// };
+		const data = ctx.fetch(ARG_JSON_DATA);
+		const schema = ctx.fetch(ARG_JSON_SCHEMA);
 
-		// const issuer = new Issuer(signer, hasher);
+		try {
+			const ajv = new Ajv.default({ allErrors: true });
 
-		// const payload: CreateSDJWTPayload = {
-		// 	iat: Date.now(),
-		// 	cnf: { jwk: holder },
-		// 	iss: 'https://valid.issuer.url',
-		// };
-		// const vcClaims: VCClaims = {
-		// 	type: 'VerifiableCredential',
-		// 	status: { idx: 'statusIndex', uri: 'https://valid.status.url' },
-		// 	object: object,
-		// };
+			// @ts-ignore
+			const validate = ajv.compile(schema);
+			validate(data);
 
-		// const sdVCClaimsDisclosureFrame: DisclosureFrame = { object: { _sd: fields } };
-
-		// const result = await issuer.createVCSDJWT(vcClaims, payload, sdVCClaimsDisclosureFrame);
-
-		return ctx.pass("");
+			// @ts-ignore
+			return ctx.pass({
+				errors: validate.errors ?? [],
+			});
+		} catch (e) {
+			console.log(e.message);
+			return ctx.fail('JSON Schema not valid' + e);
+		}
 	},
 );
 
