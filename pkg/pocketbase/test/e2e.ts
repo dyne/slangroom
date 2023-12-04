@@ -17,6 +17,15 @@ const email = process.env['EMAIL']!;
 const password = process.env['PASSWORD']!;
 const pb_address = process.env['PB_ADDRESS']! as ServerUrl;
 
+type DataCreate = {
+        create_parameters: CreateRecordParameters;
+		pb_address: ServerUrl;
+		my_credentials: Credentials;
+		record_parameters: RecordBaseParameters;
+	};
+
+const randomString = ()=>(Math.random() + 1).toString(36).substring(7);
+
 test('should create a new slangroom client', async (t) => {
 	const script = `
     Rule unknown ignore
@@ -37,7 +46,7 @@ test('should login with credentials', async (t) => {
 	const script = `
     Rule unknown ignore
     Given I send pb_address 'pb_address' and create pb_client
-    Given I send my_credentials 'my_credentials' and login and output into 'output'
+    Given I send my_credentials 'gino' and login and output into 'output'
     Given I have a 'string dictionary' named 'output'
     Then print data
     `;
@@ -45,7 +54,7 @@ test('should login with credentials', async (t) => {
 	const res = await slangroom.execute(script, {
 		data: {
 			pb_address,
-			my_credentials: {
+			gino: {
 				email,
 				password,
 			},
@@ -71,10 +80,15 @@ test('should retrieve full list of records', async (t) => {
 		list_parameters: {
 			type: 'all',
 			collection: 'organizations',
+            expand: null,
+            requestKey: null,
+            fields: null,
+            sort: null,
+            filter: null
 		},
 	};
 	const res = await slangroom.execute(script, {
-		data,
+		data: data,
 	});
 	t.truthy(res.result['output']);
 });
@@ -97,6 +111,11 @@ test('should retrieve paginated list of records', async (t) => {
 				page: 2,
 				perPage: 20,
 			},
+            expand: null,
+            requestKey: null,
+            fields: null,
+            sort: null,
+            filter: null,
 			collection: 'organizations',
 		},
 	};
@@ -128,6 +147,9 @@ test('should retrieve first record that match filters', async (t) => {
 			collection: 'organizations',
 			filter: 'created >= "2022-01-01 00:00:00"',
 			sort: '-created',
+            expand: null,
+            requestKey: null,
+            fields: null,
 		},
 	};
 	const res = await slangroom.execute(script, {
@@ -152,6 +174,8 @@ test('should retrieve one record', async (t) => {
 			collection: 'organizations',
 			id: 'ouja6pwgxuyn2sd',
 			fields: 'name',
+            requestKey: null,
+            expand:null
 		},
 	};
 	const res = await slangroom.execute(script, {
@@ -161,10 +185,9 @@ test('should retrieve one record', async (t) => {
 	t.truthy(output.name);
 });
 
-let recordId: string;
 
-test.serial('should create a record', async (t) => {
-	const randomString = (Math.random() + 1).toString(36).substring(7);
+test('should create a record', async (t) => {
+    const name = `test-${randomString()}`
 
 	const script = `
     Rule unknown ignore
@@ -176,21 +199,20 @@ test.serial('should create a record', async (t) => {
     `;
 	const slangroom = new Slangroom(pocketbase);
 
-	type Data = {
-		pb_address: ServerUrl;
-		create_parameters: CreateRecordParameters;
-		my_credentials: Credentials;
-		record_parameters: RecordBaseParameters;
-	};
-	const data: Data = {
+	
+	const data: DataCreate = {
 		pb_address,
 		create_parameters: {
 			collection: 'organizations',
 			record: {
-				name: `test-${randomString}`,
-			},
+				name,
+			},            
 		},
-		record_parameters: {},
+		record_parameters: {
+            expand: null,
+            requestKey: "testCreate",
+            fields: null
+        },
 		my_credentials: {
 			email,
 			password,
@@ -200,14 +222,22 @@ test.serial('should create a record', async (t) => {
 		data,
 	});
 	const output = res.result['output'] as { id?: string; name?: string };
-	t.is(output.name, `test-${randomString}`, res.logs);
-	recordId = output.id!;
+	t.is(output.name, name, res.logs);
 });
 
-test.serial('should update a record', async (t) => {
-	const randomString = (Math.random() + 1).toString(36).substring(7);
+test('should update a record', async (t) => {
+	
 
-	const script = `
+    const scriptCreate = `
+    Rule unknown ignore
+    Given I send pb_address 'pb_address' and create pb_client
+    Given I send my_credentials 'my_credentials' and login
+    Given I send create_parameters 'create_parameters' and send record_parameters 'record_parameters' and create record and output into 'output'
+    Given I have a 'string dictionary' named 'output'
+    Then print data
+    `;
+
+	const scriptUpdate = `
     Rule unknown ignore
     Given I send pb_address 'pb_address' and create pb_client
     Given I send my_credentials 'my_credentials' and login
@@ -217,35 +247,77 @@ test.serial('should update a record', async (t) => {
     `;
 	const slangroom = new Slangroom(pocketbase);
 
-	type Data = {
+    type DataUpdate = {
 		pb_address: ServerUrl;
 		update_parameters: UpdateRecordParameters;
 		my_credentials: Credentials;
 		record_parameters: RecordBaseParameters;
 	};
-	const data: Data = {
+
+    const dataCreate: DataCreate = {
 		pb_address,
-		update_parameters: {
-			id: recordId,
+        create_parameters: {
 			collection: 'organizations',
 			record: {
-				name: `test-${randomString}`,
+				name: `test-${randomString()}`,
 			},
 		},
-		record_parameters: {},
+		record_parameters: {
+            expand: null,
+            requestKey: "testUpdateCreateContract",
+            fields: "id, name"
+        },
 		my_credentials: {
 			email,
 			password,
 		},
 	};
-	const res = await slangroom.execute(script, {
-		data,
+
+
+    const createResult = await slangroom.execute(scriptCreate, {
+        data: dataCreate
+    })
+
+    const outputCreate = createResult.result['output'] as { id: string, name: string}
+    const updatedName = `test-${randomString()}`
+    
+    const dataUpdate: DataUpdate = {
+		pb_address,
+		update_parameters: {
+			id: outputCreate.id,
+			collection: 'organizations',
+			record: {
+				name: updatedName,
+			},
+		},
+		record_parameters: {
+            expand: null,
+            requestKey: null,
+            fields: "id, name"
+        },
+		my_credentials: {
+			email,
+			password,
+		},
+	};
+
+	const res = await slangroom.execute(scriptUpdate, {
+		data: dataUpdate,
 	});
 	const output = res.result['output'] as { id?: string; name?: string };
-	t.is(output.name, `test-${randomString}`, res.logs);
+	t.is(output.name, updatedName, res.logs);
 });
 
-test.serial('should delete a record', async (t) => {
+test('should delete a record', async (t) => {
+    const scriptCreate = `
+    Rule unknown ignore
+    Given I send pb_address 'pb_address' and create pb_client
+    Given I send my_credentials 'my_credentials' and login
+    Given I send create_parameters 'create_parameters' and send record_parameters 'record_parameters' and create record and output into 'output'
+    Given I have a 'string dictionary' named 'output'
+    Then print data
+    `;
+
 	const script = `
     Rule unknown ignore
     Given I send pb_address 'pb_address' and create pb_client
@@ -254,18 +326,45 @@ test.serial('should delete a record', async (t) => {
     Given I have a 'string' named 'output'
     Then print data
     `;
+
+    const dataCreate: DataCreate = {
+		pb_address,
+        create_parameters: {
+			collection: 'organizations',
+			record: {
+				name: `test-${randomString()}`,
+			},
+		},
+		record_parameters: {
+            expand: null,
+            requestKey: "testDeleteCreateContract",
+            fields: "id, name"
+        },
+		my_credentials: {
+			email,
+			password,
+		},
+	};
+
 	const slangroom = new Slangroom(pocketbase);
+
+    const createResult = await slangroom.execute(scriptCreate, {
+        data: dataCreate
+    })
+    const outputCreate = createResult.result['output'] as { id: string, name: string}
+
 
 	type Data = {
 		pb_address: ServerUrl;
 		delete_parameters: DeleteRecordParameters;
 		my_credentials: Credentials;
 	};
+
 	const data: Data = {
 		pb_address,
 		delete_parameters: {
 			collection: 'organizations',
-			id: recordId,
+			id: outputCreate.id,
 		},
 		my_credentials: {
 			email,

@@ -18,9 +18,9 @@ const credentialsSchema = z.object({
 export type Credentials = z.infer<typeof credentialsSchema>;
 
 const baseRecordParametersSchema = z.object({
-	expand: z.string().optional(),
-	requestKey: z.string().optional(),
-	fields: z.string().optional(),
+	expand: z.string().nullable(),
+	requestKey: z.string().nullable(),
+	fields: z.string().nullable(),
 });
 export type RecordBaseParameters = z.infer<typeof baseRecordParametersSchema>;
 
@@ -35,15 +35,15 @@ const paginationSchema = z.object({
 
 const listParametersBaseSchema = z
 	.object({
-		sort: z.string().default('-created').optional(),
+		sort: z.string().nullable(),
 	})
 	.merge(baseFetchRecordParametersSchema);
 
 const listParametersSchema = z.discriminatedUnion('type', [
-	listParametersBaseSchema.extend({ type: z.literal('all'), filter: z.string().optional() }),
+	listParametersBaseSchema.extend({ type: z.literal('all'), filter: z.string().nullable() }),
 	listParametersBaseSchema.extend({
 		type: z.literal('list'),
-		filter: z.string().optional(),
+		filter: z.string().nullable(),
 		pagination: paginationSchema,
 	}),
 	listParametersBaseSchema.extend({ type: z.literal('first'), filter: z.string() }),
@@ -60,8 +60,8 @@ export type ShowRecordParameters = z.infer<typeof showParametersSchema>;
 const createRecordParametersSchema = z
 	.object({
 		record: z.record(z.string(), z.any()),
+        collection: z.string()
 	})
-	.merge(baseFetchRecordParametersSchema);
 export type CreateRecordParameters = z.infer<typeof createRecordParametersSchema>;
 
 const updateRecordParametersSchema = z
@@ -85,9 +85,9 @@ const isPbRunning = async () => {
 const createRecordOptions = (p: RecordBaseParameters) => {
 	const { expand, fields, requestKey } = p;
 	const options: RecordOptions = {};
-	if (expand) options.expand = expand;
-	if (fields) options.fields = fields;
-	if (requestKey) options.requestKey = requestKey;
+	if (expand !== null) options.expand = expand;
+	if (fields !== null) options.fields = fields;
+	if (requestKey !== null) options.requestKey = requestKey;
 	return options;
 };
 
@@ -189,7 +189,7 @@ export const createRecord = p.new(
 		if (!validateRecordParams.success) return ctx.fail(validateRecordParams.error);
 
 		const { collection, record } = p;
-		const options = createRecordOptions(p);
+		const options = createRecordOptions(r);
 
 		try {
 			const res = await pb.collection(collection).create(record, options);
@@ -216,7 +216,7 @@ export const updateRecord = p.new(
 		if (!validateRecordParams.success) return ctx.fail(validateRecordParams.error);
 
 		const { collection, record, id } = p;
-		const options = createRecordOptions(p);
+		const options = createRecordOptions(r);
 
 		try {
 			const res = await pb.collection(collection).update(id, record, options);
@@ -243,3 +243,4 @@ export const deleteRecord = p.new(['delete_parameters'], 'delete record', async 
 });
 
 export const pocketbase = p;
+
