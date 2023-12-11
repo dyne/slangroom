@@ -33,9 +33,9 @@
 		"access": "public"
 	},
 	"devDependencies": {
-		"@playwright/test": "^1.39.0",
-		"@types/node": "^20.3.1",
-		"esbuild": "^0.18.4"
+		"@playwright/test": "^1.40.1",
+		"@types/node": "^20.10.4",
+		"esbuild": "^0.18.20"
 	},
 	"scripts": {
 		"build": "pnpm exec esbuild --bundle src/index.ts --outfile=build/slangroom.js --target=es2016 --external:fs --external:path --external:crypto && cp build/slangroom.js public"
