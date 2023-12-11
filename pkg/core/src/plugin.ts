@@ -115,20 +115,21 @@ export class Plugin {
 			throw new Error('unreachable');
 		}
 
-		// TODO: allow dashes and underscores only in between words
-		if (phrase.split(' ').some((x) => !x.match(/^[0-9a-z_-]+$/)))
+		if (phrase.split(' ').some((x) => !isSane(x)))
 			throw new Error(
-				'phrase must composed of alpha-numerical, underscore, and dash values split by a single space',
+				'phrase must be composed of alpha-numerical, underscore, and dash values split by a single space',
 			);
 
 		const key: PluginMapKey = { phrase: phrase };
 		if (openconnect) key.openconnect = openconnect;
 		if (params) {
-			// TODO: allow dashes and underscores and only in between words
-			if (params.some((x) => !x.match(/^[0-9a-z_-]+$/)))
+			// TODO: allow spaces in params
+			const found = params.find((x) => !isSane(x));
+			if (found !== undefined)
 				throw new Error(
-					'each params must composed of alpha-numerical values, optionally split by dashes or underscores',
+					`the following parameter must be composed of alpha-numerical values, optionally split by dashes or underscores: ${found}`,
 				);
+
 			const duplicates = [
 				...params.reduce((acc, cur) => {
 					const found = acc.get(cur);
@@ -148,6 +149,19 @@ export class Plugin {
 		return executor;
 	}
 }
+
+/**
+ * @internal
+ * Check the sanity of a Phrase or Param for the following:
+ *
+ * 1. Must start with a letter.
+ * 2. Dashes and underscores are allowed only inbetween words once.
+ * 3. Must be composed solely of letter, digits, dashes, and underscores.
+ *
+ * @param str The input to be checked for sanity.
+ * @returns whether it is sane or not.
+ */
+export const isSane = (str: string) => /^[a-z]([a-z0-9]+|[a-z0-9]+[_-][a-z0-9]+)*$/.test(str);
 
 // Todo: Maybe we should adapt some sort of monad library.
 
