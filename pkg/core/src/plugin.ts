@@ -161,7 +161,7 @@ export class Plugin {
  * @param str The input to be checked for sanity.
  * @returns whether it is sane or not.
  */
-export const isSane = (str: string) => /^[a-z]([a-z0-9]+|[a-z0-9]+[_-][a-z0-9]+)*$/.test(str);
+export const isSane = (str: string) => /^[a-z][a-z0-9]*([_-][a-z0-9]+)*$/.test(str);
 
 // Todo: Maybe we should adapt some sort of monad library.
 
