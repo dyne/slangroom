@@ -40,9 +40,17 @@ test('Plugin.new() phrase alpha-numerical checks work', (t) => {
 		}),
 	);
 
-	['foo', 'foo bar', 'foo_bar', 'foo-bar', 'foo bar baz', 'foo_bar_baz', 'foo-bar-baz'].forEach(
-		(x) => t.notThrows(() => new Plugin().new(x, (ctx) => ctx.pass(null)), x),
-	);
+	[
+		'foo',
+		'foo bar',
+		'foo_bar',
+		'foo-bar',
+		'foo bar baz',
+		'foo_bar_baz',
+		'foo-bar-baz',
+		'p-p',
+		'p-256',
+	].forEach((x) => t.notThrows(() => new Plugin().new(x, (ctx) => ctx.pass(null)), x));
 });
 
 test('Plugin.new() params alpha-numerical checks work', (t) => {
@@ -57,58 +65,52 @@ test('Plugin.new() params alpha-numerical checks work', (t) => {
 		),
 	);
 
-	['foo', 'foo_bar', 'foo-bar', 'foo_bar_baz', 'foo-bar-baz'].forEach((x) => {
+	['foo', 'foo_bar', 'foo-bar', 'foo_bar_baz', 'foo-bar-baz', 'p-p', 'p-256'].forEach((x) => {
 		t.notThrows(() => new Plugin().new(x, (ctx) => ctx.pass(null)), x);
 	});
 });
 
 test('Plugin.new() duplicates detected', (t) => {
 	const f: PluginExecutor = (ctx) => ctx.pass(null);
-	t.is(
-		(
-			t.throws(
-				() => {
-					const p = new Plugin();
-					p.new('a', f);
-					p.new('a', f);
-				},
-				{ instanceOf: DuplicatePluginError },
-			) as DuplicatePluginError
-		).message,
-		`duplicated plugin with key: openconnect= params= phrase="a"`,
+	t.throws(
+		() => {
+			const p = new Plugin();
+			p.new('a', f);
+			p.new('a', f);
+		},
+		{
+			instanceOf: DuplicatePluginError,
+			message: `duplicated plugin with key: openconnect= params= phrase="a"`,
+		},
 	);
 
-	t.is(
-		(
-			t.throws(
-				() => {
-					const p = new Plugin();
-					p.new('a', f);
-					p.new('open', 'a', f);
-					p.new('open', 'a', f);
-				},
-				{ instanceOf: DuplicatePluginError },
-			) as DuplicatePluginError
-		).message,
-		`duplicated plugin with key: openconnect=open params= phrase="a"`,
+	t.throws(
+		() => {
+			const p = new Plugin();
+			p.new('a', f);
+			p.new('open', 'a', f);
+			p.new('open', 'a', f);
+		},
+		{
+			instanceOf: DuplicatePluginError,
+			message: `duplicated plugin with key: openconnect=open params= phrase="a"`,
+		},
 	);
 
-	t.is(
-		(
-			t.throws(
-				() => {
-					const p = new Plugin();
-					p.new('a', f);
-					p.new('open', 'a', f);
-					p.new('connect', 'a', f);
-					p.new('open', ['foo'], 'a', f);
-					p.new('connect', ['foo'], 'a', f);
-					p.new('connect', ['foo'], 'a', f);
-				},
-				{ instanceOf: DuplicatePluginError },
-			) as DuplicatePluginError
-		).message,
-		`duplicated plugin with key: openconnect=connect params=foo phrase="a"`,
+	t.throws(
+		() => {
+			const p = new Plugin();
+			p.new('a', f);
+			p.new('open', 'a', f);
+			p.new('connect', 'a', f);
+			p.new('open', ['foo'], 'a', f);
+			p.new('connect', ['foo'], 'a', f);
+			p.new('connect', ['foo'], 'a', f);
+		},
+		{
+			instanceOf: DuplicatePluginError,
+			message: `duplicated plugin with key: openconnect=connect params=foo phrase="a"`,
+		},
 	);
 });
 
