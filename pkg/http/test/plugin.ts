@@ -44,7 +44,7 @@ test('Simple GET', async (t) => {
 	t.deepEqual(res, {
 		ok: true,
 		value: {
-			status: 200,
+			status: '200',
 			result: {
 				userId: 1,
 				myArray: [1, 2, 3, 4, 5],
@@ -65,7 +65,7 @@ test('single put with data', async (t) => {
 	const res = await defaults.putObject(ctx);
 	t.deepEqual(res, {
 		ok: true,
-		value: { status: 200, result: 'received result' },
+		value: { status: '200', result: 'received result' },
 	});
 });
 
@@ -76,7 +76,7 @@ test('single post with data', async (t) => {
 	const res = await defaults.postObject(ctx);
 	t.deepEqual(res, {
 		ok: true,
-		value: { status: 200, result: 'received result' },
+		value: { status: '200', result: 'received result' },
 	});
 });
 
@@ -89,8 +89,8 @@ test('multiple post with data', async (t) => {
 	t.deepEqual(res, {
 		ok: true,
 		value: [
-			{ status: 200, result: 'received result' },
-			{ status: 404, result: "doesn't exist, mate" },
+			{ status: '200', result: 'received result' },
+			{ status: '404', result: "doesn't exist, mate" },
 		],
 	});
 });
@@ -108,9 +108,9 @@ test('POSTs with custom different', async (t) => {
 	t.deepEqual(res, {
 		ok: true,
 		value: [
-			{ status: 200, result: 'received result' },
-			{ status: 404, result: "doesn't exist, mate" },
-			{ status: 500, result: 'Did not receive the result' },
+			{ status: '200', result: 'received result' },
+			{ status: '404', result: "doesn't exist, mate" },
+			{ status: '500', result: 'Did not receive the result' },
 		],
 	});
 });
