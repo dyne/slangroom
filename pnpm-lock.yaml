@@ -157,7 +157,7 @@ importers:
         specifier: workspace:*
         version: link:../shared
 
-  pkg/json:
+  pkg/json-schema:
     dependencies:
       '@slangroom/core':
         specifier: workspace:*

@@ -1,5 +1,5 @@
 {
-	"name": "@slangroom/json",
+	"name": "@slangroom/json-schema",
 	"version": "1.9.6",
 	"dependencies": {
 		"@slangroom/core": "workspace:*",

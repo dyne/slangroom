@@ -1,6 +1,6 @@
 import test from 'ava';
 import { Slangroom } from '@slangroom/core';
-import { json, SENTENCE_VALIDATE_JSON, ValidationError } from '@slangroom/json';
+import { JSONSchema, SENTENCE_VALIDATE_JSON, ValidationError } from '@slangroom/json-schema';
 
 const KEY_DATA = 'data';
 const KEY_SCHEMA = 'schema';
@@ -15,7 +15,7 @@ test('validate valid data with valid schema', async (t) => {
 	Then print data
 	`;
 
-	const slangroom = new Slangroom(json);
+	const slangroom = new Slangroom(JSONSchema);
 
 	const res = await slangroom.execute(script, {
 		data: {
@@ -38,7 +38,7 @@ test('validate invalid data with valid schema', async (t) => {
 	Then print data
 	`;
 
-	const slangroom = new Slangroom(json);
+	const slangroom = new Slangroom(JSONSchema);
 
 	const res = await slangroom.execute(script, {
 		data: {
@@ -61,7 +61,7 @@ test('load invalid schema', async (t) => {
 	Then print data
 	`;
 
-	const slangroom = new Slangroom(json);
+	const slangroom = new Slangroom(JSONSchema);
 
 	let error;
 	try {
