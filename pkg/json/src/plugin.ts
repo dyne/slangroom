@@ -43,4 +43,4 @@ export const validateJSON = p.new(
 	},
 );
 
-export const JSONSchema = p;
+export const json = p;
