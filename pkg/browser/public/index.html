@@ -5,6 +5,7 @@
 	<body>
 		<h1>Test http</h1>
 		<div id="test1"></div>
+		<div id="test-json-schema"></div>
 		<script>
 			const script = `
 Rule unknown ignore
@@ -26,6 +27,30 @@ Then print data
 				})
 				.then((r) => {
 					resDiv.innerText = JSON.stringify(r.result);
+				});
+
+			// 
+
+			const scriptJSONSchema = `
+Rule unknown ignore
+Given I send json_data 'data' and send json_schema 'schema' and validate json and output into 'out'
+Given I have a 'string dictionary' named 'out'
+Then print 'out'
+			`
+
+			const JSONSChemaResDiv = document.getElementById('test-json-schema');
+
+			slangroom
+				.execute(scriptJSONSchema, {
+					data: {
+						schema: {
+							type: 'string'
+						},
+						data: 'ciao',
+					},
+				})
+				.then((r) => {
+					JSONSChemaResDiv.innerText = JSON.stringify(r.result);
 				});
 		</script>
 	</body>
