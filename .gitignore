@@ -46,3 +46,4 @@
 !/docs/*.mjs
 !/docs/*.json
 
+node_modules
