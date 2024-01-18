@@ -1,6 +1,36 @@
 import { PluginMap, Token, type PluginMapKey } from '@slangroom/core';
 
+/**
+ * Represents an error encountered during the parsing phrase.
+ *
+ * @remarks
+ * The class must not be used directly with `new`.  Instead, the static
+ * constructor methods must be used.
+ *
+ * In case of:
+ * - a wrong type of token is found, use {@link wrong};
+ * - a token is not provided, missing, use {@link missing};
+ * - an extra token is found, use {@link extra}:
+ */
 export class ParseError extends Error {
+	/**
+	 * Represents an error case where a wrong type of one or multiple tokens are
+	 * found.  If a token is not found, use {@link missing}.
+	 *
+	 * @example
+	 * An alternative can be provided with the second parameter:
+	 * ```ts
+	 * if (token.name !== "asche")
+	 * 	throw ParseError.wrong(token, "asche")
+	 * ```
+	 *
+	 * @example
+	 * Multiple alternatives (e.g. "foo", or "bar", or "baz") can be provided also:
+	 * ```ts
+	 * if (token.name !== "given" || token.name !== "then")
+	 * 	throw ParseError.wrong(token, "given", "then")
+	 * ```
+	 */
 	static wrong(have: Token, wantFirst: string, ...wantRest: string[]) {
 		const wants = [wantFirst, ...wantRest];
 		return new ParseError(
@@ -10,11 +40,38 @@ export class ParseError extends Error {
 		);
 	}
 
+	/**
+	 * Represents an error case where a token is missing.  If a token is found
+	 * but of a wrong type, use {@link wrong}.
+	 *
+	 * @example
+	 * What is expected can be provided with the first parameter:
+	 * ```ts
+	 * if (tokenDoesntExist)
+	 * 	throw ParseError.missing("asche")
+	 * ```
+	 *
+	 * @example
+	 * What is expected could be multiple (e.g. "foo", or "bar", or "baz") also:
+	 * ```ts
+	 * if (tokenDoesntExist)
+	 * 	throw ParseError.missing("given", "then")
+	 * ```
+	 */
 	static missing(wantFirst: string, ...wantRest: string[]) {
 		const wants = [wantFirst, ...wantRest];
 		return new ParseError(`missing token(s): ${wants.join(', ')}`);
 	}
 
+	/**
+	 * Represents an error case where an unexpected extra token is found.
+	 *
+	 * @example
+	 * ```ts
+	 * if (token)
+	 *	throw ParseError.extra(token)
+	 * ```
+	 */
 	static extra(token: Token) {
 		return new ParseError(`extra token (${token.start}, ${token.end}): ${token.raw}`);
 	}
@@ -28,28 +85,104 @@ export class ParseError extends Error {
 	}
 }
 
+/**
+ * The CST (Concrete Syntax Tree) of a parsed line with error information.
+ */
 export type Cst = {
+	/**
+	 * Whether the line starts with "Given" or "Then" tokens, or none.
+	 */
 	givenThen?: 'given' | 'then';
+
+	/**
+	 * Any errors not involving the match of a plugin is found during parsing.
+	 * Errors such as "Given is not found" or "I needs to be capitalized" would
+	 * fit in this category.
+	 */
 	errors: ParseError[];
+
+	/**
+	 * List of possible matches of plugins with their possible errors for ranking and
+	 * reporting.
+	 */
 	matches: Match[];
 };
 
+/**
+ * A possible match of a plugin using its {@link PluginMapKey}.
+ */
 export type Match = {
+	/**
+	 * List of bindings of the plugin, pairs of parameters of the plugin and
+	 * their corresponding values, which are JSON keys that point to the actual
+	 * values.
+	 *
+	 * @example
+	 * `Given I send foo 'bar' and send baz 'quz' ...` would result in a map of
+	 * bindings like this:
+	 *
+	 * ```
+	 * {
+	 * 	"foo": "bar",
+	 * 	"baz": "quz",
+	 * }
+	 *
+	 * Here, `foo` and `baz` are parameters of a plugin, and `bar` and `quz` are
+	 * keys to the actual values (found in `data` or `keys` section of Zenroom).
+	 * ```
+	 */
 	bindings: Map<string, string>;
+
+	/**
+	 * The key of the match, a {@link PluginMapKey}.  This is what allows us to
+	 * know that a match belongs to a certain plugin.
+	 */
 	key: PluginMapKey;
+
+	/**
+	 * List of possible parsing errors specific to the plugin.  Currently, this
+	 * is what allows us to rank the list of possible matches.
+	 */
 	err: ParseError[];
+
+	/**
+	 * Whether this line wants to output the result of its plugin to a variable,
+	 * later to be used in other statements, perhaps.
+	 */
 	into?: string;
 } & (
 		| {
+			/**
+			 * Whether this line uses Open or Connect.  Having neither is an
+			 * error that would show up in {@link err}.
+			 */
 			open?: string;
+
+			/**
+			 * Whether this line uses Open or Connect.  Having neither is an
+			 * error that would show up in {@link err}.
+			 */
 			connect?: never;
 		}
 		| {
+			/**
+			 * Whether this line uses Open or Connect.  Having neither is an
+			 * error that would show up in {@link err}.
+			 */
 			open?: never;
+
+			/**
+			 * Whether this line uses Open or Connect.  Having neither is an
+			 * error that would show up in {@link err}.
+			 */
 			connect?: string;
 		}
 	);
 
+/**
+ * Parses the given tokens of a lexed line and plugins, and generates a CST with possible
+ * matches of those plugins.
+ */
 export const parse = (p: PluginMap, t: Token[]): Cst => {
 	const cst: Cst = {
 		matches: [],
