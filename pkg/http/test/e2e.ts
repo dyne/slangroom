@@ -52,8 +52,8 @@ Then I connect to 'final_endpoints' and send object 'string_array' and do parall
 			final_endpoints: ['http://localhost/sendresult', 'http://localhost/sendresult'],
 			string_array: [{ req: 'Hola chico!' }, { req: 'Hi!' }],
 			results: [
-				{ status: 200, result: 'received result' },
-				{ status: 200, result: 'received result' },
+				{ status: '200', result: 'received result' },
+				{ status: '200', result: 'received result' },
 			],
 		},
 		res.logs,
@@ -83,7 +83,7 @@ Then print data
 		{
 			auth: {
 				result: 'Yes, you can!',
-				status: 200,
+				status: '200',
 			},
 		},
 		res.logs,

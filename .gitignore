@@ -42,7 +42,6 @@
 !/pkg/browser/public/index.html
 
 # shitdocs
-!/docs/*.html
-!/docs/*.mjs
-!/docs/*.json
+!/docs/**
 
+node_modules

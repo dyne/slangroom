@@ -1,0 +1,3 @@
+# Quickstart
+
+TODO Write a simple javascript script that uses slangroom....
