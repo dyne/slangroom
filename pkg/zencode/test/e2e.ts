@@ -1,0 +1,37 @@
+import test from 'ava';
+import { Slangroom } from '@slangroom/core';
+import { zencode } from '@slangroom/zencode';
+import type { JsonableObject } from '@slangroom/shared';
+
+
+test('run zencode', async (t) => {
+	const scriptCreate = `
+Rule unknown ignore
+Given I send keys 'neo_keys' and send script 'neo_script' and send data 'neo_data' and send conf 'neo_conf' and send extra 'neo_extra' and execute zencode and output into 'ecdh_public_key'
+Given I have a 'string dictionary' named 'ecdh_public_key'
+Then print data
+`;
+	const slangroom = new Slangroom(zencode);
+	const res = await slangroom.execute(scriptCreate, {
+		keys: {
+			neo_keys: {
+				keyring: {
+					ecdh: "FJ5Esc1koLSH+9pKSdI65tcyH2HowzXMe0UdsqktmZU=",
+				}
+			},
+			neo_conf: "",
+			neo_data: {},
+			neo_extra: {},
+			neo_script: `
+				Scenario 'ecdh': Create the public key
+				Given I have the 'keyring'
+				When I create the ecdh public key
+				Then print the 'ecdh public key'
+			`
+		},
+	});
+	t.deepEqual((res.result['ecdh_public_key'] as JsonableObject), {
+   ecdh_public_key: "BLOYXryyAI7rPuyNbI0/1CfLFd7H/NbX+osqyQHjPR9BPK1lYSPOixZQWvFK+rkkJ+aJbYp6kii2Y3+fZ5vl2MA="
+	});
+
+});
