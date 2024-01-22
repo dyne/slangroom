@@ -146,7 +146,7 @@ const getDatakeys = (params: ZenParams, rhs: string): undefined | Jsonable =>
  */
 const fetchDatakeys = (params: ZenParams, rhs: string): Jsonable => {
 	const val = getDatakeys(params, rhs);
-	if (!val) throw new Error('cannot be undefined');
+	if (val === undefined) throw new Error('cannot be undefined');
 	return val;
 };
 
