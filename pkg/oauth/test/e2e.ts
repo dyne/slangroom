@@ -14,8 +14,9 @@ Then print data
 `;
 	const slangroom = new Slangroom(oauth);
 	const res = await slangroom.execute(scriptCreate, {
+		// TODO: see request with code_verifier in body
 		keys: {
-			body: "grant_type=password&username=thomseddon&password=nightworld&redirect_uri=https%3A%2F%2FWallet.example.org%2Fcb",
+			body: "grant_type=authorization_code&code=SplxlOBeZQQYbYS6WxSbIA&redirect_uri=https%3A%2F%2FWallet.example.org%2Fcb",
 			headers: {
 				"Authorization": "Basic dGhvbTpuaWdodHdvcmxk",
 				"content-length": 42,

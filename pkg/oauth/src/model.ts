@@ -1,20 +1,71 @@
-import { PasswordModel, Client, User, Token, Falsey } from "@node-oauth/oauth2-server";
+import { AuthorizationCodeModel, Client, User, Token, Falsey, AuthorizationCode } from "@node-oauth/oauth2-server";
 import { SignJWT, generateKeyPair } from 'jose';
 import { randomBytes } from 'crypto';
 
 
-export class InMemoryCache implements PasswordModel {
+export class InMemoryCache implements AuthorizationCodeModel {
 	clients: Client[];
 	tokens: Token[];
 	users: User[];
+	codes: AuthorizationCode[];
 
 	/**
 	 * Constructor.
 	 */
 	constructor() {
-		this.clients = [{ id: 'thom', clientSecret: 'nightworld', grants: ["password"], redirectUris: ['https://Wallet.example.org/cb'] }];
+		const cl:Client = { id: 'thom', clientSecret: 'nightworld', grants: ["authorization_code"], redirectUris: ['https://Wallet.example.org/cb'] };
+		const us:User = { id: '123', username: 'thomseddon', password: 'nightworld' };
+		const authCode:AuthorizationCode = { authorizationCode: 'SplxlOBeZQQYbYS6WxSbIA', expiresAt: new Date(Date.now()+50000), redirectUri: 'https://Wallet.example.org/cb', client: cl, user: us };
+
+		this.clients = [cl];
 		this.tokens = [];
-		this.users = [{ id: '123', username: 'thomseddon', password: 'nightworld' }];
+		this.users = [us];
+		this.codes = [authCode];
+	}
+
+	/**
+	 * Invoked to retrieve an existing authorization code previously saved through Model#saveAuthorizationCode().
+	 *
+	 */
+	getAuthorizationCode(authorizationCode: string): Promise<Falsey | AuthorizationCode> {
+		var codes = this.codes.filter(function (code) {
+			return code.authorizationCode === authorizationCode;
+		});
+
+		return Promise.resolve(codes[0]);
+	}
+
+	/**
+	 * Invoked to save an authorization code.
+	 *
+	 */
+	saveAuthorizationCode(code: Pick<AuthorizationCode, "authorizationCode" | "expiresAt" | "redirectUri" | "scope" | "codeChallenge" | "codeChallengeMethod">, client: Client, user: User): Promise<Falsey | AuthorizationCode> {
+		let codeSaved: AuthorizationCode = {
+			authorizationCode: code.authorizationCode,
+			expiresAt: code.expiresAt,
+			redirectUri: code.redirectUri,
+			scope: code.scope,
+			client: client,
+			user: user
+		};
+
+		if(code.codeChallenge && code.codeChallengeMethod){
+			codeSaved = Object.assign({
+				codeChallenge: code.codeChallenge,
+				codeChallengeMethod: code.codeChallengeMethod
+			}, codeSaved);
+		}
+		this.codes.push(codeSaved);
+		return Promise.resolve(codeSaved);
+	}
+
+	/**
+	 * Invoked to revoke an authorization code.
+	 *
+	 */
+	revokeAuthorizationCode(code: AuthorizationCode): Promise<boolean> {
+		// TODO: check what this should actually do
+		return Promise.resolve(code.expiresAt.getTime() > Date.now());
 	}
 
 	/**
@@ -70,16 +121,14 @@ export class InMemoryCache implements PasswordModel {
 		const tokenSaved: Token = {
 			accessToken: token.accessToken,
 			accessTokenExpiresAt: token.accessTokenExpiresAt,
-			clientId: client.id,
 			refreshToken: token.refreshToken,
 			refreshTokenExpiresAt: token.refreshTokenExpiresAt,
-			userId: user['id'],
 			client: client,
 			user: user
 		}
 		this.tokens.push(tokenSaved);
 		const clients = this.clients.filter(function (client) {
-			return client.id === tokenSaved['clientId']
+			return client.id === tokenSaved.client.id
 		});
 		if (clients[0]) tokenSaved.client = clients[0];
 		tokenSaved.user = user;
@@ -107,6 +156,8 @@ export class InMemoryCache implements PasswordModel {
 		if(user && scope) console.log('11');
 
 		const clientId = client.id;
+
+		// TODO: change so that AuthServer private key is given as input
 		const keyPair = await generateKeyPair('ES256');
 
 		const token = new SignJWT({ sub: randomBytes(20).toString('hex') })
