@@ -1,0 +1,35 @@
+{
+	"name": "@slangroom/oauth",
+	"version": "1.13.0",
+	"dependencies": {
+		"@slangroom/core": "workspace:*",
+		"@slangroom/shared": "workspace:*",
+		"jose": "^5.1.3",
+		"@node-oauth/oauth2-server": "^5.1.0",
+		"bluebird": "^3.7.2",
+		"redis": "^4.6.12",
+		"type-is": "^1.6.18"
+	},
+	"repository": "https://github.com/dyne/slangroom",
+	"license": "AGPL-3.0-only",
+	"type": "module",
+	"main": "./build/esm/src/index.js",
+	"types": "./build/esm/src/index.d.ts",
+	"exports": {
+		".": {
+			"import": {
+				"types": "./build/esm/src/index.d.ts",
+				"default": "./build/esm/src/index.js"
+			}
+		},
+		"./*": {
+			"import": {
+				"types": "./build/esm/src/*.d.ts",
+				"default": "./build/esm/src/*.js"
+			}
+		}
+	},
+	"publishConfig": {
+		"access": "public"
+	}
+}
