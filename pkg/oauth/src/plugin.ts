@@ -3,6 +3,8 @@ import OAuth2Server from '@node-oauth/oauth2-server';
 import { Request } from '@node-oauth/oauth2-server';
 import { Response } from '@node-oauth/oauth2-server';
 import { InMemoryCache } from '@slangroom/oauth';
+import { JsonableObject } from '@slangroom/shared';
+import { JWK } from 'jose';
 
 
 const p = new Plugin();
@@ -42,9 +44,9 @@ function parseQueryStringToDictionary(queryString: string) {
 
 
 let inMemoryCache: InMemoryCache | null = null;
-const getInMemoryCache = (): InMemoryCache => {
+const getInMemoryCache = (jwk: JWK): InMemoryCache => {
 	if (!inMemoryCache) {
-		inMemoryCache = new InMemoryCache();
+		inMemoryCache = new InMemoryCache(jwk);
 	}
 	return inMemoryCache;
 }
@@ -55,12 +57,13 @@ const getInMemoryCache = (): InMemoryCache => {
 
 //Add sentence that allows to generate and output a valid access token from an auth server backend
 export const createToken = p.new(
-	['body', 'headers'],
+	['body', 'headers', 'jwk'],
 	'generate access token',
 	async (ctx) => {
 
 		const params = ctx.fetch('body') as 'string';
 		const headers = ctx.fetch('headers');
+		const jwk = ctx.fetch('jwk') as JsonableObject;
 		const request = new Request({
 			body: parseQueryStringToDictionary(params),
 			headers: headers,
@@ -68,9 +71,9 @@ export const createToken = p.new(
 			query: {}
 		})
 
-		const response = new Response()
+		const response = new Response();
 		var server = new OAuth2Server({
-			model: getInMemoryCache()
+			model: getInMemoryCache(jwk)
 		});
 		return ctx.pass(await server.token(request, response))
 	}

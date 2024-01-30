@@ -1,5 +1,5 @@
 import { AuthorizationCodeModel, Client, User, Token, Falsey, AuthorizationCode } from "@node-oauth/oauth2-server";
-import { SignJWT, generateKeyPair } from 'jose';
+import { SignJWT, generateKeyPair, JWK, importJWK} from 'jose';
 import { randomBytes } from 'crypto';
 
 
@@ -8,15 +8,18 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	tokens: Token[];
 	users: User[];
 	codes: AuthorizationCode[];
+	jwk: JWK;
 
 	/**
 	 * Constructor.
 	 */
-	constructor() {
+	constructor(jwk: JWK) {
 		const cl:Client = { id: 'thom', clientSecret: 'nightworld', grants: ["authorization_code"], redirectUris: ['https://Wallet.example.org/cb'] };
 		const us:User = { id: '123', username: 'thomseddon', password: 'nightworld' };
-		const authCode:AuthorizationCode = { authorizationCode: 'SplxlOBeZQQYbYS6WxSbIA', expiresAt: new Date(Date.now()+50000), redirectUri: 'https://Wallet.example.org/cb', client: cl, user: us };
+		//Note that AuthCode need CodeChallenge/CodeChallengeMethod iff the request contains code_verifier
+		const authCode:AuthorizationCode = { authorizationCode: 'SplxlOBeZQQYbYS6WxSbIA', expiresAt: new Date(Date.now()+50000), redirectUri: 'https://Wallet.example.org/cb', client: cl, user: us, codeChallenge: 'E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM', codeChallengeMethod: 'S256' };
 
+		this.jwk = jwk;
 		this.clients = [cl];
 		this.tokens = [];
 		this.users = [us];
@@ -65,7 +68,11 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	 */
 	revokeAuthorizationCode(code: AuthorizationCode): Promise<boolean> {
 		// TODO: check what this should actually do
-		return Promise.resolve(code.expiresAt.getTime() > Date.now());
+		if (code.expiresAt.getTime() < Date.now()) {
+			var index = this.codes.indexOf(code);
+			this.codes.splice(index,1);
+		}
+		return Promise.resolve(true);
 	}
 
 	/**
@@ -107,10 +114,18 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	 */
 
 	getClient(clientId: string, clientSecret: string): Promise<Client | Falsey> {
-		var clients = this.clients.filter(function (client: Client) {
-			return client.id === clientId && client['clientSecret'] === clientSecret;
-		});
-		return Promise.resolve(clients[0]);
+		if(clientSecret) {
+			var clients = this.clients.filter(function (client: Client) {
+				return client.id === clientId && client['clientSecret'] === clientSecret;
+			});
+			return Promise.resolve(clients[0]);
+		}
+		else {
+			var clients = this.clients.filter(function (client: Client) {
+				return client.id === clientId;
+			});
+			return Promise.resolve(clients[0]);
+		}
 	};
 
 	/**
@@ -136,18 +151,6 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	};
 
 	/**
-	 * Get user.
-	 */
-
-	getUser(username: string, password: string): Promise<User | Falsey> {
-		var users = this.users.filter(function (user) {
-			return user['username'] === username && user['password'] === password;
-		});
-
-		return Promise.resolve(users[0]);
-	};
-
-	/**
 	 * Generate access token.
 	 */
 
@@ -156,18 +159,21 @@ export class InMemoryCache implements AuthorizationCodeModel {
 		if(user && scope) console.log('11');
 
 		const clientId = client.id;
-
-		// TODO: change so that AuthServer private key is given as input
-		const keyPair = await generateKeyPair('ES256');
-
+		if(this.jwk != null)
+			var privateKey = await importJWK(this.jwk);
+		else {
+			var keyPair = await generateKeyPair('ES256');
+			privateKey = keyPair.privateKey;
+		}
 		const token = new SignJWT({ sub: randomBytes(20).toString('hex') })
-			.setProtectedHeader({ alg: 'ES256', pubKey: keyPair.publicKey })
+			.setProtectedHeader({ alg: 'ES256' })
 			.setIssuedAt(Date.now())
 			.setIssuer('https://valid.issuer.url')
 			.setAudience(clientId)
 			.setExpirationTime('1h')
-			.sign(keyPair.privateKey);
+			.sign(privateKey);
 		return token;
+
 	};
 
 }
