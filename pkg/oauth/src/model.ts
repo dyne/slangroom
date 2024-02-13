@@ -1,5 +1,5 @@
 import { AuthorizationCodeModel, Client, User, Token, Falsey, AuthorizationCode } from "@node-oauth/oauth2-server";
-import { SignJWT, generateKeyPair, JWK, importJWK } from 'jose';
+import { SignJWT, jwtVerify, generateKeyPair, JWK, importJWK } from 'jose';
 import { randomBytes } from 'crypto';
 
 export class InMemoryCache implements AuthorizationCodeModel {
@@ -13,27 +13,106 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	/**
 	 * Constructor.
 	 */
-	constructor(jwk: JWK, options?:any) {
+	constructor(jwk: JWK, options?: any) {
 
 		this.options = options || {};
 		this.jwk = jwk;
 
-		const cl: Client = { id: 'thom', clientSecret: 'nightworld', grants: ["authorization_code"], redirectUris: ['https://Wallet.example.org/cb'] };
-		const us: User = { id: '123', username: 'thomseddon', password: 'nightworld' };
-		//Note that AuthCode need CodeChallenge/CodeChallengeMethod iff the request contains code_verifier
-		const authCode: AuthorizationCode = { authorizationCode: 'SplxlOBeZQQYbYS6WxSbIA', expiresAt: new Date(Date.now() + 50000), redirectUri: 'https://Wallet.example.org/cb', client: cl, user: us, codeChallenge: 'E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM', codeChallengeMethod: 'S256', scope: ['xyz'], authorization_details: {type: 'openid_credential', credential_configuration_id: 'UniversityDegreeCredential' }  };
 		const bearerToken: Token = {
 			accessToken: 'mF_9.B5f-4.1JqM',
 			accessTokenExpiresAt: new Date(Date.now() + 5000),
-			client: cl,
-			user: us
+			client: { id: 'thom', clientSecret: 'nightworld', grants: ["authorization_code"], redirectUris: ['https://Wallet.example.org/cb'] },
+			user: {}
 		}
 
-		this.clients = [cl];
+		this.clients = [];
+		this.users = [];
 		this.tokens = [bearerToken];
-		this.users = [us];
-		this.codes = [authCode];
+		this.codes = [];
 	}
+
+	/**
+	 * Create a new object Client in this.clients.
+	 */
+
+	setClient(client: { [key: string]: any }): Promise<Client | Falsey> {
+
+		if (!client["id"]) {
+			throw Error("Invalid Client, missing property 'id'");
+		}
+		if (!client["grants"]) {
+			throw Error("Invalid Client, missing property 'grants'");
+		}
+		if (!client["clientSecret"]) {
+			throw Error("Invalid Client, missing property 'clientSecret'");
+		}
+
+		const clientSaved: Client = {
+			id: client["id"],
+			grants: client["grants"],
+			clientSecret: client["clientSecret"],
+			redirectUris: client["redirectUris"],
+			accessTokenLifetime: client["accessTokenLifetime"],
+			refreshTokenLifetime: client["refreshTokenLifetime"]
+		}
+
+		this.clients.push(clientSaved);
+		return Promise.resolve(clientSaved);
+	};
+
+	/**
+	 * Create a new object AuthorizationCode in this.codes.
+	 */
+	async setAuthorizationCode(code: { [key: string]: any }): Promise<AuthorizationCode | Falsey> {
+
+		if (!code["authorizationCode"]) {
+			throw Error("Invalid Authorization Code, missing property 'authorizationCode'");
+		}
+		if (!code["expiresAt"]) {
+			throw Error("Invalid AuthorizationCode, missing property 'expiresAt'");
+		}
+		if (!code["redirectUri"]) {
+			throw Error("Invalid Authorization Code, missing property 'redirectUri'");
+		}
+		if (!code["client"]) {
+			throw Error("Invalid Authorization Code, missing property 'client'");
+		}
+		if (!code["user"]) {
+			throw Error("Invalid Authorization Code, missing property 'user'");
+		}
+
+		const publicKey = await importJWK(this.jwk);
+		// TODO?: add more checks on payload/header?
+		const outVerify = await jwtVerify(code["authorizationCode"], publicKey);
+		if(!outVerify){
+			throw Error("Invalid Authorization Code, invalid signature");
+		}
+
+		const codeSaved: AuthorizationCode = {
+			authorizationCode: code["authorizationCode"],
+			expiresAt: new Date(code["expiresAt"]),
+			redirectUri: code["redirectUri"],
+			client: code["client"],
+			user: code["user"],
+			scope: code["scope"],
+			codeChallenge: code["codeChallenge"],
+			codeChallengeMethod: code["codeChallengeMethod"]
+		}
+		var keys = Object.keys(codeSaved);
+		let missingKeys = Object.keys(code).filter(item => keys.indexOf(item) < 0);
+
+		missingKeys.forEach(function (key) {
+			codeSaved[key] = code[key];
+		});
+
+		this.codes.push(codeSaved);
+
+		//if codeSaved.client is not in this.clients we set the new object Client
+		const cl = await this.getClient(codeSaved.client.id);
+		if (!cl) this.setClient(codeSaved.client);
+
+		return Promise.resolve(codeSaved);
+	};
 
 	/**
 	 * Invoked to retrieve an existing authorization code previously saved through Model#saveAuthorizationCode().
@@ -43,7 +122,6 @@ export class InMemoryCache implements AuthorizationCodeModel {
 		var codes = this.codes.filter(function (code) {
 			return code.authorizationCode === authorizationCode;
 		});
-
 		return Promise.resolve(codes[0]);
 	}
 
@@ -78,10 +156,8 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	revokeAuthorizationCode(code: AuthorizationCode): Promise<boolean> {
 		var index = this.codes.indexOf(code);
 		this.codes.splice(index, 1);
-
 		return Promise.resolve(true);
 	}
-
 
 	/**
 	 * Get access token.
@@ -111,7 +187,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	 * Get client.
 	 */
 
-	getClient(clientId: string, clientSecret: string): Promise<Client | Falsey> {
+	getClient(clientId: string, clientSecret?: string): Promise<Client | Falsey> {
 		if (clientSecret) {
 			var clients = this.clients.filter(function (client: Client) {
 				return client.id === clientId && client['clientSecret'] === clientSecret;
@@ -146,11 +222,13 @@ export class InMemoryCache implements AuthorizationCodeModel {
 		tokenSaved['c_nonce'] = randomBytes(20).toString('hex');
 		tokenSaved['c_nonce_expires_in'] = 60 * 60;
 
-		if(this.options && this.options.allowExtendedTokenAttributes){
-		//TODO: problem with authorization_details
-			for(var key in token) {
+		if (this.options && this.options.allowExtendedTokenAttributes) {
+			//TODO: problem with authorization_details
+			var keys = Object.keys(tokenSaved);
+			let missingKeys = Object.keys(token).filter(item => keys.indexOf(item) < 0);
+			missingKeys.forEach(function (key) {
 				tokenSaved[key] = token[key];
-			}
+			});
 		}
 		this.tokens.push(tokenSaved);
 
@@ -165,10 +243,10 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	validateScope(user: User, client: Client, scope?: string[] | undefined): Promise<string[] | Falsey> {
 		//TODO
 		// see https://openid.github.io/OpenID4VCI/openid-4-verifiable-credential-issuance-wg-draft.html#section-5.1.2
-		if(user && client && scope)
+		if (user && client && scope)
 			return Promise.resolve(scope);
 		return Promise.resolve(undefined);
-	}
+	};
 
 	/**
 	 * Generate access token.
@@ -201,23 +279,42 @@ export class InMemoryCache implements AuthorizationCodeModel {
 
 	};
 
+	/**
+	 * Generate authorization code.
+	 */
+	async generateAuthorizationCode?(client: Client, user: User, scope: string[]): Promise<string> {
+		if (scope) {
+			const validatedScope = await this.validateScope(user, client, scope);
+			if (!validatedScope) {
+				throw new Error('Given scope is not valid for this client/user combination');
+			}
+		}
+
+		const clientId = client.id;
+		if (this.jwk != null)
+			var privateKey = await importJWK(this.jwk);
+
+		else {
+			var keyPair = await generateKeyPair('ES256');
+			privateKey = keyPair.privateKey;
+		}
+
+		const authCode = new SignJWT({ sub: randomBytes(20).toString('hex') })
+			.setProtectedHeader({ alg: 'ES256' })
+			.setIssuedAt(Date.now())
+			.setIssuer('https://valid.issuer.url')
+			.setAudience(clientId)
+			.setExpirationTime('1h')
+			.sign(privateKey);
+		return authCode;
+	}
+
 }
 
 // generateRefreshToken?(client: Client, user: User, scope: string[]): Promise<string> {
 // 	throw new Error("Method not implemented.");
 // }
-// generateAuthorizationCode?(client: Client, user: User, scope: string[]): Promise<string> {
-// 	throw new Error("Method not implemented.");
-// }
 
 // validateRedirectUri?(redirect_uri: string, client: Client): Promise<boolean> {
-// 	throw new Error("Method not implemented.");
-// }
-/**
- * Invoked during request authentication to check if the provided access token was authorized the requested scopes.
- * Optional, if a custom authenticateHandler is used or if there is no scope part of the request.
- *
- */
-// verifyScope?(token: Token, scope: string[]): Promise<boolean> {
 // 	throw new Error("Method not implemented.");
 // }
