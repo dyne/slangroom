@@ -1,7 +1,7 @@
 import { Plugin } from '@slangroom/core';
 import OAuth2Server from '@node-oauth/oauth2-server';
 import { Request , Response } from '@node-oauth/oauth2-server';
-import { InMemoryCache } from '@slangroom/oauth';
+import { AuthenticateHandler, InMemoryCache } from '@slangroom/oauth';
 import { JsonableObject } from '@slangroom/shared';
 import { JWK } from 'jose';
 
@@ -50,6 +50,14 @@ const getInMemoryCache = (jwk: JWK, options?:any): InMemoryCache => {
 	return inMemoryCache;
 }
 
+let authenticateHandler: any;
+const getAuthenticateHandler = (model: InMemoryCache):any => {
+	if(!authenticateHandler){
+		authenticateHandler = new AuthenticateHandler({model:model});
+	}
+	return authenticateHandler;
+}
+
 /**
  * @internal
  */
@@ -81,8 +89,10 @@ export const createToken = p.new(
 		};
 
 		const model = getInMemoryCache(jwk, options);
+		const handler = getAuthenticateHandler(model);
 		var server = new OAuth2Server({
-			model: model
+			model: model,
+			authenticateHandler: handler
 		});
 
 		const code = await model.setAuthorizationCode(authCode);
@@ -125,8 +135,10 @@ export const createAuthorizationCode = p.new(
 		};
 
 		const model = getInMemoryCache(jwk, options);
+		const handler = getAuthenticateHandler(model);
 		var server = new OAuth2Server({
-			model: model
+			model: model,
+			authenticateHandler: handler
 		});
 
 		const cl = model.setClient(client);

@@ -18,16 +18,9 @@ export class InMemoryCache implements AuthorizationCodeModel {
 		this.options = options || {};
 		this.jwk = jwk;
 
-		const bearerToken: Token = {
-			accessToken: 'mF_9.B5f-4.1JqM',
-			accessTokenExpiresAt: new Date(Date.now() + 5000),
-			client: { id: 'thom', clientSecret: 'nightworld', grants: ["authorization_code"], redirectUris: ['https://Wallet.example.org/cb'] },
-			user: {}
-		}
-
 		this.clients = [];
 		this.users = [];
-		this.tokens = [bearerToken];
+		this.tokens = [];
 		this.codes = [];
 	}
 
