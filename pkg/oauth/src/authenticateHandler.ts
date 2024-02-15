@@ -1,5 +1,4 @@
 import { Request, Response, AuthorizationCodeModel, Token, InvalidArgumentError, ServerOptions, ClientCredentialsModel, ExtensionModel, InsufficientScopeError, InvalidRequestError, InvalidTokenError, OAuthError, PasswordModel, RefreshTokenModel, ServerError, UnauthorizedRequestError } from "@node-oauth/oauth2-server";
-import axios from "axios";
 import { importJWK, jwtVerify } from "jose";
 import bs58 from 'bs58';
 
@@ -64,11 +63,14 @@ export class AuthenticateHandler {
 
 			const url = "https://did.dyne.org/dids/" + cl_id;
 
-			const res = await axios.get(url);
-			if (res.status != 200) {
-				throw Error("Client public key not found");
+			const response = await fetch(url, {method: 'GET'});
+			if (!response.ok) {
+				throw new Error(`Error! status: ${response.status}`);
 			}
-			const base58Key = res.data.didDocument.verificationMethod.find((value: any) => value.type == 'EcdsaSecp256r1VerificationKey').publicKeyBase58
+
+			const result = await response.json();
+			const base58Key = result.didDocument.verificationMethod.find((value: any) => value.type == 'EcdsaSecp256r1VerificationKey').publicKeyBase58
+
 			const uint8ArrKey = bs58.decode(base58Key);
 			const base64_x_Key = Buffer.from(uint8ArrKey.buffer.slice(0, 32)).toString('base64url');
 			const base64_y_Key = Buffer.from(uint8ArrKey.buffer.slice(32)).toString('base64url');

@@ -183,18 +183,12 @@ importers:
       '@slangroom/shared':
         specifier: workspace:*
         version: link:../shared
-      bluebird:
-        specifier: ^3.7.2
-        version: 3.7.2
+      bs58:
+        specifier: ^5.0.0
+        version: 5.0.0
       jose:
         specifier: ^5.1.3
         version: 5.1.3
-      redis:
-        specifier: ^4.6.12
-        version: 4.6.12
-      type-is:
-        specifier: ^1.6.18
-        version: 1.6.18
 
   pkg/qrcode:
     dependencies:
