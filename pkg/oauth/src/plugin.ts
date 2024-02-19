@@ -150,21 +150,4 @@ export const createAuthorizationCode = p.new(
 	}
 );
 
-/**
- * @internal
- */
-export const concatStrings = p.new(
-	['body1', 'body2', 'authcode_jwt'],
-	'create request string',
-	async (ctx) => {
-//used for testing
-		const body1 = ctx.fetch('body1') as 'string';
-		const body2 = ctx.fetch('body2') as 'string';
-		const authcode_jwt = ctx.fetch('authcode_jwt') as { [key: string]: any; };
-		const authcode_str = authcode_jwt['authorizationCode'];
-
-		return ctx.pass(body1 + authcode_str+ body2);
-	}
-);
-
 export const oauth = p;

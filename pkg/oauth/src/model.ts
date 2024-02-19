@@ -234,8 +234,9 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	 */
 
 	validateScope(user: User, client: Client, scope?: string[] | undefined): Promise<string[] | Falsey> {
-		//TODO
 		// see https://openid.github.io/OpenID4VCI/openid-4-verifiable-credential-issuance-wg-draft.html#section-5.1.2
+		//TODO: this should access the /.well-known/openid-credential-issuer
+		// and verify that the string in scope is one of the credential_configuration_id
 		if (user && client && scope)
 			return Promise.resolve(scope);
 		return Promise.resolve(undefined);

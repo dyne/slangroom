@@ -25,7 +25,7 @@ Then print data
 				"y": "lf0u0pMj4lGAzZix5u4Cm5CMQIgMNpkwy163wtKYVKI",
 				"d": "0g5vAEKzugrXaRbgKG0Tj2qJ5lMP4Bezds1_sTybkfk"
 			},
-			body: "response_type=code&client_id=did:dyne:sandbox.genericissuer:6Cp8mPUvJmQaMxQPSnNyhb74f9Ga4WqfXCkBneFgikm5&state=xyz&code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM&code_challenge_method=S256&scope=xyz&authorization_details=%5B%7B%22type%22%3A%20%22openid_credential%22%2C%20%22credential_configuration_id%22%3A%20%22UniversityDegreeCredential%22%7D%5D&redirect_uri=https%3A%2F%2FWallet.example.org%2Fcb",
+			body: "response_type=code&client_id=did:dyne:sandbox.genericissuer:6Cp8mPUvJmQaMxQPSnNyhb74f9Ga4WqfXCkBneFgikm5&state=xyz&code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM&code_challenge_method=S256&scope=UniversityDegreeCredential&redirect_uri=https%3A%2F%2FWallet.example.org%2Fcb",
 			headers: {
 				"Authorization": ""
 			},
@@ -42,15 +42,19 @@ Then print data
 
 	const scriptCreateBodyRequest = `
 	Rule unknown ignore
-	Given I send body1 'body1' and send body2 'body2' and send authcode_jwt 'authCode' and create request string and output into 'body'
+
 	Given I have a 'string' named 'body'
-	Then print data
+	Given I have a 'string dictionary' named 'auth_code_jwt'
+
+	When I create the copy of 'authorizationCode' from dictionary 'auth_code_jwt'
+	When I append 'copy' to 'body'
+
+	Then print the 'body'
 	`;
 	const res2 = await slangroom.execute(scriptCreateBodyRequest, {
 		keys: {
-			authCode: res.result['authCode_jwt'] || {},
-			body1: "grant_type=authorization_code&client_id=did:dyne:sandbox.genericissuer:6Cp8mPUvJmQaMxQPSnNyhb74f9Ga4WqfXCkBneFgikm5&code=",
-			body2: "&code_verifier=dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk&redirect_uri=https%3A%2F%2FWallet.example.org%2Fcb&authorization_details=%5B%7B%22type%22%3A%20%22openid_credential%22%2C%20%22credential_configuration_id%22%3A%20%22UniversityDegreeCredential%22%7D%5D",
+			auth_code_jwt: res.result['authCode_jwt'] || {},
+			body: "grant_type=authorization_code&client_id=did:dyne:sandbox.genericissuer:6Cp8mPUvJmQaMxQPSnNyhb74f9Ga4WqfXCkBneFgikm5&code_verifier=dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk&redirect_uri=https%3A%2F%2FWallet.example.org%2Fcb&code=",
 		}
 	});
 
@@ -87,5 +91,3 @@ Then print data
 	console.log(res3.result['accessToken_jwt']);
 	t.truthy(res3.result['accessToken_jwt']);
 });
-
-//ZGlkOmR5bmU6c2FuZGJveC5nZW5lcmljaXNzdWVyOjZDcDhtUFV2Sm1RYU14UVBTbk55aGI3NGY5R2E0V3FmWENrQm5lRmdpa201OmV5SmhiR2NpT2lKRlV6STFOaUo5LmV5SnpkV0lpT2lKd2FYQndieUo5LmhpVlBMMkpUZG1jWlk3VmNzbzk1S1VCRXpjVEd2bXZRN3dsd2tDbzBHNzRVbnB6bnkyZHJ2THN1LUh6SFd5Y2tLYlJqd1dveC1WNWdxcUtla2E4a0VR
