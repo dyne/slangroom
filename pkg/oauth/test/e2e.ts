@@ -1,6 +1,41 @@
 import test from 'ava';
 import { Slangroom } from '@slangroom/core';
 import { oauth } from '@slangroom/oauth';
+import { SignJWT, importJWK } from 'jose';
+import { randomBytes } from 'crypto';
+
+// For reference see Section 4 of https://datatracker.ietf.org/doc/html/rfc9449.html
+async function create_dpop_proof(){
+	//this is done client side for token request
+	// here for now, just for testing
+	var private_jwk =  {
+		"kty":"EC",
+		"x":"iyuaHgjseiWTdKd_EuhxO43oayK05z_wEb2SlsxofSo",
+		"y":"EJBrgZE_wqm3P0bPuuYpO-5wbEbk9xy-8hdOiVODjOM",
+		"d": "neBDuFx9xMkXWpoU+Tk9KAofgH3qzN0e3jSSjssrM8U=",
+		"crv":"P-256"
+	  }
+
+	var privateKey = await importJWK(private_jwk);
+
+
+	const dpop = new SignJWT({ jti: randomBytes(16).toString('base64url'),
+							   htm:"POST",
+								htu:"https://server.example.com/token", })
+				.setProtectedHeader({
+					typ:"dpop+jwt",
+					alg:"ES256",
+					jwk: {
+					  kty:"EC",
+					  x:"iyuaHgjseiWTdKd_EuhxO43oayK05z_wEb2SlsxofSo",
+					  y:"EJBrgZE_wqm3P0bPuuYpO-5wbEbk9xy-8hdOiVODjOM",
+					  crv:"P-256"
+					}
+				  })
+				.setIssuedAt(Date.now())
+				.sign(privateKey);
+	return dpop;
+}
 
 //for details on code_challenge/code_verifier see https://node-oauthoauth2-server.readthedocs.io/en/master/misc/pkce.html#authorization-request
 
@@ -25,7 +60,7 @@ Then print data
 				"y": "lf0u0pMj4lGAzZix5u4Cm5CMQIgMNpkwy163wtKYVKI",
 				"d": "0g5vAEKzugrXaRbgKG0Tj2qJ5lMP4Bezds1_sTybkfk"
 			},
-			body: "response_type=code&client_id=did:dyne:sandbox.genericissuer:6Cp8mPUvJmQaMxQPSnNyhb74f9Ga4WqfXCkBneFgikm5&state=xyz&code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM&code_challenge_method=S256&scope=UniversityDegreeCredential&redirect_uri=https%3A%2F%2FWallet.example.org%2Fcb",
+			body: "response_type=code&client_id=did:dyne:sandbox.genericissuer:6Cp8mPUvJmQaMxQPSnNyhb74f9Ga4WqfXCkBneFgikm5&state=xyz&code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM&code_challenge_method=S256&scope=UniversityDegreeCredential&resource=https%3A%2F%2Fcredential-issuer.example.com&redirect_uri=https%3A%2F%2FWallet.example.org%2Fcb",
 			headers: {
 				"Authorization": ""
 			},
@@ -81,9 +116,9 @@ Then print data
 			authCode: res.result['authCode_jwt'] || {},
 			body: res2.result['body'] || '',
 			headers: {
-				"Authorization": "",
 				"content-length": 42,
-				"Content-Type": "application/x-www-form-urlencoded"
+				"Content-Type": "application/x-www-form-urlencoded",
+				"DPoP": await create_dpop_proof()
 			},
 
 		},
@@ -91,3 +126,7 @@ Then print data
 	console.log(res3.result['accessToken_jwt']);
 	t.truthy(res3.result['accessToken_jwt']);
 });
+
+//authorization_details=%5B%7B%22type%22%3A%20%22openid_credential%22%2C%20%22credential_configuration_id%22%3A%20%22UniversityDegreeCredential%22%7D%5D
+// scope=%5B%7B%22resource%22%3A%20%22https%3A%2F%2Fcredential-issuer.example.com%22%2C%20%22credential_configuration_id%22%3A%20%22UniversityDegreeCredential%22%7D%5D
+//&resource=https%3A%2F%2Fcredential-issuer.example.com

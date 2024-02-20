@@ -28,7 +28,7 @@ export class AuthenticateHandler {
 		if (options.scope && undefined === options.addAuthorizedScopesHeader) {
 			throw new InvalidArgumentError('Missing parameter: `addAuthorizedScopesHeader`');
 		}
-
+	//	console.log(options.scope && !options.model.verifyScope) = undefined but pass the check
 		if (options.scope && !options.model.verifyScope) {
 			throw new InvalidArgumentError('Invalid argument: model does not implement `verifyScope()`');
 		}
@@ -61,6 +61,12 @@ export class AuthenticateHandler {
 				throw new Error("Invalid Client");
 			}
 
+			const scope = request.body.scope;
+			const resource = request.body.resource;
+			if (!this.verifyScope(scope, resource)){
+				throw new Error("Given scope is not valid");
+			}
+
 			const url = "https://did.dyne.org/dids/" + cl_id;
 
 			const response = await fetch(url, {method: 'GET'});
@@ -90,7 +96,7 @@ export class AuthenticateHandler {
 			if (!outVerify) {
 				return undefined;
 			}
-			return client["clientSecret"];
+			return client["id"];
 
 		} catch (e) {
 			// Include the "WWW-Authenticate" response header field if the client
@@ -153,14 +159,25 @@ export class AuthenticateHandler {
 	 * Verify scope.
 	 */
 
-	async verifyScope(accessToken: Token) {
-		if (this.model.verifyScope && this.scope) {
-			const scope = await this.model.verifyScope(accessToken, this.scope);
-
-			if (!scope) {
-				throw new InsufficientScopeError('Insufficient scope: authorized scope is insufficient');
-			}
+	async verifyScope(scope:string[], resource:string) {
+		// see https://openid.github.io/OpenID4VCI/openid-4-verifiable-credential-issuance-wg-draft.html#section-5.1.2
+		if (!scope) {
+			throw new InsufficientScopeError('Insufficient scope: authorized scope is insufficient');
 		}
+		if(!resource) {
+			throw new Error('Invalid request: needed resource to verify scope');
+		}
+		//TODO: this should access the /.well-known/openid-credential-issuer
+		// and verify that the string in scope is one of the credential_configuration_id
+		// NOTE that this should also handle the case of multiple scope values
+				// const url = resource + '/.well-known/openid-credential-issuer';
+				// const response = await fetch(url, {method: 'GET'});
+				// if (!response.ok) {
+				// 	throw new Error(`Error! status: ${response.status}`);
+				// }
+
+				// const result = await response.json();
+		return true;
 	}
 
 	/**

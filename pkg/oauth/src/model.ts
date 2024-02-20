@@ -1,5 +1,5 @@
-import { AuthorizationCodeModel, Client, User, Token, Falsey, AuthorizationCode } from "@node-oauth/oauth2-server";
-import { SignJWT, jwtVerify, generateKeyPair, JWK, importJWK } from 'jose';
+import { AuthorizationCodeModel, Client, User, Token, Falsey, AuthorizationCode, Request } from "@node-oauth/oauth2-server";
+import { SignJWT, jwtVerify, generateKeyPair, JWK, importJWK, decodeProtectedHeader, decodeJwt } from 'jose';
 import { randomBytes } from 'crypto';
 
 export class InMemoryCache implements AuthorizationCodeModel {
@@ -229,31 +229,10 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	};
 
 	/**
-	 * Invoked to check if the requested scope is valid for a particular client/user combination.
-	 *
-	 */
-
-	validateScope(user: User, client: Client, scope?: string[] | undefined): Promise<string[] | Falsey> {
-		// see https://openid.github.io/OpenID4VCI/openid-4-verifiable-credential-issuance-wg-draft.html#section-5.1.2
-		//TODO: this should access the /.well-known/openid-credential-issuer
-		// and verify that the string in scope is one of the credential_configuration_id
-		if (user && client && scope)
-			return Promise.resolve(scope);
-		return Promise.resolve(undefined);
-	};
-
-	/**
 	 * Generate access token.
 	 */
 
-	async generateAccessToken(client: Client, user: User, scope?: string[]): Promise<string> {
-
-		if (scope) {
-			const validatedScope = await this.validateScope(user, client, scope);
-			if (!validatedScope) {
-				throw new Error('Given scope is not valid for this client/user combination');
-			}
-		}
+	async generateAccessToken(client: Client): Promise<string> {
 
 		const clientId = client.id;
 		if (this.jwk != null)
@@ -276,13 +255,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	/**
 	 * Generate authorization code.
 	 */
-	async generateAuthorizationCode?(client: Client, user: User, scope: string[]): Promise<string> {
-		if (scope) {
-			const validatedScope = await this.validateScope(user, client, scope);
-			if (!validatedScope) {
-				throw new Error('Given scope is not valid for this client/user combination');
-			}
-		}
+	async generateAuthorizationCode(client: Client): Promise<string> {
 
 		const clientId = client.id;
 		if (this.jwk != null)
@@ -303,6 +276,41 @@ export class InMemoryCache implements AuthorizationCodeModel {
 		return authCode;
 	}
 
+// For reference see Section 4.3 of https://datatracker.ietf.org/doc/html/rfc9449.html
+	async verifyDpopProof(dpop:string, request: Request){
+
+		const header = decodeProtectedHeader(dpop);
+
+		if(!header.typ) throw Error("Invalid DPoP: missing typ header parameter");
+		if(header.typ !== "dpop+jwt") throw Error("Invalid DPoP: typ must be dpop+jwt");
+
+		if(!header.alg) throw Error("Invalid DPoP: missing alg header parameter");
+		if(header.alg !== 'ES256') throw Error("Invalid DPoP: alg must be ES256");
+
+		if(!header.jwk) throw Error("Invalid DPoP: missing jwk header parameter");
+		// Missing check: The jwk JOSE Header Parameter does not contain a private key.
+		const publicKey = await importJWK(header.jwk);
+		const verify_sig = await jwtVerify(dpop, publicKey);
+		if(!verify_sig){
+			throw Error("Invalid DPoP: invalid signature");
+		}
+
+		const payload = decodeJwt(dpop);
+
+		if(!payload.iat) throw Error("Invalid DPoP: missing iat payload parameter");
+		var FIVE_MIN=5*60*1000;
+		var date = new Date().getTime();
+		if((date - payload.iat) > FIVE_MIN)	throw Error("Invalid DPoP: expired");
+
+		if(!payload.jti) throw Error("Invalid DPoP: missing jti payload parameter");
+
+		if(!payload['htm']) throw Error("Invalid DPoP: missing htm payload parameter");
+		if(payload['htm'] !== request.method) throw Error("Invalid DPoP: htm does not match request method");
+
+		if(!payload['htu']) throw Error("Invalid DPoP: missing htu payload parameter");
+		// Missing check: The htu claim matches the HTTP URI value for the HTTP request in which the JWT was received, ignoring any query and fragment parts.
+		return true;
+	}
 }
 
 // generateRefreshToken?(client: Client, user: User, scope: string[]): Promise<string> {

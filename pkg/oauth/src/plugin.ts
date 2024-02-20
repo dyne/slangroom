@@ -99,7 +99,13 @@ export const createToken = p.new(
 		if(!code){
 			throw Error("Authorization Code is not valid");
 		}
-
+		// this checks should be done inside server.token()?
+		var dpop = request.headers!['dpop'];
+		if(dpop){
+			var check = await model.verifyDpopProof(dpop, request);
+			if(!check) throw Error("Invalid request: DPoP header parameter is not valid");
+		}
+		//------------------
 		return ctx.pass(await server.token(request, response, options));
 	}
 );
