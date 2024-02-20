@@ -95,18 +95,25 @@ export const createToken = p.new(
 			authenticateHandler: handler
 		});
 
-		const code = await model.setAuthorizationCode(authCode);
-		if(!code){
-			throw Error("Authorization Code is not valid");
+		const code = await model.setupTokenRequest(authCode, request);
+		if(!code) throw Error("Invalid token request");
+
+		const res_token = await server.token(request, response, options);
+
+		//we remove the client and user object from the token
+		const token:JsonableObject = {
+			accessToken: res_token.accessToken,
+			accessTokenExpiresAt: res_token.accessTokenExpiresAt!.toString(),
+			authorizationCode: res_token['authorizationCode'],
+			c_nonce: res_token['c_nonce'],
+			c_nonce_expires_in: res_token['c_nonce_expires_in'],
+			jkt: res_token['jkt'],
+			refreshToken: res_token.refreshToken!,
+			refreshTokenExpiresAt: res_token.refreshTokenExpiresAt!.toString(),
+			scope: res_token.scope!,
 		}
-		// this checks should be done inside server.token()?
-		var dpop = request.headers!['dpop'];
-		if(dpop){
-			var check = await model.verifyDpopProof(dpop, request);
-			if(!check) throw Error("Invalid request: DPoP header parameter is not valid");
-		}
-		//------------------
-		return ctx.pass(await server.token(request, response, options));
+
+		return ctx.pass(token);
 	}
 );
 

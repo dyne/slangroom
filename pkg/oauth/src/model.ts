@@ -1,6 +1,6 @@
 import { AuthorizationCodeModel, Client, User, Token, Falsey, AuthorizationCode, Request } from "@node-oauth/oauth2-server";
 import { SignJWT, jwtVerify, generateKeyPair, JWK, importJWK, decodeProtectedHeader, decodeJwt } from 'jose';
-import { randomBytes } from 'crypto';
+import { createHash, randomBytes } from 'crypto';
 
 export class InMemoryCache implements AuthorizationCodeModel {
 	clients: Client[];
@@ -9,6 +9,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	codes: AuthorizationCode[];
 	jwk: JWK;
 	options: any;
+	dpop_jwks: { [key: string]: any }[];
 
 	/**
 	 * Constructor.
@@ -22,6 +23,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 		this.users = [];
 		this.tokens = [];
 		this.codes = [];
+		this.dpop_jwks = [];
 	}
 
 	/**
@@ -199,7 +201,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	 * Save token.
 	 */
 
-	saveToken(token: Token, client: Client, user: User): Promise<Token | Falsey> {
+	async saveToken(token: Token, client: Client, user: User): Promise<Token | Falsey> {
 		const tokenSaved: Token = {
 			accessToken: token.accessToken,
 			accessTokenExpiresAt: token.accessTokenExpiresAt,
@@ -215,6 +217,11 @@ export class InMemoryCache implements AuthorizationCodeModel {
 		tokenSaved['c_nonce'] = randomBytes(20).toString('hex');
 		tokenSaved['c_nonce_expires_in'] = 60 * 60;
 
+		const dpop_jwk = await this.getDpopJWK(client.id);
+		if(dpop_jwk){
+		//for reference see: https://datatracker.ietf.org/doc/html/rfc9449.html#section-6.1
+			tokenSaved['jkt'] = this.createJWKThumbprint(dpop_jwk['jwk']);
+		}
 		if (this.options && this.options.allowExtendedTokenAttributes) {
 			//TODO: problem with authorization_details
 			var keys = Object.keys(tokenSaved);
@@ -276,7 +283,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 		return authCode;
 	}
 
-// For reference see Section 4.3 of https://datatracker.ietf.org/doc/html/rfc9449.html
+// For reference see Section 4.3 of RFC9449 https://datatracker.ietf.org/doc/html/rfc9449.html
 	async verifyDpopProof(dpop:string, request: Request){
 
 		const header = decodeProtectedHeader(dpop);
@@ -310,6 +317,40 @@ export class InMemoryCache implements AuthorizationCodeModel {
 		if(!payload['htu']) throw Error("Invalid DPoP: missing htu payload parameter");
 		// Missing check: The htu claim matches the HTTP URI value for the HTTP request in which the JWT was received, ignoring any query and fragment parts.
 		return true;
+	}
+
+	async setupTokenRequest(authCode:{ [key: string]: any }, request:Request){
+		const code = await this.setAuthorizationCode(authCode);
+		if(!code){
+			throw Error("Authorization Code is not valid");
+		}
+
+		var dpop = request.headers!['dpop'];
+		if(dpop){
+			var check = await this.verifyDpopProof(dpop, request);
+			if(!check) throw Error("Invalid request: DPoP header parameter is not valid");
+			const header = decodeProtectedHeader(dpop);
+			const dpop_saved = {id: authCode["client"].id, jwk: header.jwk};
+			this.dpop_jwks.push(dpop_saved);
+		}
+		return code;
+	}
+
+	getDpopJWK(id: string){
+		var jwks = this.dpop_jwks.filter(function (dpop_jwk: any) {
+			return dpop_jwk.id === id;
+		});
+		return Promise.resolve(jwks[0]);
+	}
+
+//for reference see: https://datatracker.ietf.org/doc/html/rfc7638
+	createJWKThumbprint(jwk:JWK) {
+		const jwk_str = JSON.stringify(jwk, Object.keys(jwk).sort());
+		const jwk_utf8 = new Uint8Array(Buffer.from(jwk_str));
+
+		const digest = new Uint8Array(createHash("SHA256").update(jwk_utf8).digest());
+
+		return Buffer.from(digest).toString('base64url');
 	}
 }
 
