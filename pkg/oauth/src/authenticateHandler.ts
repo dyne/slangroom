@@ -62,9 +62,12 @@ export class AuthenticateHandler {
 			}
 
 			const scope = request.body.scope;
-			const resource = request.body.resource;
-			if (!this.verifyScope(scope, resource)){
-				throw new Error("Given scope is not valid");
+			if(scope){
+				const resource = request.body.resource;
+				if(!resource) throw new Error("Request is missing resource parameter");
+
+				const valid_scope = await this.verifyScope(scope, resource);
+				if (!valid_scope) throw new Error("Given scope is not valid");
 			}
 
 			const url = "https://did.dyne.org/dids/" + cl_id;
@@ -159,25 +162,33 @@ export class AuthenticateHandler {
 	 * Verify scope.
 	 */
 
+// for reference see: https://openid.github.io/OpenID4VCI/openid-4-verifiable-credential-issuance-wg-draft.html#section-5.1.2
 	async verifyScope(scope:string[], resource:string) {
-		// see https://openid.github.io/OpenID4VCI/openid-4-verifiable-credential-issuance-wg-draft.html#section-5.1.2
 		if (!scope) {
 			throw new InsufficientScopeError('Insufficient scope: authorized scope is insufficient');
 		}
 		if(!resource) {
 			throw new Error('Invalid request: needed resource to verify scope');
 		}
-		//TODO: this should access the /.well-known/openid-credential-issuer
-		// and verify that the string in scope is one of the credential_configuration_id
-		// NOTE that this should also handle the case of multiple scope values
-				// const url = resource + '/.well-known/openid-credential-issuer';
-				// const response = await fetch(url, {method: 'GET'});
-				// if (!response.ok) {
-				// 	throw new Error(`Error! status: ${response.status}`);
-				// }
 
-				// const result = await response.json();
-		return true;
+		const url = resource + '/.well-known/openid-credential-issuer';
+		const response = await fetch(url, {method: 'GET'});
+		if (!response.ok) {
+			throw new Error(`Error! status: ${response.status}`);
+		}
+		const result = await response.json();
+		const credentials_supported = result.credentials_supported;
+		var valid_credentials = [];
+		for (var key in credentials_supported){
+			const type_arr = credentials_supported[key].credential_definition.type;
+			if(type_arr.find((id:any) => {return id===scope}) != undefined){
+				valid_credentials.push(scope);
+				break;
+			}
+		}
+
+		if(valid_credentials.length > 0) return true;
+		else return false;
 	}
 
 	/**

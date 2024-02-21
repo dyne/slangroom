@@ -39,6 +39,15 @@ async function create_dpop_proof(){
 
 //for details on code_challenge/code_verifier see https://node-oauthoauth2-server.readthedocs.io/en/master/misc/pkce.html#authorization-request
 
+
+// TODO: the request body in the test is missing scope/resource parameter
+//		verifyScope has been tested locally (resource = http://localhost:3000/)
+//		update body with scope/resource when a deployed CredentialIssuer is available
+//		and make scope/resource mandatory parameters for the request
+//		scope is the string credential_id that specifies the type of credential the client is requesting
+//		resource is the URL where we can find the .well-known/openid-credential-issuer
+
+
 test('create authorization code and access token', async (t) => {
 	const scriptCreate = `
 Rule unknown ignore
@@ -60,7 +69,7 @@ Then print data
 				"y": "lf0u0pMj4lGAzZix5u4Cm5CMQIgMNpkwy163wtKYVKI",
 				"d": "0g5vAEKzugrXaRbgKG0Tj2qJ5lMP4Bezds1_sTybkfk"
 			},
-			body: "response_type=code&client_id=did:dyne:sandbox.genericissuer:6Cp8mPUvJmQaMxQPSnNyhb74f9Ga4WqfXCkBneFgikm5&state=xyz&code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM&code_challenge_method=S256&scope=UniversityDegreeCredential&resource=https%3A%2F%2Fcredential-issuer.example.com&redirect_uri=https%3A%2F%2FWallet.example.org%2Fcb",
+			body: "response_type=code&client_id=did:dyne:sandbox.genericissuer:6Cp8mPUvJmQaMxQPSnNyhb74f9Ga4WqfXCkBneFgikm5&state=xyz&code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM&code_challenge_method=S256&redirect_uri=https%3A%2F%2FWallet.example.org%2Fcb",
 			headers: {
 				"Authorization": ""
 			},
