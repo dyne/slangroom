@@ -42,7 +42,7 @@ function parseQueryStringToDictionary(queryString: string) {
 }
 
 let inMemoryCache: InMemoryCache | null = null;
-const getInMemoryCache = (jwk: JWK, options?: any): InMemoryCache => {
+const getInMemoryCache = (jwk: JWK, options?: JsonableObject): InMemoryCache => {
 	if (!inMemoryCache) {
 		inMemoryCache = new InMemoryCache(jwk, options);
 	}

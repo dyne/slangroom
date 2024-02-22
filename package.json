@@ -11,7 +11,7 @@
 	"scripts": {
 		"lint": "eslint --ext .ts pkg/*/src pkg/*/test",
 		"format": "prettier --ignore-path .gitignore --write '**/*.+(js|ts|json|html)'",
-		"test": "pnpm build && pnpm -F @slangroom/oauth exec ava build/esm/test",
+		"test": "pnpm build && pnpm -F @slangroom/* exec ava build/esm/test",
 		"coverage": "c8 -r text -r lcov -o .coverage --exclude '**/test/' pnpm test",
 		"clean": "rm -rf .coverage && pnpm -F @slangroom/* exec -- rm -rf build",
 		"docs": "node docs/generate_syntax.mjs",

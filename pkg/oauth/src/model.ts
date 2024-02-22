@@ -10,13 +10,13 @@ import {
 import {
 	SignJWT,
 	jwtVerify,
-	generateKeyPair,
 	JWK,
 	importJWK,
 	decodeProtectedHeader,
 	decodeJwt,
 } from 'jose';
 import { createHash, randomBytes } from 'crypto';
+import { JsonableObject } from '@slangroom/shared';
 
 export class InMemoryCache implements AuthorizationCodeModel {
 	clients: Client[];
@@ -24,13 +24,13 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	users: User[];
 	codes: AuthorizationCode[];
 	jwk: JWK;
-	options: any;
+	options: JsonableObject;
 	dpop_jwks: { [key: string]: any }[];
 
 	/**
 	 * Constructor.
 	 */
-	constructor(jwk: JWK, options?: any) {
+	constructor(jwk: JWK, options?: JsonableObject) {
 		this.options = options || {};
 		this.jwk = jwk;
 
@@ -106,11 +106,12 @@ export class InMemoryCache implements AuthorizationCodeModel {
 			codeChallenge: code['codeChallenge'],
 			codeChallengeMethod: code['codeChallengeMethod'],
 		};
-		var keys = Object.keys(codeSaved);
-		let missingKeys = Object.keys(code).filter((item) => keys.indexOf(item) < 0);
 
-		missingKeys.forEach(function (key) {
-			codeSaved[key] = code[key];
+		var keys = Object.keys(code);
+		keys.forEach((key: string) => {
+			if(!codeSaved[key]) {
+				codeSaved[key] = code[key];
+			}
 		});
 
 		this.codes.push(codeSaved);
@@ -137,19 +138,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	 * Invoked to save an authorization code.
 	 *
 	 */
-	saveAuthorizationCode(
-		code: Pick<
-			AuthorizationCode,
-			| 'authorizationCode'
-			| 'expiresAt'
-			| 'redirectUri'
-			| 'scope'
-			| 'codeChallenge'
-			| 'codeChallengeMethod'
-		>,
-		client: Client,
-		user: User,
-	): Promise<Falsey | AuthorizationCode> {
+	saveAuthorizationCode(code: Pick<AuthorizationCode, "authorizationCode" | "expiresAt" | "redirectUri" | "scope" | "codeChallenge" | "codeChallengeMethod">, client: Client, user: User): Promise<Falsey | AuthorizationCode> {
 		let codeSaved: AuthorizationCode = {
 			authorizationCode: code.authorizationCode,
 			expiresAt: code.expiresAt,
@@ -165,7 +154,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 					codeChallenge: code.codeChallenge,
 					codeChallengeMethod: code.codeChallengeMethod,
 				},
-				codeSaved,
+				codeSaved
 			);
 		}
 		this.codes.push(codeSaved);
@@ -177,8 +166,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	 *
 	 */
 	revokeAuthorizationCode(code: AuthorizationCode): Promise<boolean> {
-		var index = this.codes.indexOf(code);
-		this.codes.splice(index, 1);
+		this.codes = this.codes.filter(element => element !== code);
 		return Promise.resolve(true);
 	}
 
@@ -249,12 +237,13 @@ export class InMemoryCache implements AuthorizationCodeModel {
 			//for reference see: https://datatracker.ietf.org/doc/html/rfc9449.html#section-6.1
 			tokenSaved['jkt'] = this.createJWKThumbprint(dpop_jwk['jwk']);
 		}
-		if (this.options && this.options.allowExtendedTokenAttributes) {
+		if (this.options && this.options['allowExtendedTokenAttributes']) {
 			//TODO: problem with authorization_details
-			var keys = Object.keys(tokenSaved);
-			let missingKeys = Object.keys(token).filter((item) => keys.indexOf(item) < 0);
-			missingKeys.forEach(function (key) {
-				tokenSaved[key] = token[key];
+			var keys = Object.keys(token);
+			keys.forEach((key: string) => {
+				if(!tokenSaved[key]) {
+					tokenSaved[key] = token[key];
+				}
 			});
 		}
 		this.tokens.push(tokenSaved);
@@ -268,11 +257,9 @@ export class InMemoryCache implements AuthorizationCodeModel {
 
 	async generateAccessToken(client: Client): Promise<string> {
 		const clientId = client.id;
-		if (this.jwk != null) var privateKey = await importJWK(this.jwk);
-		else {
-			var keyPair = await generateKeyPair('ES256');
-			privateKey = keyPair.privateKey;
-		}
+		if (this.jwk == null) throw Error("Missing server private JWK");
+		let privateKey = await importJWK(this.jwk);
+
 		const token = new SignJWT({ sub: randomBytes(20).toString('hex') })
 			.setProtectedHeader({ alg: 'ES256' })
 			.setIssuedAt(Date.now())
@@ -288,11 +275,8 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	 */
 	async generateAuthorizationCode(client: Client): Promise<string> {
 		const clientId = client.id;
-		if (this.jwk != null) var privateKey = await importJWK(this.jwk);
-		else {
-			var keyPair = await generateKeyPair('ES256');
-			privateKey = keyPair.privateKey;
-		}
+		if (this.jwk == null) throw Error("Missing server private JWK");
+		let privateKey = await importJWK(this.jwk);
 
 		const authCode = new SignJWT({ sub: randomBytes(20).toString('hex') })
 			.setProtectedHeader({ alg: 'ES256' })
@@ -306,16 +290,24 @@ export class InMemoryCache implements AuthorizationCodeModel {
 
 	// For reference see Section 4.3 of RFC9449 https://datatracker.ietf.org/doc/html/rfc9449.html
 	async verifyDpopProof(dpop: string, request: Request) {
+		let FIVE_MIN = 300000;
+		const defaultValues = {
+			typ: 'dpop+jwt',
+			alg: 'ES256',
+			htm: request.method,
+			iat: new Date().getTime() - FIVE_MIN
+		};
+
 		const header = decodeProtectedHeader(dpop);
 
 		if (!header.typ) throw Error('Invalid DPoP: missing typ header parameter');
-		if (header.typ !== 'dpop+jwt') throw Error('Invalid DPoP: typ must be dpop+jwt');
-
 		if (!header.alg) throw Error('Invalid DPoP: missing alg header parameter');
-		if (header.alg !== 'ES256') throw Error('Invalid DPoP: alg must be ES256');
-
 		if (!header.jwk) throw Error('Invalid DPoP: missing jwk header parameter');
+
+		if (header.typ !== defaultValues.typ) throw Error('Invalid DPoP: typ must be dpop+jwt');
+		if (header.alg !== defaultValues.alg) throw Error('Invalid DPoP: alg must be ES256');
 		// Missing check: The jwk JOSE Header Parameter does not contain a private key.
+
 		const publicKey = await importJWK(header.jwk);
 		const verify_sig = await jwtVerify(dpop, publicKey);
 		if (!verify_sig) {
@@ -325,34 +317,29 @@ export class InMemoryCache implements AuthorizationCodeModel {
 		const payload = decodeJwt(dpop);
 
 		if (!payload.iat) throw Error('Invalid DPoP: missing iat payload parameter');
-		var FIVE_MIN = 5 * 60 * 1000;
-		var date = new Date().getTime();
-		if (date - payload.iat > FIVE_MIN) throw Error('Invalid DPoP: expired');
-
 		if (!payload.jti) throw Error('Invalid DPoP: missing jti payload parameter');
-
 		if (!payload['htm']) throw Error('Invalid DPoP: missing htm payload parameter');
-		if (payload['htm'] !== request.method)
-			throw Error('Invalid DPoP: htm does not match request method');
-
 		if (!payload['htu']) throw Error('Invalid DPoP: missing htu payload parameter');
+
+		if (payload.iat < defaultValues.iat) throw Error('Invalid DPoP: expired');
+		if (payload['htm'] !== defaultValues.htm)
+			throw Error('Invalid DPoP: htm does not match request method');
 		// Missing check: The htu claim matches the HTTP URI value for the HTTP request in which the JWT was received, ignoring any query and fragment parts.
+
 		return true;
 	}
 
 	async setupTokenRequest(authCode: { [key: string]: any }, request: Request) {
 		const code = await this.setAuthorizationCode(authCode);
-		if (!code) {
-			throw Error('Authorization Code is not valid');
-		}
-
-		var dpop = request.headers!['dpop'];
-		if (dpop) {
-			var check = await this.verifyDpopProof(dpop, request);
-			if (!check) throw Error('Invalid request: DPoP header parameter is not valid');
-			const header = decodeProtectedHeader(dpop);
-			const dpop_saved = { id: authCode['client'].id, jwk: header.jwk };
-			this.dpop_jwks.push(dpop_saved);
+		if (request.headers) {
+			var dpop = request.headers['dpop'];
+			if (dpop) {
+				var check = await this.verifyDpopProof(dpop, request);
+				if (!check) throw Error('Invalid request: DPoP header parameter is not valid');
+				const header = decodeProtectedHeader(dpop);
+				const dpop_saved = { id: authCode['client'].id, jwk: header.jwk };
+				this.dpop_jwks.push(dpop_saved);
+			}
 		}
 		return code;
 	}

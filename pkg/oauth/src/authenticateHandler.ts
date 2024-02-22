@@ -101,26 +101,24 @@ export class AuthenticateHandler {
 
 			const url = 'https://did.dyne.org/dids/' + cl_id;
 
-			const response = await fetch(url, { method: 'GET' });
+			const response = await fetch(url);
 			if (!response.ok) {
 				throw new Error(`Error! status: ${response.status}`);
 			}
 
 			const result = await response.json();
-			const base58Key = result.didDocument.verificationMethod.find(
-				(value: any) => value.type == 'EcdsaSecp256r1VerificationKey',
-			).publicKeyBase58;
 
-			const uint8ArrKey = bs58.decode(base58Key);
-			const base64_x_Key = Buffer.from(uint8ArrKey.buffer.slice(0, 32)).toString('base64url');
-			const base64_y_Key = Buffer.from(uint8ArrKey.buffer.slice(32)).toString('base64url');
+			const base58Key = result.didDocument.verificationMethod.find((value: any) => value.type == 'EcdsaSecp256r1VerificationKey').publicKeyBase58;
+			const uint8Key = bs58.decode(base58Key);
+			const x_base64Key = Buffer.from(uint8Key.buffer.slice(0, 32)).toString('base64url');
+			const y_base64Key = Buffer.from(uint8Key.buffer.slice(32)).toString('base64url');
 
 			const publicKey = await importJWK(
 				{
 					crv: 'P-256',
 					kty: 'EC',
-					x: base64_x_Key,
-					y: base64_y_Key,
+					x: x_base64Key,
+					y: y_base64Key,
 				},
 				'ES256',
 			);
@@ -158,42 +156,6 @@ export class AuthenticateHandler {
 	}
 
 	/**
-	 * Get the access token from the model.
-	 */
-
-	async getAccessToken(token: string) {
-		const accessToken = await this.model.getAccessToken(token);
-
-		if (!accessToken) {
-			throw new InvalidTokenError('Invalid token: access token is invalid');
-		}
-
-		if (!accessToken.user) {
-			throw new ServerError(
-				'Server error: `getAccessToken()` did not return a `user` object',
-			);
-		}
-
-		return accessToken;
-	}
-
-	/**
-	 * Validate access token.
-	 */
-
-	validateAccessToken(accessToken: Token) {
-		if (!(accessToken.accessTokenExpiresAt instanceof Date)) {
-			throw new ServerError('Server error: `accessTokenExpiresAt` must be a Date instance');
-		}
-
-		if (accessToken.accessTokenExpiresAt < new Date()) {
-			throw new InvalidTokenError('Invalid token: access token has expired');
-		}
-
-		return accessToken;
-	}
-
-	/**
 	 * Verify scope.
 	 */
 
@@ -209,7 +171,7 @@ export class AuthenticateHandler {
 		}
 
 		const url = resource + '/.well-known/openid-credential-issuer';
-		const response = await fetch(url, { method: 'GET' });
+		const response = await fetch(url);
 		if (!response.ok) {
 			throw new Error(`Error! status: ${response.status}`);
 		}
