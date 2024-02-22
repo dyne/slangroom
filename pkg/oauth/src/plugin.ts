@@ -1,10 +1,9 @@
 import { Plugin } from '@slangroom/core';
 import OAuth2Server from '@node-oauth/oauth2-server';
-import { Request , Response } from '@node-oauth/oauth2-server';
+import { Request, Response } from '@node-oauth/oauth2-server';
 import { AuthenticateHandler, InMemoryCache } from '@slangroom/oauth';
 import { JsonableObject } from '@slangroom/shared';
 import { JWK } from 'jose';
-
 
 const p = new Plugin();
 
@@ -33,30 +32,30 @@ function parseQueryStringToDictionary(queryString: string) {
 		// decode URI encoded string
 		value = decodeURIComponent(value!);
 		value = value.replace(/\+/g, ' ');
-		if (key != undefined) { dictionary[key] = value; }
-
+		if (key != undefined) {
+			dictionary[key] = value;
+		}
 	}
 
 	// Step 4: Return Dictionary Object
 	return dictionary;
 }
 
-
 let inMemoryCache: InMemoryCache | null = null;
-const getInMemoryCache = (jwk: JWK, options?:any): InMemoryCache => {
+const getInMemoryCache = (jwk: JWK, options?: any): InMemoryCache => {
 	if (!inMemoryCache) {
 		inMemoryCache = new InMemoryCache(jwk, options);
 	}
 	return inMemoryCache;
-}
+};
 
 let authenticateHandler: any;
-const getAuthenticateHandler = (model: InMemoryCache):any => {
-	if(!authenticateHandler){
-		authenticateHandler = new AuthenticateHandler({model:model});
+const getAuthenticateHandler = (model: InMemoryCache): any => {
+	if (!authenticateHandler) {
+		authenticateHandler = new AuthenticateHandler({ model: model });
 	}
 	return authenticateHandler;
-}
+};
 
 /**
  * @internal
@@ -67,41 +66,40 @@ export const createToken = p.new(
 	['body', 'headers', 'code', 'jwk'],
 	'generate access token',
 	async (ctx) => {
-
 		const params = ctx.fetch('body') as 'string';
 		const headers = ctx.fetch('headers');
-		const authCode = ctx.fetch('code') as { [key: string]: any; };
+		const authCode = ctx.fetch('code') as JsonableObject;
 		const jwk = ctx.fetch('jwk') as JsonableObject;
 		const request = new Request({
 			body: parseQueryStringToDictionary(params),
 			headers: headers,
-			method: "POST",
-			query: {}
-		})
+			method: 'POST',
+			query: {},
+		});
 
 		const response = new Response();
 
 		const options = {
-			accessTokenLifetime: 60 * 60,             // 1 hour.
-			refreshTokenLifetime: 60 * 60 * 24 * 14,  // 2 weeks.
+			accessTokenLifetime: 60 * 60, // 1 hour.
+			refreshTokenLifetime: 60 * 60 * 24 * 14, // 2 weeks.
 			allowExtendedTokenAttributes: true,
-			requireClientAuthentication: {}           // defaults to true for all grant types
+			requireClientAuthentication: {}, // defaults to true for all grant types
 		};
 
 		const model = getInMemoryCache(jwk, options);
 		const handler = getAuthenticateHandler(model);
 		var server = new OAuth2Server({
 			model: model,
-			authenticateHandler: handler
+			authenticateHandler: handler,
 		});
 
 		const code = await model.setupTokenRequest(authCode, request);
-		if(!code) throw Error("Invalid token request");
+		if (!code) throw Error('Invalid token request');
 
 		const res_token = await server.token(request, response, options);
 
 		//we remove the client and user object from the token
-		const token:JsonableObject = {
+		const token: JsonableObject = {
 			accessToken: res_token.accessToken,
 			accessTokenExpiresAt: res_token.accessTokenExpiresAt!.toString(),
 			authorizationCode: res_token['authorizationCode'],
@@ -111,10 +109,10 @@ export const createToken = p.new(
 			refreshToken: res_token.refreshToken!,
 			refreshTokenExpiresAt: res_token.refreshTokenExpiresAt!.toString(),
 			scope: res_token.scope!,
-		}
+		};
 
 		return ctx.pass(token);
-	}
+	},
 );
 
 /**
@@ -125,42 +123,41 @@ export const createAuthorizationCode = p.new(
 	['body', 'headers', 'client', 'jwk'],
 	'generate authorization code',
 	async (ctx) => {
-
 		const params = ctx.fetch('body') as 'string';
-		const headers = ctx.fetch('headers') as { [key: string]: string; };
-		const client = ctx.fetch('client') as { [key: string]: any; };
+		const headers = ctx.fetch('headers') as JsonableObject;
+		const client = ctx.fetch('client') as JsonableObject;
 		const jwk = ctx.fetch('jwk') as JsonableObject;
 
 		const request = new Request({
 			body: parseQueryStringToDictionary(params),
 			headers: headers,
-			method: "GET",
-			query: {}
+			method: 'GET',
+			query: {},
 		});
 
 		const response = new Response();
 
 		const options = {
-			accessTokenLifetime: 60 * 60,             // 1 hour.
-			refreshTokenLifetime: 60 * 60 * 24 * 14,  // 2 weeks.
+			accessTokenLifetime: 60 * 60, // 1 hour.
+			refreshTokenLifetime: 60 * 60 * 24 * 14, // 2 weeks.
 			allowExtendedTokenAttributes: true,
-			requireClientAuthentication: {}           // defaults to true for all grant types
+			requireClientAuthentication: {}, // defaults to true for all grant types
 		};
 
 		const model = getInMemoryCache(jwk, options);
 		const handler = getAuthenticateHandler(model);
 		var server = new OAuth2Server({
 			model: model,
-			authenticateHandler: handler
+			authenticateHandler: handler,
 		});
 
 		const cl = model.setClient(client);
-		if(!cl){
-			throw Error("Client is not valid");
+		if (!cl) {
+			throw Error('Client is not valid');
 		}
 
 		return ctx.pass(await server.authorize(request, response));
-	}
+	},
 );
 
 export const oauth = p;

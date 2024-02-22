@@ -1,13 +1,34 @@
-import { Request, Response, AuthorizationCodeModel, Token, InvalidArgumentError, ServerOptions, ClientCredentialsModel, ExtensionModel, InsufficientScopeError, InvalidRequestError, InvalidTokenError, OAuthError, PasswordModel, RefreshTokenModel, ServerError, UnauthorizedRequestError } from "@node-oauth/oauth2-server";
-import { importJWK, jwtVerify } from "jose";
+import {
+	Request,
+	Response,
+	AuthorizationCodeModel,
+	Token,
+	InvalidArgumentError,
+	ServerOptions,
+	ClientCredentialsModel,
+	ExtensionModel,
+	InsufficientScopeError,
+	InvalidRequestError,
+	InvalidTokenError,
+	OAuthError,
+	PasswordModel,
+	RefreshTokenModel,
+	ServerError,
+	UnauthorizedRequestError,
+} from '@node-oauth/oauth2-server';
+import { importJWK, jwtVerify } from 'jose';
 import bs58 from 'bs58';
 
 export class AuthenticateHandler {
-
 	addAcceptedScopesHeader: boolean | undefined;
 	addAuthorizedScopesHeader: boolean | undefined;
 	allowBearerTokensInQueryString: boolean | undefined;
-	model: AuthorizationCodeModel | ClientCredentialsModel | RefreshTokenModel | PasswordModel | ExtensionModel;
+	model:
+		| AuthorizationCodeModel
+		| ClientCredentialsModel
+		| RefreshTokenModel
+		| PasswordModel
+		| ExtensionModel;
 	scope: string[] | undefined;
 
 	constructor(options: ServerOptions) {
@@ -18,7 +39,9 @@ export class AuthenticateHandler {
 		}
 
 		if (!options.model.getAccessToken) {
-			throw new InvalidArgumentError('Invalid argument: model does not implement `getAccessToken()`');
+			throw new InvalidArgumentError(
+				'Invalid argument: model does not implement `getAccessToken()`',
+			);
 		}
 
 		if (options.scope && undefined === options.addAcceptedScopesHeader) {
@@ -28,9 +51,11 @@ export class AuthenticateHandler {
 		if (options.scope && undefined === options.addAuthorizedScopesHeader) {
 			throw new InvalidArgumentError('Missing parameter: `addAuthorizedScopesHeader`');
 		}
-	//	console.log(options.scope && !options.model.verifyScope) = undefined but pass the check
+		//	console.log(options.scope && !options.model.verifyScope) = undefined but pass the check
 		if (options.scope && !options.model.verifyScope) {
-			throw new InvalidArgumentError('Invalid argument: model does not implement `verifyScope()`');
+			throw new InvalidArgumentError(
+				'Invalid argument: model does not implement `verifyScope()`',
+			);
 		}
 
 		this.addAcceptedScopesHeader = options.addAcceptedScopesHeader;
@@ -46,11 +71,15 @@ export class AuthenticateHandler {
 
 	async handle(request: Request, response: Response) {
 		if (!(request instanceof Request)) {
-			throw new InvalidArgumentError('Invalid argument: `request` must be an instance of Request');
+			throw new InvalidArgumentError(
+				'Invalid argument: `request` must be an instance of Request',
+			);
 		}
 
 		if (!(response instanceof Response)) {
-			throw new InvalidArgumentError('Invalid argument: `response` must be an instance of Response');
+			throw new InvalidArgumentError(
+				'Invalid argument: `response` must be an instance of Response',
+			);
 		}
 
 		try {
@@ -58,27 +87,29 @@ export class AuthenticateHandler {
 			const cl_sec = request.body.clientSecret;
 			const client = await this.model.getClient(cl_id, cl_sec);
 			if (!client) {
-				throw new Error("Invalid Client");
+				throw new Error('Invalid Client');
 			}
 
 			const scope = request.body.scope;
-			if(scope){
+			if (scope) {
 				const resource = request.body.resource;
-				if(!resource) throw new Error("Request is missing resource parameter");
+				if (!resource) throw new Error('Request is missing resource parameter');
 
 				const valid_scope = await this.verifyScope(scope, resource);
-				if (!valid_scope) throw new Error("Given scope is not valid");
+				if (!valid_scope) throw new Error('Given scope is not valid');
 			}
 
-			const url = "https://did.dyne.org/dids/" + cl_id;
+			const url = 'https://did.dyne.org/dids/' + cl_id;
 
-			const response = await fetch(url, {method: 'GET'});
+			const response = await fetch(url, { method: 'GET' });
 			if (!response.ok) {
 				throw new Error(`Error! status: ${response.status}`);
 			}
 
 			const result = await response.json();
-			const base58Key = result.didDocument.verificationMethod.find((value: any) => value.type == 'EcdsaSecp256r1VerificationKey').publicKeyBase58
+			const base58Key = result.didDocument.verificationMethod.find(
+				(value: any) => value.type == 'EcdsaSecp256r1VerificationKey',
+			).publicKeyBase58;
 
 			const uint8ArrKey = bs58.decode(base58Key);
 			const base64_x_Key = Buffer.from(uint8ArrKey.buffer.slice(0, 32)).toString('base64url');
@@ -99,8 +130,7 @@ export class AuthenticateHandler {
 			if (!outVerify) {
 				return undefined;
 			}
-			return client["id"];
-
+			return client['id'];
 		} catch (e) {
 			// Include the "WWW-Authenticate" response header field if the client
 			// lacks any authentication information.
@@ -113,7 +143,10 @@ export class AuthenticateHandler {
 			} else if (e instanceof InvalidTokenError) {
 				response.set('WWW-Authenticate', 'Bearer realm="Service",error="invalid_token"');
 			} else if (e instanceof InsufficientScopeError) {
-				response.set('WWW-Authenticate', 'Bearer realm="Service",error="insufficient_scope"');
+				response.set(
+					'WWW-Authenticate',
+					'Bearer realm="Service",error="insufficient_scope"',
+				);
 			}
 
 			if (!(e instanceof OAuthError)) {
@@ -136,7 +169,9 @@ export class AuthenticateHandler {
 		}
 
 		if (!accessToken.user) {
-			throw new ServerError('Server error: `getAccessToken()` did not return a `user` object');
+			throw new ServerError(
+				'Server error: `getAccessToken()` did not return a `user` object',
+			);
 		}
 
 		return accessToken;
@@ -162,32 +197,38 @@ export class AuthenticateHandler {
 	 * Verify scope.
 	 */
 
-// for reference see: https://openid.github.io/OpenID4VCI/openid-4-verifiable-credential-issuance-wg-draft.html#section-5.1.2
-	async verifyScope(scope:string[], resource:string) {
+	// for reference see: https://openid.github.io/OpenID4VCI/openid-4-verifiable-credential-issuance-wg-draft.html#section-5.1.2
+	async verifyScope(scope: string[], resource: string) {
 		if (!scope) {
-			throw new InsufficientScopeError('Insufficient scope: authorized scope is insufficient');
+			throw new InsufficientScopeError(
+				'Insufficient scope: authorized scope is insufficient',
+			);
 		}
-		if(!resource) {
+		if (!resource) {
 			throw new Error('Invalid request: needed resource to verify scope');
 		}
 
 		const url = resource + '/.well-known/openid-credential-issuer';
-		const response = await fetch(url, {method: 'GET'});
+		const response = await fetch(url, { method: 'GET' });
 		if (!response.ok) {
 			throw new Error(`Error! status: ${response.status}`);
 		}
 		const result = await response.json();
 		const credentials_supported = result.credentials_supported;
 		var valid_credentials = [];
-		for (var key in credentials_supported){
+		for (var key in credentials_supported) {
 			const type_arr = credentials_supported[key].credential_definition.type;
-			if(type_arr.find((id:any) => {return id===scope}) != undefined){
+			if (
+				type_arr.find((id: any) => {
+					return id === scope;
+				}) != undefined
+			) {
 				valid_credentials.push(scope);
 				break;
 			}
 		}
 
-		if(valid_credentials.length > 0) return true;
+		if (valid_credentials.length > 0) return true;
 		else return false;
 	}
 

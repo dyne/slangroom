@@ -1,5 +1,21 @@
-import { AuthorizationCodeModel, Client, User, Token, Falsey, AuthorizationCode, Request } from "@node-oauth/oauth2-server";
-import { SignJWT, jwtVerify, generateKeyPair, JWK, importJWK, decodeProtectedHeader, decodeJwt } from 'jose';
+import {
+	AuthorizationCodeModel,
+	Client,
+	User,
+	Token,
+	Falsey,
+	AuthorizationCode,
+	Request,
+} from '@node-oauth/oauth2-server';
+import {
+	SignJWT,
+	jwtVerify,
+	generateKeyPair,
+	JWK,
+	importJWK,
+	decodeProtectedHeader,
+	decodeJwt,
+} from 'jose';
 import { createHash, randomBytes } from 'crypto';
 
 export class InMemoryCache implements AuthorizationCodeModel {
@@ -15,7 +31,6 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	 * Constructor.
 	 */
 	constructor(jwk: JWK, options?: any) {
-
 		this.options = options || {};
 		this.jwk = jwk;
 
@@ -31,70 +46,68 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	 */
 
 	setClient(client: { [key: string]: any }): Promise<Client | Falsey> {
-
-		if (!client["id"]) {
+		if (!client['id']) {
 			throw Error("Invalid Client, missing property 'id'");
 		}
-		if (!client["grants"]) {
+		if (!client['grants']) {
 			throw Error("Invalid Client, missing property 'grants'");
 		}
-		if (!client["clientSecret"]) {
+		if (!client['clientSecret']) {
 			throw Error("Invalid Client, missing property 'clientSecret'");
 		}
 
 		const clientSaved: Client = {
-			id: client["id"],
-			grants: client["grants"],
-			clientSecret: client["clientSecret"],
-			redirectUris: client["redirectUris"],
-			accessTokenLifetime: client["accessTokenLifetime"],
-			refreshTokenLifetime: client["refreshTokenLifetime"]
-		}
+			id: client['id'],
+			grants: client['grants'],
+			clientSecret: client['clientSecret'],
+			redirectUris: client['redirectUris'],
+			accessTokenLifetime: client['accessTokenLifetime'],
+			refreshTokenLifetime: client['refreshTokenLifetime'],
+		};
 
 		this.clients.push(clientSaved);
 		return Promise.resolve(clientSaved);
-	};
+	}
 
 	/**
 	 * Create a new object AuthorizationCode in this.codes.
 	 */
 	async setAuthorizationCode(code: { [key: string]: any }): Promise<AuthorizationCode | Falsey> {
-
-		if (!code["authorizationCode"]) {
+		if (!code['authorizationCode']) {
 			throw Error("Invalid Authorization Code, missing property 'authorizationCode'");
 		}
-		if (!code["expiresAt"]) {
+		if (!code['expiresAt']) {
 			throw Error("Invalid AuthorizationCode, missing property 'expiresAt'");
 		}
-		if (!code["redirectUri"]) {
+		if (!code['redirectUri']) {
 			throw Error("Invalid Authorization Code, missing property 'redirectUri'");
 		}
-		if (!code["client"]) {
+		if (!code['client']) {
 			throw Error("Invalid Authorization Code, missing property 'client'");
 		}
-		if (!code["user"]) {
+		if (!code['user']) {
 			throw Error("Invalid Authorization Code, missing property 'user'");
 		}
 
 		const publicKey = await importJWK(this.jwk);
 		// TODO?: add more checks on payload/header?
-		const outVerify = await jwtVerify(code["authorizationCode"], publicKey);
-		if(!outVerify){
-			throw Error("Invalid Authorization Code, invalid signature");
+		const outVerify = await jwtVerify(code['authorizationCode'], publicKey);
+		if (!outVerify) {
+			throw Error('Invalid Authorization Code, invalid signature');
 		}
 
 		const codeSaved: AuthorizationCode = {
-			authorizationCode: code["authorizationCode"],
-			expiresAt: new Date(code["expiresAt"]),
-			redirectUri: code["redirectUri"],
-			client: code["client"],
-			user: code["user"],
-			scope: code["scope"],
-			codeChallenge: code["codeChallenge"],
-			codeChallengeMethod: code["codeChallengeMethod"]
-		}
+			authorizationCode: code['authorizationCode'],
+			expiresAt: new Date(code['expiresAt']),
+			redirectUri: code['redirectUri'],
+			client: code['client'],
+			user: code['user'],
+			scope: code['scope'],
+			codeChallenge: code['codeChallenge'],
+			codeChallengeMethod: code['codeChallengeMethod'],
+		};
 		var keys = Object.keys(codeSaved);
-		let missingKeys = Object.keys(code).filter(item => keys.indexOf(item) < 0);
+		let missingKeys = Object.keys(code).filter((item) => keys.indexOf(item) < 0);
 
 		missingKeys.forEach(function (key) {
 			codeSaved[key] = code[key];
@@ -107,7 +120,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 		if (!cl) this.setClient(codeSaved.client);
 
 		return Promise.resolve(codeSaved);
-	};
+	}
 
 	/**
 	 * Invoked to retrieve an existing authorization code previously saved through Model#saveAuthorizationCode().
@@ -124,21 +137,36 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	 * Invoked to save an authorization code.
 	 *
 	 */
-	saveAuthorizationCode(code: Pick<AuthorizationCode, "authorizationCode" | "expiresAt" | "redirectUri" | "scope" | "codeChallenge" | "codeChallengeMethod">, client: Client, user: User): Promise<Falsey | AuthorizationCode> {
+	saveAuthorizationCode(
+		code: Pick<
+			AuthorizationCode,
+			| 'authorizationCode'
+			| 'expiresAt'
+			| 'redirectUri'
+			| 'scope'
+			| 'codeChallenge'
+			| 'codeChallengeMethod'
+		>,
+		client: Client,
+		user: User,
+	): Promise<Falsey | AuthorizationCode> {
 		let codeSaved: AuthorizationCode = {
 			authorizationCode: code.authorizationCode,
 			expiresAt: code.expiresAt,
 			redirectUri: code.redirectUri,
 			scope: code.scope,
 			client: client,
-			user: user
+			user: user,
 		};
 
 		if (code.codeChallenge && code.codeChallengeMethod) {
-			codeSaved = Object.assign({
-				codeChallenge: code.codeChallenge,
-				codeChallengeMethod: code.codeChallengeMethod
-			}, codeSaved);
+			codeSaved = Object.assign(
+				{
+					codeChallenge: code.codeChallenge,
+					codeChallengeMethod: code.codeChallengeMethod,
+				},
+				codeSaved,
+			);
 		}
 		this.codes.push(codeSaved);
 		return Promise.resolve(codeSaved);
@@ -164,7 +192,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 		});
 
 		return Promise.resolve(tokens[0]);
-	};
+	}
 
 	/**
 	 * Get refresh token.
@@ -176,7 +204,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 		});
 
 		return tokens.length ? tokens[0] : false;
-	};
+	}
 
 	/**
 	 * Get client.
@@ -188,14 +216,13 @@ export class InMemoryCache implements AuthorizationCodeModel {
 				return client.id === clientId && client['clientSecret'] === clientSecret;
 			});
 			return Promise.resolve(clients[0]);
-		}
-		else {
+		} else {
 			var clients = this.clients.filter(function (client: Client) {
 				return client.id === clientId;
 			});
 			return Promise.resolve(clients[0]);
 		}
-	};
+	}
 
 	/**
 	 * Save token.
@@ -208,8 +235,8 @@ export class InMemoryCache implements AuthorizationCodeModel {
 			refreshToken: token.refreshToken,
 			refreshTokenExpiresAt: token.refreshTokenExpiresAt,
 			client: client,
-			user: user
-		}
+			user: user,
+		};
 		if (token.scope) {
 			Object.assign({ scope: token.scope }, tokenSaved);
 		}
@@ -218,14 +245,14 @@ export class InMemoryCache implements AuthorizationCodeModel {
 		tokenSaved['c_nonce_expires_in'] = 60 * 60;
 
 		const dpop_jwk = await this.getDpopJWK(client.id);
-		if(dpop_jwk){
-		//for reference see: https://datatracker.ietf.org/doc/html/rfc9449.html#section-6.1
+		if (dpop_jwk) {
+			//for reference see: https://datatracker.ietf.org/doc/html/rfc9449.html#section-6.1
 			tokenSaved['jkt'] = this.createJWKThumbprint(dpop_jwk['jwk']);
 		}
 		if (this.options && this.options.allowExtendedTokenAttributes) {
 			//TODO: problem with authorization_details
 			var keys = Object.keys(tokenSaved);
-			let missingKeys = Object.keys(token).filter(item => keys.indexOf(item) < 0);
+			let missingKeys = Object.keys(token).filter((item) => keys.indexOf(item) < 0);
 			missingKeys.forEach(function (key) {
 				tokenSaved[key] = token[key];
 			});
@@ -233,17 +260,15 @@ export class InMemoryCache implements AuthorizationCodeModel {
 		this.tokens.push(tokenSaved);
 
 		return Promise.resolve(tokenSaved);
-	};
+	}
 
 	/**
 	 * Generate access token.
 	 */
 
 	async generateAccessToken(client: Client): Promise<string> {
-
 		const clientId = client.id;
-		if (this.jwk != null)
-			var privateKey = await importJWK(this.jwk);
+		if (this.jwk != null) var privateKey = await importJWK(this.jwk);
 		else {
 			var keyPair = await generateKeyPair('ES256');
 			privateKey = keyPair.privateKey;
@@ -256,18 +281,14 @@ export class InMemoryCache implements AuthorizationCodeModel {
 			.setExpirationTime('1h')
 			.sign(privateKey);
 		return token;
-
-	};
+	}
 
 	/**
 	 * Generate authorization code.
 	 */
 	async generateAuthorizationCode(client: Client): Promise<string> {
-
 		const clientId = client.id;
-		if (this.jwk != null)
-			var privateKey = await importJWK(this.jwk);
-
+		if (this.jwk != null) var privateKey = await importJWK(this.jwk);
 		else {
 			var keyPair = await generateKeyPair('ES256');
 			privateKey = keyPair.privateKey;
@@ -283,72 +304,72 @@ export class InMemoryCache implements AuthorizationCodeModel {
 		return authCode;
 	}
 
-// For reference see Section 4.3 of RFC9449 https://datatracker.ietf.org/doc/html/rfc9449.html
-	async verifyDpopProof(dpop:string, request: Request){
-
+	// For reference see Section 4.3 of RFC9449 https://datatracker.ietf.org/doc/html/rfc9449.html
+	async verifyDpopProof(dpop: string, request: Request) {
 		const header = decodeProtectedHeader(dpop);
 
-		if(!header.typ) throw Error("Invalid DPoP: missing typ header parameter");
-		if(header.typ !== "dpop+jwt") throw Error("Invalid DPoP: typ must be dpop+jwt");
+		if (!header.typ) throw Error('Invalid DPoP: missing typ header parameter');
+		if (header.typ !== 'dpop+jwt') throw Error('Invalid DPoP: typ must be dpop+jwt');
 
-		if(!header.alg) throw Error("Invalid DPoP: missing alg header parameter");
-		if(header.alg !== 'ES256') throw Error("Invalid DPoP: alg must be ES256");
+		if (!header.alg) throw Error('Invalid DPoP: missing alg header parameter');
+		if (header.alg !== 'ES256') throw Error('Invalid DPoP: alg must be ES256');
 
-		if(!header.jwk) throw Error("Invalid DPoP: missing jwk header parameter");
+		if (!header.jwk) throw Error('Invalid DPoP: missing jwk header parameter');
 		// Missing check: The jwk JOSE Header Parameter does not contain a private key.
 		const publicKey = await importJWK(header.jwk);
 		const verify_sig = await jwtVerify(dpop, publicKey);
-		if(!verify_sig){
-			throw Error("Invalid DPoP: invalid signature");
+		if (!verify_sig) {
+			throw Error('Invalid DPoP: invalid signature');
 		}
 
 		const payload = decodeJwt(dpop);
 
-		if(!payload.iat) throw Error("Invalid DPoP: missing iat payload parameter");
-		var FIVE_MIN=5*60*1000;
+		if (!payload.iat) throw Error('Invalid DPoP: missing iat payload parameter');
+		var FIVE_MIN = 5 * 60 * 1000;
 		var date = new Date().getTime();
-		if((date - payload.iat) > FIVE_MIN)	throw Error("Invalid DPoP: expired");
+		if (date - payload.iat > FIVE_MIN) throw Error('Invalid DPoP: expired');
 
-		if(!payload.jti) throw Error("Invalid DPoP: missing jti payload parameter");
+		if (!payload.jti) throw Error('Invalid DPoP: missing jti payload parameter');
 
-		if(!payload['htm']) throw Error("Invalid DPoP: missing htm payload parameter");
-		if(payload['htm'] !== request.method) throw Error("Invalid DPoP: htm does not match request method");
+		if (!payload['htm']) throw Error('Invalid DPoP: missing htm payload parameter');
+		if (payload['htm'] !== request.method)
+			throw Error('Invalid DPoP: htm does not match request method');
 
-		if(!payload['htu']) throw Error("Invalid DPoP: missing htu payload parameter");
+		if (!payload['htu']) throw Error('Invalid DPoP: missing htu payload parameter');
 		// Missing check: The htu claim matches the HTTP URI value for the HTTP request in which the JWT was received, ignoring any query and fragment parts.
 		return true;
 	}
 
-	async setupTokenRequest(authCode:{ [key: string]: any }, request:Request){
+	async setupTokenRequest(authCode: { [key: string]: any }, request: Request) {
 		const code = await this.setAuthorizationCode(authCode);
-		if(!code){
-			throw Error("Authorization Code is not valid");
+		if (!code) {
+			throw Error('Authorization Code is not valid');
 		}
 
 		var dpop = request.headers!['dpop'];
-		if(dpop){
+		if (dpop) {
 			var check = await this.verifyDpopProof(dpop, request);
-			if(!check) throw Error("Invalid request: DPoP header parameter is not valid");
+			if (!check) throw Error('Invalid request: DPoP header parameter is not valid');
 			const header = decodeProtectedHeader(dpop);
-			const dpop_saved = {id: authCode["client"].id, jwk: header.jwk};
+			const dpop_saved = { id: authCode['client'].id, jwk: header.jwk };
 			this.dpop_jwks.push(dpop_saved);
 		}
 		return code;
 	}
 
-	getDpopJWK(id: string){
+	getDpopJWK(id: string) {
 		var jwks = this.dpop_jwks.filter(function (dpop_jwk: any) {
 			return dpop_jwk.id === id;
 		});
 		return Promise.resolve(jwks[0]);
 	}
 
-//for reference see: https://datatracker.ietf.org/doc/html/rfc7638
-	createJWKThumbprint(jwk:JWK) {
+	//for reference see: https://datatracker.ietf.org/doc/html/rfc7638
+	createJWKThumbprint(jwk: JWK) {
 		const jwk_str = JSON.stringify(jwk, Object.keys(jwk).sort());
 		const jwk_utf8 = new Uint8Array(Buffer.from(jwk_str));
 
-		const digest = new Uint8Array(createHash("SHA256").update(jwk_utf8).digest());
+		const digest = new Uint8Array(createHash('SHA256').update(jwk_utf8).digest());
 
 		return Buffer.from(digest).toString('base64url');
 	}
