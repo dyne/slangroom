@@ -42,17 +42,17 @@ function parseQueryStringToDictionary(queryString: string) {
 }
 
 let inMemoryCache: InMemoryCache | null = null;
-const getInMemoryCache = (jwk: JWK, options?: JsonableObject): InMemoryCache => {
+const getInMemoryCache = (serverData: { jwk: JWK, url: string }, options?: JsonableObject): InMemoryCache => {
 	if (!inMemoryCache) {
-		inMemoryCache = new InMemoryCache(jwk, options);
+		inMemoryCache = new InMemoryCache( serverData, options);
 	}
 	return inMemoryCache;
 };
 
 let authenticateHandler: any;
-const getAuthenticateHandler = (model: InMemoryCache): any => {
+const getAuthenticateHandler = (model: InMemoryCache, authenticationUrl:string): any => {
 	if (!authenticateHandler) {
-		authenticateHandler = new AuthenticateHandler({ model: model });
+		authenticateHandler = new AuthenticateHandler({ model: model },  authenticationUrl);
 	}
 	return authenticateHandler;
 };
@@ -63,15 +63,20 @@ const getAuthenticateHandler = (model: InMemoryCache): any => {
 
 //Add sentence that allows to generate and output a valid access token from an auth server backend
 export const createToken = p.new(
-	['body', 'headers', 'code', 'jwk'],
+	['request', 'code', 'server_data'],
 	'generate access token',
 	async (ctx) => {
-		const params = ctx.fetch('body') as 'string';
-		const headers = ctx.fetch('headers');
+		const params = ctx.fetch('request') as JsonableObject;
+		const body = params['body'];
+		const headers = params['headers'];
+		if(!body || !headers) throw Error("Input request is not valid");
+		if(typeof body !== 'string') throw Error("Request body must be a string");
 		const authCode = ctx.fetch('code') as JsonableObject;
-		const jwk = ctx.fetch('jwk') as JsonableObject;
+		const serverData = ctx.fetch('server_data') as { jwk: JWK, url: string , authenticationUrl: string };
+		if(!serverData['jwk'] || !serverData['url']) throw Error("Server data is missing some parameters");
+
 		const request = new Request({
-			body: parseQueryStringToDictionary(params),
+			body: parseQueryStringToDictionary(body),
 			headers: headers,
 			method: 'POST',
 			query: {},
@@ -86,8 +91,8 @@ export const createToken = p.new(
 			requireClientAuthentication: {}, // defaults to true for all grant types
 		};
 
-		const model = getInMemoryCache(jwk, options);
-		const handler = getAuthenticateHandler(model);
+		const model = getInMemoryCache(serverData, options);
+		const handler = getAuthenticateHandler(model, serverData.authenticationUrl);
 		var server = new OAuth2Server({
 			model: model,
 			authenticateHandler: handler,
@@ -120,16 +125,20 @@ export const createToken = p.new(
  */
 //Add sentence that allows to generate and output a valid authorization code for an authenticated request
 export const createAuthorizationCode = p.new(
-	['body', 'headers', 'client', 'jwk'],
+	['request', 'client', 'server_data'],
 	'generate authorization code',
 	async (ctx) => {
-		const params = ctx.fetch('body') as 'string';
-		const headers = ctx.fetch('headers') as JsonableObject;
+		const params = ctx.fetch('request') as JsonableObject;
+		const body = params['body'];
+		const headers = params['headers'];
+		if(!body || !headers) throw Error("Input request is not valid");
+		if(typeof body !== 'string') throw Error("Request body must be a string");
 		const client = ctx.fetch('client') as JsonableObject;
-		const jwk = ctx.fetch('jwk') as JsonableObject;
+		const serverData = ctx.fetch('server_data') as { jwk: JWK, url: string , authenticationUrl: string };
+		if(!serverData['jwk'] || !serverData['url']) throw Error("Server data is missing some parameters");
 
 		const request = new Request({
-			body: parseQueryStringToDictionary(params),
+			body: parseQueryStringToDictionary(body),
 			headers: headers,
 			method: 'GET',
 			query: {},
@@ -144,8 +153,8 @@ export const createAuthorizationCode = p.new(
 			requireClientAuthentication: {}, // defaults to true for all grant types
 		};
 
-		const model = getInMemoryCache(jwk, options);
-		const handler = getAuthenticateHandler(model);
+		const model = getInMemoryCache(serverData, options);
+		const handler = getAuthenticateHandler(model, serverData.authenticationUrl);
 		var server = new OAuth2Server({
 			model: model,
 			authenticateHandler: handler,

@@ -13,7 +13,7 @@ import {
 	JWK,
 	importJWK,
 	decodeProtectedHeader,
-	decodeJwt,
+	decodeJwt
 } from 'jose';
 import { createHash, randomBytes } from 'crypto';
 import { JsonableObject } from '@slangroom/shared';
@@ -23,16 +23,19 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	tokens: Token[];
 	users: User[];
 	codes: AuthorizationCode[];
-	jwk: JWK;
+	serverData: { jwk: JWK, url: string };
 	options: JsonableObject;
 	dpop_jwks: { [key: string]: any }[];
 
 	/**
 	 * Constructor.
 	 */
-	constructor(jwk: JWK, options?: JsonableObject) {
+	constructor(serverData: { jwk: JWK, url: string }, options?: JsonableObject) {
 		this.options = options || {};
-		this.jwk = jwk;
+		this.serverData = {
+			jwk: serverData['jwk'],
+			url: serverData['url']
+		};
 
 		this.clients = [];
 		this.users = [];
@@ -89,7 +92,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 			throw Error("Invalid Authorization Code, missing property 'user'");
 		}
 
-		const publicKey = await importJWK(this.jwk);
+		const publicKey = await importJWK(this.serverData.jwk);
 		// TODO?: add more checks on payload/header?
 		const outVerify = await jwtVerify(code['authorizationCode'], publicKey);
 		if (!outVerify) {
@@ -251,22 +254,35 @@ export class InMemoryCache implements AuthorizationCodeModel {
 		return Promise.resolve(tokenSaved);
 	}
 
+
+	/**
+	 * Create a JWT with a random value in payload,
+	 *  issued by this.serverData.url, signed with the private key in this.serverData.jwk,
+	 *  the input string is set as the audience parameter.
+	 */
+
+	async createServerJWS(clientId: string){
+		if (this.serverData.jwk == null) throw Error("Missing server private JWK");
+		let privateKey = await importJWK(this.serverData.jwk);
+		let alg = this.serverData.jwk.alg || 'ES256';
+
+		const jws = new SignJWT({ sub: randomBytes(20).toString('hex') })
+			.setProtectedHeader({ alg: alg })
+			.setIssuedAt(Date.now())
+			.setIssuer(this.serverData.url)
+			.setAudience(clientId)
+			.setExpirationTime('1h')
+			.sign(privateKey);
+		return jws;
+	}
+
 	/**
 	 * Generate access token.
 	 */
 
 	async generateAccessToken(client: Client): Promise<string> {
 		const clientId = client.id;
-		if (this.jwk == null) throw Error("Missing server private JWK");
-		let privateKey = await importJWK(this.jwk);
-
-		const token = new SignJWT({ sub: randomBytes(20).toString('hex') })
-			.setProtectedHeader({ alg: 'ES256' })
-			.setIssuedAt(Date.now())
-			.setIssuer('https://valid.issuer.url')
-			.setAudience(clientId)
-			.setExpirationTime('1h')
-			.sign(privateKey);
+		const token = this.createServerJWS(clientId);
 		return token;
 	}
 
@@ -275,16 +291,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	 */
 	async generateAuthorizationCode(client: Client): Promise<string> {
 		const clientId = client.id;
-		if (this.jwk == null) throw Error("Missing server private JWK");
-		let privateKey = await importJWK(this.jwk);
-
-		const authCode = new SignJWT({ sub: randomBytes(20).toString('hex') })
-			.setProtectedHeader({ alg: 'ES256' })
-			.setIssuedAt(Date.now())
-			.setIssuer('https://valid.issuer.url')
-			.setAudience(clientId)
-			.setExpirationTime('1h')
-			.sign(privateKey);
+		const authCode = this.createServerJWS(clientId);
 		return authCode;
 	}
 

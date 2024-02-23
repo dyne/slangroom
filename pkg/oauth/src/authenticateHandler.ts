@@ -1,37 +1,37 @@
 import {
 	Request,
 	Response,
-	AuthorizationCodeModel,
 	Token,
 	InvalidArgumentError,
 	ServerOptions,
-	ClientCredentialsModel,
-	ExtensionModel,
 	InsufficientScopeError,
 	InvalidRequestError,
 	InvalidTokenError,
 	OAuthError,
-	PasswordModel,
-	RefreshTokenModel,
 	ServerError,
 	UnauthorizedRequestError,
+	AuthorizationCodeModel,
+	ClientCredentialsModel,
+	ExtensionModel,
+	PasswordModel,
+	RefreshTokenModel,
 } from '@node-oauth/oauth2-server';
 import { importJWK, jwtVerify } from 'jose';
 import bs58 from 'bs58';
+import { InMemoryCache } from '@slangroom/oauth';
 
 export class AuthenticateHandler {
 	addAcceptedScopesHeader: boolean | undefined;
 	addAuthorizedScopesHeader: boolean | undefined;
 	allowBearerTokensInQueryString: boolean | undefined;
-	model:
-		| AuthorizationCodeModel
-		| ClientCredentialsModel
-		| RefreshTokenModel
-		| PasswordModel
-		| ExtensionModel;
+	model: InMemoryCache | AuthorizationCodeModel | ClientCredentialsModel | RefreshTokenModel | PasswordModel | ExtensionModel;
 	scope: string[] | undefined;
+	authenticationUrl: string;
 
-	constructor(options: ServerOptions) {
+	constructor(options: ServerOptions, authentication_url: string) {
+
+		this.authenticationUrl = authentication_url || 'https://did.dyne.org/dids/';
+
 		options = options || {};
 
 		if (!options.model) {
@@ -99,7 +99,8 @@ export class AuthenticateHandler {
 				if (!valid_scope) throw new Error('Given scope is not valid');
 			}
 
-			const url = 'https://did.dyne.org/dids/' + cl_id;
+			const auth_url = this.authenticationUrl;
+			const url = auth_url + cl_id;
 
 			const response = await fetch(url);
 			if (!response.ok) {

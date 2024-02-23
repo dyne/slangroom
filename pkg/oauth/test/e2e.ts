@@ -51,7 +51,7 @@ test('create authorization code and access token', async (t) => {
 	const scriptCreate = `
 Rule unknown ignore
 
-Given I send body 'body' and send headers 'headers' and send client 'client' and send jwk 'jwk' and generate authorization code and output into 'authCode_jwt'
+Given I send request 'request' and send client 'client' and send server_data 'server' and generate authorization code and output into 'authCode_jwt'
 
 Given I have a 'string dictionary' named 'authCode_jwt'
 
@@ -60,18 +60,25 @@ Then print data
 	const slangroom = new Slangroom(oauth);
 	const res = await slangroom.execute(scriptCreate, {
 		keys: {
-			jwk: {
-				kty: 'EC',
-				crv: 'P-256',
-				alg: 'ES256',
-				x: 'SVqB4JcUD6lsfvqMr-OKUNUphdNn64Eay60978ZlL74',
-				y: 'lf0u0pMj4lGAzZix5u4Cm5CMQIgMNpkwy163wtKYVKI',
-				d: '0g5vAEKzugrXaRbgKG0Tj2qJ5lMP4Bezds1_sTybkfk',
+			server: {
+				jwk: {
+					kty: 'EC',
+					crv: 'P-256',
+					alg: 'ES256',
+					x: 'SVqB4JcUD6lsfvqMr-OKUNUphdNn64Eay60978ZlL74',
+					y: 'lf0u0pMj4lGAzZix5u4Cm5CMQIgMNpkwy163wtKYVKI',
+					d: '0g5vAEKzugrXaRbgKG0Tj2qJ5lMP4Bezds1_sTybkfk',
+				},
+				url: 'https://valid.issuer.url',
+				authentication_url : 'https://did.dyne.org/dids/'
 			},
-			body: 'response_type=code&client_id=did:dyne:sandbox.genericissuer:6Cp8mPUvJmQaMxQPSnNyhb74f9Ga4WqfXCkBneFgikm5&state=xyz&code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM&code_challenge_method=S256&redirect_uri=https%3A%2F%2FWallet.example.org%2Fcb',
-			headers: {
-				Authorization: '',
+			request: {
+				body: 'response_type=code&client_id=did:dyne:sandbox.genericissuer:6Cp8mPUvJmQaMxQPSnNyhb74f9Ga4WqfXCkBneFgikm5&state=xyz&code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM&code_challenge_method=S256&redirect_uri=https%3A%2F%2FWallet.example.org%2Fcb',
+				headers: {
+					Authorization: '',
+				},
 			},
+
 			client: {
 				id: 'did:dyne:sandbox.genericissuer:6Cp8mPUvJmQaMxQPSnNyhb74f9Ga4WqfXCkBneFgikm5',
 				clientSecret:
@@ -106,7 +113,7 @@ Then print data
 	const scriptCreateToken = `
 	Rule unknown ignore
 
-	Given I send body 'body' and send headers 'headers' and send code 'authCode' and send jwk 'jwk' and generate access token and output into 'accessToken_jwt'
+	Given I send request 'request' and send code 'authCode' and send server_data 'server' and generate access token and output into 'accessToken_jwt'
 
 	Given I have a 'string dictionary' named 'accessToken_jwt'
 
@@ -114,20 +121,26 @@ Then print data
 	`;
 	const res3 = await slangroom.execute(scriptCreateToken, {
 		keys: {
-			jwk: {
-				kty: 'EC',
-				crv: 'P-256',
-				alg: 'ES256',
-				x: 'SVqB4JcUD6lsfvqMr-OKUNUphdNn64Eay60978ZlL74',
-				y: 'lf0u0pMj4lGAzZix5u4Cm5CMQIgMNpkwy163wtKYVKI',
-				d: '0g5vAEKzugrXaRbgKG0Tj2qJ5lMP4Bezds1_sTybkfk',
+			server: {
+				jwk: {
+					kty: 'EC',
+					crv: 'P-256',
+					alg: 'ES256',
+					x: 'SVqB4JcUD6lsfvqMr-OKUNUphdNn64Eay60978ZlL74',
+					y: 'lf0u0pMj4lGAzZix5u4Cm5CMQIgMNpkwy163wtKYVKI',
+					d: '0g5vAEKzugrXaRbgKG0Tj2qJ5lMP4Bezds1_sTybkfk',
+				},
+				url: 'https://valid.issuer.url',
+				authentication_url : 'https://did.dyne.org/dids/'
 			},
 			authCode: res.result['authCode_jwt'] || {},
-			body: res2.result['body'] || '',
-			headers: {
-				'content-length': 42,
-				'Content-Type': 'application/x-www-form-urlencoded',
-				DPoP: await create_dpop_proof(),
+			request: {
+				body: res2.result['body'] || '',
+				headers: {
+					'content-length': 42,
+					'Content-Type': 'application/x-www-form-urlencoded',
+					DPoP: await create_dpop_proof(),
+				},
 			},
 		},
 	});
@@ -135,6 +148,3 @@ Then print data
 	t.truthy(res3.result['accessToken_jwt']);
 });
 
-//authorization_details=%5B%7B%22type%22%3A%20%22openid_credential%22%2C%20%22credential_configuration_id%22%3A%20%22UniversityDegreeCredential%22%7D%5D
-// scope=%5B%7B%22resource%22%3A%20%22https%3A%2F%2Fcredential-issuer.example.com%22%2C%20%22credential_configuration_id%22%3A%20%22UniversityDegreeCredential%22%7D%5D
-//&resource=https%3A%2F%2Fcredential-issuer.example.com
