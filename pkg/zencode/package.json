@@ -1,9 +1,8 @@
 {
-	"name": "@slangroom/core",
+	"name": "@slangroom/zencode",
 	"version": "1.14.1",
 	"dependencies": {
-		"@slangroom/deps": "workspace:*",
-		"@slangroom/ignored": "workspace:*",
+		"@slangroom/core": "workspace:*",
 		"@slangroom/shared": "workspace:*"
 	},
 	"repository": "https://github.com/dyne/slangroom",

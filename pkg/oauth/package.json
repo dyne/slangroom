@@ -1,10 +1,12 @@
 {
-	"name": "@slangroom/core",
-	"version": "1.14.1",
+	"name": "@slangroom/oauth",
+	"version": "1.16.0",
 	"dependencies": {
-		"@slangroom/deps": "workspace:*",
-		"@slangroom/ignored": "workspace:*",
-		"@slangroom/shared": "workspace:*"
+		"@node-oauth/oauth2-server": "^5.1.0",
+		"@slangroom/core": "workspace:*",
+		"@slangroom/shared": "workspace:*",
+		"bs58": "^5.0.0",
+		"jose": "^5.1.3"
 	},
 	"repository": "https://github.com/dyne/slangroom",
 	"license": "AGPL-3.0-only",

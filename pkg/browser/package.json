@@ -3,10 +3,10 @@
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
 		"@slangroom/http": "workspace:*",
-		"@slangroom/qrcode": "workspace:*",
-		"@slangroom/json-schema": "workspace:*"
+		"@slangroom/json-schema": "workspace:*",
+		"@slangroom/qrcode": "workspace:*"
 	},
-	"version": "1.10.1",
+	"version": "1.14.1",
 	"repository": "https://github.com/dyne/slangroom",
 	"license": "AGPL-3.0-only",
 	"type": "module",

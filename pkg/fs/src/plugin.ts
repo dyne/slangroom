@@ -38,6 +38,11 @@ const resolveFilepath = (unsafe: string) => {
 
 const readFile = async (safePath: string) => {
 	const str = await fspkg.readFile(safePath, 'utf8');
+	return str;
+};
+
+const readJSON = async (safePath: string) => {
+	const str = await fspkg.readFile(safePath, 'utf8');
 	return JSON.parse(str);
 };
 
@@ -78,6 +83,19 @@ export const downloadAndExtract = p.new(
  * @internal
  */
 export const readFileContent = p.new(['path'], 'read file content', async (ctx) => {
+	const unsafe = ctx.fetch('path');
+	if (typeof unsafe !== 'string') return ctx.fail('path must be string');
+
+	const { filepath, error } = resolveFilepath(unsafe);
+	if (!filepath) return ctx.fail(error);
+
+	return ctx.pass(await readJSON(filepath));
+});
+
+/**
+ * @internal
+ */
+export const readVerbatimFileContent = p.new(['path'], 'read verbatim file content', async (ctx) => {
 	const unsafe = ctx.fetch('path');
 	if (typeof unsafe !== 'string') return ctx.fail('path must be string');
 
