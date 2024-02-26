@@ -1,6 +1,6 @@
 {
 	"name": "@slangroom/pocketbase",
-	"version": "1.0.0",
+	"version": "1.17.0",
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
 		"@slangroom/shared": "workspace:*",
