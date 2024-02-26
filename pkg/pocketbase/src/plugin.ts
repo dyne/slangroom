@@ -102,7 +102,7 @@ export const setupClient = p.new(['pb_address'], 'create pb_client', async (ctx)
 		if (!(await isPbRunning())) return ctx.fail('Client is not running');
 		return ctx.pass('pb client successfully created');
 	} catch (e) {
-		return ctx.fail('Invalid address');
+		throw new Error(e)
 	}
 });
 
@@ -122,7 +122,7 @@ export const authWithPassword = p.new(['my_credentials'], 'login', async (ctx) =
 			.authWithPassword(credentials!.email, credentials!.password, { requestKey: null });
 		return ctx.pass({ token: res.token, record: res.record });
 	} catch (err) {
-		return ctx.fail(err);
+		throw new Error(err)
 	}
 });
 
@@ -169,7 +169,7 @@ export const showRecord = p.new(['show_parameters'], 'ask record', async (ctx) =
 		const res = await pb.collection(p.collection).getOne(p.id, options);
 		return ctx.pass(res);
 	} catch (err) {
-		return ctx.fail(err);
+		throw new Error(err)
 	}
 });
 
@@ -195,7 +195,7 @@ export const createRecord = p.new(
 			const res = await pb.collection(collection).create(record, options);
 			return ctx.pass(res);
 		} catch (err) {
-			return ctx.fail(err.message);
+			throw new Error(err.message);
 		}
 	},
 );
@@ -222,7 +222,7 @@ export const updateRecord = p.new(
 			const res = await pb.collection(collection).update(id, record, options);
 			return ctx.pass(res);
 		} catch (err) {
-			return ctx.fail(err.message);
+			throw new Error(err.message);
 		}
 	},
 );

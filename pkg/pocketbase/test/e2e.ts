@@ -11,11 +11,10 @@ import type {
 import { pocketbase } from '@slangroom/pocketbase';
 import test from 'ava';
 import { Slangroom } from '@slangroom/core';
-import 'dotenv/config';
 
-const email = process.env['EMAIL']!;
-const password = process.env['PASSWORD']!;
-const pb_address = process.env['PB_ADDRESS']! as ServerUrl;
+const email = "test@test.eu";
+const password = "testtest";
+const pb_address = "http://127.0.0.1:8090/" as ServerUrl;
 
 type DataCreate = {
         create_parameters: CreateRecordParameters;
@@ -123,11 +122,11 @@ test('should retrieve paginated list of records', async (t) => {
 		data,
 	});
 	const output = res.result['output'] as {
-		records?: { items?: []; page?: number; perPage?: number };
+		records?: { items?: []; page?: string; perPage?: string};
 	};
 	t.truthy(Array.isArray(output.records?.items));
-	t.is(output.records?.page, 2);
-	t.is(output.records?.perPage, 20);
+	t.is(output.records?.page, '2');
+	t.is(output.records?.perPage, '20');
 });
 
 test('should retrieve first record that match filters', async (t) => {
@@ -172,7 +171,7 @@ test('should retrieve one record', async (t) => {
 		pb_address,
 		show_parameters: {
 			collection: 'organizations',
-			id: 'ouja6pwgxuyn2sd',
+			id: 'p7viyzsihrn52uj',
 			fields: 'name',
             requestKey: null,
             expand:null
@@ -199,14 +198,14 @@ test('should create a record', async (t) => {
     `;
 	const slangroom = new Slangroom(pocketbase);
 
-	
+
 	const data: DataCreate = {
 		pb_address,
 		create_parameters: {
 			collection: 'organizations',
 			record: {
 				name,
-			},            
+			},
 		},
 		record_parameters: {
             expand: null,
@@ -226,7 +225,7 @@ test('should create a record', async (t) => {
 });
 
 test('should update a record', async (t) => {
-	
+
 
     const scriptCreate = `
     Rule unknown ignore
@@ -280,7 +279,7 @@ test('should update a record', async (t) => {
 
     const outputCreate = createResult.result['output'] as { id: string, name: string}
     const updatedName = `test-${randomString()}`
-    
+
     const dataUpdate: DataUpdate = {
 		pb_address,
 		update_parameters: {
