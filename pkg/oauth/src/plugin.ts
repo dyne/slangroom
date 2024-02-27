@@ -1,7 +1,7 @@
 import { Plugin } from '@slangroom/core';
 import OAuth2Server from '@node-oauth/oauth2-server';
 import { Request, Response } from '@node-oauth/oauth2-server';
-import { AuthenticateHandler, InMemoryCache } from '@slangroom/oauth';
+import { AuthenticateHandler, InMemoryCache, AuthorizeHandler } from '@slangroom/oauth';
 import { JsonableObject } from '@slangroom/shared';
 import { JWK } from 'jose';
 
@@ -155,16 +155,20 @@ export const createAuthorizationCode = p.new(
 
 		const model = getInMemoryCache(serverData, options);
 		const handler = getAuthenticateHandler(model, serverData.authenticationUrl);
-		var server = new OAuth2Server({
-			model: model,
-			authenticateHandler: handler,
-		});
 
 		const cl = model.setClient(client);
 		if (!cl) {
 			throw Error('Client is not valid');
 		}
-		const res_authCode = await server.authorize(request, response);
+
+		const authorize_options = {
+			model: model,
+			authenticateHandler: handler,
+			allowEmptyState: false,
+			authorizationCodeLifetime: 5 * 60   // 5 minutes.
+		}
+		const res_authCode = await new AuthorizeHandler(authorize_options).handle(request, response);
+
 		const authCode : JsonableObject = {
 			authorizationCode: res_authCode.authorizationCode,
 			client: res_authCode.client,

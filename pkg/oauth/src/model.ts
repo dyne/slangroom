@@ -367,12 +367,20 @@ export class InMemoryCache implements AuthorizationCodeModel {
 
 		return Buffer.from(digest).toString('base64url');
 	}
+
+	validateRedirectUri?(redirect_uri: string, client: Client): Promise<boolean> {
+		if(redirect_uri && client)
+			return Promise.resolve(true);
+		return Promise.resolve(true);
+	}
+	// validateScope?(user: User, client: Client, scope?: string[] | undefined):Promise<Falsey | string[]>{
+	// 	if(user && client && scope)
+	// 		return Promise.resolve(scope);
+	// 	return Promise.resolve(scope);
+	// }
 }
 
 // generateRefreshToken?(client: Client, user: User, scope: string[]): Promise<string> {
 // 	throw new Error("Method not implemented.");
 // }
 
-// validateRedirectUri?(redirect_uri: string, client: Client): Promise<boolean> {
-// 	throw new Error("Method not implemented.");
-// }
