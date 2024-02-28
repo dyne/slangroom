@@ -45,3 +45,6 @@
 !/docs/**
 
 node_modules
+
+# pocketbase files
+!/pkg/**/*.pb.js

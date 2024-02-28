@@ -12,6 +12,11 @@ import { pocketbase } from '@slangroom/pocketbase';
 import test from 'ava';
 import { Slangroom } from '@slangroom/core';
 
+// Starters / Signroom local test
+// const email = "userA@example.org";
+// const password = "userAuserA";
+// const pb_address = "http://127.0.0.1:8090/" as ServerUrl;
+
 const email = "test@test.eu";
 const password = "testtest";
 const pb_address = "http://127.0.0.1:8090/" as ServerUrl;
@@ -374,4 +379,36 @@ test('should delete a record', async (t) => {
 		data,
 	});
 	t.is(res.result['output'], 'deleted');
+});
+
+test('should make a request', async (t) => {
+	const script = `
+	Rule unknown ignore
+	Given I send pb_address 'pb_address' and create pb_client
+	Given I send my_credentials 'my_credentials' and login
+	Given I send url 'url' and send send_parameters 'send_parameters' and send request and output into 'output'
+	Given I have a 'string dictionary' named 'output'
+	Then print data
+	`;
+	const slangroom = new Slangroom(pocketbase);
+
+	const param = `user`
+
+	const data = {
+		pb_address,
+		my_credentials: {
+			email,
+			password,
+		},
+		url: `/api/hello/${param}`,
+		send_parameters: {
+		}
+	};
+
+	const res = await slangroom.execute(script, {
+		data,
+	});
+
+	// @ts-expect-error - Don't know the shape of the object in advance
+	t.is(res.result['output']["message"], `Hello ${param}`);
 });

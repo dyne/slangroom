@@ -242,5 +242,33 @@ export const deleteRecord = p.new(['delete_parameters'], 'delete record', async 
 	return ctx.fail('shit happened');
 });
 
+const sendParametersSchema = z.object({
+  fetch: z.any(),
+  headers: z.record(z.unknown()).optional(),
+  body: z.any(),
+  query: z.record(z.unknown()).optional(),
+  requestKey: z.string().optional(),
+});
+export type SendParameters = z.infer<typeof sendParametersSchema>;
+
+const urlSchema = z.string()
+
+
+export const sendRequest = p.new(['url','send_parameters'], 'send request', async (ctx) => {
+	const p = ctx.fetch('send_parameters')
+	const u = ctx.fetch('url')
+
+	const validation = sendParametersSchema.safeParse(p);
+	if (!validation.success) return ctx.fail(validation.error);
+
+	const validateUrl = urlSchema.safeParse(u)
+	if (!validateUrl.success) return ctx.fail(validateUrl.error)
+
+	// @ts-expect-error - Somehow, "send" requires properties that are not
+	const res = await pb.send(u, p)
+	if (res) return ctx.pass(res);
+	return ctx.fail('shit happened');
+})
+
 export const pocketbase = p;
 
