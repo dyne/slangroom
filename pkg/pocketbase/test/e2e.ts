@@ -375,3 +375,30 @@ test('should delete a record', async (t) => {
 	});
 	t.is(res.result['output'], 'deleted');
 });
+
+test('should make a request', async (t) => {
+	const script = `
+	Rule unknown ignore
+	Given I send pb_address 'pb_address' and create pb_client
+	Given I send my_credentials 'my_credentials' and login
+	Given I send url 'url' and I send send_parameters 'send_parameters' and send request and output into 'output'
+	Given I have a 'string dictionary' named 'output'
+	Then print data
+	`;
+	const slangroom = new Slangroom(pocketbase);
+
+	const data = {
+		pb_address,
+		my_credentials: {
+			email,
+			password,
+		},
+		url: '/api/did',
+		send_parameters: {
+		}
+	};
+	const res = await slangroom.execute(script, {
+		data,
+	});
+	t.truthy(res.result['output']);
+});
