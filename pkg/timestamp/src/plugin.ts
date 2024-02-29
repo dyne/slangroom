@@ -8,7 +8,7 @@ export const milliseconds = p.new('fetch the local timestamp in milliseconds', a
 });
 
 export const seconds = p.new('fetch the local timestamp in seconds', async (ctx) => {
-	const t = new Date().getTime() / 1000;
+	const t = Math.floor(new Date().getTime() / 1000);
 	return ctx.pass(t.toString());
 });
 
