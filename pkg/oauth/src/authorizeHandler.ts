@@ -1,7 +1,7 @@
 import { AuthorizationCodeModel, Client, User, Request, Response, InvalidScopeError } from "@node-oauth/oauth2-server";
 import { InvalidArgumentError, InvalidClientError, InvalidRequestError, UnsupportedResponseTypeError, OAuthError, ServerError, UnauthorizedClientError, AccessDeniedError } from '@node-oauth/oauth2-server';
 import url from 'node:url';
-import { InMemoryCache, AuthenticateHandler, pkce, isFormat  } from '@slangroom/oauth';
+import { InMemoryCache, AuthenticateHandler, pkce, isFormat } from '@slangroom/oauth';
 import { createHash, randomBytes } from "crypto";
 
 
@@ -9,31 +9,31 @@ import { createHash, randomBytes } from "crypto";
  * Response types.
  */
 const respType = class CodeResponseType {
-	code:string;
+	code: string;
 
-	constructor(code:string) {
-	  if (!code) {
-		throw new InvalidArgumentError('Missing parameter: `code`');
-	  }
+	constructor(code: string) {
+		if (!code) {
+			throw new InvalidArgumentError('Missing parameter: `code`');
+		}
 
-	  this.code = code;
+		this.code = code;
 	}
 
 	buildRedirectUri(redirectUri: string) {
-	  if (!redirectUri) {
-		throw new InvalidArgumentError('Missing parameter: `redirectUri`');
-	  }
+		if (!redirectUri) {
+			throw new InvalidArgumentError('Missing parameter: `redirectUri`');
+		}
 
-	  const uri = url.parse(redirectUri, true);
+		const uri = url.parse(redirectUri, true);
 
-	  uri.query["code"] = this.code;
-	  uri.search = null;
+		uri.query["code"] = this.code;
+		uri.search = null;
 
-	  return uri;
+		return uri;
 	}
 }
 
-const responseTypes:{[key:string]:any} = {
+const responseTypes: { [key: string]: any } = {
 	code: respType,
 };
 
@@ -43,7 +43,7 @@ export class AuthorizeHandler {
 	allowEmptyState: boolean;
 	authenticateHandler: any;
 	authorizationCodeLifetime: number;
-	model: InMemoryCache | AuthorizationCodeModel;
+	model: InMemoryCache;
 
 	constructor(options: any) {
 		options = options || {};
@@ -84,7 +84,7 @@ export class AuthorizeHandler {
 	 * Authorize Handler.
 	 */
 
-	async handle(request: Request, response:Response) {
+	async handle(request: Request, response: Response) {
 		if (!(request instanceof Request)) {
 			throw new InvalidArgumentError(
 				'Invalid argument: `request` must be an instance of Request',
@@ -99,7 +99,7 @@ export class AuthorizeHandler {
 
 		const expiresAt = this.getAuthorizationCodeLifetime();
 		const client = await this.getClient(request);
-		const user = await this.getUser(request, response);
+		const user:User = {id:client.id};
 
 		let uri;
 		let state;
@@ -107,11 +107,6 @@ export class AuthorizeHandler {
 		try {
 			uri = this.getRedirectUri(request, client);
 			state = this.getState(request);
-			if(request.query){
-				if (request.query["allowed"] === 'false' || request.body.allowed === 'false') {
-					throw new AccessDeniedError('Access denied: user denied access to application');
-				}
-			}
 
 			const validScope = this.getScope(request);
 			const authorizationCode = await this.generateAuthorizationCode(client, user, validScope!);
@@ -129,13 +124,67 @@ export class AuthorizeHandler {
 				codeChallenge,
 				codeChallengeMethod,
 			);
-			if(!code) throw Error("Code is not a valid authorization code");
+			if (!code) throw Error("Code is not a valid authorization code");
 			const responseTypeInstance = new ResponseType(code.authorizationCode);
 			const redirectUri = this.buildSuccessRedirectUri(uri, responseTypeInstance);
 
 			this.updateResponse(response, redirectUri, state);
 
 			return code;
+		} catch (err) {
+			let e = err;
+
+			if (!(e instanceof OAuthError)) {
+				e = new ServerError(e);
+			}
+			const redirectUri = this.buildErrorRedirectUri(uri, e);
+			this.updateResponse(response, redirectUri, state);
+
+			throw e;
+		}
+	}
+
+	async handle_par(request: Request, response: Response){
+		if (!(request instanceof Request)) {
+			throw new InvalidArgumentError(
+				'Invalid argument: `request` must be an instance of Request',
+			);
+		}
+
+		if (!(response instanceof Response)) {
+			throw new InvalidArgumentError(
+				'Invalid argument: `response` must be an instance of Response',
+			);
+		}
+
+		const client = await this.getClient(request);
+		const user = await this.getUser(request, response);
+
+		if(!user) throw new UnauthorizedClientError("Client authentication failed");
+
+		let uri;
+		let state;
+
+		try {
+			uri = this.getRedirectUri(request, client);
+			state = this.getState(request);
+			if (request.query) {
+				if (request.query["allowed"] === 'false' || request.body.allowed === 'false') {
+					throw new AccessDeniedError('Access denied: user denied access to application');
+				}
+			}
+
+			const validScope = this.getScope(request);
+			if(!validScope) throw new InvalidScopeError("Given scope is invalid");
+			const ResponseType = this.getResponseType(request);
+			if (!ResponseType) {
+				throw new InvalidRequestError('Missing parameter: `response_type`');
+			}
+			// const codeChallenge = this.getCodeChallenge(request);
+			// const codeChallengeMethod = this.getCodeChallengeMethod(request);
+			const request_uri = this.createRequestUri();
+
+			return request_uri;
 		} catch (err) {
 			let e = err;
 
@@ -260,7 +309,7 @@ export class AuthorizeHandler {
 	async getUser(request: Request, response: Response) {
 		if (this.authenticateHandler instanceof AuthenticateHandler) {
 			const handled = await this.authenticateHandler.handle(request, response);
-			return handled ? handled: undefined;
+			return handled ? handled : undefined;
 		}
 
 		const user = await this.authenticateHandler.handle(request, response);
@@ -290,6 +339,7 @@ export class AuthorizeHandler {
 			expiresAt: expiresAt,
 			redirectUri: redirectUri,
 			scope: scope,
+			user: user
 		};
 
 		if (codeChallenge && codeChallengeMethod) {
@@ -336,7 +386,7 @@ export class AuthorizeHandler {
 	 * Build a successful response that redirects the user-agent to the client-provided url.
 	 */
 
-	buildSuccessRedirectUri(redirectUri: string, responseType:any) {
+	buildSuccessRedirectUri(redirectUri: string, responseType: any) {
 		return responseType.buildRedirectUri(redirectUri);
 	}
 
@@ -396,24 +446,38 @@ export class AuthorizeHandler {
 		return algorithm || 'plain';
 	}
 
-	parseScope(requestedScope:string) {
+	parseScope(requestedScope: string) {
 		const whiteSpace = /\s+/g;
 		if (requestedScope == null) {
-		  return undefined;
+			return undefined;
 		}
 
 		if (typeof requestedScope !== 'string') {
-		  throw new InvalidScopeError('Invalid parameter: `scope`');
+			throw new InvalidScopeError('Invalid parameter: `scope`');
 		}
 
 		// XXX: this prevents spaced-only strings to become
 		// treated as valid nqchar by making them empty strings
 		requestedScope = requestedScope.trim();
 
-		if(!isFormat.nqschar(requestedScope)) {
-		  throw new InvalidScopeError('Invalid parameter: `scope`');
+		if (!isFormat.nqschar(requestedScope)) {
+			throw new InvalidScopeError('Invalid parameter: `scope`');
 		}
 
 		return requestedScope.split(whiteSpace);
-	  }
+	}
+
+	createRequestUri(){
+		const base_uri = "urn:ietf:params:oauth:request_uri:";
+		const rand_uri = randomBytes(20).toString(); //check needed length
+		//https://datatracker.ietf.org/doc/rfc9101/
+		// Upon receipt of the Request, the authorization server MUST send an
+		// HTTP "GET" request to the "request_uri" to retrieve the referenced
+		// Request Object unless the Request Object is stored in a way so that
+		// the server can retrieve it through other mechanisms securely and
+		// parse it to recreate the authorization request parameters.
+
+		return base_uri.concat(rand_uri);
+	}
+
 }
