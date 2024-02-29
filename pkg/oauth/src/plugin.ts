@@ -106,13 +106,13 @@ export const createToken = p.new(
 		//we remove the client and user object from the token
 		const token: JsonableObject = {
 			accessToken: res_token.accessToken,
-			accessTokenExpiresAt: res_token.accessTokenExpiresAt!.toString(),
+			accessTokenExpiresAt: Math.round(res_token.accessTokenExpiresAt!.getTime()/ 1000),
 			authorizationCode: res_token['authorizationCode'],
 			c_nonce: res_token['c_nonce'],
 			c_nonce_expires_in: res_token['c_nonce_expires_in'],
 			jkt: res_token['jkt'],
 			refreshToken: res_token.refreshToken!,
-			refreshTokenExpiresAt: res_token.refreshTokenExpiresAt!.toString(),
+			refreshTokenExpiresAt: Math.round(res_token.refreshTokenExpiresAt!.getTime()/ 1000),
 			scope: res_token.scope!,
 		};
 
@@ -164,8 +164,20 @@ export const createAuthorizationCode = p.new(
 		if (!cl) {
 			throw Error('Client is not valid');
 		}
+		const res_authCode = await server.authorize(request, response);
+		const authCode : JsonableObject = {
+			authorizationCode: res_authCode.authorizationCode,
+			client: res_authCode.client,
+			expiresAt: Math.round(res_authCode.expiresAt.getTime()/ 1000),
+			redirectUri: res_authCode.redirectUri,
+			user: res_authCode.user
+		}
+		if(res_authCode.codeChallenge) authCode['codeChallenge'] = res_authCode.codeChallenge;
+		if(res_authCode.codeChallengeMethod) authCode['codeChallengeMethod'] = res_authCode.codeChallengeMethod;
+		if(res_authCode.scope) authCode['scope'] = res_authCode.scope;
+		if(res_authCode['resource']) authCode['resource'] = res_authCode['resource'];
 
-		return ctx.pass(await server.authorize(request, response));
+		return ctx.pass(authCode);
 	},
 );
 
