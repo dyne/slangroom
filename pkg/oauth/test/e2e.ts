@@ -33,7 +33,7 @@ async function create_dpop_proof() {
 				crv: 'P-256',
 			},
 		})
-		.setIssuedAt(Date.now())
+		.setIssuedAt(Math.round(Date.now() / 1000))
 		.sign(privateKey);
 	return dpop;
 }

@@ -101,7 +101,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 
 		const codeSaved: AuthorizationCode = {
 			authorizationCode: code['authorizationCode'],
-			expiresAt: new Date(code['expiresAt']),
+			expiresAt: new Date(code['expiresAt'] * 1000),
 			redirectUri: code['redirectUri'],
 			client: code['client'],
 			user: code['user'],
@@ -112,7 +112,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 
 		var keys = Object.keys(code);
 		keys.forEach((key: string) => {
-			if(!codeSaved[key]) {
+			if (!codeSaved[key]) {
 				codeSaved[key] = code[key];
 			}
 		});
@@ -244,7 +244,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 			//TODO: problem with authorization_details
 			var keys = Object.keys(token);
 			keys.forEach((key: string) => {
-				if(!tokenSaved[key]) {
+				if (!tokenSaved[key]) {
 					tokenSaved[key] = token[key];
 				}
 			});
@@ -261,14 +261,14 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	 *  the input string is set as the audience parameter.
 	 */
 
-	async createServerJWS(clientId: string){
+	async createServerJWS(clientId: string) {
 		if (this.serverData.jwk == null) throw Error("Missing server private JWK");
 		let privateKey = await importJWK(this.serverData.jwk);
 		let alg = this.serverData.jwk.alg || 'ES256';
 
 		const jws = new SignJWT({ sub: randomBytes(20).toString('hex') })
 			.setProtectedHeader({ alg: alg })
-			.setIssuedAt(Date.now())
+			.setIssuedAt(Math.round(Date.now() / 1000))
 			.setIssuer(this.serverData.url)
 			.setAudience(clientId)
 			.setExpirationTime('1h')
@@ -302,7 +302,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 			typ: 'dpop+jwt',
 			alg: 'ES256',
 			htm: request.method,
-			iat: new Date().getTime() - FIVE_MIN
+			iat: Math.round(Date.now() / 1000) - FIVE_MIN
 		};
 
 		const header = decodeProtectedHeader(dpop);
