@@ -10,7 +10,7 @@ Then print data
 `
     const sl = new Slangroom(timestamp);
 	const res = await sl.execute(contract);
-	const ts = new Date().getTime() / 1000;
+	const ts = Date.now() / 1000;
 	t.truthy(res.result['output']);
 	t.true(Math.abs(Number(res.result['output']) - ts) < 100);
 });
@@ -23,7 +23,7 @@ Then print data
 `
     const sl = new Slangroom(timestamp);
 	const res = await sl.execute(contract);
-	const ts = new Date().getTime();
+	const ts = Date.now();
 	t.truthy(res.result['output']);
 	t.true(Math.abs(Number(res.result['output']) - ts) < 100000);
 });
