@@ -367,12 +367,55 @@ export class InMemoryCache implements AuthorizationCodeModel {
 
 		return Buffer.from(digest).toString('base64url');
 	}
+
+	validateRedirectUri?(redirect_uri: string, client: Client): Promise<boolean> {
+		if(redirect_uri && client)
+			return Promise.resolve(true);
+		return Promise.resolve(true);
+	}
+
+
+	async validateScope?(user: User, client: Client, scope?: string[] | undefined, resource?: string):Promise<Falsey | string[]>{
+
+		if(!user || !client) throw new Error("Invalid input parameters for ValidateScope");
+		if(resource) return Promise.resolve(scope);
+
+		// if (!scope) {
+		// 	throw new InsufficientScopeError(
+		// 		'Insufficient scope: authorized scope is insufficient',
+		// 	);
+		// }
+		// if (!resource) {
+		// 	throw new Error('Invalid request: needed resource to verify scope');
+		// }
+
+		// const url = resource + '/.well-known/openid-credential-issuer';
+		// const response = await fetch(url);
+		// if (!response.ok) {
+		// 	throw new Error(`Fetch to url ${url} failed with error status: ${response.status}`);
+		// }
+		// const result = await response.json();
+		// const credentials_supported = result.credentials_supported;
+		// var valid_credentials = [];
+		// for (var key in credentials_supported) {
+		// 	const type_arr = credentials_supported[key].credential_definition.type;
+		// 	if (
+		// 		type_arr.find((id: any) => {
+		// 			return id === scope;
+		// 		}) != undefined
+		// 	) {
+		// 		valid_credentials.push(scope);
+		// 		break;
+		// 	}
+		// }
+
+		// if (valid_credentials.length > 0) return Promise.resolve(scope);
+		// else return false;
+		return Promise.resolve(scope);
+	}
 }
 
 // generateRefreshToken?(client: Client, user: User, scope: string[]): Promise<string> {
 // 	throw new Error("Method not implemented.");
 // }
 
-// validateRedirectUri?(redirect_uri: string, client: Client): Promise<boolean> {
-// 	throw new Error("Method not implemented.");
-// }

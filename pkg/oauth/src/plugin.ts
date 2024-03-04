@@ -1,7 +1,7 @@
 import { Plugin } from '@slangroom/core';
 import OAuth2Server from '@node-oauth/oauth2-server';
 import { Request, Response } from '@node-oauth/oauth2-server';
-import { AuthenticateHandler, InMemoryCache } from '@slangroom/oauth';
+import { AuthenticateHandler, InMemoryCache, AuthorizeHandler } from '@slangroom/oauth';
 import { JsonableObject } from '@slangroom/shared';
 import { JWK } from 'jose';
 
@@ -61,7 +61,7 @@ const getAuthenticateHandler = (model: InMemoryCache, authenticationUrl:string):
  * @internal
  */
 
-//Add sentence that allows to generate and output a valid access token from an auth server backend
+//Sentence that allows to generate and output a valid access token from an auth server backend
 export const createToken = p.new(
 	['request', 'code', 'server_data'],
 	'generate access token',
@@ -123,10 +123,69 @@ export const createToken = p.new(
 /**
  * @internal
  */
-//Add sentence that allows to generate and output a valid authorization code for an authenticated request
+// Sentence that allows to generate and output a valid authorization code for an authenticated request
 export const createAuthorizationCode = p.new(
-	['request', 'client', 'server_data'],
+	['request', 'server_data'],
 	'generate authorization code',
+	async (ctx) => {
+		const params = ctx.fetch('request') as JsonableObject;
+		const body = params['body'];
+		const headers = params['headers'];
+		if(!body || !headers) throw Error("Input request is not valid");
+		if(typeof body !== 'string') throw Error("Request body must be a string");
+		const serverData = ctx.fetch('server_data') as { jwk: JWK, url: string , authenticationUrl: string };
+		if(!serverData['jwk'] || !serverData['url']) throw Error("Server data is missing some parameters");
+
+		const request = new Request({
+			body: parseQueryStringToDictionary(body),
+			headers: headers,
+			method: 'GET',
+			query: {},
+		});
+
+		const response = new Response();
+
+		const options = {
+			accessTokenLifetime: 60 * 60, // 1 hour.
+			refreshTokenLifetime: 60 * 60 * 24 * 14, // 2 weeks.
+			allowExtendedTokenAttributes: true,
+			requireClientAuthentication: {}, // defaults to true for all grant types
+		};
+
+		const model = getInMemoryCache(serverData, options);
+		const handler = getAuthenticateHandler(model, serverData.authenticationUrl);
+
+		const authorize_options = {
+			model: model,
+			authenticateHandler: handler,
+			allowEmptyState: false,
+			authorizationCodeLifetime: 5 * 60   // 5 minutes.
+		}
+		const res_authCode = await new AuthorizeHandler(authorize_options).handle(request, response);
+
+		const authCode : JsonableObject = {
+			authorizationCode: res_authCode.authorizationCode,
+			client: res_authCode.client,
+			expiresAt: Math.round(res_authCode.expiresAt.getTime()/ 1000),
+			redirectUri: res_authCode.redirectUri,
+			user: res_authCode.user
+		}
+		if(res_authCode.codeChallenge) authCode['codeChallenge'] = res_authCode.codeChallenge;
+		if(res_authCode.codeChallengeMethod) authCode['codeChallengeMethod'] = res_authCode.codeChallengeMethod;
+		if(res_authCode.scope) authCode['scope'] = res_authCode.scope;
+		if(res_authCode['resource']) authCode['resource'] = res_authCode['resource'];
+
+		return ctx.pass(authCode);
+	},
+);
+
+/**
+ * @internal
+ */
+//Sentence that perform a Pushed Authorization Request and return a valid request_uri (and expires_in)
+export const createRequestUri = p.new(
+	['request', 'client', 'server_data'],
+	'generate request uri',
 	async (ctx) => {
 		const params = ctx.fetch('request') as JsonableObject;
 		const body = params['body'];
@@ -155,29 +214,23 @@ export const createAuthorizationCode = p.new(
 
 		const model = getInMemoryCache(serverData, options);
 		const handler = getAuthenticateHandler(model, serverData.authenticationUrl);
-		var server = new OAuth2Server({
-			model: model,
-			authenticateHandler: handler,
-		});
 
 		const cl = model.setClient(client);
 		if (!cl) {
 			throw Error('Client is not valid');
 		}
-		const res_authCode = await server.authorize(request, response);
-		const authCode : JsonableObject = {
-			authorizationCode: res_authCode.authorizationCode,
-			client: res_authCode.client,
-			expiresAt: Math.round(res_authCode.expiresAt.getTime()/ 1000),
-			redirectUri: res_authCode.redirectUri,
-			user: res_authCode.user
-		}
-		if(res_authCode.codeChallenge) authCode['codeChallenge'] = res_authCode.codeChallenge;
-		if(res_authCode.codeChallengeMethod) authCode['codeChallengeMethod'] = res_authCode.codeChallengeMethod;
-		if(res_authCode.scope) authCode['scope'] = res_authCode.scope;
-		if(res_authCode['resource']) authCode['resource'] = res_authCode['resource'];
 
-		return ctx.pass(authCode);
+		const authorize_options = {
+			model: model,
+			authenticateHandler: handler,
+			allowEmptyState: false,
+			authorizationCodeLifetime: 5 * 60   // 5 minutes.
+		}
+		const res = await new AuthorizeHandler(authorize_options).handle_par(request, response);
+
+		const request_uri = res['base_uri'].concat(res['rand_uri']);
+		const expires_in = res['expires_in'];
+		return ctx.pass({request_uri: request_uri, expires_in: expires_in});
 	},
 );
 
