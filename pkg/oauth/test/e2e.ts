@@ -47,13 +47,13 @@ async function create_dpop_proof() {
 //		scope is the string credential_id that specifies the type of credential the client is requesting
 //		resource is the URL where we can find the .well-known/openid-credential-issuer
 
-test('create authorization code and access token', async (t) => {
+test('create authorization code and access token with PAR', async (t) => {
 	const scriptCreate = `
 Rule unknown ignore
 
-Given I send request 'request' and send client 'client' and send server_data 'server' and generate authorization code and output into 'authCode_jwt'
+Given I send request 'request' and send client 'client' and send server_data 'server' and generate request uri and output into 'request_uri_out'
 
-Given I have a 'string dictionary' named 'authCode_jwt'
+Given I have a 'string dictionary' named 'request_uri_out'
 
 Then print data
 `;
@@ -88,8 +88,63 @@ Then print data
 			},
 		},
 	});
-	console.log(res.result['authCode_jwt']);
-	t.truthy(res.result['authCode_jwt']);
+	console.log(res.result['request_uri_out']);
+	t.truthy(res.result['request_uri_out']);
+
+	const scriptCreateBodyRequest1 = `
+	Rule unknown ignore
+
+	Given I have a 'string' named 'body'
+	Given I have a 'string dictionary' named 'request_uri_out'
+
+	When I create the copy of 'request_uri' from dictionary 'request_uri_out'
+	# TODO: check if we need encoding before append
+	When I append 'copy' to 'body'
+
+	Then print the 'body'
+	`;
+	const resb = await slangroom.execute(scriptCreateBodyRequest1, {
+		keys: {
+			request_uri_out: res.result['request_uri_out'] || {},
+			body: 'client_id=did:dyne:sandbox.genericissuer:6Cp8mPUvJmQaMxQPSnNyhb74f9Ga4WqfXCkBneFgikm5&request_uri=',
+		},
+	});
+
+	t.truthy(resb.result['body']);
+
+	const scriptAuthCode = `
+	Rule unknown ignore
+
+	Given I send request 'request' and send server_data 'server' and generate authorization code and output into 'authCode_jwt'
+
+	Given I have a 'string dictionary' named 'authCode_jwt'
+
+	Then print data
+	`;
+	const res_auth = await slangroom.execute(scriptAuthCode, {
+		keys: {
+			server: {
+				jwk: {
+					kty: 'EC',
+					crv: 'P-256',
+					alg: 'ES256',
+					x: 'SVqB4JcUD6lsfvqMr-OKUNUphdNn64Eay60978ZlL74',
+					y: 'lf0u0pMj4lGAzZix5u4Cm5CMQIgMNpkwy163wtKYVKI',
+					d: '0g5vAEKzugrXaRbgKG0Tj2qJ5lMP4Bezds1_sTybkfk',
+				},
+				url: 'https://valid.issuer.url',
+				authentication_url : 'https://did.dyne.org/dids/'
+			},
+			request: {
+				body: resb.result['body'] || '',
+				headers: {
+					Authorization: '',
+				},
+			}
+		},
+	});
+	console.log(res_auth.result['authCode_jwt']);
+	t.truthy(res_auth.result['authCode_jwt']);
 
 	const scriptCreateBodyRequest = `
 	Rule unknown ignore

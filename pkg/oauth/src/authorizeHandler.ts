@@ -1,4 +1,4 @@
-import { AuthorizationCodeModel, Client, User, Request, Response, InvalidScopeError } from "@node-oauth/oauth2-server";
+import { Client, User, Request, Response, InvalidScopeError, AuthorizationCode } from "@node-oauth/oauth2-server";
 import { InvalidArgumentError, InvalidClientError, InvalidRequestError, UnsupportedResponseTypeError, OAuthError, ServerError, UnauthorizedClientError, AccessDeniedError } from '@node-oauth/oauth2-server';
 import url from 'node:url';
 import { InMemoryCache, AuthenticateHandler, pkce, isFormat } from '@slangroom/oauth';
@@ -83,7 +83,7 @@ export class AuthorizeHandler {
 	/**
 	 * Authorize Handler.
 	 */
-
+	// handle /authorize request containing request_uri and client_id
 	async handle(request: Request, response: Response) {
 		if (!(request instanceof Request)) {
 			throw new InvalidArgumentError(
@@ -97,34 +97,30 @@ export class AuthorizeHandler {
 			);
 		}
 
-		const expiresAt = this.getAuthorizationCodeLifetime();
+		if(!request.body.request_uri) throw new InvalidRequestError("Missing parameter: request_uri");
+
 		const client = await this.getClient(request);
-		const user:User = {id:client.id};
+		const user = await this.getUser(request, response);
+		// NOTE: this call the Authentication handler and do authenticate
+		//		in the previous version the clientSecret used to authenticate was in request.body
+		//		here it should be obtained from the request_uri
+		if(!user) throw Error("Authentication failed");
 
 		let uri;
 		let state;
 
 		try {
+
+			// the following should be changed so that the data are retrieved starting from the
+			// request_uri and client_id in the Request object
+			//--------------------------------------------
 			uri = this.getRedirectUri(request, client);
 			state = this.getState(request);
-
-			const validScope = this.getScope(request);
-			const authorizationCode = await this.generateAuthorizationCode(client, user, validScope!);
+			const code = this.getAuthorizationCode();
+			// -------------------------------------------
 
 			const ResponseType = this.getResponseType(request);
-			const codeChallenge = this.getCodeChallenge(request);
-			const codeChallengeMethod = this.getCodeChallengeMethod(request);
-			const code = await this.saveAuthorizationCode(
-				authorizationCode,
-				expiresAt,
-				uri,
-				validScope!,
-				client,
-				user,
-				codeChallenge,
-				codeChallengeMethod,
-			);
-			if (!code) throw Error("Code is not a valid authorization code");
+
 			const responseTypeInstance = new ResponseType(code.authorizationCode);
 			const redirectUri = this.buildSuccessRedirectUri(uri, responseTypeInstance);
 
@@ -144,7 +140,16 @@ export class AuthorizeHandler {
 		}
 	}
 
-	async handle_par(request: Request, response: Response){
+	getAuthorizationCode(): any {
+		//TODO
+		return false;
+	}
+
+	/**
+	 * Pushed Authorization Request Handler.
+	 */
+	// handle /as/par request with input all the client data
+	async handle_par(request: Request, response: Response) {
 		if (!(request instanceof Request)) {
 			throw new InvalidArgumentError(
 				'Invalid argument: `request` must be an instance of Request',
@@ -157,10 +162,13 @@ export class AuthorizeHandler {
 			);
 		}
 
+		if(request.body.request_uri) throw new InvalidRequestError("Found request_uri parameter in the request");
+
+		const expiresAt = this.getAuthorizationCodeLifetime();
 		const client = await this.getClient(request);
 		const user = await this.getUser(request, response);
 
-		if(!user) throw new UnauthorizedClientError("Client authentication failed");
+		if (!user) throw new UnauthorizedClientError("Client authentication failed");
 
 		let uri;
 		let state;
@@ -174,17 +182,39 @@ export class AuthorizeHandler {
 				}
 			}
 
-			const validScope = this.getScope(request);
-			if(!validScope) throw new InvalidScopeError("Given scope is invalid");
-			const ResponseType = this.getResponseType(request);
-			if (!ResponseType) {
-				throw new InvalidRequestError('Missing parameter: `response_type`');
-			}
-			// const codeChallenge = this.getCodeChallenge(request);
-			// const codeChallengeMethod = this.getCodeChallengeMethod(request);
-			const request_uri = this.createRequestUri();
+			const resource = request.body.resource;
+			const requestedScope = this.getScope(request);
+			const validScope = await this.validateScope(user, client, requestedScope!, resource);
+			const authorizationCode = await this.generateAuthorizationCode(client);
 
-			return request_uri;
+			const ResponseType = this.getResponseType(request);
+			const codeChallenge = this.getCodeChallenge(request);
+			const codeChallengeMethod = this.getCodeChallengeMethod(request);
+
+			const code = await this.saveAuthorizationCode(
+				authorizationCode,
+				expiresAt,
+				uri,
+				validScope!,
+				client,
+				user,
+				codeChallenge,
+				codeChallengeMethod,
+			);
+			if(!code) { throw Error("Failed to create the Authorization Code"); }
+
+			const request_uri = this.createRequestUri();
+			const expires_in = 300;
+
+			// TODO: insert code to save Client data, so that with a GET request to the request_uri
+			// 		it is possible to retrieve the information to issue the Authorization Code
+			//		also this should not be possible if the exp_time is passed
+			const responseTypeInstance = new ResponseType(code.authorizationCode);
+			const redirectUri = this.buildSuccessRedirectUri(uri, responseTypeInstance);
+			this.updateResponse(response, redirectUri, state);
+
+			return { request_uri:request_uri, expires_in: expires_in };
+
 		} catch (err) {
 			let e = err;
 
@@ -202,9 +232,9 @@ export class AuthorizeHandler {
 	 * Generate authorization code.
 	 */
 
-	async generateAuthorizationCode(client: Client, user: User, scope: string[]) {
+	async generateAuthorizationCode(client: Client) {
 		if (this.model.generateAuthorizationCode) {
-			return this.model.generateAuthorizationCode(client, user, scope);
+			return this.model.generateAuthorizationCode(client);
 		}
 		else {
 			const buffer = randomBytes(256);
@@ -276,6 +306,24 @@ export class AuthorizeHandler {
 	}
 
 	/**
+	 * Validate requested scope.
+	 */
+	async validateScope (user:User, client:Client, scope:string[], resource:string) {
+		// TODO: this should actually do something...
+		if (this.model.validateScope) {
+			const validatedScope = await this.model.validateScope(user, client, scope, resource);
+
+			if (!validatedScope) {
+				throw new InvalidScopeError('Invalid scope: Requested scope is invalid');
+			}
+
+			return validatedScope;
+		}
+
+		return scope;
+	}
+
+	/**
 	 * Get scope from the request.
 	 */
 
@@ -334,12 +382,13 @@ export class AuthorizeHandler {
 	 */
 
 	async saveAuthorizationCode(authorizationCode: string, expiresAt: Date, redirectUri: string, scope: string[], client: Client, user: User, codeChallenge: string, codeChallengeMethod: string,) {
-		let code = {
+		let code: AuthorizationCode = {
 			authorizationCode: authorizationCode,
 			expiresAt: expiresAt,
 			redirectUri: redirectUri,
 			scope: scope,
-			user: user
+			user: user,
+			client: client
 		};
 
 		if (codeChallenge && codeChallengeMethod) {
@@ -467,10 +516,10 @@ export class AuthorizeHandler {
 		return requestedScope.split(whiteSpace);
 	}
 
-	createRequestUri(){
+	createRequestUri() {
 		const base_uri = "urn:ietf:params:oauth:request_uri:";
-		const rand_uri = randomBytes(20).toString(); //check needed length
-		//https://datatracker.ietf.org/doc/rfc9101/
+		const rand_uri = randomBytes(20).toString('base64'); //check needed length
+		// https://datatracker.ietf.org/doc/rfc9101/
 		// Upon receipt of the Request, the authorization server MUST send an
 		// HTTP "GET" request to the "request_uri" to retrieve the referenced
 		// Request Object unless the Request Object is stored in a way so that

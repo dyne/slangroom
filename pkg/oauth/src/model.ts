@@ -6,6 +6,7 @@ import {
 	Falsey,
 	AuthorizationCode,
 	Request,
+	InsufficientScopeError,
 } from '@node-oauth/oauth2-server';
 import {
 	SignJWT,
@@ -373,11 +374,44 @@ export class InMemoryCache implements AuthorizationCodeModel {
 			return Promise.resolve(true);
 		return Promise.resolve(true);
 	}
-	// validateScope?(user: User, client: Client, scope?: string[] | undefined):Promise<Falsey | string[]>{
-	// 	if(user && client && scope)
-	// 		return Promise.resolve(scope);
-	// 	return Promise.resolve(scope);
-	// }
+
+
+	async validateScope?(user: User, client: Client, scope?: string[] | undefined, resource?: string):Promise<Falsey | string[]>{
+
+		if(!user || !client) throw new Error("Invalid input parameters for ValidateScope");
+
+		if (!scope) {
+			throw new InsufficientScopeError(
+				'Insufficient scope: authorized scope is insufficient',
+			);
+		}
+		if (!resource) {
+			throw new Error('Invalid request: needed resource to verify scope');
+		}
+
+		const url = resource + '/.well-known/openid-credential-issuer';
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error(`Fetch to url ${url} failed with error status: ${response.status}`);
+		}
+		const result = await response.json();
+		const credentials_supported = result.credentials_supported;
+		var valid_credentials = [];
+		for (var key in credentials_supported) {
+			const type_arr = credentials_supported[key].credential_definition.type;
+			if (
+				type_arr.find((id: any) => {
+					return id === scope;
+				}) != undefined
+			) {
+				valid_credentials.push(scope);
+				break;
+			}
+		}
+
+		if (valid_credentials.length > 0) return Promise.resolve(scope);
+		else return false;
+	}
 }
 
 // generateRefreshToken?(client: Client, user: User, scope: string[]): Promise<string> {
