@@ -184,18 +184,19 @@ export class AuthorizeHandler {
 
 			const resource = request.body.resource;
 			const requestedScope = this.getScope(request);
-			const validScope = await this.validateScope(user, client, requestedScope!, resource);
+			var validScope = await this.validateScope(user, client, requestedScope!, resource);
 			const authorizationCode = await this.generateAuthorizationCode(client);
 
 			const ResponseType = this.getResponseType(request);
 			const codeChallenge = this.getCodeChallenge(request);
 			const codeChallengeMethod = this.getCodeChallengeMethod(request);
+			if(typeof validScope !== 'string') validScope = "";
 
 			const code = await this.saveAuthorizationCode(
 				authorizationCode,
 				expiresAt,
 				uri,
-				validScope!,
+				[validScope],
 				client,
 				user,
 				codeChallenge,
@@ -203,17 +204,15 @@ export class AuthorizeHandler {
 			);
 			if(!code) { throw Error("Failed to create the Authorization Code"); }
 
-			const request_uri = this.createRequestUri();
+			const base_uri = "urn:ietf:params:oauth:request_uri:";
+			const rand_uri = randomBytes(20).toString('base64');
 			const expires_in = 300;
 
-			// TODO: insert code to save Client data, so that with a GET request to the request_uri
-			// 		it is possible to retrieve the information to issue the Authorization Code
-			//		also this should not be possible if the exp_time is passed
 			const responseTypeInstance = new ResponseType(code.authorizationCode);
 			const redirectUri = this.buildSuccessRedirectUri(uri, responseTypeInstance);
 			this.updateResponse(response, redirectUri, state);
 
-			return { request_uri:request_uri, expires_in: expires_in };
+			return { base_uri:base_uri, rand_uri: rand_uri, expires_in: expires_in, authorizationCode: code };
 
 		} catch (err) {
 			let e = err;
@@ -313,9 +312,9 @@ export class AuthorizeHandler {
 		if (this.model.validateScope) {
 			const validatedScope = await this.model.validateScope(user, client, scope, resource);
 
-			if (!validatedScope) {
-				throw new InvalidScopeError('Invalid scope: Requested scope is invalid');
-			}
+			// if (!validatedScope) {
+			// 	throw new InvalidScopeError('Invalid scope: Requested scope is invalid');
+			// }
 
 			return validatedScope;
 		}
@@ -514,19 +513,6 @@ export class AuthorizeHandler {
 		}
 
 		return requestedScope.split(whiteSpace);
-	}
-
-	createRequestUri() {
-		const base_uri = "urn:ietf:params:oauth:request_uri:";
-		const rand_uri = randomBytes(20).toString('base64'); //check needed length
-		// https://datatracker.ietf.org/doc/rfc9101/
-		// Upon receipt of the Request, the authorization server MUST send an
-		// HTTP "GET" request to the "request_uri" to retrieve the referenced
-		// Request Object unless the Request Object is stored in a way so that
-		// the server can retrieve it through other mechanisms securely and
-		// parse it to recreate the authorization request parameters.
-
-		return base_uri.concat(rand_uri);
 	}
 
 }
