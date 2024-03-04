@@ -263,6 +263,15 @@ importers:
         specifier: ^8.0.1
         version: 8.0.1
 
+  pkg/timestamp:
+    dependencies:
+      '@slangroom/core':
+        specifier: workspace:*
+        version: link:../core
+      '@slangroom/shared':
+        specifier: workspace:*
+        version: link:../shared
+
   pkg/wallet:
     dependencies:
       '@meeco/sd-jwt':
