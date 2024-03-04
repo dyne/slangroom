@@ -228,9 +228,7 @@ export const createRequestUri = p.new(
 		}
 		const res = await new AuthorizeHandler(authorize_options).handle_par(request, response);
 
-		const request_uri = res['base_uri'].concat(res['rand_uri']);
-		const expires_in = res['expires_in'];
-		return ctx.pass({request_uri: request_uri, expires_in: expires_in});
+		return ctx.pass(res);
 	},
 );
 
