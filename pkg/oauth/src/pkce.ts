@@ -1,3 +1,6 @@
+// Typescript of the code below
+//https://github.com/node-oauth/node-oauth2-server/blob/master/lib/pkce/pkce.js
+
 import { createHash } from "crypto";
 
 const codeChallengeRegexp = /^([a-zA-Z0-9.\-_~]){43,128}$/;

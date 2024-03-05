@@ -1,3 +1,5 @@
+// Typescript of the code below
+//https://github.com/node-oauth/formats/blob/main/index.js
 
 const rules = {
 	NCHAR: /^[\u002D\u002E\u005F\w]+$/,

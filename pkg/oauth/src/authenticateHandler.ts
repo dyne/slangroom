@@ -104,7 +104,7 @@ export class AuthenticateHandler {
 
 			const response = await fetch(url);
 			if (!response.ok) {
-				throw new Error(`Error! status: ${response.status}`);
+				throw new Error(`Fetch to url ${url} failed with error status: ${response.status}`);
 			}
 
 			const result = await response.json();
@@ -174,7 +174,7 @@ export class AuthenticateHandler {
 		const url = resource + '/.well-known/openid-credential-issuer';
 		const response = await fetch(url);
 		if (!response.ok) {
-			throw new Error(`Error! status: ${response.status}`);
+			throw new Error(`Fetch to url ${url} failed with error status: ${response.status}`);
 		}
 		const result = await response.json();
 		const credentials_supported = result.credentials_supported;

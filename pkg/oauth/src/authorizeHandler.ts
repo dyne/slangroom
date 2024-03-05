@@ -205,7 +205,7 @@ export class AuthorizeHandler {
 			if(!code) { throw Error("Failed to create the Authorization Code"); }
 
 			const base_uri = "urn:ietf:params:oauth:request_uri:";
-			const rand_uri = randomBytes(20).toString('base64');
+			const rand_uri = randomBytes(20).toString('hex');
 			const expires_in = 300;
 
 			const responseTypeInstance = new ResponseType(code.authorizationCode);
