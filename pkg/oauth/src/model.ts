@@ -48,7 +48,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	 * Create a new object Client in this.clients.
 	 */
 
-	setClient(client: { [key: string]: any }): Promise<Client | Falsey> {
+	async setClient(client: { [key: string]: any }): Promise<Client | Falsey> {
 		if (!client['id']) {
 			throw Error("Invalid Client, missing property 'id'");
 		}
@@ -58,7 +58,10 @@ export class InMemoryCache implements AuthorizationCodeModel {
 		if (!client['clientSecret']) {
 			throw Error("Invalid Client, missing property 'clientSecret'");
 		}
-
+		const ex_client = await this.getClient(client['id'], client['clientSecret'])
+		if(ex_client){
+			this.revokeClient(ex_client);
+		}
 		const clientSaved: Client = {
 			id: client['id'],
 			grants: client['grants'],
@@ -70,6 +73,17 @@ export class InMemoryCache implements AuthorizationCodeModel {
 
 		this.clients.push(clientSaved);
 		return Promise.resolve(clientSaved);
+	}
+
+	/**
+	 * Invoked to revoke a client.
+	 *
+	 */
+	revokeClient(client:Client): Promise<boolean> {
+		this.clients = this.clients.filter(function(elem :Client){
+			return elem !== client;
+		});
+		return Promise.resolve(true);
 	}
 
 	/**
@@ -121,7 +135,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 
 		//if codeSaved.client is not in this.clients we set the new object Client
 		const cl = await this.getClient(codeSaved.client.id);
-		if (!cl) this.setClient(codeSaved.client);
+		if (!cl) await this.setClient(codeSaved.client);
 
 		return Promise.resolve(codeSaved);
 	}
@@ -206,13 +220,12 @@ export class InMemoryCache implements AuthorizationCodeModel {
 			var clients = this.clients.filter(function (client: Client) {
 				return client.id === clientId && client['clientSecret'] === clientSecret;
 			});
-			return Promise.resolve(clients[0]);
 		} else {
 			var clients = this.clients.filter(function (client: Client) {
 				return client.id === clientId;
 			});
-			return Promise.resolve(clients[0]);
 		}
+		return Promise.resolve(clients[0]);
 	}
 
 	/**
@@ -336,19 +349,18 @@ export class InMemoryCache implements AuthorizationCodeModel {
 		return true;
 	}
 
-	async setupTokenRequest(authCode: { [key: string]: any }, request: Request) {
-		const code = await this.setAuthorizationCode(authCode);
+	async verifyDpopHeader(request: Request) {
 		if (request.headers) {
 			var dpop = request.headers['dpop'];
 			if (dpop) {
 				var check = await this.verifyDpopProof(dpop, request);
 				if (!check) throw Error('Invalid request: DPoP header parameter is not valid');
 				const header = decodeProtectedHeader(dpop);
-				const dpop_saved = { id: authCode['client'].id, jwk: header.jwk };
+				const dpop_saved = { id: request.body['client_id'], jwk: header.jwk };
 				this.dpop_jwks.push(dpop_saved);
 			}
 		}
-		return code;
+		return true;
 	}
 
 	getDpopJWK(id: string) {

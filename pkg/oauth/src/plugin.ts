@@ -63,7 +63,7 @@ const getAuthenticateHandler = (model: InMemoryCache, authenticationUrl:string):
 
 //Sentence that allows to generate and output a valid access token from an auth server backend
 export const createToken = p.new(
-	['request', 'code', 'server_data'],
+	['request', 'server_data'],
 	'generate access token',
 	async (ctx) => {
 		const params = ctx.fetch('request') as JsonableObject;
@@ -71,12 +71,11 @@ export const createToken = p.new(
 		const headers = params['headers'];
 		if(!body || !headers) throw Error("Input request is not valid");
 		if(typeof body !== 'string') throw Error("Request body must be a string");
-		const authCode = ctx.fetch('code') as JsonableObject;
 		const serverData = ctx.fetch('server_data') as { jwk: JWK, url: string , authenticationUrl: string };
 		if(!serverData['jwk'] || !serverData['url']) throw Error("Server data is missing some parameters");
-
+		const bodyDict = parseQueryStringToDictionary(body);
 		const request = new Request({
-			body: parseQueryStringToDictionary(body),
+			body: bodyDict,
 			headers: headers,
 			method: 'POST',
 			query: {},
@@ -98,10 +97,13 @@ export const createToken = p.new(
 			authenticateHandler: handler,
 		});
 
-		const code = await model.setupTokenRequest(authCode, request);
-		if (!code) throw Error('Invalid token request');
+		const checkDpop = await model.verifyDpopHeader(request);
+		if(!checkDpop) throw new Error("Failed to verify DPoP in headers");
 
 		const res_token = await server.token(request, response, options);
+
+		const removed = model.revokeClient(res_token.client);
+		if(!removed) throw Error("Failed to revoke Client");
 
 		//we remove the client and user object from the token
 		const token: JsonableObject = {
@@ -215,7 +217,7 @@ export const createRequestUri = p.new(
 		const model = getInMemoryCache(serverData, options);
 		const handler = getAuthenticateHandler(model, serverData.authenticationUrl);
 
-		const cl = model.setClient(client);
+		const cl = await model.setClient(client);
 		if (!cl) {
 			throw Error('Client is not valid');
 		}
