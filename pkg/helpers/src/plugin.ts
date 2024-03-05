@@ -10,6 +10,16 @@ class HelperError extends Error {
     }
 }
 
+export const get = p.new(['object', 'path'], 'manipulate and get', async (ctx) => {
+    const object = ctx.fetch('object');
+    const path = ctx.fetch('path');
+    try {
+        return ctx.pass(_.get(object as any, path as string));
+    } catch (e) {
+        throw new HelperError(e);
+    }
+});
+
 export const set = p.new(['object', 'path', 'value'], 'manipulate and set', async (ctx) => {
     const object = ctx.fetch('object');
     const path = ctx.fetch('path');
