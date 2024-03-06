@@ -61,7 +61,7 @@ export type Ast = {
 	 */
 	into?: string;
 } & (
-		| {
+	| {
 			/**
 			 * The value of the variable used in Open, must be a string or a
 			 * list of string, former of which is converted to an array for
@@ -69,8 +69,8 @@ export type Ast = {
 			 */
 			open?: [string, ...string[]];
 			connect?: never;
-		}
-		| {
+	  }
+	| {
 			open?: never;
 			/**
 			 * The value of the variable used in Connect, must be a string or a
@@ -78,8 +78,8 @@ export type Ast = {
 			 * convenience.
 			 */
 			connect?: [string, ...string[]];
-		}
-	);
+	  }
+);
 
 /**
  * Visits the given CST with parameters and generates the AST for it.

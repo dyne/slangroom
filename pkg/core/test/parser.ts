@@ -14,62 +14,62 @@ test('parser works', (t) => {
 
 	Object.entries<ReturnType<typeof parse>>({
 		'': {
-			errors: [ParseError.missing('given', 'then'), ParseError.missing('I')],
+			errors: [ParseError.missing(1, 'Given I', 'Then I')],
 			matches: [
 				{
 					key: { phrase: 'love asche' },
 					bindings: new Map(),
-					err: [ParseError.missing('love'), ParseError.missing('asche')],
+					err: [ParseError.missing(1, 'love'), ParseError.missing(1, 'asche')],
 				},
 			],
 		},
 
 		G: {
 			errors: [
-				ParseError.wrong(new Token('G', 0, 0), 'given', 'then'),
-				ParseError.missing('I'),
+				ParseError.wrong(new Token('G', 1, 0, 0), 'given', 'then'),
+				ParseError.missing(new Token('G', 1, 0, 0), 'I'),
 			],
 			matches: [
 				{
 					key: { phrase: 'love asche' },
 					bindings: new Map(),
-					err: [ParseError.missing('love'), ParseError.missing('asche')],
+					err: [ParseError.missing(1, 'love'), ParseError.missing(1, 'asche')],
 				},
 			],
 		},
 		t: {
 			errors: [
-				ParseError.wrong(new Token('t', 0, 0), 'given', 'then'),
-				ParseError.missing('I'),
+				ParseError.wrong(new Token('t', 1, 0, 0), 'given', 'then'),
+				ParseError.missing(new Token('t', 1, 0, 0), 'I'),
 			],
 			matches: [
 				{
 					key: { phrase: 'love asche' },
 					bindings: new Map(),
-					err: [ParseError.missing('love'), ParseError.missing('asche')],
+					err: [ParseError.missing(1, 'love'), ParseError.missing(1, 'asche')],
 				},
 			],
 		},
 
 		'given Me': {
 			givenThen: 'given',
-			errors: [ParseError.wrong(new Token('Me', 6, 7), 'I')],
+			errors: [ParseError.wrong(new Token('Me', 1, 6, 7), 'I')],
 			matches: [
 				{
 					key: { phrase: 'love asche' },
 					bindings: new Map(),
-					err: [ParseError.missing('love'), ParseError.missing('asche')],
+					err: [ParseError.missing(1, 'love'), ParseError.missing(1, 'asche')],
 				},
 			],
 		},
 		'Then myself': {
 			givenThen: 'then',
-			errors: [ParseError.wrong(new Token('myself', 5, 10), 'I')],
+			errors: [ParseError.wrong(new Token('myself', 1, 5, 10), 'I')],
 			matches: [
 				{
 					key: { phrase: 'love asche' },
 					bindings: new Map(),
-					err: [ParseError.missing('love'), ParseError.missing('asche')],
+					err: [ParseError.missing(1, 'love'), ParseError.missing(1, 'asche')],
 				},
 			],
 		},
@@ -81,7 +81,7 @@ test('parser works', (t) => {
 				{
 					key: { phrase: 'love asche' },
 					bindings: new Map(),
-					err: [ParseError.wrong(new Token('notAsche', 13, 20), 'asche')],
+					err: [ParseError.wrong(new Token('notAsche', 1, 13, 20), 'asche')],
 				},
 			],
 		},
@@ -92,7 +92,7 @@ test('parser works', (t) => {
 				{
 					key: { phrase: 'a b c' },
 					bindings: new Map(),
-					err: [ParseError.wrong(new Token('foobar', 11, 16), 'c')],
+					err: [ParseError.wrong(new Token('foobar', 1, 11, 16), 'c')],
 				},
 			],
 		},
@@ -106,8 +106,8 @@ test('parser works', (t) => {
 					},
 					bindings: new Map(),
 					err: [
-						ParseError.wrong(new Token('patates', 16, 22), 'biber'),
-						ParseError.wrong(new Token('biber', 24, 28), 'patlican'),
+						ParseError.wrong(new Token('patates', 1, 16, 22), 'biber'),
+						ParseError.wrong(new Token('biber', 1, 24, 28), 'patlican'),
 					],
 				},
 			],
@@ -123,7 +123,7 @@ test('parser works', (t) => {
 					},
 					open: 'xfiles',
 					bindings: new Map([]),
-					err: [ParseError.wrong(new Token('files', 32, 36), 'file')],
+					err: [ParseError.wrong(new Token('files', 1, 32, 36), 'file')],
 				},
 			],
 		},
@@ -135,7 +135,7 @@ test('parser works', (t) => {
 				{
 					key: { phrase: 'love asche' },
 					bindings: new Map(),
-					err: [ParseError.wrong(new Token('Like', 7, 10), 'love')],
+					err: [ParseError.wrong(new Token('Like', 1, 7, 10), 'love')],
 				},
 			],
 		},
@@ -146,7 +146,7 @@ test('parser works', (t) => {
 				{
 					key: { phrase: 'a b c' },
 					bindings: new Map(),
-					err: [ParseError.wrong(new Token('biber', 10, 14), 'b')],
+					err: [ParseError.wrong(new Token('biber', 1, 10, 14), 'b')],
 				},
 			],
 		},
@@ -158,16 +158,16 @@ test('parser works', (t) => {
 					key: { phrase: 'a b c' },
 					bindings: new Map(),
 					err: [
-						ParseError.wrong(new Token('domates', 7, 13), 'a'),
-						ParseError.wrong(new Token('patates', 17, 23), 'c'),
+						ParseError.wrong(new Token('domates', 1, 7, 13), 'a'),
+						ParseError.wrong(new Token('patates', 1, 17, 23), 'c'),
 					],
 				},
 				{
 					key: { phrase: 'domates biber patlican' },
 					bindings: new Map(),
 					err: [
-						ParseError.wrong(new Token('b', 15, 15), 'biber'),
-						ParseError.wrong(new Token('patates', 17, 23), 'patlican'),
+						ParseError.wrong(new Token('b', 1, 15, 15), 'biber'),
+						ParseError.wrong(new Token('patates', 1, 17, 23), 'patlican'),
 					],
 				},
 			],
@@ -175,28 +175,28 @@ test('parser works', (t) => {
 
 		'given i love Asche and so': {
 			givenThen: 'given',
-			errors: [ParseError.wrong(new Token('i', 6, 6), 'I')],
+			errors: [ParseError.wrong(new Token('i', 1, 6, 6), 'I')],
 			matches: [
 				{
 					key: { phrase: 'love asche' },
 					bindings: new Map(),
 					err: [
-						ParseError.extra(new Token('and', 19, 21)),
-						ParseError.extra(new Token('so', 23, 24)),
+						ParseError.extra(new Token('and', 1, 19, 21)),
+						ParseError.extra(new Token('so', 1, 23, 24)),
 					],
 				},
 			],
 		},
 		'Then i a b c and d': {
 			givenThen: 'then',
-			errors: [ParseError.wrong(new Token('i', 5, 5), 'I')],
+			errors: [ParseError.wrong(new Token('i', 1, 5, 5), 'I')],
 			matches: [
 				{
 					key: { phrase: 'a b c' },
 					bindings: new Map(),
 					err: [
-						ParseError.extra(new Token('and', 13, 15)),
-						ParseError.extra(new Token('d', 17, 17)),
+						ParseError.extra(new Token('and', 1, 13, 15)),
+						ParseError.extra(new Token('d', 1, 17, 17)),
 					],
 				},
 			],
@@ -208,7 +208,7 @@ test('parser works', (t) => {
 				{
 					key: { phrase: 'domates biber patlican' },
 					bindings: new Map(),
-					err: [ParseError.extra(new Token('patates', 30, 36))],
+					err: [ParseError.extra(new Token('patates', 1, 30, 36))],
 				},
 			],
 		},
@@ -224,8 +224,8 @@ test('parser works', (t) => {
 					open: 'xfiles',
 					bindings: new Map([]),
 					err: [
-						ParseError.extra(new Token('and', 37, 39)),
-						ParseError.extra(new Token('stuff', 41, 45)),
+						ParseError.extra(new Token('and', 1, 37, 39)),
+						ParseError.extra(new Token('stuff', 1, 41, 45)),
 					],
 				},
 			],
@@ -233,14 +233,14 @@ test('parser works', (t) => {
 
 		"given i love Asche and so and output into 'foo'": {
 			givenThen: 'given',
-			errors: [ParseError.wrong(new Token('i', 6, 6), 'I')],
+			errors: [ParseError.wrong(new Token('i', 1, 6, 6), 'I')],
 			matches: [
 				{
 					key: { phrase: 'love asche' },
 					bindings: new Map(),
 					err: [
-						ParseError.extra(new Token('and', 19, 21)),
-						ParseError.extra(new Token('so', 23, 24)),
+						ParseError.extra(new Token('and', 1, 19, 21)),
+						ParseError.extra(new Token('so', 1, 23, 24)),
 					],
 					into: 'foo',
 				},
@@ -248,14 +248,14 @@ test('parser works', (t) => {
 		},
 		"Then i a b c and d and output into 'bar'": {
 			givenThen: 'then',
-			errors: [ParseError.wrong(new Token('i', 5, 5), 'I')],
+			errors: [ParseError.wrong(new Token('i', 1, 5, 5), 'I')],
 			matches: [
 				{
 					key: { phrase: 'a b c' },
 					bindings: new Map(),
 					err: [
-						ParseError.extra(new Token('and', 13, 15)),
-						ParseError.extra(new Token('d', 17, 17)),
+						ParseError.extra(new Token('and', 1, 13, 15)),
+						ParseError.extra(new Token('d', 1, 17, 17)),
 					],
 					into: 'bar',
 				},
@@ -268,7 +268,7 @@ test('parser works', (t) => {
 				{
 					key: { phrase: 'domates biber patlican' },
 					bindings: new Map(),
-					err: [ParseError.extra(new Token('patates', 30, 36))],
+					err: [ParseError.extra(new Token('patates', 1, 30, 36))],
 					into: 'baz',
 				},
 			],
@@ -285,8 +285,8 @@ test('parser works', (t) => {
 					open: 'xfiles',
 					bindings: new Map([]),
 					err: [
-						ParseError.extra(new Token('and', 37, 39)),
-						ParseError.extra(new Token('stuff', 41, 45)),
+						ParseError.extra(new Token('and', 1, 37, 39)),
+						ParseError.extra(new Token('stuff', 1, 41, 45)),
 					],
 					into: 'quz',
 				},
@@ -295,26 +295,26 @@ test('parser works', (t) => {
 
 		"given i love Asche and so output into 'foo'": {
 			givenThen: 'given',
-			errors: [ParseError.wrong(new Token('i', 6, 6), 'I')],
+			errors: [ParseError.wrong(new Token('i', 1, 6, 6), 'I')],
 			matches: [
 				{
 					key: { phrase: 'love asche' },
 					bindings: new Map(),
 					err: [
-						ParseError.extra(new Token('and', 19, 21)),
-						ParseError.wrong(new Token('so', 23, 24), 'and'),
+						ParseError.extra(new Token('and', 1, 19, 21)),
+						ParseError.wrong(new Token('so', 1, 23, 24), 'and'),
 					],
 				},
 			],
 		},
 		"Then i a b c and d into 'bar'": {
 			givenThen: 'then',
-			errors: [ParseError.wrong(new Token('i', 5, 5), 'I')],
+			errors: [ParseError.wrong(new Token('i', 1, 5, 5), 'I')],
 			matches: [
 				{
 					key: { phrase: 'a b c' },
 					bindings: new Map(),
-					err: [ParseError.wrong(new Token('d', 17, 17), 'output')],
+					err: [ParseError.wrong(new Token('d', 1, 17, 17), 'output')],
 				},
 			],
 		},
@@ -326,8 +326,8 @@ test('parser works', (t) => {
 					key: { phrase: 'domates biber patlican' },
 					bindings: new Map(),
 					err: [
-						ParseError.extra(new Token('patates', 30, 36)),
-						ParseError.extra(new Token("'baz'", 38, 42)),
+						ParseError.extra(new Token('patates', 1, 30, 36)),
+						ParseError.extra(new Token("'baz'", 1, 38, 42)),
 					],
 				},
 			],
@@ -344,10 +344,10 @@ test('parser works', (t) => {
 					open: 'xfiles',
 					bindings: new Map([]),
 					err: [
-						ParseError.extra(new Token('and', 37, 39)),
-						ParseError.wrong(new Token('stuff', 41, 45), 'and'),
-						ParseError.wrong(new Token('and', 47, 49), 'output'),
-						ParseError.wrong(new Token('output', 51, 56), 'into'),
+						ParseError.extra(new Token('and', 1, 37, 39)),
+						ParseError.wrong(new Token('stuff', 1, 41, 45), 'and'),
+						ParseError.wrong(new Token('and', 1, 47, 49), 'output'),
+						ParseError.wrong(new Token('output', 1, 51, 56), 'into'),
 					],
 				},
 			],
@@ -355,12 +355,12 @@ test('parser works', (t) => {
 
 		"given i love Asche save output into 'foo'": {
 			givenThen: 'given',
-			errors: [ParseError.wrong(new Token('i', 6, 6), 'I')],
+			errors: [ParseError.wrong(new Token('i', 1, 6, 6), 'I')],
 			matches: [
 				{
 					key: { phrase: 'love asche' },
 					bindings: new Map(),
-					err: [ParseError.wrong(new Token('save', 19, 22), 'and')],
+					err: [ParseError.wrong(new Token('save', 1, 19, 22), 'and')],
 				},
 			],
 		},
@@ -506,7 +506,7 @@ test('parser works', (t) => {
 			],
 		},
 	}).forEach(([give, want], index) => {
-		const have = parse(p.store, lex(give));
+		const have = parse(p.store, ...lex(give, 1));
 		t.deepEqual(have, want, `${index}: ${give}`);
 	});
 });

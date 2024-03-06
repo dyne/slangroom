@@ -64,13 +64,12 @@ export class Slangroom {
 	async execute(contract: string, optParams?: Partial<ZenParams>): Promise<ZenOutput> {
 		const paramsGiven = requirifyZenParams(optParams);
 		const ignoredLines = await getIgnoredStatements(contract, paramsGiven);
-		const lexedLines = ignoredLines.map(lex);
-		const parsedLines = lexedLines.map((x) => parse(this.#plugins, x));
-		parsedLines.forEach((x) => {
-			if (x.errors.length) throw new Error(`general errors: ${x.errors.join('\n')}`);
-			if (x.matches[0]?.err.length)
-				throw new Error(`${x.matches.map((y) => y.err).join('\n')}`);
-		});
+		const lexedLines = ignoredLines.map((ignored) => lex(...ignored));
+		const parsedLines = lexedLines.map((lexed) => parse(this.#plugins, ...lexed));
+		const errs = parsedLines
+			.flatMap((x) => [...x.errors, ...(x.matches[0]?.err ?? [])])
+			.join('\n');
+		if (errs.length) throw new Error(errs);
 
 		const cstGivens = parsedLines.filter((x) => x.givenThen === 'given');
 		for (const cst of cstGivens) {
