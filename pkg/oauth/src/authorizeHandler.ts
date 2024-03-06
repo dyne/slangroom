@@ -190,13 +190,12 @@ export class AuthorizeHandler {
 			const ResponseType = this.getResponseType(request);
 			const codeChallenge = this.getCodeChallenge(request);
 			const codeChallengeMethod = this.getCodeChallengeMethod(request);
-			if(typeof validScope !== 'string') validScope = "";
 
 			const code = await this.saveAuthorizationCode(
 				authorizationCode,
 				expiresAt,
 				uri,
-				[validScope],
+				validScope,
 				client,
 				user,
 				codeChallenge,
@@ -205,7 +204,7 @@ export class AuthorizeHandler {
 			if(!code) { throw Error("Failed to create the Authorization Code"); }
 
 			const base_uri = "urn:ietf:params:oauth:request_uri:";
-			const rand_uri = randomBytes(20).toString('base64');
+			const rand_uri = randomBytes(20).toString('hex');
 			const expires_in = 300;
 
 			const responseTypeInstance = new ResponseType(code.authorizationCode);
@@ -308,13 +307,12 @@ export class AuthorizeHandler {
 	 * Validate requested scope.
 	 */
 	async validateScope (user:User, client:Client, scope:string[], resource:string) {
-		// TODO: this should actually do something...
 		if (this.model.validateScope) {
 			const validatedScope = await this.model.validateScope(user, client, scope, resource);
 
-			// if (!validatedScope) {
-			// 	throw new InvalidScopeError('Invalid scope: Requested scope is invalid');
-			// }
+			if (!validatedScope) {
+				throw new InvalidScopeError('Invalid scope: Requested scope is invalid');
+			}
 
 			return validatedScope;
 		}

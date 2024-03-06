@@ -91,20 +91,18 @@ export class AuthenticateHandler {
 			}
 
 			const scope = request.body.scope;
-			if (scope) {
-				const resource = request.body.resource;
-				if (!resource) throw new Error('Request is missing resource parameter');
+			const resource = request.body.resource;
+			if (!resource) throw new Error('Request is missing resource parameter');
 
-				const valid_scope = await this.verifyScope(scope, resource);
-				if (!valid_scope) throw new Error('Given scope is not valid');
-			}
+			const valid_scope = await this.verifyScope(scope, resource);
+			if (!valid_scope) throw new Error('Given scope is not valid');
 
 			const auth_url = this.authenticationUrl;
 			const url = auth_url + cl_id;
 
 			const response = await fetch(url);
 			if (!response.ok) {
-				throw new Error(`Error! status: ${response.status}`);
+				throw new Error(`Fetch to url ${url} failed with error status: ${response.status}`);
 			}
 
 			const result = await response.json();
@@ -174,7 +172,7 @@ export class AuthenticateHandler {
 		const url = resource + '/.well-known/openid-credential-issuer';
 		const response = await fetch(url);
 		if (!response.ok) {
-			throw new Error(`Error! status: ${response.status}`);
+			throw new Error(`Fetch to url ${url} failed with error status: ${response.status}`);
 		}
 		const result = await response.json();
 		const credentials_supported = result.credentials_supported;
