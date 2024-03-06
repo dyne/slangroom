@@ -78,6 +78,7 @@ export class Slangroom {
 			const exec = this.#plugins.get(ast.key);
 			if (!exec) throw new Error('no statements matched');
 			const res = await exec(new PluginContextImpl(ast));
+			if (!res.ok) throw new Error(res.error);
 			if (res.ok && ast.into) paramsGiven.data[ast.into] = res.value;
 		}
 
@@ -90,6 +91,7 @@ export class Slangroom {
 			const exec = this.#plugins.get(ast.key);
 			if (!exec) throw new Error('no statements matched');
 			const res = await exec(new PluginContextImpl(ast));
+			if (!res.ok) throw new Error(res.error);
 			if (res.ok && ast.into) paramsThen.data[ast.into] = res.value;
 		}
 
