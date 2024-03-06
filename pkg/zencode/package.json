@@ -1,6 +1,6 @@
 {
 	"name": "@slangroom/zencode",
-	"version": "1.18.0",
+	"version": "1.25.1",
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
 		"@slangroom/shared": "workspace:*"
