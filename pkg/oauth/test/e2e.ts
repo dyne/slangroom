@@ -41,11 +41,7 @@ async function create_dpop_proof() {
 
 //for details on code_challenge/code_verifier see https://node-oauthoauth2-server.readthedocs.io/en/master/misc/pkce.html#authorization-request
 
-// TODO: the request body in the test is missing scope/resource parameter
-//		verifyScope has been tested locally (resource = http://localhost:3000/)
-//		update body with scope/resource when a deployed CredentialIssuer is available
-//		and make scope/resource mandatory parameters for the request
-//		scope is the string credential_id that specifies the type of credential the client is requesting
+//NOTE: scope is the string credential_id that specifies the type of credential the client is requesting
 //		resource is the URL where we can find the .well-known/openid-credential-issuer
 
 test('create authorization code and access token with PAR', async (t) => {
@@ -86,6 +82,8 @@ Then print data
 					'eyJhbGciOiJFUzI1NiJ9.eyJzdWIiOiJwaXBwbyJ9.hiVPL2JTdmcZY7Vcso95KUBEzcTGvmvQ7wlwkCo0G74Unpzny2drvLsu-HzHWyckKbRjwWox-V5gqqKeka8kEQ',
 				grants: ['authorization_code'],
 				redirectUris: ['https://Wallet.example.org/cb'],
+				scope:['Auth1'],
+				resource: "http://issuer1.zenswarm.forkbomb.eu/"
 			},
 		},
 	});
@@ -110,7 +108,7 @@ Then print data
 	const res2 = await slangroom.execute(scriptCreateBodyRequest, {
 		keys: {
 			auth_code_jwt: authCode,
-			body: 'grant_type=authorization_code&client_id=did:dyne:sandbox.genericissuer:6Cp8mPUvJmQaMxQPSnNyhb74f9Ga4WqfXCkBneFgikm5&code_verifier=dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk&redirect_uri=https%3A%2F%2FWallet.example.org%2Fcb&code=',
+			body: 'grant_type=authorization_code&client_id=did:dyne:sandbox.genericissuer:6Cp8mPUvJmQaMxQPSnNyhb74f9Ga4WqfXCkBneFgikm5&code_verifier=dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk&redirect_uri=https%3A%2F%2FWallet.example.org%2Fcb&scope=Auth1&resource=http%3A%2F%2Fissuer1.zenswarm.forkbomb.eu%3A3100%2F&code=',
 		},
 	});
 

@@ -6,6 +6,7 @@ import {
 	Falsey,
 	AuthorizationCode,
 	Request,
+	InsufficientScopeError,
 } from '@node-oauth/oauth2-server';
 import {
 	SignJWT,
@@ -69,6 +70,8 @@ export class InMemoryCache implements AuthorizationCodeModel {
 			redirectUris: client['redirectUris'],
 			accessTokenLifetime: client['accessTokenLifetime'],
 			refreshTokenLifetime: client['refreshTokenLifetime'],
+			scope: client['scope'],
+			resource: client['resource']
 		};
 
 		this.clients.push(clientSaved);
@@ -242,7 +245,10 @@ export class InMemoryCache implements AuthorizationCodeModel {
 			user: user,
 		};
 		if (token.scope) {
-			Object.assign({ scope: token.scope }, tokenSaved);
+			tokenSaved.scope = token.scope;
+			if(client['resource']){
+				tokenSaved['resource'] = client['resource'];
+			}
 		}
 
 		tokenSaved['c_nonce'] = randomBytes(20).toString('hex');
@@ -390,40 +396,41 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	async validateScope?(user: User, client: Client, scope?: string[] | undefined, resource?: string):Promise<Falsey | string[]>{
 
 		if(!user || !client) throw new Error("Invalid input parameters for ValidateScope");
-		if(resource) return Promise.resolve(scope);
 
-		// if (!scope) {
-		// 	throw new InsufficientScopeError(
-		// 		'Insufficient scope: authorized scope is insufficient',
-		// 	);
-		// }
-		// if (!resource) {
-		// 	throw new Error('Invalid request: needed resource to verify scope');
-		// }
+		if (!scope) {
+			throw new InsufficientScopeError(
+				'Insufficient scope: authorized scope is insufficient',
+			);
+		}
+		if (!resource) {
+			var resource = client['resource'] as string | undefined;
+			if(!resource)
+				throw new Error('Invalid request: needed resource to verify scope');
+		}
+		const url = resource + '/.well-known/openid-credential-issuer';
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error(`Fetch to url ${url} failed with error status: ${response.status}`);
+		}
+		const result = await response.json();
+		const credentials_supported = result.credentials_supported;
+		var valid_credentials = [];
 
-		// const url = resource + '/.well-known/openid-credential-issuer';
-		// const response = await fetch(url);
-		// if (!response.ok) {
-		// 	throw new Error(`Fetch to url ${url} failed with error status: ${response.status}`);
-		// }
-		// const result = await response.json();
-		// const credentials_supported = result.credentials_supported;
-		// var valid_credentials = [];
-		// for (var key in credentials_supported) {
-		// 	const type_arr = credentials_supported[key].credential_definition.type;
-		// 	if (
-		// 		type_arr.find((id: any) => {
-		// 			return id === scope;
-		// 		}) != undefined
-		// 	) {
-		// 		valid_credentials.push(scope);
-		// 		break;
-		// 	}
-		// }
+		for (var key in credentials_supported) {
+			const type_arr = credentials_supported[key].credential_definition.type;
+			if (
+				type_arr.find((id: any) => {
+					return id === scope[0];
+				}) != undefined
+			) {
+				valid_credentials.push(scope);
+				break;
+			}
+		}
 
-		// if (valid_credentials.length > 0) return Promise.resolve(scope);
-		// else return false;
-		return Promise.resolve(scope);
+		if (valid_credentials.length > 0) return Promise.resolve(scope);
+		else return false;
+
 	}
 }
 

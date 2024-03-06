@@ -116,6 +116,7 @@ export const createToken = p.new(
 			refreshToken: res_token.refreshToken!,
 			refreshTokenExpiresAt: Math.round(res_token.refreshTokenExpiresAt!.getTime()/ 1000),
 			scope: res_token.scope!,
+			resource: res_token['resource']
 		};
 
 		return ctx.pass(token);
