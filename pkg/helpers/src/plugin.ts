@@ -84,6 +84,11 @@ export const pick = p.new(['object', 'properties'], 'manipulate and pick', async
     }
 });
 
+// must be followe by "and output into 'variable_to_eliminate'"
+export const del = p.new('manipulate and delete', async (ctx) => {
+    return ctx.pass(null)
+});
+
 export const helpers = p
 
 
