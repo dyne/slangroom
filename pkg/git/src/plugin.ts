@@ -72,7 +72,7 @@ export const cloneRepository = p.new('connect', ['path'], 'clone repository', as
 /*
  * @internal
  */
-export const createNewGitCommit = p.new('open', 'create new git commit', async (ctx) => {
+export const createNewGitCommit = p.new('open', ['commit'], 'create new git commit', async (ctx) => {
 	const unsafe = ctx.fetchOpen()[0];
 	const { dirpath, error } = sandboxizeDir(unsafe);
 	if (!dirpath) return ctx.fail(error);
