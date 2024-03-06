@@ -95,6 +95,8 @@ export class Slangroom {
 			if (res.ok && ast.into) paramsThen.data[ast.into] = res.value;
 		}
 
+		// remove null values from output
+		Object.keys(paramsThen.data).forEach(k => (paramsThen.data[k] == null) && delete paramsThen.data[k]);
 		return { result: paramsThen.data, logs: zout.logs };
 	}
 }
