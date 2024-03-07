@@ -47,7 +47,7 @@ test('create authorization code and access token with PAR', async (t) => {
 	const scriptCreate = `
 Rule unknown ignore
 
-Given I send request 'request' and send client 'client' and send server_data 'server' and generate request uri and output into 'request_uri_out'
+Given I send request 'request' and send client 'client' and send server_data 'server' and send expires_in 'expires_in' and generate request uri and output into 'request_uri_out'
 
 Given I have a 'string dictionary' named 'request_uri_out'
 
@@ -74,7 +74,7 @@ Then print data
 					Authorization: '',
 				},
 			},
-
+			expires_in: 500,
 			client: {
 				id: 'did:dyne:sandbox.genericissuer:6Cp8mPUvJmQaMxQPSnNyhb74f9Ga4WqfXCkBneFgikm5',
 				clientSecret:

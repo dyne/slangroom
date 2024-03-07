@@ -36,7 +36,7 @@ const responseTypes: { [key: string]: any } = {
 	code: respType,
 };
 
-
+let par_expires_in: number = 600;
 export class AuthorizeHandler {
 
 	allowEmptyState: boolean;
@@ -106,7 +106,7 @@ export class AuthorizeHandler {
 		//TODO: check if we can convert timestamp in a better way
 		const timestamp = Math.round(new Date(rand_uri.substring(0, 10)).getTime() / 1000);
 		const time_now = Math.round(Date.now() / 1000);
-		if(time_now - timestamp > 600) {
+		if(time_now - timestamp > par_expires_in) {
 			this.model.revokeAuthCodeFromUri(rand_uri, true);
 			throw new InvalidRequestError(`'${request.body.request_uri}' has expired`);
 		}
@@ -129,7 +129,7 @@ export class AuthorizeHandler {
 	 * Pushed Authorization Request Handler.
 	 */
 	// handle /as/par request with input all the client data
-	async handle_par(request: Request, response: Response) {
+	async handle_par(request: Request, response: Response, expires_in?: number) {
 		if (!(request instanceof Request)) {
 			throw new InvalidArgumentError(
 				'Invalid argument: `request` must be an instance of Request',
@@ -141,6 +141,8 @@ export class AuthorizeHandler {
 				'Invalid argument: `response` must be an instance of Response',
 			);
 		}
+
+		if(expires_in) par_expires_in = expires_in;
 
 		if(request.body.request_uri) throw new InvalidRequestError("Found request_uri parameter in the request");
 
@@ -174,7 +176,6 @@ export class AuthorizeHandler {
 			const timestamp = Math.round(Date.now() / 1000);
 			const base_uri = "urn:ietf:params:oauth:request_uri:";
 			const rand_uri = timestamp.toString().concat(randomBytes(20).toString('hex'));
-			const expires_in = 600;
 
 			const code = await this.saveAuthorizationCode(
 				authorizationCode,
@@ -193,7 +194,7 @@ export class AuthorizeHandler {
 			const redirectUri = this.buildSuccessRedirectUri(uri, responseTypeInstance);
 			this.updateResponse(response, redirectUri, state);
 
-			return { request_uri: base_uri.concat(rand_uri),  expires_in: expires_in}
+			return { request_uri: base_uri.concat(rand_uri),  expires_in: par_expires_in}
 		} catch (err) {
 			let e = err;
 
