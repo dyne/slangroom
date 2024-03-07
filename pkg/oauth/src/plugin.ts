@@ -166,19 +166,7 @@ export const createAuthorizationCode = p.new(
 		}
 		const res_authCode = await new AuthorizeHandler(authorize_options).handle(request, response);
 
-		const authCode : JsonableObject = {
-			authorizationCode: res_authCode.authorizationCode,
-			client: res_authCode.client,
-			expiresAt: Math.round(res_authCode.expiresAt.getTime()/ 1000),
-			redirectUri: res_authCode.redirectUri,
-			user: res_authCode.user
-		}
-		if(res_authCode.codeChallenge) authCode['codeChallenge'] = res_authCode.codeChallenge;
-		if(res_authCode.codeChallengeMethod) authCode['codeChallengeMethod'] = res_authCode.codeChallengeMethod;
-		if(res_authCode.scope) authCode['scope'] = res_authCode.scope;
-		if(res_authCode['resource']) authCode['resource'] = res_authCode['resource'];
-
-		return ctx.pass(authCode);
+		return ctx.pass({code: res_authCode.authorizationCode});
 	},
 );
 
@@ -187,7 +175,7 @@ export const createAuthorizationCode = p.new(
  */
 //Sentence that perform a Pushed Authorization Request and return a valid request_uri (and expires_in)
 export const createRequestUri = p.new(
-	['request', 'client', 'server_data'],
+	['request', 'client', 'server_data', 'expires_in'],
 	'generate request uri',
 	async (ctx) => {
 		const params = ctx.fetch('request') as JsonableObject;
@@ -198,6 +186,7 @@ export const createRequestUri = p.new(
 		const client = ctx.fetch('client') as JsonableObject;
 		const serverData = ctx.fetch('server_data') as { jwk: JWK, url: string , authenticationUrl: string };
 		if(!serverData['jwk'] || !serverData['url']) throw Error("Server data is missing some parameters");
+		const expires_in = ctx.fetch('expires_in') as number;
 
 		const request = new Request({
 			body: parseQueryStringToDictionary(body),
@@ -229,7 +218,7 @@ export const createRequestUri = p.new(
 			allowEmptyState: false,
 			authorizationCodeLifetime: 5 * 60   // 5 minutes.
 		}
-		const res = await new AuthorizeHandler(authorize_options).handle_par(request, response);
+		const res = await new AuthorizeHandler(authorize_options).handle_par(request, response, expires_in);
 
 		return ctx.pass(res);
 	},

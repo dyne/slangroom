@@ -4,7 +4,6 @@ import url from 'node:url';
 import { InMemoryCache, AuthenticateHandler, pkce, isFormat } from '@slangroom/oauth';
 import { createHash, randomBytes } from "crypto";
 
-
 /**
  * Response types.
  */
@@ -37,7 +36,7 @@ const responseTypes: { [key: string]: any } = {
 	code: respType,
 };
 
-
+let par_expires_in: number = 600;
 export class AuthorizeHandler {
 
 	allowEmptyState: boolean;
@@ -98,58 +97,39 @@ export class AuthorizeHandler {
 		}
 
 		if(!request.body.request_uri) throw new InvalidRequestError("Missing parameter: request_uri");
+		if(!request.body.client_id) throw new InvalidRequestError("Missing parameter: client_id");
+
+		const base_uri = "urn:ietf:params:oauth:request_uri:";
+		let rand_uri = request.body.request_uri;
+		rand_uri = rand_uri.replace(base_uri, "");
+
+		//TODO: check if we can convert timestamp in a better way
+		const timestamp = Math.round(new Date(rand_uri.substring(0, 10)).getTime() / 1000);
+		const time_now = Math.round(Date.now() / 1000);
+		if(time_now - timestamp > par_expires_in) {
+			this.model.revokeAuthCodeFromUri(rand_uri, true);
+			throw new InvalidRequestError(`'${request.body.request_uri}' has expired`);
+		}
 
 		const client = await this.getClient(request);
-		const user = await this.getUser(request, response);
-		// NOTE: this call the Authentication handler and do authenticate
-		//		in the previous version the clientSecret used to authenticate was in request.body
-		//		here it should be obtained from the request_uri
-		if(!user) throw Error("Authentication failed");
+		if(!client) throw new InvalidClientError(`Failed to get Client from '${request.body.client_id}'`);
 
-		let uri;
-		let state;
+		const code = this.getAuthorizationCode(rand_uri);
+		if(!code) throw new Error(`Failed to get Authorization Code from '${request.body.request_uri}'`);
+		this.model.revokeAuthCodeFromUri(rand_uri);
 
-		try {
-
-			// the following should be changed so that the data are retrieved starting from the
-			// request_uri and client_id in the Request object
-			//--------------------------------------------
-			uri = this.getRedirectUri(request, client);
-			state = this.getState(request);
-			const code = this.getAuthorizationCode();
-			// -------------------------------------------
-
-			const ResponseType = this.getResponseType(request);
-
-			const responseTypeInstance = new ResponseType(code.authorizationCode);
-			const redirectUri = this.buildSuccessRedirectUri(uri, responseTypeInstance);
-
-			this.updateResponse(response, redirectUri, state);
-
-			return code;
-		} catch (err) {
-			let e = err;
-
-			if (!(e instanceof OAuthError)) {
-				e = new ServerError(e);
-			}
-			const redirectUri = this.buildErrorRedirectUri(uri, e);
-			this.updateResponse(response, redirectUri, state);
-
-			throw e;
-		}
+		return code;
 	}
 
-	getAuthorizationCode(): any {
-		//TODO
-		return false;
+	getAuthorizationCode(filename: string): AuthorizationCode {
+		return this.model.getAuthCodeFromUri(filename);
 	}
 
 	/**
 	 * Pushed Authorization Request Handler.
 	 */
 	// handle /as/par request with input all the client data
-	async handle_par(request: Request, response: Response) {
+	async handle_par(request: Request, response: Response, expires_in?: number) {
 		if (!(request instanceof Request)) {
 			throw new InvalidArgumentError(
 				'Invalid argument: `request` must be an instance of Request',
@@ -161,6 +141,8 @@ export class AuthorizeHandler {
 				'Invalid argument: `response` must be an instance of Response',
 			);
 		}
+
+		if(expires_in) par_expires_in = expires_in;
 
 		if(request.body.request_uri) throw new InvalidRequestError("Found request_uri parameter in the request");
 
@@ -191,6 +173,10 @@ export class AuthorizeHandler {
 			const codeChallenge = this.getCodeChallenge(request);
 			const codeChallengeMethod = this.getCodeChallengeMethod(request);
 
+			const timestamp = Math.round(Date.now() / 1000);
+			const base_uri = "urn:ietf:params:oauth:request_uri:";
+			const rand_uri = timestamp.toString().concat(randomBytes(20).toString('hex'));
+
 			const code = await this.saveAuthorizationCode(
 				authorizationCode,
 				expiresAt,
@@ -200,19 +186,15 @@ export class AuthorizeHandler {
 				user,
 				codeChallenge,
 				codeChallengeMethod,
+				rand_uri
 			);
 			if(!code) { throw Error("Failed to create the Authorization Code"); }
-
-			const base_uri = "urn:ietf:params:oauth:request_uri:";
-			const rand_uri = randomBytes(20).toString('hex');
-			const expires_in = 300;
 
 			const responseTypeInstance = new ResponseType(code.authorizationCode);
 			const redirectUri = this.buildSuccessRedirectUri(uri, responseTypeInstance);
 			this.updateResponse(response, redirectUri, state);
 
-			return { base_uri:base_uri, rand_uri: rand_uri, expires_in: expires_in, authorizationCode: code };
-
+			return { request_uri: base_uri.concat(rand_uri),  expires_in: par_expires_in}
 		} catch (err) {
 			let e = err;
 
@@ -378,7 +360,7 @@ export class AuthorizeHandler {
 	 * Save authorization code.
 	 */
 
-	async saveAuthorizationCode(authorizationCode: string, expiresAt: Date, redirectUri: string, scope: string[], client: Client, user: User, codeChallenge: string, codeChallengeMethod: string,) {
+	async saveAuthorizationCode(authorizationCode: string, expiresAt: Date, redirectUri: string, scope: string[], client: Client, user: User, codeChallenge: string, codeChallengeMethod: string, rand_uri: string) {
 		let code: AuthorizationCode = {
 			authorizationCode: authorizationCode,
 			expiresAt: expiresAt,
@@ -387,18 +369,12 @@ export class AuthorizeHandler {
 			user: user,
 			client: client
 		};
-
 		if (codeChallenge && codeChallengeMethod) {
-			code = Object.assign(
-				{
-					codeChallenge: codeChallenge,
-					codeChallengeMethod: codeChallengeMethod,
-				},
-				code,
-			);
+			code.codeChallenge = codeChallenge;
+			code.codeChallengeMethod = codeChallengeMethod;
 		}
 
-		return this.model.saveAuthorizationCode(code, client, user);
+		return this.model.saveAuthorizationCode(code, client, user, rand_uri);
 	}
 
 	async validateRedirectUri(redirectUri: string, client: Client) {

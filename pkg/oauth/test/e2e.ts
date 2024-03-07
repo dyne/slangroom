@@ -3,7 +3,6 @@ import { Slangroom } from '@slangroom/core';
 import { oauth } from '@slangroom/oauth';
 import { SignJWT, importJWK } from 'jose';
 import { randomBytes } from 'crypto';
-import { Jsonable, JsonableObject } from '@slangroom/shared';
 
 //For reference see Section 4 of https://datatracker.ietf.org/doc/html/rfc9449.html
 async function create_dpop_proof() {
@@ -48,7 +47,7 @@ test('create authorization code and access token with PAR', async (t) => {
 	const scriptCreate = `
 Rule unknown ignore
 
-Given I send request 'request' and send client 'client' and send server_data 'server' and generate request uri and output into 'request_uri_out'
+Given I send request 'request' and send client 'client' and send server_data 'server' and send expires_in 'expires_in' and generate request uri and output into 'request_uri_out'
 
 Given I have a 'string dictionary' named 'request_uri_out'
 
@@ -75,7 +74,7 @@ Then print data
 					Authorization: '',
 				},
 			},
-
+			expires_in: 500,
 			client: {
 				id: 'did:dyne:sandbox.genericissuer:6Cp8mPUvJmQaMxQPSnNyhb74f9Ga4WqfXCkBneFgikm5',
 				clientSecret:
@@ -90,38 +89,88 @@ Then print data
 	console.log(res.result['request_uri_out']);
 	t.truthy(res.result['request_uri_out']);
 
+	const scriptCreateBodyRequest1 = `
+Rule unknown ignore
+
+Given I have a 'string' named 'body'
+Given I have a 'string dictionary' named 'request_uri_out'
+
+When I create the copy of 'request_uri' from dictionary 'request_uri_out'
+# TODO: check if we need encoding before append
+When I append 'copy' to 'body'
+
+Then print the 'body'
+`;
+	const resb = await slangroom.execute(scriptCreateBodyRequest1, {
+		keys: {
+			request_uri_out: res.result['request_uri_out'] || {},
+			body: 'client_id=did:dyne:sandbox.genericissuer:6Cp8mPUvJmQaMxQPSnNyhb74f9Ga4WqfXCkBneFgikm5&request_uri=',
+		},
+	});
+	t.truthy(resb.result['body']);
+
+	const scriptAuthCode = `
+Rule unknown ignore
+
+Given I send request 'request' and send server_data 'server' and generate authorization code and output into 'authCode'
+
+Given I have a 'string dictionary' named 'authCode'
+
+Then print data
+`;
+	const res_auth = await slangroom.execute(scriptAuthCode, {
+		keys: {
+			server: {
+				jwk: {
+					kty: 'EC',
+					crv: 'P-256',
+					alg: 'ES256',
+					x: 'SVqB4JcUD6lsfvqMr-OKUNUphdNn64Eay60978ZlL74',
+					y: 'lf0u0pMj4lGAzZix5u4Cm5CMQIgMNpkwy163wtKYVKI',
+					d: '0g5vAEKzugrXaRbgKG0Tj2qJ5lMP4Bezds1_sTybkfk',
+				},
+				url: 'https://valid.issuer.url',
+				authentication_url : 'https://did.dyne.org/dids/'
+			},
+			request: {
+				body: resb.result['body'] || '',
+				headers: {
+					Authorization: '',
+				},
+			}
+		},
+	});
+	console.log(res_auth.result['authCode']);
+	t.truthy(res_auth.result['authCode']);
+
 	const scriptCreateBodyRequest = `
-	Rule unknown ignore
+Rule unknown ignore
 
-	Given I have a 'string' named 'body'
-	Given I have a 'string dictionary' named 'auth_code_jwt'
+Given I have a 'string' named 'body'
+Given I have a 'string dictionary' named 'auth_code'
+When I create the copy of 'code' from dictionary 'auth_code'
+When I append 'copy' to 'body'
 
-	When I create the copy of 'authorizationCode' from dictionary 'auth_code_jwt'
-	When I append 'copy' to 'body'
-
-	Then print the 'body'
-	`;
-
-	let reqUri_out = res.result['request_uri_out']! as JsonableObject;
-	var authCode:Jsonable = reqUri_out['authorizationCode']!;
+Then print the 'body'
+`;
 
 	const res2 = await slangroom.execute(scriptCreateBodyRequest, {
 		keys: {
-			auth_code_jwt: authCode,
+			auth_code: res_auth.result['authCode']!,
 			body: 'grant_type=authorization_code&client_id=did:dyne:sandbox.genericissuer:6Cp8mPUvJmQaMxQPSnNyhb74f9Ga4WqfXCkBneFgikm5&code_verifier=dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk&redirect_uri=https%3A%2F%2FWallet.example.org%2Fcb&scope=Auth1&resource=http%3A%2F%2Fissuer1.zenswarm.forkbomb.eu%3A3100%2F&code=',
 		},
 	});
 
 	t.truthy(res2.result['body']);
 	const scriptCreateToken = `
-	Rule unknown ignore
+Rule unknown ignore
 
-	Given I send request 'request' and send server_data 'server' and generate access token and output into 'accessToken_jwt'
+Given I send request 'request' and send server_data 'server' and generate access token and output into 'accessToken_jwt'
 
-	Given I have a 'string dictionary' named 'accessToken_jwt'
+Given I have a 'string dictionary' named 'accessToken_jwt'
 
-	Then print data
-	`;
+Then print data
+`;
 	const res3 = await slangroom.execute(scriptCreateToken, {
 		keys: {
 			server: {
@@ -150,57 +199,3 @@ Then print data
 	t.truthy(res3.result['accessToken_jwt']);
 });
 
-	// const scriptCreateBodyRequest1 = `
-	// Rule unknown ignore
-
-	// Given I have a 'string' named 'body'
-	// Given I have a 'string dictionary' named 'request_uri_out'
-
-	// When I create the copy of 'request_uri' from dictionary 'request_uri_out'
-	// # TODO: check if we need encoding before append
-	// When I append 'copy' to 'body'
-
-	// Then print the 'body'
-	// `;
-	// const resb = await slangroom.execute(scriptCreateBodyRequest1, {
-	// 	keys: {
-	// 		request_uri_out: res.result['request_uri_out'] || {},
-	// 		body: 'client_id=did:dyne:sandbox.genericissuer:6Cp8mPUvJmQaMxQPSnNyhb74f9Ga4WqfXCkBneFgikm5&request_uri=',
-	// 	},
-	// });
-
-	// t.truthy(resb.result['body']);
-
-	// const scriptAuthCode = `
-	// Rule unknown ignore
-
-	// Given I send request 'request' and send server_data 'server' and generate authorization code and output into 'authCode_jwt'
-
-	// Given I have a 'string dictionary' named 'authCode_jwt'
-
-	// Then print data
-	// `;
-	// const res_auth = await slangroom.execute(scriptAuthCode, {
-	// 	keys: {
-	// 		server: {
-	// 			jwk: {
-	// 				kty: 'EC',
-	// 				crv: 'P-256',
-	// 				alg: 'ES256',
-	// 				x: 'SVqB4JcUD6lsfvqMr-OKUNUphdNn64Eay60978ZlL74',
-	// 				y: 'lf0u0pMj4lGAzZix5u4Cm5CMQIgMNpkwy163wtKYVKI',
-	// 				d: '0g5vAEKzugrXaRbgKG0Tj2qJ5lMP4Bezds1_sTybkfk',
-	// 			},
-	// 			url: 'https://valid.issuer.url',
-	// 			authentication_url : 'https://did.dyne.org/dids/'
-	// 		},
-	// 		request: {
-	// 			body: resb.result['body'] || '',
-	// 			headers: {
-	// 				Authorization: '',
-	// 			},
-	// 		}
-	// 	},
-	// });
-	// console.log(res_auth.result['authCode_jwt']);
-	// t.truthy(res_auth.result['authCode_jwt']);
