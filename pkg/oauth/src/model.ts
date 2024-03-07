@@ -32,6 +32,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	tokens: Token[];
 	users: User[];
 	codes: AuthorizationCode[];
+	uri_codes: Map<string, AuthorizationCode>;
 	serverData: { jwk: JWK, url: string };
 	options: JsonableObject;
 	dpop_jwks: { [key: string]: any }[];
@@ -50,6 +51,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 		this.users = [];
 		this.tokens = [];
 		this.codes = [];
+		this.uri_codes = new Map();
 		this.dpop_jwks = [];
 	}
 
@@ -151,7 +153,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	}
 
 	/**
-	 * Invoked to retrieve an existing authorization code previously saved through Model#saveAuthorizationCode().
+	 * Invoked to retrieve an existing authorization code from this.codes.
 	 *
 	 */
 	getAuthorizationCode(authorizationCode: string): Promise<Falsey | AuthorizationCode> {
@@ -162,10 +164,29 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	}
 
 	/**
+	 * Invoked to retrieve an existing authorization code previously saved through Model#saveAuthorizationCode().
+	 *
+	 */
+	getAuthCodeFromUri(rand_uri: string) {
+		const code = this.uri_codes.get(rand_uri);
+		if(!code) throw new OAuthError("Failed to get Authorization Code: given request_uri is not valid");
+		return code;
+	}
+
+	revokeAuthCodeFromUri(rand_uri: string, expired?: boolean) {
+		const code = this.uri_codes.get(rand_uri);
+		if(!code) throw new OAuthError("Authorization code does not exist on server");
+		if(!expired) {
+			this.codes.push(code);
+		}
+		this.uri_codes.delete(rand_uri);
+	}
+
+	/**
 	 * Invoked to save an authorization code.
 	 *
 	 */
-	saveAuthorizationCode(code: Pick<AuthorizationCode, "authorizationCode" | "expiresAt" | "redirectUri" | "scope" | "codeChallenge" | "codeChallengeMethod">, client: Client, user: User): Promise<Falsey | AuthorizationCode> {
+	saveAuthorizationCode(code: Pick<AuthorizationCode, "authorizationCode" | "expiresAt" | "redirectUri" | "scope" | "codeChallenge" | "codeChallengeMethod">, client: Client, user: User, rand_uri?: string): Promise<Falsey | AuthorizationCode> {
 		let codeSaved: AuthorizationCode = {
 			authorizationCode: code.authorizationCode,
 			expiresAt: code.expiresAt,
@@ -179,8 +200,13 @@ export class InMemoryCache implements AuthorizationCodeModel {
 			codeSaved.codeChallenge = code.codeChallenge
 			codeSaved.codeChallengeMethod = code.codeChallengeMethod
 		}
+		//TODO: check this
+		if(rand_uri) {
+			this.uri_codes.set(rand_uri, codeSaved);
+		} else {
+			this.codes.push(codeSaved);
+		}
 
-		this.codes.push(codeSaved);
 		return Promise.resolve(codeSaved);
 	}
 
