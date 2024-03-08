@@ -312,9 +312,17 @@ export class InMemoryCache implements AuthorizationCodeModel {
 		if (this.serverData.jwk == null) throw new OAuthError("Missing server private JWK");
 		let privateKey = await importJWK(this.serverData.jwk);
 		let alg = this.serverData.jwk.alg || 'ES256';
+		let public_jwk:JWK = {
+			kty: this.serverData.jwk.kty!,
+			x: this.serverData.jwk.x!,
+			y: this.serverData.jwk.y!,
+			crv: this.serverData.jwk.crv!
+		}
 
 		const jws = new SignJWT({ sub: randomBytes(20).toString('hex') })
-			.setProtectedHeader({ alg: alg })
+			.setProtectedHeader({ alg: alg,
+								  jwk: public_jwk
+								})
 			.setIssuedAt(Math.round(Date.now() / 1000))
 			.setIssuer(this.serverData.url)
 			.setAudience(clientId)
