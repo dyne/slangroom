@@ -175,7 +175,7 @@ export class AuthenticateHandler {
 			throw new Error(`Fetch to url ${url} failed with error status: ${response.status}`);
 		}
 		const result = await response.json();
-		const credentials_supported = result.credentials_supported;
+		const credentials_supported = result.credential_configurations_supported;
 		var valid_credentials = [];
 		for (var key in credentials_supported) {
 			const type_arr = credentials_supported[key].credential_definition.type;
