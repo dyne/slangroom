@@ -1,5 +1,5 @@
 import { Plugin } from '@slangroom/core';
-import OAuth2Server from '@node-oauth/oauth2-server';
+import OAuth2Server, { OAuthError } from '@node-oauth/oauth2-server';
 import { Request, Response } from '@node-oauth/oauth2-server';
 import { AuthenticateHandler, InMemoryCache, AuthorizeHandler } from '@slangroom/oauth';
 import { JsonableObject } from '@slangroom/shared';
@@ -105,6 +105,13 @@ export const createToken = p.new(
 		const removed = model.revokeClient(res_token.client);
 		if(!removed) throw Error("Failed to revoke Client");
 
+		var authorization_details = model.getAuthorizationDetails(bodyDict['code']!);
+		if(!authorization_details) {
+			throw new OAuthError("Invalid token: missing authorization_details");
+		}
+
+		model.revokeAuthorizationDetails(bodyDict['code']!);
+
 		//we remove the client and user object from the token
 		const token: JsonableObject = {
 			accessToken: res_token.accessToken,
@@ -116,7 +123,8 @@ export const createToken = p.new(
 			refreshToken: res_token.refreshToken!,
 			refreshTokenExpiresAt: Math.round(res_token.refreshTokenExpiresAt!.getTime()/ 1000),
 			scope: res_token.scope!,
-			resource: res_token['resource']
+			resource: res_token['resource'],
+			authorization_details: authorization_details
 		};
 
 		return ctx.pass(token);

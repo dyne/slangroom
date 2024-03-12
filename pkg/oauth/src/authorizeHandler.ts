@@ -152,6 +152,21 @@ export class AuthorizeHandler {
 
 		if (!user) throw new UnauthorizedClientError("Client authentication failed");
 
+		if(request.body.authorization_details) {
+			const auth_det = JSON.parse(request.body.authorization_details);
+			console.log(auth_det)
+			var authorization_details = await this.verifyAuthrizationDetails(auth_det);
+			console.log(authorization_details)
+			if(authorization_details.length === 0) throw new OAuthError("Given authorization_details are not valid");
+			var validScope: string[] = [authorization_details[0]['credential_configuration_id']];
+		}
+		else {
+			const resource = request.body.resource;
+			const requestedScope = this.getScope(request);
+			if(!requestedScope) throw new InvalidRequestError("Neither authorization_details, nor scope parameter found in request");
+			var validScope = await this.validateScope(user, client, requestedScope, resource);
+		}
+
 		let uri;
 		let state;
 
@@ -164,9 +179,6 @@ export class AuthorizeHandler {
 				}
 			}
 
-			const resource = request.body.resource;
-			const requestedScope = this.getScope(request);
-			var validScope = await this.validateScope(user, client, requestedScope!, resource);
 			const authorizationCode = await this.generateAuthorizationCode(client);
 
 			const ResponseType = this.getResponseType(request);
@@ -186,6 +198,7 @@ export class AuthorizeHandler {
 				user,
 				codeChallenge,
 				codeChallengeMethod,
+				authorization_details,
 				rand_uri
 			);
 			if(!code) { throw Error("Failed to create the Authorization Code"); }
@@ -285,6 +298,25 @@ export class AuthorizeHandler {
 		return client;
 	}
 
+	async verifyAuthrizationDetails(authorization_details: any){
+		// TODO: fix type
+		const verifiedAuthDetails: any = [];
+		await Promise.all(authorization_details.map(async (dict : {[key: string]: any}) => {
+
+			if(!dict['type']) throw new OAuthError("Invalid authorization_details: missing parameter type");
+			if(!dict['locations']) throw new OAuthError("Invalid authorization_details: missing parameter locations");
+			if(!dict['credential_configuration_id']) throw new OAuthError("Invalid authorization_details: missing parameter credential_configuration_id");
+
+			const valid_credentials = await this.model.verifyCredentialId(dict['credential_configuration_id'], dict['locations'][0]);
+			console.log(valid_credentials)
+			if (valid_credentials.length == 0) throw new OAuthError(`Invalid authorization_details: '${dict['credential_configuration_id']}' is not a vail credential_id `)
+			// TODO: verify other content of authorization_details
+			verifiedAuthDetails.push(dict);
+		}));
+
+		return verifiedAuthDetails;
+	}
+
 	/**
 	 * Validate requested scope.
 	 */
@@ -360,7 +392,7 @@ export class AuthorizeHandler {
 	 * Save authorization code.
 	 */
 
-	async saveAuthorizationCode(authorizationCode: string, expiresAt: Date, redirectUri: string, scope: string[], client: Client, user: User, codeChallenge: string, codeChallengeMethod: string, rand_uri: string) {
+	async saveAuthorizationCode(authorizationCode: string, expiresAt: Date, redirectUri: string, scope: string[], client: Client, user: User, codeChallenge: string, codeChallengeMethod: string, authorization_details: [{ [key: string]: any }], rand_uri: string) {
 		let code: AuthorizationCode = {
 			authorizationCode: authorizationCode,
 			expiresAt: expiresAt,
@@ -373,8 +405,11 @@ export class AuthorizeHandler {
 			code.codeChallenge = codeChallenge;
 			code.codeChallengeMethod = codeChallengeMethod;
 		}
+		if(authorization_details) {
+			code['authorization_details'] = authorization_details;
+		}
 
-		return this.model.saveAuthorizationCode(code, client, user, rand_uri);
+		return this.model.saveAuthorizationCode(code, client, user, authorization_details, rand_uri);
 	}
 
 	async validateRedirectUri(redirectUri: string, client: Client) {

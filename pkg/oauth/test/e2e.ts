@@ -69,7 +69,8 @@ Then print data
 				authentication_url : 'https://did.dyne.org/dids/'
 			},
 			request: {
-				body: 'response_type=code&client_id=did:dyne:sandbox.genericissuer:6Cp8mPUvJmQaMxQPSnNyhb74f9Ga4WqfXCkBneFgikm5&state=xyz&code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM&code_challenge_method=S256&redirect_uri=https%3A%2F%2FWallet.example.org%2Fcb&scope=Auth1&resource=http%3A%2F%2Fissuer1.zenswarm.forkbomb.eu%3A3100%2Fcredential_issuer%2F',
+				//&scope=Auth1&resource=http%3A%2F%2Fissuer1.zenswarm.forkbomb.eu%3A3100%2Fcredential_issuer%2F
+				body: 'response_type=code&client_id=did:dyne:sandbox.genericissuer:6Cp8mPUvJmQaMxQPSnNyhb74f9Ga4WqfXCkBneFgikm5&state=xyz&code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM&code_challenge_method=S256&redirect_uri=https%3A%2F%2FWallet.example.org%2Fcb&authorization_details=%5B%7B%22type%22%3A%20%22openid_credential%22%2C%20%22credential_configuration_id%22%3A%20%22Auth1%22%2C%22locations%22%3A%20%5B%22http%3A%2F%2Fissuer1.zenswarm.forkbomb.eu%3A3100%2Fcredential_issuer%2F%22%5D%7D%5D',
 				headers: {
 					Authorization: '',
 				},
@@ -157,7 +158,7 @@ Then print the 'body'
 	const res2 = await slangroom.execute(scriptCreateBodyRequest, {
 		keys: {
 			auth_code: res_auth.result['authCode']!,
-			body: 'grant_type=authorization_code&client_id=did:dyne:sandbox.genericissuer:6Cp8mPUvJmQaMxQPSnNyhb74f9Ga4WqfXCkBneFgikm5&code_verifier=dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk&redirect_uri=https%3A%2F%2FWallet.example.org%2Fcb&scope=Auth1&resource=http%3A%2F%2Fissuer1.zenswarm.forkbomb.eu%3A3100%2Fcredential_issuer%2F&code=',
+			body: 'grant_type=authorization_code&client_id=did:dyne:sandbox.genericissuer:6Cp8mPUvJmQaMxQPSnNyhb74f9Ga4WqfXCkBneFgikm5&code_verifier=dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk&redirect_uri=https%3A%2F%2FWallet.example.org%2Fcb&code=',
 		},
 	});
 

@@ -33,6 +33,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	users: User[];
 	codes: AuthorizationCode[];
 	uri_codes: Map<string, AuthorizationCode>;
+	authorization_details: Map<string, [{ [key: string]: any }]>;
 	serverData: { jwk: JWK, url: string };
 	options: JsonableObject;
 	dpop_jwks: { [key: string]: any }[];
@@ -52,6 +53,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 		this.tokens = [];
 		this.codes = [];
 		this.uri_codes = new Map();
+		this.authorization_details = new Map();
 		this.dpop_jwks = [];
 	}
 
@@ -152,6 +154,15 @@ export class InMemoryCache implements AuthorizationCodeModel {
 		return Promise.resolve(codeSaved);
 	}
 
+	getAuthorizationDetails(authorizationCode: string) {
+		const auth_details = this.authorization_details.get(authorizationCode);
+		return auth_details;
+	}
+
+	revokeAuthorizationDetails(authorizationCode: string) {
+		this.authorization_details.delete(authorizationCode);
+	}
+
 	/**
 	 * Invoked to retrieve an existing authorization code from this.codes.
 	 *
@@ -186,7 +197,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	 * Invoked to save an authorization code.
 	 *
 	 */
-	saveAuthorizationCode(code: Pick<AuthorizationCode, "authorizationCode" | "expiresAt" | "redirectUri" | "scope" | "codeChallenge" | "codeChallengeMethod">, client: Client, user: User, rand_uri?: string): Promise<Falsey | AuthorizationCode> {
+	saveAuthorizationCode(code: Pick<AuthorizationCode, "authorizationCode" | "expiresAt" | "redirectUri" | "scope" | "codeChallenge" | "codeChallengeMethod">, client: Client, user: User, authorization_details?: [{ [key: string]: any }], rand_uri?: string): Promise<Falsey | AuthorizationCode> {
 		let codeSaved: AuthorizationCode = {
 			authorizationCode: code.authorizationCode,
 			expiresAt: code.expiresAt,
@@ -199,6 +210,9 @@ export class InMemoryCache implements AuthorizationCodeModel {
 		if (code.codeChallenge && code.codeChallengeMethod) {
 			codeSaved.codeChallenge = code.codeChallenge
 			codeSaved.codeChallengeMethod = code.codeChallengeMethod
+		}
+		if(authorization_details) {
+			this.authorization_details.set(code.authorizationCode, authorization_details);
 		}
 		//TODO: check this
 		if(rand_uri) {
@@ -428,6 +442,31 @@ export class InMemoryCache implements AuthorizationCodeModel {
 		return Promise.resolve(true);
 	}
 
+	async verifyCredentialId(scope: string, resource: string) {
+		if(resource.slice(-1) === "/") resource = resource.slice(0, -1);
+		const url = resource + '/.well-known/openid-credential-issuer';
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new OAuthError(`Fetch to url ${url} failed with error status: ${response.status}`);
+		}
+		const result = await response.json();
+		const credentials_supported = result.credentials_supported;
+		var valid_credentials = [];
+
+		for (var key in credentials_supported) {
+			const type_arr = credentials_supported[key].credential_definition.type;
+			if (
+				type_arr.find((id: any) => {
+					return id === scope;
+				}) != undefined
+			) {
+				valid_credentials.push(scope);
+				break;
+			}
+		}
+
+		return valid_credentials;
+	}
 
 	async validateScope?(user: User, client: Client, scope?: string[] | undefined, resource?: string): Promise<Falsey | string[]> {
 
@@ -443,26 +482,8 @@ export class InMemoryCache implements AuthorizationCodeModel {
 			if (!resource)
 				throw new OAuthError('Invalid request: needed resource to verify scope');
 		}
-		const url = resource + '/.well-known/openid-credential-issuer';
-		const response = await fetch(url);
-		if (!response.ok) {
-			throw new OAuthError(`Fetch to url ${url} failed with error status: ${response.status}`);
-		}
-		const result = await response.json();
-		const credentials_supported = result.credential_configurations_supported;
-		var valid_credentials = [];
 
-		for (var key in credentials_supported) {
-			const type_arr = credentials_supported[key].credential_definition.type;
-			if (
-				type_arr.find((id: any) => {
-					return id === scope[0];
-				}) != undefined
-			) {
-				valid_credentials.push(scope);
-				break;
-			}
-		}
+		var valid_credentials = await this.verifyCredentialId(scope[0]!, resource);
 
 		if (valid_credentials.length > 0) return Promise.resolve(scope);
 		else return false;
