@@ -450,7 +450,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 			throw new OAuthError(`Fetch to url ${url} failed with error status: ${response.status}`);
 		}
 		const result = await response.json();
-		const credentials_supported = result.credentials_supported;
+		const credentials_supported = result.credential_configurations_supported;
 		var valid_credentials = [];
 
 		for (var key in credentials_supported) {

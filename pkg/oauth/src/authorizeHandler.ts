@@ -154,9 +154,7 @@ export class AuthorizeHandler {
 
 		if(request.body.authorization_details) {
 			const auth_det = JSON.parse(request.body.authorization_details);
-			console.log(auth_det)
 			var authorization_details = await this.verifyAuthrizationDetails(auth_det);
-			console.log(authorization_details)
 			if(authorization_details.length === 0) throw new OAuthError("Given authorization_details are not valid");
 			var validScope: string[] = [authorization_details[0]['credential_configuration_id']];
 		}
@@ -308,9 +306,10 @@ export class AuthorizeHandler {
 			if(!dict['credential_configuration_id']) throw new OAuthError("Invalid authorization_details: missing parameter credential_configuration_id");
 
 			const valid_credentials = await this.model.verifyCredentialId(dict['credential_configuration_id'], dict['locations'][0]);
-			console.log(valid_credentials)
-			if (valid_credentials.length == 0) throw new OAuthError(`Invalid authorization_details: '${dict['credential_configuration_id']}' is not a vail credential_id `)
+			if (valid_credentials.length == 0) throw new OAuthError(`Invalid authorization_details: '${dict['credential_configuration_id']}' is not a valid credential_id `)
+
 			// TODO: verify other content of authorization_details
+
 			verifiedAuthDetails.push(dict);
 		}));
 
