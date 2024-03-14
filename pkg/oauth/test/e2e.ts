@@ -70,7 +70,8 @@ Then print data
 			},
 			request: {
 				//&scope=Auth1&resource=http%3A%2F%2Fissuer1.zenswarm.forkbomb.eu%3A3100%2Fcredential_issuer%2F
-				body: 'response_type=code&client_id=did:dyne:sandbox.genericissuer:6Cp8mPUvJmQaMxQPSnNyhb74f9Ga4WqfXCkBneFgikm5&state=xyz&code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM&code_challenge_method=S256&redirect_uri=https%3A%2F%2FWallet.example.org%2Fcb&authorization_details=%5B%7B%22type%22%3A%20%22openid_credential%22%2C%20%22credential_configuration_id%22%3A%20%22Auth1%22%2C%22locations%22%3A%20%5B%22http%3A%2F%2Fissuer1.zenswarm.forkbomb.eu%3A3100%2Fcredential_issuer%2F%22%5D%7D%5D',
+				//authorization_details=%5B%7B%22type%22%3A%20%22openid_credential%22%2C%20%22credential_configuration_id%22%3A%20%22Auth1%22%2C%22locations%22%3A%20%5B%22http%3A%2F%2Fissuer1.zenswarm.forkbomb.eu%3A3100%2Fcredential_issuer%2F%22%5D%7D%5D
+				body: 'response_type=code&client_id=did:dyne:sandbox.genericissuer:6Cp8mPUvJmQaMxQPSnNyhb74f9Ga4WqfXCkBneFgikm5&state=xyz&code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM&code_challenge_method=S256&redirect_uri=https%3A%2F%2FWallet.example.org%2Fcb&authorization_details=%5B%7B%22type%22%3A+%22openid_credential%22%2C+%22credential_configuration_id%22%3A+%22Auth1%22%2C%22locations%22%3A+%5B%22http%3A%2F%2Fissuer1.zenswarm.forkbomb.eu%3A3100%2Fcredential_issuer%2F%22%5D%2C%22given_name%22%3A%22Pippo%22%2C+%22family_name%22%3A%22Peppe%22%2C%22is_human%22%3Atrue%7D%5D',
 				headers: {
 					Authorization: '',
 				},

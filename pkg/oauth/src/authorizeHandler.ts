@@ -305,10 +305,15 @@ export class AuthorizeHandler {
 			if(!dict['locations']) throw new OAuthError("Invalid authorization_details: missing parameter locations");
 			if(!dict['credential_configuration_id']) throw new OAuthError("Invalid authorization_details: missing parameter credential_configuration_id");
 
-			const valid_credentials = await this.model.verifyCredentialId(dict['credential_configuration_id'], dict['locations'][0]);
-			if (valid_credentials.length == 0) throw new OAuthError(`Invalid authorization_details: '${dict['credential_configuration_id']}' is not a valid credential_id `)
+			const verified_credentials = await this.model.verifyCredentialId(dict['credential_configuration_id'], dict['locations'][0]);
+			if (verified_credentials.valid_credentials.length == 0) throw new OAuthError(`Invalid authorization_details: '${dict['credential_configuration_id']}' is not a valid credential_id `)
 
-			// TODO: verify other content of authorization_details
+			const claims = verified_credentials.credential_claims.get(dict['credential_configuration_id']);
+			claims!.map((claim: string) => {
+				if(!dict[claim]) throw new OAuthError(`Invalid authorization_details: missing parameter '${claim}'`);
+			});
+
+			// TODO: verify content of authorization_details claims
 
 			verifiedAuthDetails.push(dict);
 		}));

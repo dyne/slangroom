@@ -302,7 +302,6 @@ export class InMemoryCache implements AuthorizationCodeModel {
 			tokenSaved['jkt'] = this.createJWKThumbprint(dpop_jwk['jwk']);
 		}
 		if (this.options && this.options['allowExtendedTokenAttributes']) {
-			//TODO: problem with authorization_details
 			var keys = Object.keys(token);
 			keys.forEach((key: string) => {
 				if (!tokenSaved[key]) {
@@ -452,6 +451,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 		const result = await response.json();
 		const credentials_supported = result.credential_configurations_supported;
 		var valid_credentials = [];
+		var credential_claims = new Map<string, string[]>();
 
 		for (var key in credentials_supported) {
 			const type_arr = credentials_supported[key].credential_definition.type;
@@ -461,11 +461,17 @@ export class InMemoryCache implements AuthorizationCodeModel {
 				}) != undefined
 			) {
 				valid_credentials.push(scope);
+				const credentialSubject = credentials_supported[key].credential_definition.credentialSubject;
+				var claims = [];
+				for (var claim in credentialSubject) {
+					if(credentialSubject[claim].mandatory) claims.push(claim);
+				}
+				credential_claims.set(scope, claims);
 				break;
 			}
 		}
 
-		return valid_credentials;
+		return {valid_credentials: valid_credentials, credential_claims: credential_claims };
 	}
 
 	async validateScope?(user: User, client: Client, scope?: string[] | undefined, resource?: string): Promise<Falsey | string[]> {
@@ -483,9 +489,9 @@ export class InMemoryCache implements AuthorizationCodeModel {
 				throw new OAuthError('Invalid request: needed resource to verify scope');
 		}
 
-		var valid_credentials = await this.verifyCredentialId(scope[0]!, resource);
+		var verified_credentials = await this.verifyCredentialId(scope[0]!, resource);
 
-		if (valid_credentials.length > 0) return Promise.resolve(scope);
+		if (verified_credentials.valid_credentials.length > 0) return Promise.resolve(scope);
 		else return false;
 
 	}
