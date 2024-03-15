@@ -91,11 +91,13 @@ export class AuthenticateHandler {
 			}
 
 			const scope = request.body.scope;
-			const resource = request.body.resource;
-			if (!resource) throw new Error('Request is missing resource parameter');
+			if(scope) {
+				const resource = request.body.resource;
+				if (!resource) throw new Error('Request is missing resource parameter');
 
-			const valid_scope = await this.verifyScope(scope, resource);
-			if (!valid_scope) throw new Error('Given scope is not valid');
+				const valid_scope = await this.verifyScope(scope, resource);
+				if (!valid_scope) throw new Error('Given scope is not valid');
+			}
 
 			const auth_url = this.authenticationUrl;
 			const url = auth_url + cl_id;
