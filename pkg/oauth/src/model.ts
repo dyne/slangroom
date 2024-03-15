@@ -4,6 +4,7 @@ import {
 	Client,
 	Falsey,
 	InsufficientScopeError,
+	InvalidTokenError,
 	Request,
 	Token,
 	User,
@@ -33,7 +34,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	users: User[];
 	codes: AuthorizationCode[];
 	uri_codes: Map<string, AuthorizationCode>;
-	authorization_details: Map<string, [{ [key: string]: any }]>;
+	authorization_details: Map<string, { [key: string]: any }[]>;
 	serverData: { jwk: JWK, url: string };
 	options: JsonableObject;
 	dpop_jwks: { [key: string]: any }[];
@@ -180,14 +181,14 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	 */
 	getAuthCodeFromUri(rand_uri: string) {
 		const code = this.uri_codes.get(rand_uri);
-		if(!code) throw new OAuthError("Failed to get Authorization Code: given request_uri is not valid");
+		if (!code) throw new OAuthError("Failed to get Authorization Code: given request_uri is not valid");
 		return code;
 	}
 
 	revokeAuthCodeFromUri(rand_uri: string, expired?: boolean) {
 		const code = this.uri_codes.get(rand_uri);
-		if(!code) throw new OAuthError("Authorization code does not exist on server");
-		if(!expired) {
+		if (!code) throw new OAuthError("Authorization code does not exist on server");
+		if (!expired) {
 			this.codes.push(code);
 		}
 		this.uri_codes.delete(rand_uri);
@@ -197,7 +198,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	 * Invoked to save an authorization code.
 	 *
 	 */
-	saveAuthorizationCode(code: Pick<AuthorizationCode, "authorizationCode" | "expiresAt" | "redirectUri" | "scope" | "codeChallenge" | "codeChallengeMethod">, client: Client, user: User, authorization_details?: [{ [key: string]: any }], rand_uri?: string): Promise<Falsey | AuthorizationCode> {
+	saveAuthorizationCode(code: Pick<AuthorizationCode, "authorizationCode" | "expiresAt" | "redirectUri" | "scope" | "codeChallenge" | "codeChallengeMethod">, client: Client, user: User, authorization_details?: { [key: string]: any }[], rand_uri?: string): Promise<Falsey | AuthorizationCode> {
 		let codeSaved: AuthorizationCode = {
 			authorizationCode: code.authorizationCode,
 			expiresAt: code.expiresAt,
@@ -211,11 +212,11 @@ export class InMemoryCache implements AuthorizationCodeModel {
 			codeSaved.codeChallenge = code.codeChallenge
 			codeSaved.codeChallengeMethod = code.codeChallengeMethod
 		}
-		if(authorization_details) {
+		if (authorization_details) {
 			this.authorization_details.set(code.authorizationCode, authorization_details);
 		}
 		//TODO: check this
-		if(rand_uri) {
+		if (rand_uri) {
 			this.uri_codes.set(rand_uri, codeSaved);
 		} else {
 			this.codes.push(codeSaved);
@@ -292,7 +293,10 @@ export class InMemoryCache implements AuthorizationCodeModel {
 				tokenSaved['resource'] = client['resource'];
 			}
 		}
-
+		if (token['authorizationCode']) {
+			const auth_details = this.authorization_details.get(token['authorizationCode']);
+			if (auth_details) tokenSaved['authorization_details'] = auth_details;
+		}
 		tokenSaved['c_nonce'] = randomBytes(20).toString('hex');
 		tokenSaved['c_nonce_expires_in'] = 60 * 60;
 
@@ -325,7 +329,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 		if (this.serverData.jwk == null) throw new OAuthError("Missing server private JWK");
 		let privateKey = await importJWK(this.serverData.jwk);
 		let alg = this.serverData.jwk.alg || 'ES256';
-		let public_jwk:JWK = {
+		let public_jwk: JWK = {
 			kty: this.serverData.jwk.kty!,
 			x: this.serverData.jwk.x!,
 			y: this.serverData.jwk.y!,
@@ -333,9 +337,10 @@ export class InMemoryCache implements AuthorizationCodeModel {
 		}
 
 		const jws = new SignJWT({ sub: randomBytes(20).toString('hex') })
-			.setProtectedHeader({ alg: alg,
-								  jwk: public_jwk
-								})
+			.setProtectedHeader({
+				alg: alg,
+				jwk: public_jwk
+			})
 			.setIssuedAt(Math.round(Date.now() / 1000))
 			.setIssuer(this.serverData.url)
 			.setAudience(clientId)
@@ -442,7 +447,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	}
 
 	async verifyCredentialId(scope: string, resource: string) {
-		if(resource.slice(-1) === "/") resource = resource.slice(0, -1);
+		if (resource.slice(-1) === "/") resource = resource.slice(0, -1);
 		const url = resource + '/.well-known/openid-credential-issuer';
 		const response = await fetch(url);
 		if (!response.ok) {
@@ -464,14 +469,14 @@ export class InMemoryCache implements AuthorizationCodeModel {
 				const credentialSubject = credentials_supported[key].credential_definition.credentialSubject;
 				var claims = [];
 				for (var claim in credentialSubject) {
-					if(credentialSubject[claim].mandatory) claims.push(claim);
+					if (credentialSubject[claim].mandatory) claims.push(claim);
 				}
 				credential_claims.set(scope, claims);
 				break;
 			}
 		}
 
-		return {valid_credentials: valid_credentials, credential_claims: credential_claims };
+		return { valid_credentials: valid_credentials, credential_claims: credential_claims };
 	}
 
 	async validateScope?(user: User, client: Client, scope?: string[] | undefined, resource?: string): Promise<Falsey | string[]> {
@@ -494,6 +499,22 @@ export class InMemoryCache implements AuthorizationCodeModel {
 		if (verified_credentials.valid_credentials.length > 0) return Promise.resolve(scope);
 		else return false;
 
+	}
+
+	async getClaimsFromToken(accessToken: string) {
+		const token = await this.getAccessToken(accessToken);
+		if (!token) throw new InvalidTokenError("Given token is not valid");
+		const auth_details = token['authorization_details'];
+		if (!auth_details) throw new InvalidTokenError("authorization_details not found in accessToken");
+		var claims: { [key: string]: any }[] = [];
+		auth_details.map((dict: { [key: string]: any }) => {
+			delete dict['type'];
+			delete dict['locations'];
+			delete dict['credential_configuration_id'];
+			claims.push(dict);
+		});
+
+		return claims;
 	}
 }
 

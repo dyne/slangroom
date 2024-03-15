@@ -96,8 +96,8 @@ export class AuthorizeHandler {
 			);
 		}
 
-		if(!request.body.request_uri) throw new InvalidRequestError("Missing parameter: request_uri");
-		if(!request.body.client_id) throw new InvalidRequestError("Missing parameter: client_id");
+		if (!request.body.request_uri) throw new InvalidRequestError("Missing parameter: request_uri");
+		if (!request.body.client_id) throw new InvalidRequestError("Missing parameter: client_id");
 
 		const base_uri = "urn:ietf:params:oauth:request_uri:";
 		let rand_uri = request.body.request_uri;
@@ -106,16 +106,16 @@ export class AuthorizeHandler {
 		//TODO: check if we can convert timestamp in a better way
 		const timestamp = Math.round(new Date(rand_uri.substring(0, 10)).getTime() / 1000);
 		const time_now = Math.round(Date.now() / 1000);
-		if(time_now - timestamp > par_expires_in) {
+		if (time_now - timestamp > par_expires_in) {
 			this.model.revokeAuthCodeFromUri(rand_uri, true);
 			throw new InvalidRequestError(`'${request.body.request_uri}' has expired`);
 		}
 
 		const client = await this.getClient(request);
-		if(!client) throw new InvalidClientError(`Failed to get Client from '${request.body.client_id}'`);
+		if (!client) throw new InvalidClientError(`Failed to get Client from '${request.body.client_id}'`);
 
 		const code = this.getAuthorizationCode(rand_uri);
-		if(!code) throw new Error(`Failed to get Authorization Code from '${request.body.request_uri}'`);
+		if (!code) throw new Error(`Failed to get Authorization Code from '${request.body.request_uri}'`);
 		this.model.revokeAuthCodeFromUri(rand_uri);
 
 		return code;
@@ -142,9 +142,9 @@ export class AuthorizeHandler {
 			);
 		}
 
-		if(expires_in) par_expires_in = expires_in;
+		if (expires_in) par_expires_in = expires_in;
 
-		if(request.body.request_uri) throw new InvalidRequestError("Found request_uri parameter in the request");
+		if (request.body.request_uri) throw new InvalidRequestError("Found request_uri parameter in the request");
 
 		const expiresAt = this.getAuthorizationCodeLifetime();
 		const client = await this.getClient(request);
@@ -152,16 +152,16 @@ export class AuthorizeHandler {
 
 		if (!user) throw new UnauthorizedClientError("Client authentication failed");
 
-		if(request.body.authorization_details) {
+		if (request.body.authorization_details) {
 			const auth_det = JSON.parse(request.body.authorization_details);
 			var authorization_details = await this.verifyAuthrizationDetails(auth_det);
-			if(authorization_details.length === 0) throw new OAuthError("Given authorization_details are not valid");
+			if (authorization_details.length === 0) throw new OAuthError("Given authorization_details are not valid");
 			var validScope: string[] = [authorization_details[0]['credential_configuration_id']];
 		}
 		else {
 			const resource = request.body.resource;
 			const requestedScope = this.getScope(request);
-			if(!requestedScope) throw new InvalidRequestError("Neither authorization_details, nor scope parameter found in request");
+			if (!requestedScope) throw new InvalidRequestError("Neither authorization_details, nor scope parameter found in request");
 			var validScope = await this.validateScope(user, client, requestedScope, resource);
 		}
 
@@ -199,13 +199,13 @@ export class AuthorizeHandler {
 				authorization_details,
 				rand_uri
 			);
-			if(!code) { throw Error("Failed to create the Authorization Code"); }
+			if (!code) { throw Error("Failed to create the Authorization Code"); }
 
 			const responseTypeInstance = new ResponseType(code.authorizationCode);
 			const redirectUri = this.buildSuccessRedirectUri(uri, responseTypeInstance);
 			this.updateResponse(response, redirectUri, state);
 
-			return { request_uri: base_uri.concat(rand_uri),  expires_in: par_expires_in}
+			return { request_uri: base_uri.concat(rand_uri), expires_in: par_expires_in }
 		} catch (err) {
 			let e = err;
 
@@ -296,21 +296,20 @@ export class AuthorizeHandler {
 		return client;
 	}
 
-	async verifyAuthrizationDetails(authorization_details: any){
-		// TODO: fix type
+	async verifyAuthrizationDetails(authorization_details: { [key: string]: any }[]) {
 		const verifiedAuthDetails: any = [];
-		await Promise.all(authorization_details.map(async (dict : {[key: string]: any}) => {
+		await Promise.all(authorization_details.map(async (dict: { [key: string]: any }) => {
 
-			if(!dict['type']) throw new OAuthError("Invalid authorization_details: missing parameter type");
-			if(!dict['locations']) throw new OAuthError("Invalid authorization_details: missing parameter locations");
-			if(!dict['credential_configuration_id']) throw new OAuthError("Invalid authorization_details: missing parameter credential_configuration_id");
+			if (!dict['type']) throw new OAuthError("Invalid authorization_details: missing parameter type");
+			if (!dict['locations']) throw new OAuthError("Invalid authorization_details: missing parameter locations");
+			if (!dict['credential_configuration_id']) throw new OAuthError("Invalid authorization_details: missing parameter credential_configuration_id");
 
 			const verified_credentials = await this.model.verifyCredentialId(dict['credential_configuration_id'], dict['locations'][0]);
 			if (verified_credentials.valid_credentials.length == 0) throw new OAuthError(`Invalid authorization_details: '${dict['credential_configuration_id']}' is not a valid credential_id `)
 
 			const claims = verified_credentials.credential_claims.get(dict['credential_configuration_id']);
 			claims!.map((claim: string) => {
-				if(!dict[claim]) throw new OAuthError(`Invalid authorization_details: missing parameter '${claim}'`);
+				if (!dict[claim]) throw new OAuthError(`Invalid authorization_details: missing parameter '${claim}'`);
 			});
 
 			// TODO: verify content of authorization_details claims
@@ -324,7 +323,7 @@ export class AuthorizeHandler {
 	/**
 	 * Validate requested scope.
 	 */
-	async validateScope (user:User, client:Client, scope:string[], resource:string) {
+	async validateScope(user: User, client: Client, scope: string[], resource: string) {
 		if (this.model.validateScope) {
 			const validatedScope = await this.model.validateScope(user, client, scope, resource);
 
@@ -396,7 +395,7 @@ export class AuthorizeHandler {
 	 * Save authorization code.
 	 */
 
-	async saveAuthorizationCode(authorizationCode: string, expiresAt: Date, redirectUri: string, scope: string[], client: Client, user: User, codeChallenge: string, codeChallengeMethod: string, authorization_details: [{ [key: string]: any }], rand_uri: string) {
+	async saveAuthorizationCode(authorizationCode: string, expiresAt: Date, redirectUri: string, scope: string[], client: Client, user: User, codeChallenge: string, codeChallengeMethod: string, authorization_details: { [key: string]: any }[], rand_uri: string) {
 		let code: AuthorizationCode = {
 			authorizationCode: authorizationCode,
 			expiresAt: expiresAt,
@@ -409,7 +408,7 @@ export class AuthorizeHandler {
 			code.codeChallenge = codeChallenge;
 			code.codeChallengeMethod = codeChallengeMethod;
 		}
-		if(authorization_details) {
+		if (authorization_details) {
 			code['authorization_details'] = authorization_details;
 		}
 

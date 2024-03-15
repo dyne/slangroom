@@ -3,6 +3,7 @@ import { Slangroom } from '@slangroom/core';
 import { oauth } from '@slangroom/oauth';
 import { SignJWT, importJWK } from 'jose';
 import { randomBytes } from 'crypto';
+import { JsonableObject } from '@slangroom/shared';
 
 //For reference see Section 4 of https://datatracker.ietf.org/doc/html/rfc9449.html
 async function create_dpop_proof() {
@@ -66,7 +67,7 @@ Then print data
 					d: '0g5vAEKzugrXaRbgKG0Tj2qJ5lMP4Bezds1_sTybkfk',
 				},
 				url: 'https://valid.issuer.url',
-				authentication_url : 'https://did.dyne.org/dids/'
+				authentication_url: 'https://did.dyne.org/dids/'
 			},
 			request: {
 				//&scope=Auth1&resource=http%3A%2F%2Fissuer1.zenswarm.forkbomb.eu%3A3100%2Fcredential_issuer%2F
@@ -83,7 +84,7 @@ Then print data
 					'eyJhbGciOiJFUzI1NiJ9.eyJzdWIiOiJwaXBwbyJ9.hiVPL2JTdmcZY7Vcso95KUBEzcTGvmvQ7wlwkCo0G74Unpzny2drvLsu-HzHWyckKbRjwWox-V5gqqKeka8kEQ',
 				grants: ['authorization_code'],
 				redirectUris: ['https://Wallet.example.org/cb'],
-				scope:['Auth1'],
+				scope: ['Auth1'],
 				resource: "http://issuer1.zenswarm.forkbomb.eu/credential_issuer/"
 			},
 		},
@@ -132,7 +133,7 @@ Then print data
 					d: '0g5vAEKzugrXaRbgKG0Tj2qJ5lMP4Bezds1_sTybkfk',
 				},
 				url: 'https://valid.issuer.url',
-				authentication_url : 'https://did.dyne.org/dids/'
+				authentication_url: 'https://did.dyne.org/dids/'
 			},
 			request: {
 				body: resb.result['body'] || '',
@@ -185,7 +186,7 @@ Then print data
 					d: '0g5vAEKzugrXaRbgKG0Tj2qJ5lMP4Bezds1_sTybkfk',
 				},
 				url: 'https://valid.issuer.url',
-				authentication_url : 'https://did.dyne.org/dids/'
+				authentication_url: 'https://did.dyne.org/dids/'
 			},
 			request: {
 				body: res2.result['body'] || '',
@@ -199,5 +200,27 @@ Then print data
 	});
 	console.log(res3.result['accessToken_jwt']);
 	t.truthy(res3.result['accessToken_jwt']);
+	const scriptGetClaims = `
+Rule unknown ignore
+
+Given I send token 'token' and send server_data 'server' and get claims from token and output into 'claims'
+Given I have a 'string dictionary' named 'claims'
+
+Then print data
+`;
+	const token_jwt = res3.result['accessToken_jwt'] as JsonableObject;
+	const token_str = token_jwt['accessToken'];
+	if (token_str == undefined) throw new Error("token not found");
+	const res4 = await slangroom.execute(scriptGetClaims, {
+		keys: {
+			server: {
+				url: 'https://valid.issuer.url'
+			},
+			token: token_str
+		},
+	});
+	console.log(res4.result['claims']);
+	t.truthy(res4.result['claims']);
+
 });
 

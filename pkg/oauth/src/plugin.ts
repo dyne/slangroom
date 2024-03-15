@@ -1,5 +1,5 @@
 import { Plugin } from '@slangroom/core';
-import OAuth2Server, { OAuthError } from '@node-oauth/oauth2-server';
+import OAuth2Server from '@node-oauth/oauth2-server';
 import { Request, Response } from '@node-oauth/oauth2-server';
 import { AuthenticateHandler, InMemoryCache, AuthorizeHandler } from '@slangroom/oauth';
 import { JsonableObject } from '@slangroom/shared';
@@ -44,15 +44,15 @@ function parseQueryStringToDictionary(queryString: string) {
 let inMemoryCache: InMemoryCache | null = null;
 const getInMemoryCache = (serverData: { jwk: JWK, url: string }, options?: JsonableObject): InMemoryCache => {
 	if (!inMemoryCache) {
-		inMemoryCache = new InMemoryCache( serverData, options);
+		inMemoryCache = new InMemoryCache(serverData, options);
 	}
 	return inMemoryCache;
 };
 
 let authenticateHandler: any;
-const getAuthenticateHandler = (model: InMemoryCache, authenticationUrl:string): any => {
+const getAuthenticateHandler = (model: InMemoryCache, authenticationUrl: string): any => {
 	if (!authenticateHandler) {
-		authenticateHandler = new AuthenticateHandler({ model: model },  authenticationUrl);
+		authenticateHandler = new AuthenticateHandler({ model: model }, authenticationUrl);
 	}
 	return authenticateHandler;
 };
@@ -69,10 +69,10 @@ export const createToken = p.new(
 		const params = ctx.fetch('request') as JsonableObject;
 		const body = params['body'];
 		const headers = params['headers'];
-		if(!body || !headers) throw Error("Input request is not valid");
-		if(typeof body !== 'string') throw Error("Request body must be a string");
-		const serverData = ctx.fetch('server_data') as { jwk: JWK, url: string , authenticationUrl: string };
-		if(!serverData['jwk'] || !serverData['url']) throw Error("Server data is missing some parameters");
+		if (!body || !headers) throw Error("Input request is not valid");
+		if (typeof body !== 'string') throw Error("Request body must be a string");
+		const serverData = ctx.fetch('server_data') as { jwk: JWK, url: string, authenticationUrl: string };
+		if (!serverData['jwk'] || !serverData['url']) throw Error("Server data is missing some parameters");
 		const bodyDict = parseQueryStringToDictionary(body);
 		const request = new Request({
 			body: bodyDict,
@@ -98,33 +98,28 @@ export const createToken = p.new(
 		});
 
 		const checkDpop = await model.verifyDpopHeader(request);
-		if(!checkDpop) throw new Error("Failed to verify DPoP in headers");
+		if (!checkDpop) throw new Error("Failed to verify DPoP in headers");
 
 		const res_token = await server.token(request, response, options);
 
 		const removed = model.revokeClient(res_token.client);
-		if(!removed) throw Error("Failed to revoke Client");
+		if (!removed) throw Error("Failed to revoke Client");
 
-		var authorization_details = model.getAuthorizationDetails(bodyDict['code']!);
-		if(!authorization_details) {
-			throw new OAuthError("Invalid token: missing authorization_details");
-		}
-
-		model.revokeAuthorizationDetails(bodyDict['code']!);
+		model.revokeAuthorizationDetails(res_token['authorizationCode']);
 
 		//we remove the client and user object from the token
 		const token: JsonableObject = {
 			accessToken: res_token.accessToken,
-			accessTokenExpiresAt: Math.round(res_token.accessTokenExpiresAt!.getTime()/ 1000),
+			accessTokenExpiresAt: Math.round(res_token.accessTokenExpiresAt!.getTime() / 1000),
 			authorizationCode: res_token['authorizationCode'],
 			c_nonce: res_token['c_nonce'],
 			c_nonce_expires_in: res_token['c_nonce_expires_in'],
 			jkt: res_token['jkt'],
 			refreshToken: res_token.refreshToken!,
-			refreshTokenExpiresAt: Math.round(res_token.refreshTokenExpiresAt!.getTime()/ 1000),
+			refreshTokenExpiresAt: Math.round(res_token.refreshTokenExpiresAt!.getTime() / 1000),
 			scope: res_token.scope!,
 			resource: res_token['resource'],
-			authorization_details: authorization_details
+			authorization_details: res_token['authorization_details']
 		};
 
 		return ctx.pass(token);
@@ -142,10 +137,10 @@ export const createAuthorizationCode = p.new(
 		const params = ctx.fetch('request') as JsonableObject;
 		const body = params['body'];
 		const headers = params['headers'];
-		if(!body || !headers) throw Error("Input request is not valid");
-		if(typeof body !== 'string') throw Error("Request body must be a string");
-		const serverData = ctx.fetch('server_data') as { jwk: JWK, url: string , authenticationUrl: string };
-		if(!serverData['jwk'] || !serverData['url']) throw Error("Server data is missing some parameters");
+		if (!body || !headers) throw Error("Input request is not valid");
+		if (typeof body !== 'string') throw Error("Request body must be a string");
+		const serverData = ctx.fetch('server_data') as { jwk: JWK, url: string, authenticationUrl: string };
+		if (!serverData['jwk'] || !serverData['url']) throw Error("Server data is missing some parameters");
 
 		const request = new Request({
 			body: parseQueryStringToDictionary(body),
@@ -174,7 +169,7 @@ export const createAuthorizationCode = p.new(
 		}
 		const res_authCode = await new AuthorizeHandler(authorize_options).handle(request, response);
 
-		return ctx.pass({code: res_authCode.authorizationCode});
+		return ctx.pass({ code: res_authCode.authorizationCode });
 	},
 );
 
@@ -189,11 +184,11 @@ export const createRequestUri = p.new(
 		const params = ctx.fetch('request') as JsonableObject;
 		const body = params['body'];
 		const headers = params['headers'];
-		if(!body || !headers) throw Error("Input request is not valid");
-		if(typeof body !== 'string') throw Error("Request body must be a string");
+		if (!body || !headers) throw Error("Input request is not valid");
+		if (typeof body !== 'string') throw Error("Request body must be a string");
 		const client = ctx.fetch('client') as JsonableObject;
-		const serverData = ctx.fetch('server_data') as { jwk: JWK, url: string , authenticationUrl: string };
-		if(!serverData['jwk'] || !serverData['url']) throw Error("Server data is missing some parameters");
+		const serverData = ctx.fetch('server_data') as { jwk: JWK, url: string, authenticationUrl: string };
+		if (!serverData['jwk'] || !serverData['url']) throw Error("Server data is missing some parameters");
 		const expires_in = ctx.fetch('expires_in') as number;
 
 		const request = new Request({
@@ -227,6 +222,33 @@ export const createRequestUri = p.new(
 			authorizationCodeLifetime: 5 * 60   // 5 minutes.
 		}
 		const res = await new AuthorizeHandler(authorize_options).handle_par(request, response, expires_in);
+
+		return ctx.pass(res);
+	},
+);
+
+
+/**
+ * @internal
+ */
+//Sentence that given an access token return the authorization_details
+export const getClaims = p.new(
+	['token', 'server_data'],
+	'get claims from token',
+	async (ctx) => {
+		const serverData = ctx.fetch('server_data') as { jwk: JWK, url: string, authenticationUrl: string };
+		const accessToken = ctx.fetch('token') as string;
+
+		const options = {
+			accessTokenLifetime: 60 * 60, // 1 hour.
+			refreshTokenLifetime: 60 * 60 * 24 * 14, // 2 weeks.
+			allowExtendedTokenAttributes: true,
+			requireClientAuthentication: {}, // defaults to true for all grant types
+		};
+
+		const model = getInMemoryCache(serverData, options);
+
+		const res = await model.getClaimsFromToken(accessToken);
 
 		return ctx.pass(res);
 	},
