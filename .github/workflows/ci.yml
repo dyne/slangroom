@@ -49,7 +49,7 @@ jobs:
         working-directory: ./pkg/browser
 
       - name: Check the documentation
-        run: pnpm docs:ci
+        run: pnpm run docs:ci
 
 #       - name: Upload coverage reports to Codecov
 #         uses: codecov/codecov-action@v3
