@@ -3,6 +3,7 @@ import { defineConfig } from 'vitepress'
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "Slangroom",
+  base: "/slangroom/",
   description: "🎮 Enhance zencode smart contracts with your slang ",
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
