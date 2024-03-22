@@ -34,7 +34,7 @@ jobs:
       - name: Linting
         continue-on-error: true
         run: pnpm lint
-      
+
       - run: ./pkg/pocketbase/test/pocketbase serve &
 
       - name: Run the tests
@@ -47,6 +47,9 @@ jobs:
           pnpm build
           pnpm exec playwright test
         working-directory: ./pkg/browser
+
+      - name: Check the documentation
+        run: pnpm docs:ci
 
 #       - name: Upload coverage reports to Codecov
 #         uses: codecov/codecov-action@v3
