@@ -9,8 +9,8 @@ export default defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: 'Home', link: '/' },
-      { text: 'Examples', link: '/markdown-examples' },
-      { text: 'Reference', link: '/statements/index' },
+      { text: 'Examples', link: '/examples/' },
+      { text: 'Reference', link: '/statements/' },
     ],
 
     sidebar: [
@@ -24,8 +24,9 @@ export default defineConfig({
     ],
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/dyne/slangroom' },
-      { icon: 'twitter', link: 'https://x.com/dyneorg' }
+      { icon: 'github', link: 'https://socials.dyne.org/github' },
+      { icon: 'npm', link: 'https://www.npmjs.com/search?q=%40slangroom' },
+      { icon: 'mastodon', link: 'https://socials.dyne.org/mastodon' },
     ]
   }
 })
