@@ -1,38 +1,44 @@
 {
-	"name": "slangroom",
-	"version": "0.0.3",
-	"description": "Enhance zencode smart contracts with your slang dialect",
-	"repository": "https://github.com/dyne/slangroom",
-	"author": {
-		"name": "Puria Nafisi Azizi",
-		"email": "puria@dyne.org"
-	},
-	"license": "AGPL-3.0-only",
-	"scripts": {
-		"lint": "eslint --ext .ts pkg/*/src pkg/*/test",
-		"format": "prettier --ignore-path .gitignore --write '**/*.+(js|ts|json|html)'",
-		"test": "pnpm build && pnpm -F @slangroom/* exec ava --verbose build/esm/test",
-		"coverage": "c8 -r text -r lcov -o .coverage --exclude '**/test/' pnpm test",
-		"clean": "rm -rf .coverage && pnpm -F @slangroom/* exec -- rm -rf build",
-		"docs": "node docs/generate_syntax.mjs",
-		"build": "pnpm -F @slangroom/* exec tsc --outdir build/esm --module node16",
-		"publish:ci": "lerna version --no-changelog --conventional-commits --yes && pnpm publish -r --no-git-checks"
-	},
-	"devDependencies": {
-		"@lerna-lite/publish": "^2.7.2",
-		"@types/node": "^20.10.4",
-		"@typescript-eslint/eslint-plugin": "^6.13.2",
-		"@typescript-eslint/parser": "^6.13.2",
-		"ava": "^5.3.1",
-		"c8": "^8.0.1",
-		"esbuild": "^0.19.9",
-		"eslint": "^8.55.0",
-		"eslint-config-prettier": "^9.1.0",
-		"nock": "^13.4.0",
-		"prettier": "^3.1.1",
-		"ts-node": "^10.9.2",
-		"tslib": "^2.6.2",
-		"typedoc": "^0.25.4",
-		"typescript": "5.2.2"
-	}
+  "name": "slangroom",
+  "version": "0.0.3",
+  "description": "Enhance zencode smart contracts with your slang dialect",
+  "repository": "https://github.com/dyne/slangroom",
+  "author": {
+    "name": "Puria Nafisi Azizi",
+    "email": "puria@dyne.org"
+  },
+  "license": "AGPL-3.0-only",
+  "scripts": {
+    "lint": "eslint --ext .ts pkg/*/src pkg/*/test",
+    "format": "prettier --ignore-path .gitignore --write '**/*.+(js|ts|json|html)'",
+    "test": "pnpm build && pnpm -F @slangroom/* exec ava --verbose build/esm/test",
+    "coverage": "c8 -r text -r lcov -o .coverage --exclude '**/test/' pnpm test",
+    "clean": "rm -rf .coverage && pnpm -F @slangroom/* exec -- rm -rf build",
+    "build": "pnpm -F @slangroom/* exec tsc --outdir build/esm --module node16",
+    "publish:ci": "lerna version --no-changelog --conventional-commits --yes && pnpm publish -r --no-git-checks",
+    "docs:api": "node docs/statements/index.mjs",
+    "docs:ci": "node docs/statements/index.mjs ci",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs",
+	"docs": "pnpm run docs:api && pnpm run docs:build"
+  },
+  "devDependencies": {
+    "@lerna-lite/publish": "^2.7.2",
+    "@types/node": "^20.10.4",
+    "@typescript-eslint/eslint-plugin": "^6.13.2",
+    "@typescript-eslint/parser": "^6.13.2",
+    "ava": "^5.3.1",
+    "c8": "^8.0.1",
+    "esbuild": "^0.19.9",
+    "eslint": "^8.55.0",
+    "eslint-config-prettier": "^9.1.0",
+    "nock": "^13.4.0",
+    "prettier": "^3.1.1",
+    "ts-node": "^10.9.2",
+    "tslib": "^2.6.2",
+    "typedoc": "^0.25.4",
+    "typescript": "5.2.2",
+    "vitepress": "^1.0.1"
+  }
 }

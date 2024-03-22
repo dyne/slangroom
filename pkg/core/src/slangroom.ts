@@ -99,6 +99,10 @@ export class Slangroom {
 		Object.keys(paramsThen.data).forEach(k => (paramsThen.data[k] == null) && delete paramsThen.data[k]);
 		return { result: paramsThen.data, logs: zout.logs };
 	}
+
+	getPlugin() {
+		return this.#plugins
+	}
 }
 
 /**

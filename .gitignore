@@ -42,7 +42,9 @@
 !/pkg/browser/public/index.html
 
 # shitdocs
-!/docs/**
+!/docs/**/*.md
+!/docs/.vitepress/config.mts
+!/docs/statements/**/*
 
 node_modules
 

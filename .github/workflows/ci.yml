@@ -34,7 +34,7 @@ jobs:
       - name: Linting
         continue-on-error: true
         run: pnpm lint
-      
+
       - run: ./pkg/pocketbase/test/pocketbase serve &
 
       - name: Run the tests
@@ -48,10 +48,44 @@ jobs:
           pnpm exec playwright test
         working-directory: ./pkg/browser
 
-#       - name: Upload coverage reports to Codecov
-#         uses: codecov/codecov-action@v3
-#         env:
-#           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      - name: Check the documentation
+        run: pnpm run docs:ci
+
+  build_docs:
+    runs-on: ubuntu-latest
+    needs: build_and_test
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: 🛎️ Checkout
+        uses: actions/checkout@v4
+      - name: 🎯 Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - name: 📖 Setup Pages
+        uses: actions/configure-pages@v4
+      - name: ⏬ Install dependencies
+        run: pnpm install
+      - name: 🏗️ Build with VitePress
+        run: pnpm docs:build
+      - name: ⏫ Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/.vitepress/dist
+
+  deploy_docs:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: build_docs
+    runs-on: ubuntu-latest
+    name: Deploy
+    steps:
+      - name: 📡 Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
   publish:
     runs-on: ubuntu-latest
     needs: build_and_test
