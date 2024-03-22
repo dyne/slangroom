@@ -54,6 +54,54 @@ importers:
         specifier: 5.2.2
         version: 5.2.2
 
+  docs/statements:
+    dependencies:
+      '@slangroom/core':
+        specifier: workspace:^
+        version: link:../../pkg/core
+      '@slangroom/ethereum':
+        specifier: workspace:^
+        version: link:../../pkg/ethereum
+      '@slangroom/fs':
+        specifier: workspace:^
+        version: link:../../pkg/fs
+      '@slangroom/git':
+        specifier: workspace:^
+        version: link:../../pkg/git
+      '@slangroom/helpers':
+        specifier: workspace:^
+        version: link:../../pkg/helpers
+      '@slangroom/http':
+        specifier: workspace:^
+        version: link:../../pkg/http
+      '@slangroom/oauth':
+        specifier: workspace:^
+        version: link:../../pkg/oauth
+      '@slangroom/pocketbase':
+        specifier: workspace:^
+        version: link:../../pkg/pocketbase
+      '@slangroom/qrcode':
+        specifier: workspace:^
+        version: link:../../pkg/qrcode
+      '@slangroom/redis':
+        specifier: workspace:^
+        version: link:../../pkg/redis
+      '@slangroom/shell':
+        specifier: workspace:^
+        version: link:../../pkg/shell
+      '@slangroom/timestamp':
+        specifier: workspace:^
+        version: link:../../pkg/timestamp
+      '@slangroom/wallet':
+        specifier: workspace:^
+        version: link:../../pkg/wallet
+      '@slangroom/zencode':
+        specifier: workspace:^
+        version: link:../../pkg/zencode
+      markdown-table:
+        specifier: ^3.0.3
+        version: 3.0.3
+
   pkg/browser:
     dependencies:
       '@slangroom/core':
@@ -4154,6 +4202,10 @@ packages:
     resolution: {integrity: sha512-hdN1wVrZbb29eBGiGjJbeP8JbKjq1urkHJ/LIP/NY48MZ1QVXUsQBV1G1zvYFHn1XE06cwjBsOI2K3Ulnj1YXQ==}
     engines: {node: '>=8'}
     dev: true
+
+  /markdown-table@3.0.3:
+    resolution: {integrity: sha512-Z1NL3Tb1M9wH4XESsCDEksWoKTdlUafKc4pt0GRwjUyXaCFZ+dc3g2erqB6zm3szA2IUSi7VnPI+o/9jnxh9hw==}
+    dev: false
 
   /marked@4.3.0:
     resolution: {integrity: sha512-PRsaiG84bK+AMvxziE/lCFss8juXjNaWzVbN5tXAm4XjeaS9NAHhop+PjQxz2A9h8Q4M/xGmzP8vqNwy6JeK0A==}
