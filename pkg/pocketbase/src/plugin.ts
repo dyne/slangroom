@@ -1,7 +1,9 @@
-import PocketBase from 'pocketbase';
+import PocketBase, { AsyncAuthStore } from 'pocketbase';
 import type { FullListOptions, ListResult, RecordModel, RecordOptions } from 'pocketbase';
 import { Plugin } from '@slangroom/core';
 import { z } from 'zod';
+import { Preferences } from '@capacitor/preferences';
+
 
 let pb: PocketBase;
 const p = new Plugin();
@@ -99,6 +101,26 @@ export const setupClient = p.new(['pb_address'], 'create pb_client', async (ctx)
 	if (typeof address !== 'string') return ctx.fail('Invalid address');
 	try {
 		pb = new PocketBase(address);
+		if (!(await isPbRunning())) return ctx.fail('Client is not running');
+		return ctx.pass('pb client successfully created');
+	} catch (e) {
+		throw new Error(e)
+	}
+});
+
+export const setupCapacitorClient = p.new(['pb_address'], 'create capacitor pb_client', async (ctx) => {
+	const address = ctx.fetch('pb_address');
+	const PB_AUTH_KEY:string = 'pb_auth'
+
+	const store = new AsyncAuthStore({
+		save: async (serialized) => Preferences.set({
+			key:PB_AUTH_KEY, value:serialized,
+		}),
+		initial: Preferences.get({ key:PB_AUTH_KEY }),
+	});
+	if (typeof address !== 'string') return ctx.fail('Invalid address');
+	try {
+		pb = new PocketBase(address, store);
 		if (!(await isPbRunning())) return ctx.fail('Client is not running');
 		return ctx.pass('pb client successfully created');
 	} catch (e) {

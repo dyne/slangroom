@@ -46,6 +46,22 @@ test('should create a new slangroom client', async (t) => {
 	t.is(res.result['res'], 'pb client successfully created');
 });
 
+test('should create a new slangroom capacitor client', async (t) => {
+	const script = `
+    Rule unknown ignore
+    Given I send pb_address 'pb_address' and create capacitor pb_client and output into 'res'
+    Given I have a 'string' named 'res'
+    Then print data
+    `;
+	const slangroom = new Slangroom(pocketbase);
+	const res = await slangroom.execute(script, {
+		data: {
+			pb_address,
+		},
+	});
+	t.is(res.result['res'], 'pb client successfully created');
+});
+
 test('should login with credentials', async (t) => {
 	const script = `
     Rule unknown ignore
