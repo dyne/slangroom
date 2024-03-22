@@ -64,7 +64,7 @@ let mdDocumentation = "# Tables of all slangroom statements\n\n";
 if (pkgNames.length != 0) {
 	throw new Error(`Not all packages are documented, missing: ${pkgNames}`)
 }
-const outPath = path.resolve(__dirname, "./") + '/phraseTable.md';
+const outPath = path.resolve(__dirname, "./") + '/index.md';
 const content = fs.readFileSync(outPath);
 
 if (process.argv[2] === 'ci' && content != mdDocumentation) {
