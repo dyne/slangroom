@@ -45,6 +45,8 @@
 !/docs/**/*.md
 !/docs/.vitepress/config.mts
 !/docs/statements/**/*
+!/README.md
+!/LICENSE
 
 node_modules
 
