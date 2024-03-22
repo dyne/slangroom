@@ -22,6 +22,10 @@ import {zencode} from "@slangroom/zencode";
 const IGNORED_PKG = ['browser', 'core', 'deps', 'ignored', 'json-schema', 'shared']
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
+const ourDirPath = path.resolve(__dirname, "./");
+const descriptionPath = ourDirPath + '/description.md'
+const description = fs.readFileSync(descriptionPath);
+let mdDocumentation = `${description}\n## Tables of all slangroom statements\n\n`;
 
 // utility to check that all packages are documented
 const pkgPath = path.resolve(__dirname, "../../pkg");
@@ -43,8 +47,6 @@ const generateTable = (plugin, name) => {
 	mdDocumentation = mdDocumentation.concat(`## ${name} plugin\n${mdTable}\n\n`)
 }
 
-let mdDocumentation = "# Tables of all slangroom statements\n\n";
-
 [
     [ethereum, 'ethereum'],
 	[sl_fs, 'fs'],
@@ -64,7 +66,8 @@ let mdDocumentation = "# Tables of all slangroom statements\n\n";
 if (pkgNames.length != 0) {
 	throw new Error(`Not all packages are documented, missing: ${pkgNames}`)
 }
-const outPath = path.resolve(__dirname, "./") + '/index.md';
+
+const outPath = ourDirPath + '/index.md';
 const content = fs.readFileSync(outPath);
 
 if (process.argv[2] === 'ci' && content != mdDocumentation) {
