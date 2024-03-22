@@ -16,7 +16,7 @@ jobs:
       fail-fast: false
       max-parallel: 1
       matrix:
-        node: [18, 20]
+        node: [ 20 ]
 
     steps:
       - uses: actions/checkout@v3
@@ -63,6 +63,10 @@ jobs:
         with:
           node-version: 20
           cache: pnpm
+      - uses: pnpm/action-setup@v2
+        name: 🔨 Install pnpm
+        with:
+          version: 8
       - name: 📖 Setup Pages
         uses: actions/configure-pages@v4
       - name: ⏬ Install dependencies
