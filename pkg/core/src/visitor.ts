@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2024 Dyne.org foundation
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import type { Cst, Match, PluginMapKey } from '@slangroom/core';
 import type { Jsonable, ZenParams } from '@slangroom/shared';
 

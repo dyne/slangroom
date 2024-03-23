@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2024 Dyne.org foundation
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import type { JsonableArray, JsonableObject } from '@slangroom/shared';
 import { Plugin, type PluginExecutor } from '@slangroom/core';
 import axios, { type AxiosRequestConfig } from 'axios';

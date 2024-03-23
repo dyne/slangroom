@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2024 Dyne.org foundation
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import type { JsonableObject } from '@slangroom/shared';
 import { zencode_exec } from '@slangroom/deps/zenroom';
 
