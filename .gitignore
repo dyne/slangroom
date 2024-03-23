@@ -45,6 +45,9 @@
 !/docs/**/*.md
 !/docs/.vitepress/config.mts
 !/docs/statements/**/*
+!/docs/examples/**/*.data
+!/docs/examples/**/*.keys
+!/docs/examples/**/*.zen
 !/README.md
 !/LICENSE
 

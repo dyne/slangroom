@@ -1,0 +1,4 @@
+Given I have a 'string' named 'address'
+Given I connect to 'address' and do get and output into 'result'
+Then print all data
+Then print the string 'result'
