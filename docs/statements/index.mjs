@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2024 Dyne.org foundation
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import fs from "fs";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
