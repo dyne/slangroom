@@ -5,6 +5,7 @@
 # leeeegal
 !/LICENSE
 !/LICENSES/*
+!/**/*.license
 
 # shithub
 !/.github/workflows/*.yml
