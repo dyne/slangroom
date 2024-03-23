@@ -2,6 +2,10 @@
 *
 !*/
 
+# leeeegal
+!/LICENSE
+!/LICENSES/*
+
 # shithub
 !/.github/workflows/*.yml
 
@@ -49,7 +53,6 @@
 !/docs/examples/**/*.keys
 !/docs/examples/**/*.zen
 !/README.md
-!/LICENSE
 
 node_modules
 
