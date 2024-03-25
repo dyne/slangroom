@@ -81,84 +81,76 @@ neither the open/connect part nor the parameters part are present.
 | open/connect | params         | phrase               |
 | ------------ | -------------- | -------------------- |
 | connect      |                | do get               |
-| connect      | object         | do get               |
 | connect      | headers        | do get               |
-| connect      | object,headers | do get               |
 | connect      |                | do sequential get    |
-| connect      | object         | do sequential get    |
 | connect      | headers        | do sequential get    |
-| connect      | object,headers | do sequential get    |
 | connect      |                | do parallel get      |
-| connect      | object         | do parallel get      |
 | connect      | headers        | do parallel get      |
-| connect      | object,headers | do parallel get      |
 | connect      |                | do same get          |
-| connect      | object         | do same get          |
 | connect      | headers        | do same get          |
-| connect      | object,headers | do same get          |
 | connect      |                | do post              |
-| connect      | object         | do post              |
 | connect      | headers        | do post              |
+| connect      | object         | do post              |
 | connect      | object,headers | do post              |
 | connect      |                | do sequential post   |
-| connect      | object         | do sequential post   |
 | connect      | headers        | do sequential post   |
+| connect      | object         | do sequential post   |
 | connect      | object,headers | do sequential post   |
 | connect      |                | do parallel post     |
-| connect      | object         | do parallel post     |
 | connect      | headers        | do parallel post     |
+| connect      | object         | do parallel post     |
 | connect      | object,headers | do parallel post     |
 | connect      |                | do same post         |
-| connect      | object         | do same post         |
 | connect      | headers        | do same post         |
+| connect      | object         | do same post         |
 | connect      | object,headers | do same post         |
 | connect      |                | do put               |
-| connect      | object         | do put               |
 | connect      | headers        | do put               |
+| connect      | object         | do put               |
 | connect      | object,headers | do put               |
 | connect      |                | do sequential put    |
-| connect      | object         | do sequential put    |
 | connect      | headers        | do sequential put    |
+| connect      | object         | do sequential put    |
 | connect      | object,headers | do sequential put    |
 | connect      |                | do parallel put      |
-| connect      | object         | do parallel put      |
 | connect      | headers        | do parallel put      |
+| connect      | object         | do parallel put      |
 | connect      | object,headers | do parallel put      |
 | connect      |                | do same put          |
-| connect      | object         | do same put          |
 | connect      | headers        | do same put          |
+| connect      | object         | do same put          |
 | connect      | object,headers | do same put          |
 | connect      |                | do patch             |
-| connect      | object         | do patch             |
 | connect      | headers        | do patch             |
+| connect      | object         | do patch             |
 | connect      | object,headers | do patch             |
 | connect      |                | do sequential patch  |
-| connect      | object         | do sequential patch  |
 | connect      | headers        | do sequential patch  |
+| connect      | object         | do sequential patch  |
 | connect      | object,headers | do sequential patch  |
 | connect      |                | do parallel patch    |
-| connect      | object         | do parallel patch    |
 | connect      | headers        | do parallel patch    |
+| connect      | object         | do parallel patch    |
 | connect      | object,headers | do parallel patch    |
 | connect      |                | do same patch        |
-| connect      | object         | do same patch        |
 | connect      | headers        | do same patch        |
+| connect      | object         | do same patch        |
 | connect      | object,headers | do same patch        |
 | connect      |                | do delete            |
-| connect      | object         | do delete            |
 | connect      | headers        | do delete            |
+| connect      | object         | do delete            |
 | connect      | object,headers | do delete            |
 | connect      |                | do sequential delete |
-| connect      | object         | do sequential delete |
 | connect      | headers        | do sequential delete |
+| connect      | object         | do sequential delete |
 | connect      | object,headers | do sequential delete |
 | connect      |                | do parallel delete   |
-| connect      | object         | do parallel delete   |
 | connect      | headers        | do parallel delete   |
+| connect      | object         | do parallel delete   |
 | connect      | object,headers | do parallel delete   |
 | connect      |                | do same delete       |
-| connect      | object         | do same delete       |
 | connect      | headers        | do same delete       |
+| connect      | object         | do same delete       |
 | connect      | object,headers | do same delete       |
 
 ## oauth plugin
