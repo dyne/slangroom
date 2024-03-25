@@ -57,6 +57,7 @@
 !/docs/examples/**/*.data
 !/docs/examples/**/*.keys
 !/docs/examples/**/*.zen
+!/docs/examples/license_example.sh
 !/README.md
 
 node_modules
