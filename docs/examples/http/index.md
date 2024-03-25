@@ -13,6 +13,13 @@ SPDX-License-Identifier: CC-BY-NC-SA-4.0
 <<< @/examples/http/get.keys{json}
 :::
 
+### http get with headers
+::: code-group
+<<< @/examples/http/get_with_headers.zen{2 gherkin:line-numbers}
+<<< @/examples/http/get_with_headers.data{json}
+<<< @/examples/http/get_with_headers.keys{json}
+:::
+
 ### http post
 ::: code-group
 <<< @/examples/http/post.zen{2 gherkin:line-numbers}
