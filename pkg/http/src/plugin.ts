@@ -129,9 +129,11 @@ export const sames = {} as typeof defaults;
 		}
 
 		x[m] = p.new('connect', phrase, cb);
-		x[`${m}Object`] = p.new('connect', ['object'], phrase, cb);
 		x[`${m}Headers`] = p.new('connect', ['headers'], phrase, cb);
-		x[`${m}ObjectHeaders`] = p.new('connect', ['object', 'headers'], phrase, cb);
+		if (m != 'get') {
+			x[`${m}Object`] = p.new('connect', ['object'], phrase, cb);
+			x[`${m}ObjectHeaders`] = p.new('connect', ['object', 'headers'], phrase, cb);
+		}
 	});
 });
 
