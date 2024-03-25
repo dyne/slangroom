@@ -1,0 +1,8 @@
+{
+	"body": {
+		"hello": "world"
+	},
+	"headers": {
+		"Content-Type": "application/json"
+	}
+}
