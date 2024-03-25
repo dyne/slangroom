@@ -1,4 +1,4 @@
-Given I have a 'string' named 'address'
+Rule unknown ignore
 Given I connect to 'address' and do get and output into 'result'
-Then print all data
+Given I have a 'string' named 'result'
 Then print the string 'result'
