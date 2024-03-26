@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2024 Dyne.org foundation
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 name: 🧪 Lint and test
 
 on:
@@ -6,9 +10,15 @@ on:
       - main
   pull_request:
 
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref_name }}
   cancel-in-progress: true
+
 jobs:
   build_and_test:
     runs-on: ubuntu-latest
@@ -16,31 +26,28 @@ jobs:
       fail-fast: false
       max-parallel: 1
       matrix:
-        node: [18, 20]
+        node: [ 20 ]
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2
-        name: Install pnpm
+      - name: 🛎️ Checkout
+        uses: actions/checkout@v4
+      - name: 🔨 Install pnpm
+        uses: pnpm/action-setup@v3
         with:
           version: 8
-
-      - run: pnpm recursive install
-
-      - uses: supercharge/redis-github-action@1.4.0
+      - name: ⏬ Install dependencies
+        run: pnpm recursive install
+      - uses: supercharge/redis-github-action@1.8.0
         with:
           redis-version: 6
-
-      - name: Linting
+      - name:  Linting
         continue-on-error: true
         run: pnpm lint
-      
-      - run: ./pkg/pocketbase/test/pocketbase serve &
-
-      - name: Run the tests
+      - name: 🤖 Start pocketbase
+        run: ./pkg/pocketbase/test/pocketbase serve &
+      - name: 🧪 Run the tests
         run: pnpm coverage
-
-      - name: Setup playwright
+      - name: 📨 Setup playwright
         run: |
           npx playwright install
           npx playwright install-deps
@@ -48,34 +55,70 @@ jobs:
           pnpm exec playwright test
         working-directory: ./pkg/browser
 
-#       - name: Upload coverage reports to Codecov
-#         uses: codecov/codecov-action@v3
-#         env:
-#           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+  build_docs:
+    runs-on: ubuntu-latest
+    needs: build_and_test
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: 🛎️ Checkout
+        uses: actions/checkout@v4
+      - name: 🎯 Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: pnpm/action-setup@v3
+        name: 🔨 Install pnpm
+        with:
+          version: 8
+      - name: 📖 Setup Pages
+        uses: actions/configure-pages@v4
+      - name: ⏬ Install dependencies
+        run: pnpm install
+      - name: 🏗️ update sentences tabled and build the docs
+        run: pnpm build && pnpm run docs
+      - name: ⏫ Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/.vitepress/dist
+
+  deploy_docs:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    needs: build_docs
+    runs-on: ubuntu-latest
+    name: Deploy documentation
+    steps:
+      - name: 📡 Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
   publish:
     runs-on: ubuntu-latest
     needs: build_and_test
     if: github.ref == 'refs/heads/main'
     steps:
-    - uses: actions/checkout@v3
+    - name: 🛎️ Checkout
+      uses: actions/checkout@v4
       with:
         fetch-depth: "0"
-    - uses: actions/setup-node@v3
+    - name: 🎯 Setup Node
+      uses: actions/setup-node@v4
       with:
-        node-version: 16.x
+        node-version: 20.x
         registry-url: 'https://registry.npmjs.org'
-    - uses: pnpm/action-setup@v2
-      name: Install pnpm
+    - name: 🔨 Install pnpm
+      uses: pnpm/action-setup@v3
       with:
         version: 8
-    - name: Build all
+    - name: ⏬ Install dependencies
       run: pnpm i
-    - name: Build all
+    - name: 🏗️ Build all
       run: pnpm build
-    - name: Build @slangroom/browser
+    - name: 🌍 Build @slangroom/browser
       run: pnpm build
       working-directory: ./pkg/browser
-    - name: Release
+    - name: 📦 Releases
       run: |
         git config --global user.email "dev@dyne.org" && git config --global user.name "Dev Dyne.org"
         echo "//registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN" > .npmrc

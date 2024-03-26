@@ -1,0 +1,4 @@
+{
+	"file_path_1": "path/to/file/that/should/exists/from/FILES_DIR",
+	"file_path_2": "path/to/file/that/should/not/exists/from/FILES_DIR"
+}

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2024 Dyne.org foundation
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import { getIgnoredStatements } from '@slangroom/ignored';
 import { type ZenOutput, ZenParams, zencodeExec } from '@slangroom/shared';
 import { lex, parse, visit, Plugin, PluginMap, PluginContextImpl } from '@slangroom/core';
@@ -98,6 +102,10 @@ export class Slangroom {
 		// remove null values from output
 		Object.keys(paramsThen.data).forEach(k => (paramsThen.data[k] == null) && delete paramsThen.data[k]);
 		return { result: paramsThen.data, logs: zout.logs };
+	}
+
+	getPlugin() {
+		return this.#plugins
 	}
 }
 

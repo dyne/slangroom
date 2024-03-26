@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2024 Dyne.org foundation
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import ava, { TestFn } from 'ava';
 import { Web3 } from 'web3';
 import { PluginContextTest } from '@slangroom/core';

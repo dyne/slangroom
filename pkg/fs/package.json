@@ -1,6 +1,6 @@
 {
 	"name": "@slangroom/fs",
-	"version": "1.27.0",
+	"version": "1.27.6",
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
 		"axios": "^1.6.2",

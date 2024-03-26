@@ -1,6 +1,6 @@
 {
 	"name": "@slangroom/deps",
-	"version": "1.9.5",
+	"version": "1.27.6",
 	"dependencies": {
 		"chevrotain": "^10.5.0"
 	},

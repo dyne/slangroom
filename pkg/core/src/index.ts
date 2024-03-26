@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2024 Dyne.org foundation
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 export * from '@slangroom/core/lexer';
 export * from '@slangroom/core/parser';
 export * from '@slangroom/core/lexer';
