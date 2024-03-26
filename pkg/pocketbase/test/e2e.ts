@@ -28,7 +28,7 @@ const randomString = ()=>(Math.random() + 1).toString(36).substring(7);
 test('should create a new slangroom client', async (t) => {
 	const script = `
     Rule unknown ignore
-    Given I send pb_address 'pb_address' and connect to pb_address and output into 'res'
+    Given I connect to 'pb_address' and start pb client and output into 'res'
     Given I have a 'string' named 'res'
     Then print data
     `;
@@ -44,7 +44,7 @@ test('should create a new slangroom client', async (t) => {
 test('should create a new slangroom capacitor client', async (t) => {
 	const script = `
     Rule unknown ignore
-    Given I send pb_address 'pb_address' and connect capacitor app to pb_client and output into 'res'
+    Given I connect to 'pb_address' and start capacitor pb client and output into 'res'
     Given I have a 'string' named 'res'
     Then print data
     `;
@@ -60,7 +60,7 @@ test('should create a new slangroom capacitor client', async (t) => {
 test('should login with credentials', async (t) => {
 	const script = `
     Rule unknown ignore
-    Given I send pb_address 'pb_address' and connect to pb_address
+    Given I connect to 'pb_address' and start pb client
     Given I send my_credentials 'gino' and login and output into 'output'
     Given I have a 'string dictionary' named 'output'
     Then print data
@@ -83,7 +83,7 @@ test('should login with credentials', async (t) => {
 test('should retrieve full list of records', async (t) => {
 	const script = `
     Rule unknown ignore
-    Given I send pb_address 'pb_address' and connect to pb_address
+    Given I connect to 'pb_address' and start pb client
     Given I send list_parameters 'list_parameters' and get some records and output into 'output'
     Given I have a 'string dictionary' named 'output'
     Then print data
@@ -106,7 +106,7 @@ test('should retrieve full list of records', async (t) => {
 test('should retrieve paginated list of records', async (t) => {
 	const script = `
     Rule unknown ignore
-    Given I send pb_address 'pb_address' and connect to pb_address
+    Given I connect to 'pb_address' and start pb client
     Given I send list_parameters 'list_parameters' and get some records and output into 'output'
     Given I have a 'string dictionary' named 'output'
     Then print data
@@ -140,7 +140,7 @@ test('should retrieve paginated list of records', async (t) => {
 test('should retrieve first record that match filters', async (t) => {
 	const script = `
     Rule unknown ignore
-    Given I send pb_address 'pb_address' and connect to pb_address
+    Given I connect to 'pb_address' and start pb client
     Given I send list_parameters 'list_parameters' and get some records and output into 'output'
     Given I have a 'string dictionary' named 'output'
     Then print data
@@ -167,7 +167,7 @@ test('should retrieve first record that match filters', async (t) => {
 test('should retrieve one record', async (t) => {
 	const script = `
     Rule unknown ignore
-    Given I send pb_address 'pb_address' and connect to pb_address
+    Given I connect to 'pb_address' and start pb client
     Given I send show_parameters 'show_parameters' and get one record and output into 'output'
     Given I have a 'string dictionary' named 'output'
     Then print data
@@ -197,7 +197,7 @@ test('should create a record', async (t) => {
 
 	const script = `
     Rule unknown ignore
-    Given I send pb_address 'pb_address' and connect to pb_address
+    Given I connect to 'pb_address' and start pb client
     Given I send my_credentials 'my_credentials' and login
     Given I send create_parameters 'create_parameters' and send record_parameters 'record_parameters' and create record and output into 'output'
     Given I have a 'string dictionary' named 'output'
@@ -234,7 +234,7 @@ test('should update a record', async (t) => {
 
     const scriptCreate = `
     Rule unknown ignore
-    Given I send pb_address 'pb_address' and connect to pb_address
+    Given I connect to 'pb_address' and start pb client
     Given I send my_credentials 'my_credentials' and login
     Given I send create_parameters 'create_parameters' and send record_parameters 'record_parameters' and create record and output into 'output'
     Given I have a 'string dictionary' named 'output'
@@ -243,7 +243,7 @@ test('should update a record', async (t) => {
 
 	const scriptUpdate = `
     Rule unknown ignore
-    Given I send pb_address 'pb_address' and connect to pb_address
+    Given I connect to 'pb_address' and start pb client
     Given I send my_credentials 'my_credentials' and login
     Given I send update_parameters 'update_parameters' and send record_parameters 'record_parameters' and update record and output into 'output'
     Given I have a 'string dictionary' named 'output'
@@ -315,7 +315,7 @@ test('should update a record', async (t) => {
 test('should delete a record', async (t) => {
     const scriptCreate = `
     Rule unknown ignore
-    Given I send pb_address 'pb_address' and connect to pb_address
+    Given I connect to 'pb_address' and start pb client
     Given I send my_credentials 'my_credentials' and login
     Given I send create_parameters 'create_parameters' and send record_parameters 'record_parameters' and create record and output into 'output'
     Given I have a 'string dictionary' named 'output'
@@ -324,7 +324,7 @@ test('should delete a record', async (t) => {
 
 	const script = `
     Rule unknown ignore
-    Given I send pb_address 'pb_address' and connect to pb_address
+    Given I connect to 'pb_address' and start pb client
     Given I send my_credentials 'my_credentials' and login
     Given I send delete_parameters 'delete_parameters' and delete record and output into 'output'
     Given I have a 'string' named 'output'
@@ -383,7 +383,7 @@ test('should delete a record', async (t) => {
 test('should make a request', async (t) => {
 	const script = `
 	Rule unknown ignore
-	Given I send pb_address 'pb_address' and connect to pb_address
+	Given I connect to 'pb_address' and start pb client
 	Given I send my_credentials 'my_credentials' and login
 	Given I send url 'url' and send send_parameters 'send_parameters' and send request and output into 'output'
 	Given I have a 'string dictionary' named 'output'

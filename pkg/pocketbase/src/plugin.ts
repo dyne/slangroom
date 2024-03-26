@@ -100,8 +100,8 @@ const createRecordOptions = (p: RecordBaseParameters) => {
 /**
  * @internal
  */
-export const setupClient = p.new(['pb_address'], 'connect to pb_address', async (ctx) => {
-	const address = ctx.fetch('pb_address');
+export const setupClient = p.new('connect', 'start pb client', async (ctx) => {
+	const address = ctx.fetchConnect()[0];
 	if (typeof address !== 'string') return ctx.fail('Invalid address');
 	try {
 		pb = new PocketBase(address);
@@ -112,8 +112,8 @@ export const setupClient = p.new(['pb_address'], 'connect to pb_address', async 
 	}
 });
 
-export const setupCapacitorClient = p.new(['pb_address'], 'connect capacitor app to pb_client', async (ctx) => {
-	const address = ctx.fetch('pb_address');
+export const setupCapacitorClient = p.new('connect', 'start capacitor pb client', async (ctx) => {
+	const address = ctx.fetchConnect()[0];
 	const PB_AUTH_KEY:string = 'pb_auth'
 
 	const store = new AsyncAuthStore({
