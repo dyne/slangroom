@@ -29,28 +29,25 @@ jobs:
         node: [ 20 ]
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: pnpm/action-setup@v2
-        name: Install pnpm
+      - name: 🛎️ Checkout
+        uses: actions/checkout@v4
+      - name: 🎯 Setup Node
+        uses: pnpm/action-setup@v4
         with:
           version: 8
-
-      - run: pnpm recursive install
-
-      - uses: supercharge/redis-github-action@1.4.0
+      - name: ⏬ Install dependencies
+        run: pnpm recursive install
+      - uses: supercharge/redis-github-action@1.8.0
         with:
           redis-version: 6
-
-      - name: Linting
+      - name:  Linting
         continue-on-error: true
         run: pnpm lint
-
-      - run: ./pkg/pocketbase/test/pocketbase serve &
-
-      - name: Run the tests
+      - name: 🤖 Start pocketbase
+        run: ./pkg/pocketbase/test/pocketbase serve &
+      - name: 🧪 Run the tests
         run: pnpm coverage
-
-      - name: Setup playwright
+      - name: 📨 Setup playwright
         run: |
           npx playwright install
           npx playwright install-deps
@@ -90,7 +87,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     needs: build_docs
     runs-on: ubuntu-latest
-    name: Deploy
+    name: Deploy documentation
     steps:
       - name: 📡 Deploy to GitHub Pages
         id: deployment
@@ -101,25 +98,27 @@ jobs:
     needs: build_and_test
     if: github.ref == 'refs/heads/main'
     steps:
-    - uses: actions/checkout@v3
+    - name: 🛎️ Checkout
+      uses: actions/checkout@v4
       with:
         fetch-depth: "0"
-    - uses: actions/setup-node@v3
+    - name: 🎯 Setup Node
+      uses: actions/setup-node@4
       with:
-        node-version: 16.x
+        node-version: 20.x
         registry-url: 'https://registry.npmjs.org'
-    - uses: pnpm/action-setup@v2
-      name: Install pnpm
+    - name: 🔨 Install pnpm
+      uses: pnpm/action-setup@v3
       with:
         version: 8
-    - name: Build all
+    - name: ⏬ Install dependencies
       run: pnpm i
-    - name: Build all
+    - name: 🏗️ Build all
       run: pnpm build
-    - name: Build @slangroom/browser
+    - name: 🌍 Build @slangroom/browser
       run: pnpm build
       working-directory: ./pkg/browser
-    - name: Release
+    - name: 📦 Releases
       run: |
         git config --global user.email "dev@dyne.org" && git config --global user.name "Dev Dyne.org"
         echo "//registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN" > .npmrc
