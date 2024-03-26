@@ -162,16 +162,17 @@ neither the open/connect part nor the parameters part are present.
 |              | token,server_data                     | get claims from token       |
 
 ## pocketbase plugin
-| open/connect | params                              | phrase           |
-| ------------ | ----------------------------------- | ---------------- |
-|              | pb_address                          | create pb_client |
-|              | my_credentials                      | login            |
-|              | list_parameters                     | ask records      |
-|              | show_parameters                     | ask record       |
-|              | create_parameters,record_parameters | create record    |
-|              | update_parameters,record_parameters | update record    |
-|              | delete_parameters                   | delete record    |
-|              | url,send_parameters                 | send request     |
+| open/connect | params                              | phrase                             |
+| ------------ | ----------------------------------- | ---------------------------------- |
+|              | pb_address                          | connect to pb_address              |
+|              | pb_address                          | connect capacitor app to pb_client |
+|              | my_credentials                      | login                              |
+|              | list_parameters                     | get some records                   |
+|              | show_parameters                     | get one record                     |
+|              | create_parameters,record_parameters | create record                      |
+|              | update_parameters,record_parameters | update record                      |
+|              | delete_parameters                   | delete record                      |
+|              | url,send_parameters                 | send request                       |
 
 ## qrcode plugin
 | open/connect | params | phrase         |

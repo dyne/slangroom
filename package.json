@@ -21,24 +21,24 @@
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
-	"docs": "pnpm run docs:api && pnpm run docs:build"
+    "docs": "pnpm run docs:api && pnpm run docs:build"
   },
   "devDependencies": {
-    "@lerna-lite/publish": "^2.7.2",
-    "@types/node": "^20.10.4",
-    "@typescript-eslint/eslint-plugin": "^6.13.2",
-    "@typescript-eslint/parser": "^6.13.2",
-    "ava": "^5.3.1",
-    "c8": "^8.0.1",
-    "esbuild": "^0.19.9",
-    "eslint": "^8.55.0",
+    "@lerna-lite/publish": "^3.3.1",
+    "@types/node": "^20.11.30",
+    "@typescript-eslint/eslint-plugin": "^7.4.0",
+    "@typescript-eslint/parser": "^7.4.0",
+    "ava": "^6.1.2",
+    "c8": "^9.1.0",
+    "esbuild": "^0.20.2",
+    "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
-    "nock": "^13.4.0",
-    "prettier": "^3.1.1",
+    "nock": "^13.5.4",
+    "prettier": "^3.2.5",
     "ts-node": "^10.9.2",
     "tslib": "^2.6.2",
-    "typedoc": "^0.25.4",
-    "typescript": "5.2.2",
+    "typedoc": "^0.25.12",
+    "typescript": "5.4.3",
     "vitepress": "^1.0.1"
   }
 }
