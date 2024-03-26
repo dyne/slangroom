@@ -58,9 +58,6 @@ jobs:
           pnpm exec playwright test
         working-directory: ./pkg/browser
 
-      - name: Check the documentation
-        run: pnpm run docs:ci
-
   build_docs:
     runs-on: ubuntu-latest
     needs: build_and_test
