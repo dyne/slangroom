@@ -1,39 +1,30 @@
 import type {
 	ServerUrl,
-	ListParameters,
-	CreateRecordParameters,
 	Credentials,
-	RecordBaseParameters,
 	DeleteRecordParameters,
-	UpdateRecordParameters,
+	ListParameters,
 	ShowRecordParameters,
+	UpdateRecordParameters,
+	RecordBaseParameters,
 } from '@slangroom/pocketbase';
 import { pocketbase } from '@slangroom/pocketbase';
 import test from 'ava';
 import { Slangroom } from '@slangroom/core';
+import { JsonableObject } from '@slangroom/shared';
 
-// Starters / Signroom local test
-// const email = "userA@example.org";
-// const password = "userAuserA";
-// const pb_address = "http://127.0.0.1:8090/" as ServerUrl;
 
 const email = "test@test.eu";
 const password = "testtest";
 const pb_address = "http://127.0.0.1:8090/" as ServerUrl;
 
-type DataCreate = {
-        create_parameters: CreateRecordParameters;
-		pb_address: ServerUrl;
-		my_credentials: Credentials;
-		record_parameters: RecordBaseParameters;
-	};
+
 
 const randomString = ()=>(Math.random() + 1).toString(36).substring(7);
 
 test('should create a new slangroom client', async (t) => {
 	const script = `
     Rule unknown ignore
-    Given I send pb_address 'pb_address' and create pb_client and output into 'res'
+    Given I send pb_address 'pb_address' and connect to pb_address and output into 'res'
     Given I have a 'string' named 'res'
     Then print data
     `;
@@ -49,7 +40,7 @@ test('should create a new slangroom client', async (t) => {
 test('should create a new slangroom capacitor client', async (t) => {
 	const script = `
     Rule unknown ignore
-    Given I send pb_address 'pb_address' and create capacitor pb_client and output into 'res'
+    Given I send pb_address 'pb_address' and connect capacitor app to pb_client and output into 'res'
     Given I have a 'string' named 'res'
     Then print data
     `;
@@ -65,7 +56,7 @@ test('should create a new slangroom capacitor client', async (t) => {
 test('should login with credentials', async (t) => {
 	const script = `
     Rule unknown ignore
-    Given I send pb_address 'pb_address' and create pb_client
+    Given I send pb_address 'pb_address' and connect to pb_address
     Given I send my_credentials 'gino' and login and output into 'output'
     Given I have a 'string dictionary' named 'output'
     Then print data
@@ -88,23 +79,18 @@ test('should login with credentials', async (t) => {
 test('should retrieve full list of records', async (t) => {
 	const script = `
     Rule unknown ignore
-    Given I send pb_address 'pb_address' and create pb_client
-    Given I send list_parameters 'list_parameters' and ask records and output into 'output'
+    Given I send pb_address 'pb_address' and connect to pb_address
+    Given I send list_parameters 'list_parameters' and get some records and output into 'output'
     Given I have a 'string dictionary' named 'output'
     Then print data
     `;
 	const slangroom = new Slangroom(pocketbase);
 
-	const data: { pb_address: ServerUrl; list_parameters: ListParameters } = {
+	const data: { pb_address: ServerUrl; list_parameters: JsonableObject } = {
 		pb_address,
 		list_parameters: {
 			type: 'all',
 			collection: 'organizations',
-            expand: null,
-            requestKey: null,
-            fields: null,
-            sort: null,
-            filter: null
 		},
 	};
 	const res = await slangroom.execute(script, {
@@ -116,14 +102,14 @@ test('should retrieve full list of records', async (t) => {
 test('should retrieve paginated list of records', async (t) => {
 	const script = `
     Rule unknown ignore
-    Given I send pb_address 'pb_address' and create pb_client
-    Given I send list_parameters 'list_parameters' and ask records and output into 'output'
+    Given I send pb_address 'pb_address' and connect to pb_address
+    Given I send list_parameters 'list_parameters' and get some records and output into 'output'
     Given I have a 'string dictionary' named 'output'
     Then print data
     `;
 	const slangroom = new Slangroom(pocketbase);
 
-	const data: { pb_address: ServerUrl; list_parameters: ListParameters } = {
+	const data: { pb_address: ServerUrl; list_parameters: ListParameters} = {
 		pb_address,
 		list_parameters: {
 			type: 'list',
@@ -131,16 +117,13 @@ test('should retrieve paginated list of records', async (t) => {
 				page: 2,
 				perPage: 20,
 			},
-            expand: null,
-            requestKey: null,
-            fields: null,
-            sort: null,
-            filter: null,
 			collection: 'organizations',
 		},
-	};
+	} 
+	//Jsonable object dont like undefined values from list parameters
+	const retypedData = data as unknown as JsonableObject
 	const res = await slangroom.execute(script, {
-		data,
+		data:retypedData,
 	});
 	const output = res.result['output'] as {
 		records?: { items?: []; page?: string; perPage?: string};
@@ -153,27 +136,26 @@ test('should retrieve paginated list of records', async (t) => {
 test('should retrieve first record that match filters', async (t) => {
 	const script = `
     Rule unknown ignore
-    Given I send pb_address 'pb_address' and create pb_client
-    Given I send list_parameters 'list_parameters' and ask records and output into 'output'
+    Given I send pb_address 'pb_address' and connect to pb_address
+    Given I send list_parameters 'list_parameters' and get some records and output into 'output'
     Given I have a 'string dictionary' named 'output'
     Then print data
     `;
 	const slangroom = new Slangroom(pocketbase);
 
-	const data: { pb_address: ServerUrl; list_parameters: ListParameters } = {
+	const data: { pb_address: ServerUrl; list_parameters:ListParameters } = {
 		pb_address,
 		list_parameters: {
 			type: 'first',
 			collection: 'organizations',
 			filter: 'created >= "2022-01-01 00:00:00"',
 			sort: '-created',
-            expand: null,
-            requestKey: null,
-            fields: null,
 		},
 	};
+	//Jsonable object dont like undefined values from list parameters
+	const retypedData = data as unknown as JsonableObject
 	const res = await slangroom.execute(script, {
-		data,
+		data:retypedData,
 	});
 	t.truthy(res.result['output']);
 });
@@ -181,8 +163,8 @@ test('should retrieve first record that match filters', async (t) => {
 test('should retrieve one record', async (t) => {
 	const script = `
     Rule unknown ignore
-    Given I send pb_address 'pb_address' and create pb_client
-    Given I send show_parameters 'show_parameters' and ask record and output into 'output'
+    Given I send pb_address 'pb_address' and connect to pb_address
+    Given I send show_parameters 'show_parameters' and get one record and output into 'output'
     Given I have a 'string dictionary' named 'output'
     Then print data
     `;
@@ -194,12 +176,12 @@ test('should retrieve one record', async (t) => {
 			collection: 'organizations',
 			id: 'p7viyzsihrn52uj',
 			fields: 'name',
-            requestKey: null,
-            expand:null
 		},
 	};
+	//Jsonable object dont like undefined values from ShowRecordParameters
+	const retypedData = data as unknown as JsonableObject
 	const res = await slangroom.execute(script, {
-		data,
+		data:retypedData,
 	});
 	const output = res.result['output'] as { name?: string };
 	t.truthy(output.name);
@@ -211,7 +193,7 @@ test('should create a record', async (t) => {
 
 	const script = `
     Rule unknown ignore
-    Given I send pb_address 'pb_address' and create pb_client
+    Given I send pb_address 'pb_address' and connect to pb_address
     Given I send my_credentials 'my_credentials' and login
     Given I send create_parameters 'create_parameters' and send record_parameters 'record_parameters' and create record and output into 'output'
     Given I have a 'string dictionary' named 'output'
@@ -220,7 +202,7 @@ test('should create a record', async (t) => {
 	const slangroom = new Slangroom(pocketbase);
 
 
-	const data: DataCreate = {
+	const data = {
 		pb_address,
 		create_parameters: {
 			collection: 'organizations',
@@ -229,9 +211,7 @@ test('should create a record', async (t) => {
 			},
 		},
 		record_parameters: {
-            expand: null,
             requestKey: "testCreate",
-            fields: null
         },
 		my_credentials: {
 			email,
@@ -250,7 +230,7 @@ test('should update a record', async (t) => {
 
     const scriptCreate = `
     Rule unknown ignore
-    Given I send pb_address 'pb_address' and create pb_client
+    Given I send pb_address 'pb_address' and connect to pb_address
     Given I send my_credentials 'my_credentials' and login
     Given I send create_parameters 'create_parameters' and send record_parameters 'record_parameters' and create record and output into 'output'
     Given I have a 'string dictionary' named 'output'
@@ -259,7 +239,7 @@ test('should update a record', async (t) => {
 
 	const scriptUpdate = `
     Rule unknown ignore
-    Given I send pb_address 'pb_address' and create pb_client
+    Given I send pb_address 'pb_address' and connect to pb_address
     Given I send my_credentials 'my_credentials' and login
     Given I send update_parameters 'update_parameters' and send record_parameters 'record_parameters' and update record and output into 'output'
     Given I have a 'string dictionary' named 'output'
@@ -267,14 +247,7 @@ test('should update a record', async (t) => {
     `;
 	const slangroom = new Slangroom(pocketbase);
 
-    type DataUpdate = {
-		pb_address: ServerUrl;
-		update_parameters: UpdateRecordParameters;
-		my_credentials: Credentials;
-		record_parameters: RecordBaseParameters;
-	};
-
-    const dataCreate: DataCreate = {
+    const dataCreate = {
 		pb_address,
         create_parameters: {
 			collection: 'organizations',
@@ -283,7 +256,6 @@ test('should update a record', async (t) => {
 			},
 		},
 		record_parameters: {
-            expand: null,
             requestKey: "testUpdateCreateContract",
             fields: "id, name"
         },
@@ -301,7 +273,15 @@ test('should update a record', async (t) => {
     const outputCreate = createResult.result['output'] as { id: string, name: string}
     const updatedName = `test-${randomString()}`
 
-    const dataUpdate: DataUpdate = {
+	type DataUpdate = {
+		pb_address: ServerUrl;
+		update_parameters: UpdateRecordParameters;
+		record_parameters: RecordBaseParameters;
+		my_credentials: Credentials;
+	};
+
+
+    const dataUpdate:DataUpdate = {
 		pb_address,
 		update_parameters: {
 			id: outputCreate.id,
@@ -311,8 +291,6 @@ test('should update a record', async (t) => {
 			},
 		},
 		record_parameters: {
-            expand: null,
-            requestKey: null,
             fields: "id, name"
         },
 		my_credentials: {
@@ -321,8 +299,10 @@ test('should update a record', async (t) => {
 		},
 	};
 
+	//Jsonable object dont like undefined values from ShowRecordParameters
+	const retypedData = dataUpdate as unknown as JsonableObject
 	const res = await slangroom.execute(scriptUpdate, {
-		data: dataUpdate,
+		data:retypedData,
 	});
 	const output = res.result['output'] as { id?: string; name?: string };
 	t.is(output.name, updatedName, res.logs);
@@ -331,7 +311,7 @@ test('should update a record', async (t) => {
 test('should delete a record', async (t) => {
     const scriptCreate = `
     Rule unknown ignore
-    Given I send pb_address 'pb_address' and create pb_client
+    Given I send pb_address 'pb_address' and connect to pb_address
     Given I send my_credentials 'my_credentials' and login
     Given I send create_parameters 'create_parameters' and send record_parameters 'record_parameters' and create record and output into 'output'
     Given I have a 'string dictionary' named 'output'
@@ -340,14 +320,14 @@ test('should delete a record', async (t) => {
 
 	const script = `
     Rule unknown ignore
-    Given I send pb_address 'pb_address' and create pb_client
+    Given I send pb_address 'pb_address' and connect to pb_address
     Given I send my_credentials 'my_credentials' and login
     Given I send delete_parameters 'delete_parameters' and delete record and output into 'output'
     Given I have a 'string' named 'output'
     Then print data
     `;
 
-    const dataCreate: DataCreate = {
+    const dataCreate = {
 		pb_address,
         create_parameters: {
 			collection: 'organizations',
@@ -356,7 +336,6 @@ test('should delete a record', async (t) => {
 			},
 		},
 		record_parameters: {
-            expand: null,
             requestKey: "testDeleteCreateContract",
             fields: "id, name"
         },
@@ -400,7 +379,7 @@ test('should delete a record', async (t) => {
 test('should make a request', async (t) => {
 	const script = `
 	Rule unknown ignore
-	Given I send pb_address 'pb_address' and create pb_client
+	Given I send pb_address 'pb_address' and connect to pb_address
 	Given I send my_credentials 'my_credentials' and login
 	Given I send url 'url' and send send_parameters 'send_parameters' and send request and output into 'output'
 	Given I have a 'string dictionary' named 'output'
