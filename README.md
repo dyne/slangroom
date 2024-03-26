@@ -65,7 +65,7 @@ To write new plugins and other technical documentation  head your browser to
 
 <img alt="software by Dyne.org" src="https://files.dyne.org/software_by_dyne.png" width="150" />
 
-Copyleft (ɔ) 2023—2024 by [Dyne.org](https://www.dyne.org) foundation, Amsterdam
+Copyleft 🄯 2023—2024 by [Dyne.org](https://www.dyne.org) foundation, Amsterdam
 
 **[🔝 back to top](#toc)**
 
