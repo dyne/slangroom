@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2024 Dyne.org foundation
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import type { JsonableArray, JsonableObject } from '@slangroom/shared';
 import { Plugin, type PluginExecutor } from '@slangroom/core';
 import axios, { type AxiosRequestConfig } from 'axios';
@@ -125,9 +129,11 @@ export const sames = {} as typeof defaults;
 		}
 
 		x[m] = p.new('connect', phrase, cb);
-		x[`${m}Object`] = p.new('connect', ['object'], phrase, cb);
 		x[`${m}Headers`] = p.new('connect', ['headers'], phrase, cb);
-		x[`${m}ObjectHeaders`] = p.new('connect', ['object', 'headers'], phrase, cb);
+		if (m != 'get') {
+			x[`${m}Object`] = p.new('connect', ['object'], phrase, cb);
+			x[`${m}ObjectHeaders`] = p.new('connect', ['object', 'headers'], phrase, cb);
+		}
 	});
 });
 

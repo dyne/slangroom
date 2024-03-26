@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2024 Dyne.org foundation
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import test from 'ava';
 import { visit, type Cst, type Ast } from '@slangroom/core';
 import { ZenParams } from '@slangroom/shared';

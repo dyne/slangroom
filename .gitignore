@@ -1,6 +1,15 @@
+# SPDX-FileCopyrightText: 2024 Dyne.org foundation
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 # blacklist everything
 *
 !*/
+
+# leeeegal
+!/LICENSE
+!/LICENSES/*
+!/**/*.license
 
 # shithub
 !/.github/workflows/*.yml
@@ -42,7 +51,14 @@
 !/pkg/browser/public/index.html
 
 # shitdocs
-!/docs/**
+!/docs/**/*.md
+!/docs/.vitepress/config.mts
+!/docs/statements/**/*
+!/docs/examples/**/*.data
+!/docs/examples/**/*.keys
+!/docs/examples/**/*.zen
+!/docs/examples/license_example.sh
+!/README.md
 
 node_modules
 
