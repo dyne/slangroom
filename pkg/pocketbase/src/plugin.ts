@@ -91,9 +91,9 @@ const isPbRunning = async () => {
 const createRecordOptions = (p: RecordBaseParameters) => {
 	const { expand, fields, requestKey } = p;
 	const options: RecordOptions = {};
-	if (expand) options.expand = expand;
-	if (fields) options.fields = fields;
-	if (requestKey) options.requestKey = requestKey;
+	if (expand && expand!==null) options.expand = expand;
+	if (fields && fields!==null) options.fields = fields;
+	if (requestKey && requestKey!==null) options.requestKey = requestKey;
 	return options;
 };
 
