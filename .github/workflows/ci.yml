@@ -78,7 +78,7 @@ jobs:
       - name: ⏬ Install dependencies
         run: pnpm install
       - name: 🏗️ update sentences tabled and build the docs
-        run: pnpm docs
+        run: pnpm build && pnpm docs
       - name: ⏫ Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
