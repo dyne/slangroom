@@ -36,8 +36,8 @@ importers:
         specifier: ^9.1.0
         version: 9.1.0(eslint@8.55.0)
       nock:
-        specifier: ^13.4.0
-        version: 13.4.0
+        specifier: 14.0.0-beta.5
+        version: 14.0.0-beta.5
       prettier:
         specifier: ^3.1.1
         version: 3.1.1
@@ -213,9 +213,6 @@ importers:
       '@slangroom/shared':
         specifier: workspace:*
         version: link:../shared
-      axios:
-        specifier: ^1.6.2
-        version: 1.6.2
 
   pkg/ignored:
     dependencies:
@@ -5284,15 +5281,12 @@ packages:
       type-fest: 2.19.0
     dev: true
 
-  /nock@13.4.0:
-    resolution: {integrity: sha512-W8NVHjO/LCTNA64yxAPHV/K47LpGYcVzgKd3Q0n6owhwvD0Dgoterc25R4rnZbckJEb6Loxz1f5QMuJpJnbSyQ==}
-    engines: {node: '>= 10.13'}
+  /nock@14.0.0-beta.5:
+    resolution: {integrity: sha512-u255tf4DYvyErTlPZA9uTfXghiZZy+NflUOFONPVKZ5tP0yaHwKig28zyFOLhu8y5YcCRC+V5vDk4HHileh2iw==}
+    engines: {node: '>= 18'}
     dependencies:
-      debug: 4.3.4
       json-stringify-safe: 5.0.1
       propagate: 2.0.1
-    transitivePeerDependencies:
-      - supports-color
     dev: true
 
   /node-domexception@1.0.0:
