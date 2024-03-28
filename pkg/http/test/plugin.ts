@@ -58,6 +58,9 @@ test('Simple GET', async (t) => {
 					2: 123,
 				},
 			},
+			headers: {
+				'content-type': 'application/json'
+			}
 		},
 	});
 });
@@ -69,7 +72,7 @@ test('single put with data', async (t) => {
 	const res = await defaults.putObject(ctx);
 	t.deepEqual(res, {
 		ok: true,
-		value: { status: '200', result: 'received result' },
+		value: { status: '200', result: 'received result', headers: {} },
 	});
 });
 
@@ -80,7 +83,7 @@ test('single post with data', async (t) => {
 	const res = await defaults.postObject(ctx);
 	t.deepEqual(res, {
 		ok: true,
-		value: { status: '200', result: 'received result' },
+		value: { status: '200', result: 'received result', headers: {} },
 	});
 });
 
@@ -93,8 +96,8 @@ test('multiple post with data', async (t) => {
 	t.deepEqual(res, {
 		ok: true,
 		value: [
-			{ status: '200', result: 'received result' },
-			{ status: '404', result: "doesn't exist, mate" },
+			{ status: '200', result: 'received result', headers: {} },
+			{ status: '404', result: "doesn't exist, mate", headers: {} },
 		],
 	});
 });
@@ -112,9 +115,9 @@ test('POSTs with custom different', async (t) => {
 	t.deepEqual(res, {
 		ok: true,
 		value: [
-			{ status: '200', result: 'received result' },
-			{ status: '404', result: "doesn't exist, mate" },
-			{ status: '500', result: 'Did not receive the result' },
+			{ status: '200', result: 'received result', headers: {} },
+			{ status: '404', result: "doesn't exist, mate", headers: {} },
+			{ status: '500', result: 'Did not receive the result', headers: {} },
 		],
 	});
 });
