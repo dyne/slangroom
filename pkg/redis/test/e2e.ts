@@ -2,9 +2,15 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-import test from 'ava';
+import test, { registerCompletionHandler } from 'ava';
 import { Slangroom } from '@slangroom/core';
 import { redis } from '@slangroom/redis';
+import process from 'node:process';
+
+// https://github.com/avajs/ava/blob/main/docs/08-common-pitfalls.md#timeouts-because-a-file-failed-to-exit
+registerCompletionHandler(() => {
+	process.exit();
+});
 
 test('Redis write and read back', async (t) => {
 	const obj = {

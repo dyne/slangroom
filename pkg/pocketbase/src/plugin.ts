@@ -2,10 +2,12 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-import PocketBase from 'pocketbase';
+import PocketBase, { AsyncAuthStore } from 'pocketbase';
 import type { FullListOptions, ListResult, RecordModel, RecordOptions } from 'pocketbase';
 import { Plugin } from '@slangroom/core';
 import { z } from 'zod';
+import { Preferences } from '@capacitor/preferences';
+
 
 let pb: PocketBase;
 const p = new Plugin();
@@ -22,9 +24,9 @@ const credentialsSchema = z.object({
 export type Credentials = z.infer<typeof credentialsSchema>;
 
 const baseRecordParametersSchema = z.object({
-	expand: z.string().nullable(),
-	requestKey: z.string().nullable(),
-	fields: z.string().nullable(),
+	expand: z.string().nullish(),
+	requestKey: z.string().nullish(),
+	fields: z.string().nullish(),
 });
 export type RecordBaseParameters = z.infer<typeof baseRecordParametersSchema>;
 
@@ -39,15 +41,15 @@ const paginationSchema = z.object({
 
 const listParametersBaseSchema = z
 	.object({
-		sort: z.string().nullable(),
+		sort: z.string().nullish(),
 	})
 	.merge(baseFetchRecordParametersSchema);
 
 const listParametersSchema = z.discriminatedUnion('type', [
-	listParametersBaseSchema.extend({ type: z.literal('all'), filter: z.string().nullable() }),
+	listParametersBaseSchema.extend({ type: z.literal('all'), filter: z.string().nullish() }),
 	listParametersBaseSchema.extend({
 		type: z.literal('list'),
-		filter: z.string().nullable(),
+		filter: z.string().nullish(),
 		pagination: paginationSchema,
 	}),
 	listParametersBaseSchema.extend({ type: z.literal('first'), filter: z.string() }),
@@ -89,20 +91,40 @@ const isPbRunning = async () => {
 const createRecordOptions = (p: RecordBaseParameters) => {
 	const { expand, fields, requestKey } = p;
 	const options: RecordOptions = {};
-	if (expand !== null) options.expand = expand;
-	if (fields !== null) options.fields = fields;
-	if (requestKey !== null) options.requestKey = requestKey;
+	if (expand && expand!==null) options.expand = expand;
+	if (fields && fields!==null) options.fields = fields;
+	if (requestKey && requestKey!==null) options.requestKey = requestKey;
 	return options;
 };
 
 /**
  * @internal
  */
-export const setupClient = p.new(['pb_address'], 'create pb_client', async (ctx) => {
-	const address = ctx.fetch('pb_address');
+export const setupClient = p.new('connect', 'start pb client', async (ctx) => {
+	const address = ctx.fetchConnect()[0];
 	if (typeof address !== 'string') return ctx.fail('Invalid address');
 	try {
 		pb = new PocketBase(address);
+		if (!(await isPbRunning())) return ctx.fail('Client is not running');
+		return ctx.pass('pb client successfully created');
+	} catch (e) {
+		throw new Error(e)
+	}
+});
+
+export const setupCapacitorClient = p.new('connect', 'start capacitor pb client', async (ctx) => {
+	const address = ctx.fetchConnect()[0];
+	const PB_AUTH_KEY:string = 'pb_auth'
+
+	const store = new AsyncAuthStore({
+		save: async (serialized) => Preferences.set({
+			key:PB_AUTH_KEY, value:serialized,
+		}),
+		initial: Preferences.get({ key:PB_AUTH_KEY }),
+	});
+	if (typeof address !== 'string') return ctx.fail('Invalid address');
+	try {
+		pb = new PocketBase(address, store);
 		if (!(await isPbRunning())) return ctx.fail('Client is not running');
 		return ctx.pass('pb client successfully created');
 	} catch (e) {
@@ -133,7 +155,7 @@ export const authWithPassword = p.new(['my_credentials'], 'login', async (ctx) =
 /**
  * @internal
  */
-export const getList = p.new(['list_parameters'], 'ask records', async (ctx) => {
+export const getList = p.new(['list_parameters'], 'get some records', async (ctx) => {
 	const params = ctx.fetch('list_parameters') as ListParameters;
 	const validation = listParametersSchema.safeParse(params);
 	if (!validation.success) return ctx.fail(validation.error);
@@ -162,7 +184,7 @@ export const getList = p.new(['list_parameters'], 'ask records', async (ctx) => 
 /**
  * @internal
  */
-export const showRecord = p.new(['show_parameters'], 'ask record', async (ctx) => {
+export const showRecord = p.new(['show_parameters'], 'get one record', async (ctx) => {
 	const p = ctx.fetch('show_parameters') as ShowRecordParameters;
 	const validation = showParametersSchema.safeParse(p);
 	if (!validation.success) return ctx.fail(validation.error);
@@ -248,10 +270,10 @@ export const deleteRecord = p.new(['delete_parameters'], 'delete record', async 
 
 const sendParametersSchema = z.object({
   fetch: z.any(),
-  headers: z.record(z.unknown()).optional(),
+  headers: z.record(z.unknown()).nullish(),
   body: z.any(),
-  query: z.record(z.unknown()).optional(),
-  requestKey: z.string().optional(),
+  query: z.record(z.unknown()).nullish(),
+  requestKey: z.string().nullish(),
 });
 export type SendParameters = z.infer<typeof sendParametersSchema>;
 
