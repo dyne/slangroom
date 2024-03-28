@@ -21,7 +21,7 @@
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
-	"docs": "pnpm run docs:api && pnpm run docs:build"
+    "docs": "pnpm run docs:api && pnpm run docs:build"
   },
   "devDependencies": {
     "@lerna-lite/publish": "^2.7.2",
@@ -33,7 +33,7 @@
     "esbuild": "^0.19.9",
     "eslint": "^8.55.0",
     "eslint-config-prettier": "^9.1.0",
-    "nock": "^13.4.0",
+    "nock": "14.0.0-beta.5",
     "prettier": "^3.1.1",
     "ts-node": "^10.9.2",
     "tslib": "^2.6.2",
