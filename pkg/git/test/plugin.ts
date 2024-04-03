@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2024 Dyne.org foundation
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import ava, { type TestFn } from 'ava';
 import * as fs from 'node:fs/promises';
 import { join } from 'node:path';

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2024 Dyne.org foundation
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import {
 	Request,
 	Response,
@@ -91,7 +95,7 @@ export class AuthenticateHandler {
 			}
 
 			const scope = request.body.scope;
-			if (scope) {
+			if(scope) {
 				const resource = request.body.resource;
 				if (!resource) throw new Error('Request is missing resource parameter');
 
@@ -104,7 +108,7 @@ export class AuthenticateHandler {
 
 			const response = await fetch(url);
 			if (!response.ok) {
-				throw new Error(`Error! status: ${response.status}`);
+				throw new Error(`Fetch to url ${url} failed with error status: ${response.status}`);
 			}
 
 			const result = await response.json();
@@ -174,10 +178,10 @@ export class AuthenticateHandler {
 		const url = resource + '/.well-known/openid-credential-issuer';
 		const response = await fetch(url);
 		if (!response.ok) {
-			throw new Error(`Error! status: ${response.status}`);
+			throw new Error(`Fetch to url ${url} failed with error status: ${response.status}`);
 		}
 		const result = await response.json();
-		const credentials_supported = result.credentials_supported;
+		const credentials_supported = result.credential_configurations_supported;
 		var valid_credentials = [];
 		for (var key in credentials_supported) {
 			const type_arr = credentials_supported[key].credential_definition.type;

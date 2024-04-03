@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2024 Dyne.org foundation
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import { Plugin } from '@slangroom/core';
 import * as path from 'node:path';
 import * as fspkg from 'node:fs/promises';
@@ -45,6 +49,15 @@ const readJSON = async (safePath: string) => {
 	const str = await fspkg.readFile(safePath, 'utf8');
 	return JSON.parse(str);
 };
+
+const checkFileExists = async (safePath: string) => {
+	try {
+		await fspkg.stat(safePath);
+	} catch {
+		return false;
+	}
+	return true;
+}
 
 const p = new Plugin();
 
@@ -153,6 +166,32 @@ export const listDirectoryContent = p.new(['path'], 'list directory content', as
 		};
 	});
 	return ctx.pass(result);
+});
+
+/**
+ * @internal
+ */
+export const verifyFileExists = p.new(['path'], 'verify file exists', async (ctx) => {
+	const unsafe = ctx.fetch('path');
+	if (typeof unsafe !== 'string') return ctx.fail('path must be string');
+
+	const { filepath, error } = resolveFilepath(unsafe);
+	if (!filepath) return ctx.fail(error);
+	if (!(await checkFileExists(filepath))) return ctx.fail('no such file or directory: '+filepath);
+	return ctx.pass(null);
+});
+
+/**
+ * @internal
+ */
+export const verifyFileDoesNotExist = p.new(['path'], 'verify file does not exist', async (ctx) => {
+	const unsafe = ctx.fetch('path');
+	if (typeof unsafe !== 'string') return ctx.fail('path must be string');
+
+	const { filepath, error } = resolveFilepath(unsafe);
+	if (!filepath) return ctx.fail(error);
+	if (await checkFileExists(filepath)) return ctx.fail('file or directory found under: '+filepath);
+	return ctx.pass(null);
 });
 
 export const fs = p;

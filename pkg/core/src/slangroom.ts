@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2024 Dyne.org foundation
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import { getIgnoredStatements } from '@slangroom/ignored';
 import { type ZenOutput, ZenParams, zencodeExec } from '@slangroom/shared';
 import { lex, parse, visit, Plugin, PluginMap, PluginContextImpl } from '@slangroom/core';
@@ -77,6 +81,7 @@ export class Slangroom {
 			const exec = this.#plugins.get(ast.key);
 			if (!exec) throw new Error('no statements matched');
 			const res = await exec(new PluginContextImpl(ast));
+			if (!res.ok) throw new Error(res.error);
 			if (res.ok && ast.into) paramsGiven.data[ast.into] = res.value;
 		}
 
@@ -89,10 +94,17 @@ export class Slangroom {
 			const exec = this.#plugins.get(ast.key);
 			if (!exec) throw new Error('no statements matched');
 			const res = await exec(new PluginContextImpl(ast));
+			if (!res.ok) throw new Error(res.error);
 			if (res.ok && ast.into) paramsThen.data[ast.into] = res.value;
 		}
 
+		// remove null values from output
+		Object.keys(paramsThen.data).forEach(k => (paramsThen.data[k] == null) && delete paramsThen.data[k]);
 		return { result: paramsThen.data, logs: zout.logs };
+	}
+
+	getPlugin() {
+		return this.#plugins
 	}
 }
 

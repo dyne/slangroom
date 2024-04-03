@@ -1,9 +1,14 @@
+// SPDX-FileCopyrightText: 2024 Dyne.org foundation
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import test from 'ava';
 import nock from 'nock';
 import { Slangroom } from '@slangroom/core';
 import { http } from '@slangroom/http';
 
 nock('http://localhost')
+	.defaultReplyHeaders({'test_header': '@slangroom/http'})
 	.get('/greeting-es')
 	.reply(200, { req: 'Hola chico!' })
 	.get('/greeting-en')
@@ -52,8 +57,8 @@ Then I connect to 'final_endpoints' and send object 'string_array' and do parall
 			final_endpoints: ['http://localhost/sendresult', 'http://localhost/sendresult'],
 			string_array: [{ req: 'Hola chico!' }, { req: 'Hi!' }],
 			results: [
-				{ status: '200', result: 'received result' },
-				{ status: '200', result: 'received result' },
+				{ status: '200', result: 'received result', headers: { test_header: '@slangroom/http'} },
+				{ status: '200', result: 'received result', headers: { test_header: '@slangroom/http'} },
 			],
 		},
 		res.logs,
@@ -84,6 +89,9 @@ Then print data
 			auth: {
 				result: 'Yes, you can!',
 				status: '200',
+				headers: {
+					test_header: '@slangroom/http',
+				}
 			},
 		},
 		res.logs,

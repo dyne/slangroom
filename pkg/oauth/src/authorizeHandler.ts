@@ -1,9 +1,12 @@
+// SPDX-FileCopyrightText: 2024 Dyne.org foundation
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import { Client, User, Request, Response, InvalidScopeError, AuthorizationCode } from "@node-oauth/oauth2-server";
 import { InvalidArgumentError, InvalidClientError, InvalidRequestError, UnsupportedResponseTypeError, OAuthError, ServerError, UnauthorizedClientError, AccessDeniedError } from '@node-oauth/oauth2-server';
 import url from 'node:url';
 import { InMemoryCache, AuthenticateHandler, pkce, isFormat } from '@slangroom/oauth';
 import { createHash, randomBytes } from "crypto";
-
 
 /**
  * Response types.
@@ -37,7 +40,7 @@ const responseTypes: { [key: string]: any } = {
 	code: respType,
 };
 
-
+let par_expires_in: number = 600;
 export class AuthorizeHandler {
 
 	allowEmptyState: boolean;
@@ -97,59 +100,40 @@ export class AuthorizeHandler {
 			);
 		}
 
-		if(!request.body.request_uri) throw new InvalidRequestError("Missing parameter: request_uri");
+		if (!request.body.request_uri) throw new InvalidRequestError("Missing parameter: request_uri");
+		if (!request.body.client_id) throw new InvalidRequestError("Missing parameter: client_id");
+
+		const base_uri = "urn:ietf:params:oauth:request_uri:";
+		let rand_uri = request.body.request_uri;
+		rand_uri = rand_uri.replace(base_uri, "");
+
+		//TODO: check if we can convert timestamp in a better way
+		const timestamp = Math.round(new Date(rand_uri.substring(0, 10)).getTime() / 1000);
+		const time_now = Math.round(Date.now() / 1000);
+		if (time_now - timestamp > par_expires_in) {
+			this.model.revokeAuthCodeFromUri(rand_uri, true);
+			throw new InvalidRequestError(`'${request.body.request_uri}' has expired`);
+		}
 
 		const client = await this.getClient(request);
-		const user = await this.getUser(request, response);
-		// NOTE: this call the Authentication handler and do authenticate
-		//		in the previous version the clientSecret used to authenticate was in request.body
-		//		here it should be obtained from the request_uri
-		if(!user) throw Error("Authentication failed");
+		if (!client) throw new InvalidClientError(`Failed to get Client from '${request.body.client_id}'`);
 
-		let uri;
-		let state;
+		const code = this.getAuthorizationCode(rand_uri);
+		if (!code) throw new Error(`Failed to get Authorization Code from '${request.body.request_uri}'`);
+		this.model.revokeAuthCodeFromUri(rand_uri);
 
-		try {
-
-			// the following should be changed so that the data are retrieved starting from the
-			// request_uri and client_id in the Request object
-			//--------------------------------------------
-			uri = this.getRedirectUri(request, client);
-			state = this.getState(request);
-			const code = this.getAuthorizationCode();
-			// -------------------------------------------
-
-			const ResponseType = this.getResponseType(request);
-
-			const responseTypeInstance = new ResponseType(code.authorizationCode);
-			const redirectUri = this.buildSuccessRedirectUri(uri, responseTypeInstance);
-
-			this.updateResponse(response, redirectUri, state);
-
-			return code;
-		} catch (err) {
-			let e = err;
-
-			if (!(e instanceof OAuthError)) {
-				e = new ServerError(e);
-			}
-			const redirectUri = this.buildErrorRedirectUri(uri, e);
-			this.updateResponse(response, redirectUri, state);
-
-			throw e;
-		}
+		return code;
 	}
 
-	getAuthorizationCode(): any {
-		//TODO
-		return false;
+	getAuthorizationCode(filename: string): AuthorizationCode {
+		return this.model.getAuthCodeFromUri(filename);
 	}
 
 	/**
 	 * Pushed Authorization Request Handler.
 	 */
 	// handle /as/par request with input all the client data
-	async handle_par(request: Request, response: Response) {
+	async handle_par(request: Request, response: Response, expires_in?: number) {
 		if (!(request instanceof Request)) {
 			throw new InvalidArgumentError(
 				'Invalid argument: `request` must be an instance of Request',
@@ -162,13 +146,28 @@ export class AuthorizeHandler {
 			);
 		}
 
-		if(request.body.request_uri) throw new InvalidRequestError("Found request_uri parameter in the request");
+		if (expires_in) par_expires_in = expires_in;
+
+		if (request.body.request_uri) throw new InvalidRequestError("Found request_uri parameter in the request");
 
 		const expiresAt = this.getAuthorizationCodeLifetime();
 		const client = await this.getClient(request);
 		const user = await this.getUser(request, response);
 
 		if (!user) throw new UnauthorizedClientError("Client authentication failed");
+
+		if (request.body.authorization_details) {
+			const auth_det = JSON.parse(request.body.authorization_details);
+			var authorization_details = await this.verifyAuthrizationDetails(auth_det);
+			if (authorization_details.length === 0) throw new OAuthError("Given authorization_details are not valid");
+			var validScope: string[] = [authorization_details[0]['credential_configuration_id']];
+		}
+		else {
+			const resource = request.body.resource;
+			const requestedScope = this.getScope(request);
+			if (!requestedScope) throw new InvalidRequestError("Neither authorization_details, nor scope parameter found in request");
+			var validScope = await this.validateScope(user, client, requestedScope, resource);
+		}
 
 		let uri;
 		let state;
@@ -182,38 +181,35 @@ export class AuthorizeHandler {
 				}
 			}
 
-			const resource = request.body.resource;
-			const requestedScope = this.getScope(request);
-			var validScope = await this.validateScope(user, client, requestedScope!, resource);
 			const authorizationCode = await this.generateAuthorizationCode(client);
 
 			const ResponseType = this.getResponseType(request);
 			const codeChallenge = this.getCodeChallenge(request);
 			const codeChallengeMethod = this.getCodeChallengeMethod(request);
-			if(typeof validScope !== 'string') validScope = "";
+
+			const timestamp = Math.round(Date.now() / 1000);
+			const base_uri = "urn:ietf:params:oauth:request_uri:";
+			const rand_uri = timestamp.toString().concat(randomBytes(20).toString('hex'));
 
 			const code = await this.saveAuthorizationCode(
 				authorizationCode,
 				expiresAt,
 				uri,
-				[validScope],
+				validScope,
 				client,
 				user,
 				codeChallenge,
 				codeChallengeMethod,
+				authorization_details,
+				rand_uri
 			);
-			if(!code) { throw Error("Failed to create the Authorization Code"); }
-
-			const base_uri = "urn:ietf:params:oauth:request_uri:";
-			const rand_uri = randomBytes(20).toString('base64');
-			const expires_in = 300;
+			if (!code) { throw Error("Failed to create the Authorization Code"); }
 
 			const responseTypeInstance = new ResponseType(code.authorizationCode);
 			const redirectUri = this.buildSuccessRedirectUri(uri, responseTypeInstance);
 			this.updateResponse(response, redirectUri, state);
 
-			return { base_uri:base_uri, rand_uri: rand_uri, expires_in: expires_in, authorizationCode: code };
-
+			return { request_uri: base_uri.concat(rand_uri), expires_in: par_expires_in }
 		} catch (err) {
 			let e = err;
 
@@ -304,17 +300,40 @@ export class AuthorizeHandler {
 		return client;
 	}
 
+	async verifyAuthrizationDetails(authorization_details: { [key: string]: any }[]) {
+		const verifiedAuthDetails: any = [];
+		await Promise.all(authorization_details.map(async (dict: { [key: string]: any }) => {
+
+			if (!dict['type']) throw new OAuthError("Invalid authorization_details: missing parameter type");
+			if (!dict['locations']) throw new OAuthError("Invalid authorization_details: missing parameter locations");
+			if (!dict['credential_configuration_id']) throw new OAuthError("Invalid authorization_details: missing parameter credential_configuration_id");
+
+			const verified_credentials = await this.model.verifyCredentialId(dict['credential_configuration_id'], dict['locations'][0]);
+			if (verified_credentials.valid_credentials.length == 0) throw new OAuthError(`Invalid authorization_details: '${dict['credential_configuration_id']}' is not a valid credential_id `)
+
+			const claims = verified_credentials.credential_claims.get(dict['credential_configuration_id']);
+			claims!.map((claim: string) => {
+				if (!dict[claim]) throw new OAuthError(`Invalid authorization_details: missing parameter '${claim}'`);
+			});
+
+			// TODO: verify content of authorization_details claims
+
+			verifiedAuthDetails.push(dict);
+		}));
+
+		return verifiedAuthDetails;
+	}
+
 	/**
 	 * Validate requested scope.
 	 */
-	async validateScope (user:User, client:Client, scope:string[], resource:string) {
-		// TODO: this should actually do something...
+	async validateScope(user: User, client: Client, scope: string[], resource: string) {
 		if (this.model.validateScope) {
 			const validatedScope = await this.model.validateScope(user, client, scope, resource);
 
-			// if (!validatedScope) {
-			// 	throw new InvalidScopeError('Invalid scope: Requested scope is invalid');
-			// }
+			if (!validatedScope) {
+				throw new InvalidScopeError('Invalid scope: Requested scope is invalid');
+			}
 
 			return validatedScope;
 		}
@@ -380,7 +399,7 @@ export class AuthorizeHandler {
 	 * Save authorization code.
 	 */
 
-	async saveAuthorizationCode(authorizationCode: string, expiresAt: Date, redirectUri: string, scope: string[], client: Client, user: User, codeChallenge: string, codeChallengeMethod: string,) {
+	async saveAuthorizationCode(authorizationCode: string, expiresAt: Date, redirectUri: string, scope: string[], client: Client, user: User, codeChallenge: string, codeChallengeMethod: string, authorization_details: { [key: string]: any }[], rand_uri: string) {
 		let code: AuthorizationCode = {
 			authorizationCode: authorizationCode,
 			expiresAt: expiresAt,
@@ -389,18 +408,15 @@ export class AuthorizeHandler {
 			user: user,
 			client: client
 		};
-
 		if (codeChallenge && codeChallengeMethod) {
-			code = Object.assign(
-				{
-					codeChallenge: codeChallenge,
-					codeChallengeMethod: codeChallengeMethod,
-				},
-				code,
-			);
+			code.codeChallenge = codeChallenge;
+			code.codeChallengeMethod = codeChallengeMethod;
+		}
+		if (authorization_details) {
+			code['authorization_details'] = authorization_details;
 		}
 
-		return this.model.saveAuthorizationCode(code, client, user);
+		return this.model.saveAuthorizationCode(code, client, user, authorization_details, rand_uri);
 	}
 
 	async validateRedirectUri(redirectUri: string, client: Client) {

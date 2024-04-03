@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2024 Dyne.org foundation
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import { Plugin } from '@slangroom/core';
 import _ from 'lodash';
 
@@ -82,6 +86,11 @@ export const pick = p.new(['object', 'properties'], 'manipulate and pick', async
     } catch (e) {
         throw new HelperError(e);
     }
+});
+
+// must be followe by "and output into 'variable_to_eliminate'"
+export const del = p.new('manipulate and delete', async (ctx) => {
+    return ctx.pass(null)
 });
 
 export const helpers = p
