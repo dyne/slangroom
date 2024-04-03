@@ -12,7 +12,12 @@ test('@slangroom/core errors are shown and context is shown with line number', a
     Given nothing
     Then print data`)
 
-    const expected = `ParseError: "gibberish" at 2:9-17 must be one of: "send"
+    const expected = `\x1b[33m0 | \x1b[0mRule unknown ignore
+\x1b[33m1 | \x1b[0m    Given I gibberish
+                \x1b[31m^^^^^^^^^\x1b[0m
+\x1b[33m2 | \x1b[0m    Given nothing
+\x1b[33m3 | \x1b[0m    Then print data
+ParseError: "gibberish" at 2:9-17 must be one of: "send"
 ParseError: at 2:9-17, must be followed by one of: "param"
 ParseError: at 2, missing one of: "<identifier>"
 ParseError: at 2, missing one of: "and"

@@ -73,7 +73,7 @@ export class Slangroom {
 		const errs = parsedLines
 			.flatMap((x) => [...x.errors, ...(x.matches[0]?.err ?? [])])
 			.join('\n');
-		if (errs.length) throw new Error(errs);
+		if (errs.length) thorwErrors(errs, contract);
 
 		const cstGivens = parsedLines.filter((x) => x.givenThen === 'given');
 		for (const cst of cstGivens) {
@@ -117,3 +117,34 @@ const requirifyZenParams = (params?: Partial<ZenParams>): Required<ZenParams> =>
 	if (!params.keys) params.keys = {};
 	return { extra: {}, conf: '', ...params } as Required<ZenParams>;
 };
+
+// first draft of improved error throwing starting from a parseError
+// TODO: move the retireve of errorLine and errorColumns out of this function
+// TODO: some problems raised in case of use of tabs in the contract
+//       maybe to be converted into all spaces at the beginning
+// TODO: make it working with all type of errors in slangroom
+const thorwErrors = (error: string, contract: string) => {
+	const contractLines = contract.split('\n');
+	const lc = error.match(/\d+:\d+-\d+/) || ['1:1-1'];
+	const [ line, col ] = lc[0].split(':');
+	const lineNumber = Number(line);
+	const colStart = Number(col!.split('-')[0]);
+	const colEnd = Number(col!.split('-')[1]);
+	const lineStart = lineNumber > 2 ? lineNumber - 2 : 0;
+	const lineEnd = lineNumber + 2 > contractLines.length ? contractLines.length : lineNumber + 2;
+	let e = "";
+	for (let i = lineStart; i < lineEnd; i++) {
+		const linePrefix = `${i} | `;
+		e = e.concat(`\x1b[33m${linePrefix}\x1b[0m${contractLines[i]}\n`);
+		if (i === lineNumber -1) {
+			const cLine = contractLines[i] || '';
+			const initialWS = cLine.match(/^[\s\t]+/) || [''];
+			// tabs includes lineprefix
+			const linePrefixLength = cLine.search(/\t/) >= 0 ? 0 : linePrefix.length;
+			e = e.concat(initialWS[0], ' '.repeat(colStart - 1 + linePrefixLength) + '\x1b[31m' + '^'.repeat(colEnd - colStart + 1) + '\x1b[0m', '\n');
+		}
+	}
+	e = e.concat(error)
+	console.log(e)
+	throw new Error(e);
+}
