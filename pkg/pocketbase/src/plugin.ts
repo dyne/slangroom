@@ -120,7 +120,7 @@ export const setupCapacitorClient = p.new('connect', 'start capacitor pb client'
 		save: async (serialized) => await Preferences.set({
 			key:PB_AUTH_KEY, value:serialized,
 		}),
-		initial: await Preferences.get({ key:PB_AUTH_KEY }),
+		initial: Preferences.get({ key:PB_AUTH_KEY }),
 	});
 	if (typeof address !== 'string') return ctx.fail('Invalid address');
 	try {
