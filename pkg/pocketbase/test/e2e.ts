@@ -141,13 +141,14 @@ test('should retrieve first record that match filters', async (t) => {
 	const script = `
     Rule unknown ignore
     Given I connect to 'pb_address' and start pb client
+	Given I send my_credentials 'my_credentials' and login
     Given I send list_parameters 'list_parameters' and get some records and output into 'output'
     Given I have a 'string dictionary' named 'output'
     Then print data
     `;
 	const slangroom = new Slangroom(pocketbase);
 
-	const data: { pb_address: ServerUrl; list_parameters:ListParameters } = {
+	const data: { pb_address: ServerUrl; list_parameters:ListParameters, my_credentials: Credentials } = {
 		pb_address,
 		list_parameters: {
 			type: 'first',
@@ -155,6 +156,10 @@ test('should retrieve first record that match filters', async (t) => {
 			filter: 'created >= "2022-01-01 00:00:00"',
 			sort: '-created',
 		},
+		my_credentials: {
+			email,
+			password
+		}
 	};
 	//Jsonable object dont like undefined values from list parameters
 	const retypedData = data as unknown as JsonableObject
