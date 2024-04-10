@@ -457,7 +457,7 @@ test('should show parameters using capacitor client', async (t) => {
 		show_parameters: {
 			collection: "organizations",
 			id: "p7viyzsihrn52uj",
-			fields: "name"
+			fields: "description"
 		}
 	};
 
