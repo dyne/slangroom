@@ -436,3 +436,35 @@ test('should make a request', async (t) => {
 	// @ts-expect-error - Don't know the shape of the object in advance
 	t.is(res.result['output']["message"], `Hello ${param}`);
 });
+
+test('should show parameters using capacitor client', async (t) => {
+	const script = `
+	Rule unknown ignore
+	Given I connect to 'pb_address' and start capacitor pb client
+	Given I send my_credentials 'my_credentials' and login
+	Given I send show_parameters 'show_parameters' and get one record and output into 'output'
+	Given I have a 'string dictionary' named 'output'
+	Then print data
+	`;
+	const slangroom = new Slangroom(pocketbase);
+
+	const data = {
+		pb_address,
+		my_credentials: {
+			email,
+			password,
+		},
+		show_parameters: {
+			collection: "organizations",
+			id: "p7viyzsihrn52uj",
+			fields: "name"
+		}
+	};
+
+	const res = await slangroom.execute(script, {
+		data,
+	});
+
+	// @ts-expect-error - Don't know the shape of the object in advance
+	t.is(res.result['output']["name"], `test organization`);
+});
