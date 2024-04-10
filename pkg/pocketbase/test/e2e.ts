@@ -123,7 +123,7 @@ test('should retrieve paginated list of records', async (t) => {
 			},
 			collection: 'organizations',
 		},
-	} 
+	}
 	//Jsonable object dont like undefined values from list parameters
 	const retypedData = data as unknown as JsonableObject
 	const res = await slangroom.execute(script, {
@@ -168,19 +168,24 @@ test('should retrieve one record', async (t) => {
 	const script = `
     Rule unknown ignore
     Given I connect to 'pb_address' and start pb client
+    Given I send my_credentials 'my_credentials' and login
     Given I send show_parameters 'show_parameters' and get one record and output into 'output'
     Given I have a 'string dictionary' named 'output'
     Then print data
     `;
 	const slangroom = new Slangroom(pocketbase);
 
-	const data: { pb_address: ServerUrl; show_parameters: ShowRecordParameters } = {
+	const data: { pb_address: ServerUrl; show_parameters: ShowRecordParameters; my_credentials: Credentials } = {
 		pb_address,
 		show_parameters: {
 			collection: 'organizations',
 			id: 'p7viyzsihrn52uj',
 			fields: 'name',
 		},
+		my_credentials: {
+			email,
+			password
+		}
 	};
 	//Jsonable object dont like undefined values from ShowRecordParameters
 	const retypedData = data as unknown as JsonableObject
@@ -235,10 +240,18 @@ test('should update a record', async (t) => {
     const scriptCreate = `
     Rule unknown ignore
     Given I connect to 'pb_address' and start pb client
-    Given I send my_credentials 'my_credentials' and login
-    Given I send create_parameters 'create_parameters' and send record_parameters 'record_parameters' and create record and output into 'output'
-    Given I have a 'string dictionary' named 'output'
-    Then print data
+    Given I send my_credentials 'my_credentials' and login and output into 'loginOutput'
+	Given I have a 'string dictionary' named 'loginOutput'
+	Given I have a 'string dictionary' named 'create_parameters'
+	Given I have a 'string dictionary' named 'record_parameters'
+	When I pickup from path 'loginOutput.record.id'
+	and I pickup from path 'create_parameters.record'
+	and I remove 'record' from 'create_parameters'
+	and I move 'id' to 'owners' in 'record'
+	and I move 'record' in 'create_parameters'
+	Then print the 'create_parameters'
+	Then print the 'record_parameters'
+    Then I send create_parameters 'create_parameters' and send record_parameters 'record_parameters' and create record and output into 'output'
     `;
 
 	const scriptUpdate = `
@@ -256,7 +269,7 @@ test('should update a record', async (t) => {
         create_parameters: {
 			collection: 'organizations',
 			record: {
-				name: `test-${randomString()}`,
+				name: `test-created-${randomString()}`
 			},
 		},
 		record_parameters: {
@@ -269,13 +282,12 @@ test('should update a record', async (t) => {
 		},
 	};
 
-
     const createResult = await slangroom.execute(scriptCreate, {
         data: dataCreate
     })
 
     const outputCreate = createResult.result['output'] as { id: string, name: string}
-    const updatedName = `test-${randomString()}`
+    const updatedName = `test-updated-${randomString()}`
 
 	type DataUpdate = {
 		pb_address: ServerUrl;
@@ -316,10 +328,18 @@ test('should delete a record', async (t) => {
     const scriptCreate = `
     Rule unknown ignore
     Given I connect to 'pb_address' and start pb client
-    Given I send my_credentials 'my_credentials' and login
-    Given I send create_parameters 'create_parameters' and send record_parameters 'record_parameters' and create record and output into 'output'
-    Given I have a 'string dictionary' named 'output'
-    Then print data
+    Given I send my_credentials 'my_credentials' and login and output into 'loginOutput'
+	Given I have a 'string dictionary' named 'loginOutput'
+	Given I have a 'string dictionary' named 'create_parameters'
+	Given I have a 'string dictionary' named 'record_parameters'
+	When I pickup from path 'loginOutput.record.id'
+	and I pickup from path 'create_parameters.record'
+	and I remove 'record' from 'create_parameters'
+	and I move 'id' to 'owners' in 'record'
+	and I move 'record' in 'create_parameters'
+	Then print the 'create_parameters'
+	Then print the 'record_parameters'
+    Then I send create_parameters 'create_parameters' and send record_parameters 'record_parameters' and create record and output into 'output'
     `;
 
 	const script = `
