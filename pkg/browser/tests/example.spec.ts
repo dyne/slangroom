@@ -15,4 +15,8 @@ test('check results of slangroom', async ({ page }) => {
 	await expect(page.locator('#test-json-schema')).toContainText(
 		"{\"out\":{\"errors\":[]}}",
 	);
+
+	await expect(page.locator('#test-pocketbase')).toContainText(
+		"{\"output\":{\"description\":\"<p>test description of org</p>\"}}"
+	);
 });

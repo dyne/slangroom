@@ -12,6 +12,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 		<h1>Test http</h1>
 		<div id="test1"></div>
 		<div id="test-json-schema"></div>
+		<div id="test-pocketbase"></div>
 		<script>
 			const script = `
 Rule unknown ignore
@@ -35,7 +36,7 @@ Then print data
 					resDiv.innerText = JSON.stringify(r.result);
 				});
 
-			// 
+			//
 
 			const scriptJSONSchema = `
 Rule unknown ignore
@@ -57,6 +58,37 @@ Then print 'out'
 				})
 				.then((r) => {
 					JSONSChemaResDiv.innerText = JSON.stringify(r.result);
+				});
+
+			//
+
+			const scriptPocketbase = `
+Rule unknown ignore
+Given I connect to 'pb_address' and start capacitor pb client
+Given I send my_credentials 'my_credentials' and login
+Given I send show_parameters 'show_parameters' and get one record and output into 'output'
+Given I have a 'string dictionary' named 'output'
+Then print data
+			`
+
+			const PocketbaseResDiv = document.getElementById('test-pocketbase');
+
+			slangroom
+				.execute(scriptPocketbase, {
+					data: {
+						pb_address: "http://127.0.0.1:8090/",
+						my_credentials: {
+							email: "test@test.eu",
+							password: "testtest"
+					},
+					show_parameters: {
+						collection: "organizations",
+						id: "p7viyzsihrn52uj",
+						fields: "description"
+					}
+				}})
+				.then((r) => {
+					PocketbaseResDiv.innerText = JSON.stringify(r.result);
 				});
 		</script>
 	</body>

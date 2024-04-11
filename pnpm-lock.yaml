@@ -116,6 +116,9 @@ importers:
       '@slangroom/json-schema':
         specifier: workspace:*
         version: link:../json-schema
+      '@slangroom/pocketbase':
+        specifier: workspace:*
+        version: link:../pocketbase
       '@slangroom/qrcode':
         specifier: workspace:*
         version: link:../qrcode
