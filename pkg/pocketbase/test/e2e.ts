@@ -49,12 +49,14 @@ test('should create a new slangroom capacitor client', async (t) => {
     Then print data
     `;
 	const slangroom = new Slangroom(pocketbase);
-	const res = await slangroom.execute(script, {
+	const fn = slangroom.execute(script, {
 		data: {
 			pb_address,
 		},
 	});
-	t.is(res.result['res'], 'pb client successfully created');
+	// check error from slangroom execution
+	const error = await t.throwsAsync(fn);
+	t.is((error as Error).message, "Can not start capacitor client in node environment");
 });
 
 test('should login with credentials', async (t) => {
@@ -437,34 +439,3 @@ test('should make a request', async (t) => {
 	t.is(res.result['output']["message"], `Hello ${param}`);
 });
 
-test('should show parameters using capacitor client', async (t) => {
-	const script = `
-	Rule unknown ignore
-	Given I connect to 'pb_address' and start capacitor pb client
-	Given I send my_credentials 'my_credentials' and login
-	Given I send show_parameters 'show_parameters' and get one record and output into 'output'
-	Given I have a 'string dictionary' named 'output'
-	Then print data
-	`;
-	const slangroom = new Slangroom(pocketbase);
-
-	const data = {
-		pb_address,
-		my_credentials: {
-			email,
-			password,
-		},
-		show_parameters: {
-			collection: "organizations",
-			id: "p7viyzsihrn52uj",
-			fields: "description"
-		}
-	};
-
-	const res = await slangroom.execute(script, {
-		data,
-	});
-
-	// @ts-expect-error - Don't know the shape of the object in advance
-	t.is(res.result['output']["name"], `test organization`);
-});
