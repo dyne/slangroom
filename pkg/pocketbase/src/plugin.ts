@@ -113,6 +113,7 @@ export const setupClient = p.new('connect', 'start pb client', async (ctx) => {
 });
 
 export const setupCapacitorClient = p.new('connect', 'start capacitor pb client', async (ctx) => {
+	if (typeof window === 'undefined') return ctx.fail('Can not start capacitor client in node environment');
 	const address = ctx.fetchConnect()[0];
 	const PB_AUTH_KEY:string = 'pb_auth'
 
