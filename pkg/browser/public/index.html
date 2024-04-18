@@ -13,6 +13,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 		<div id="test1"></div>
 		<div id="test-json-schema"></div>
 		<div id="test-pocketbase"></div>
+		<div id="test-pocketbase-2"></div>
 		<script>
 			const script = `
 Rule unknown ignore
@@ -89,7 +90,33 @@ Then print data
 				}})
 				.then((r) => {
 					PocketbaseResDiv.innerText = JSON.stringify(r.result);
-				});
+			});
+
+			//
+			const script2Pocketbase = `
+Rule unknown ignore
+Given I connect to 'pb_address' and start capacitor pb client
+Given I send show_parameters 'show_parameters' and get one record and output into 'output'
+Given I have a 'string dictionary' named 'output'
+Then print data
+			`
+
+			const Pocketbase2ResDiv = document.getElementById('test-pocketbase-2');
+
+			setTimeout(() => {
+				slangroom.execute(script2Pocketbase, {
+					data: {
+						pb_address: "http://127.0.0.1:8090/",
+						show_parameters: {
+							collection: "organizations",
+							id: "p7viyzsihrn52uj",
+							fields: "name"
+						}
+					}
+				})
+				.then((r) => {
+					Pocketbase2ResDiv.innerText = JSON.stringify(r.result);
+				})}, 3000);
 		</script>
 	</body>
 </html>
