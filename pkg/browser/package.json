@@ -4,7 +4,8 @@
 		"@slangroom/core": "workspace:*",
 		"@slangroom/http": "workspace:*",
 		"@slangroom/json-schema": "workspace:*",
-		"@slangroom/qrcode": "workspace:*"
+		"@slangroom/qrcode": "workspace:*",
+		"@slangroom/pocketbase": "workspace:*"
 	},
 	"version": "1.28.1",
 	"repository": "https://github.com/dyne/slangroom",

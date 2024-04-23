@@ -64,3 +64,4 @@ node_modules
 
 # pocketbase files
 !/pkg/**/*.pb.js
+!/pkg/pocketbase/test/pb_migrations/*.js

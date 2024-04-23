@@ -112,7 +112,10 @@ export const setupClient = p.new('connect', 'start pb client', async (ctx) => {
 	}
 });
 
+const init = async (key: string) => { return (await Preferences.get({ key })).value }
+
 export const setupCapacitorClient = p.new('connect', 'start capacitor pb client', async (ctx) => {
+	if (typeof window === 'undefined') return ctx.fail('Can not start capacitor client in node environment');
 	const address = ctx.fetchConnect()[0];
 	const PB_AUTH_KEY:string = 'pb_auth'
 
@@ -120,7 +123,7 @@ export const setupCapacitorClient = p.new('connect', 'start capacitor pb client'
 		save: async (serialized) => await Preferences.set({
 			key:PB_AUTH_KEY, value:serialized,
 		}),
-		initial: Preferences.get({ key:PB_AUTH_KEY }),
+		initial: init(PB_AUTH_KEY),
 	});
 	if (typeof address !== 'string') return ctx.fail('Invalid address');
 	try {
