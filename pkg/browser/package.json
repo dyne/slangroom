@@ -4,10 +4,10 @@
 		"@slangroom/core": "workspace:*",
 		"@slangroom/http": "workspace:*",
 		"@slangroom/json-schema": "workspace:*",
-		"@slangroom/qrcode": "workspace:*",
-		"@slangroom/pocketbase": "workspace:*"
+		"@slangroom/pocketbase": "workspace:*",
+		"@slangroom/qrcode": "workspace:*"
 	},
-	"version": "1.28.1",
+	"version": "1.28.2",
 	"repository": "https://github.com/dyne/slangroom",
 	"license": "AGPL-3.0-only",
 	"type": "module",
