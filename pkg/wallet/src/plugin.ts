@@ -119,13 +119,6 @@ export const createVcSdJwt = p.new(
 		const holder = ctx.fetch('holder') as JsonableObject;
 		// TODO: typecheck fields
 		const fields = ctx.fetch('fields') as JsonableArray;
-		// TODO: generate in another statement
-		const signer: SignerConfig = {
-			alg: supportedAlgorithm.ES256,
-			callback: signerCallbackFn(await importJWK(sk)),
-		};
-
-		const issuer = new Issuer(signer, hasher);
 
 		const payload: CreateSDJWTPayload = {
 			iat: Date.now(),
@@ -137,11 +130,20 @@ export const createVcSdJwt = p.new(
 			status: { idx: 'statusIndex', uri: 'https://valid.status.url' },
 			object: object,
 		};
-
 		const sdVCClaimsDisclosureFrame: DisclosureFrame = { object: { _sd: fields } };
 
-		const result = await issuer.createVCSDJWT(vcClaims, payload, sdVCClaimsDisclosureFrame);
-
+		let result
+		try {
+			// TODO: generate in another statement
+			const signer: SignerConfig = {
+				alg: supportedAlgorithm.ES256,
+				callback: signerCallbackFn(await importJWK(sk)),
+			};
+			const issuer = new Issuer(signer, hasher);
+			result = await issuer.createVCSDJWT(vcClaims, payload, sdVCClaimsDisclosureFrame);
+		} catch (e) {
+			return ctx.fail(e);
+		}
 		return ctx.pass(result);
 	},
 );
@@ -164,11 +166,8 @@ export const presentVcSdJwt = p.new(
 		// TODO: typecheck holderSk
 		const holderSk = ctx.fetch('holder') as JsonableObject;
 
-		const pk = await importJWK(holderSk);
 		const disclosureList = [];
-
 		const tildeTokens = issuedVc.split('~');
-
 		for (let i = 1; i < tildeTokens.length; ++i) {
 			const encoded = tildeTokens[i];
 			if (!encoded) continue;
@@ -181,17 +180,21 @@ export const presentVcSdJwt = p.new(
 			});
 		}
 
-		const signer: SignerConfig = {
-			alg: supportedAlgorithm.ES256,
-			callback: signerCallbackFn(pk),
-		};
-		const holder = new Holder(signer);
-
-		const { vcSDJWTWithkeyBindingJWT } = await holder.presentVCSDJWT(issuedVc, disclosureList, {
-			nonce: nonce,
-			audience: verifierUrl,
-			keyBindingVerifyCallbackFn: keyBindingVerifierCallbackFn(),
-		});
+		let vcSDJWTWithkeyBindingJWT
+		try {
+			const signer: SignerConfig = {
+				alg: supportedAlgorithm.ES256,
+				callback: signerCallbackFn(await importJWK(holderSk))
+			};
+			const holder = new Holder(signer);
+			({ vcSDJWTWithkeyBindingJWT } = await holder.presentVCSDJWT(issuedVc, disclosureList, {
+				nonce: nonce,
+				audience: verifierUrl,
+				keyBindingVerifyCallbackFn: keyBindingVerifierCallbackFn(),
+			}));
+		} catch (e) {
+			return ctx.fail(e);
+		}
 		return ctx.pass(vcSDJWTWithkeyBindingJWT);
 	},
 );
@@ -211,16 +214,19 @@ export const verifyVcSdJwt = p.new(
 		if (typeof nonce !== 'string') return ctx.fail('nonce must be string');
 		// TODO: typecheck issuer
 		const issuer = ctx.fetch('issuer') as JsonableObject;
-		const issuerPubKey = await importJWK(issuer);
 
 		const verifier = new Verifier();
-
-		const result = await verifier.verifyVCSDJWT(
-			issuedVc,
-			verifierCallbackFn(issuerPubKey),
-			hasherCallbackFn(defaultHashAlgorithm),
-			kbVerifierCallbackFn(verifierUrl, nonce),
-		);
+		let result
+		try {
+			result = await verifier.verifyVCSDJWT(
+				issuedVc,
+				verifierCallbackFn(await importJWK(issuer)),
+				hasherCallbackFn(defaultHashAlgorithm),
+				kbVerifierCallbackFn(verifierUrl, nonce),
+			);
+		} catch (e) {
+			return ctx.fail(e);
+		}
 		return ctx.pass(result as JsonableObject);
 	},
 );
@@ -230,9 +236,12 @@ export const verifyVcSdJwt = p.new(
  */
 export const keyGen = p.new('create p-256 key', async (ctx) => {
 	// Elliptic Curve Digital Signature Algorithm with the P-256 curve and the SHA-256 hash function
-	const keyPair = await generateKeyPair(supportedAlgorithm.ES256);
-
-	const sk = await exportJWK(keyPair.privateKey);
+	let sk
+	try {
+		sk = await exportJWK((await generateKeyPair(supportedAlgorithm.ES256)).privateKey);
+	} catch (e) {
+		return ctx.fail(e);
+	}
 
 	return ctx.pass({
 		kty: sk.kty || 'EC',
