@@ -17,7 +17,7 @@ export const runCommand = p.new(['command'], 'execute in shell', async (ctx) => 
         const { stdout } = await execaCommand(command);
         return ctx.pass(stdout)
     } catch (e) {
-        throw Error(e)
+        return ctx.fail(e)
     }
 })
 
