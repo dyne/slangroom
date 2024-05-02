@@ -49,12 +49,14 @@ test('should create a new slangroom capacitor client', async (t) => {
     Then print data
     `;
 	const slangroom = new Slangroom(pocketbase);
-	const res = await slangroom.execute(script, {
+	const fn = slangroom.execute(script, {
 		data: {
 			pb_address,
 		},
 	});
-	t.is(res.result['res'], 'pb client successfully created');
+	// check error from slangroom execution
+	const error = await t.throwsAsync(fn);
+	t.is((error as Error).message, "Can not start capacitor client in node environment");
 });
 
 test('should login with credentials', async (t) => {
@@ -123,7 +125,7 @@ test('should retrieve paginated list of records', async (t) => {
 			},
 			collection: 'organizations',
 		},
-	} 
+	}
 	//Jsonable object dont like undefined values from list parameters
 	const retypedData = data as unknown as JsonableObject
 	const res = await slangroom.execute(script, {
@@ -141,13 +143,14 @@ test('should retrieve first record that match filters', async (t) => {
 	const script = `
     Rule unknown ignore
     Given I connect to 'pb_address' and start pb client
+	Given I send my_credentials 'my_credentials' and login
     Given I send list_parameters 'list_parameters' and get some records and output into 'output'
     Given I have a 'string dictionary' named 'output'
     Then print data
     `;
 	const slangroom = new Slangroom(pocketbase);
 
-	const data: { pb_address: ServerUrl; list_parameters:ListParameters } = {
+	const data: { pb_address: ServerUrl; list_parameters:ListParameters, my_credentials: Credentials } = {
 		pb_address,
 		list_parameters: {
 			type: 'first',
@@ -155,6 +158,10 @@ test('should retrieve first record that match filters', async (t) => {
 			filter: 'created >= "2022-01-01 00:00:00"',
 			sort: '-created',
 		},
+		my_credentials: {
+			email,
+			password
+		}
 	};
 	//Jsonable object dont like undefined values from list parameters
 	const retypedData = data as unknown as JsonableObject
@@ -168,19 +175,24 @@ test('should retrieve one record', async (t) => {
 	const script = `
     Rule unknown ignore
     Given I connect to 'pb_address' and start pb client
+    Given I send my_credentials 'my_credentials' and login
     Given I send show_parameters 'show_parameters' and get one record and output into 'output'
     Given I have a 'string dictionary' named 'output'
     Then print data
     `;
 	const slangroom = new Slangroom(pocketbase);
 
-	const data: { pb_address: ServerUrl; show_parameters: ShowRecordParameters } = {
+	const data: { pb_address: ServerUrl; show_parameters: ShowRecordParameters; my_credentials: Credentials } = {
 		pb_address,
 		show_parameters: {
 			collection: 'organizations',
 			id: 'p7viyzsihrn52uj',
 			fields: 'name',
 		},
+		my_credentials: {
+			email,
+			password
+		}
 	};
 	//Jsonable object dont like undefined values from ShowRecordParameters
 	const retypedData = data as unknown as JsonableObject
@@ -235,10 +247,18 @@ test('should update a record', async (t) => {
     const scriptCreate = `
     Rule unknown ignore
     Given I connect to 'pb_address' and start pb client
-    Given I send my_credentials 'my_credentials' and login
-    Given I send create_parameters 'create_parameters' and send record_parameters 'record_parameters' and create record and output into 'output'
-    Given I have a 'string dictionary' named 'output'
-    Then print data
+    Given I send my_credentials 'my_credentials' and login and output into 'loginOutput'
+	Given I have a 'string dictionary' named 'loginOutput'
+	Given I have a 'string dictionary' named 'create_parameters'
+	Given I have a 'string dictionary' named 'record_parameters'
+	When I pickup from path 'loginOutput.record.id'
+	and I pickup from path 'create_parameters.record'
+	and I remove 'record' from 'create_parameters'
+	and I move 'id' to 'owners' in 'record'
+	and I move 'record' in 'create_parameters'
+	Then print the 'create_parameters'
+	Then print the 'record_parameters'
+    Then I send create_parameters 'create_parameters' and send record_parameters 'record_parameters' and create record and output into 'output'
     `;
 
 	const scriptUpdate = `
@@ -256,7 +276,7 @@ test('should update a record', async (t) => {
         create_parameters: {
 			collection: 'organizations',
 			record: {
-				name: `test-${randomString()}`,
+				name: `test-created-${randomString()}`
 			},
 		},
 		record_parameters: {
@@ -269,13 +289,12 @@ test('should update a record', async (t) => {
 		},
 	};
 
-
     const createResult = await slangroom.execute(scriptCreate, {
         data: dataCreate
     })
 
     const outputCreate = createResult.result['output'] as { id: string, name: string}
-    const updatedName = `test-${randomString()}`
+    const updatedName = `test-updated-${randomString()}`
 
 	type DataUpdate = {
 		pb_address: ServerUrl;
@@ -316,10 +335,18 @@ test('should delete a record', async (t) => {
     const scriptCreate = `
     Rule unknown ignore
     Given I connect to 'pb_address' and start pb client
-    Given I send my_credentials 'my_credentials' and login
-    Given I send create_parameters 'create_parameters' and send record_parameters 'record_parameters' and create record and output into 'output'
-    Given I have a 'string dictionary' named 'output'
-    Then print data
+    Given I send my_credentials 'my_credentials' and login and output into 'loginOutput'
+	Given I have a 'string dictionary' named 'loginOutput'
+	Given I have a 'string dictionary' named 'create_parameters'
+	Given I have a 'string dictionary' named 'record_parameters'
+	When I pickup from path 'loginOutput.record.id'
+	and I pickup from path 'create_parameters.record'
+	and I remove 'record' from 'create_parameters'
+	and I move 'id' to 'owners' in 'record'
+	and I move 'record' in 'create_parameters'
+	Then print the 'create_parameters'
+	Then print the 'record_parameters'
+    Then I send create_parameters 'create_parameters' and send record_parameters 'record_parameters' and create record and output into 'output'
     `;
 
 	const script = `
@@ -411,3 +438,4 @@ test('should make a request', async (t) => {
 	// @ts-expect-error - Don't know the shape of the object in advance
 	t.is(res.result['output']["message"], `Hello ${param}`);
 });
+

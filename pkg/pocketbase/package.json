@@ -1,8 +1,8 @@
 {
 	"name": "@slangroom/pocketbase",
-	"version": "1.28.0",
+	"version": "1.28.2",
 	"dependencies": {
-		"@capacitor/preferences": "^5.0.7",
+		"@capacitor/preferences": "^6.0.0",
 		"@slangroom/core": "workspace:*",
 		"@slangroom/shared": "workspace:*",
 		"dotenv": "^16.3.1",

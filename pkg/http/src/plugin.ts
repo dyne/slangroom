@@ -4,6 +4,7 @@
 
 import type { JsonableArray, JsonableObject } from '@slangroom/shared';
 import { Plugin, type PluginExecutor } from '@slangroom/core';
+import axios, { type AxiosRequestConfig } from 'axios';
 
 export type HttpMethod = 'get' | 'post' | 'put' | 'patch' | 'delete';
 
@@ -13,12 +14,12 @@ const p = new Plugin();
  * The default timeout of an HTTP request in milliseconds.
  */
 export const DefaultTimeoutMs = 5000;
-export const DefaultHeaders = { 'Content-Type': 'application/json' }
-let defaultOptions: Record<string, any> = {
-	timeout: DefaultTimeoutMs,
+
+const { request } = axios.create({
+	headers: { 'Content-Type': 'application/json' },
 	validateStatus: null,
-	headers: DefaultHeaders
-}
+	timeout: DefaultTimeoutMs,
+});
 
 const defaultRequest = (m: HttpMethod): PluginExecutor => {
 	return async (ctx) => {
@@ -26,23 +27,14 @@ const defaultRequest = (m: HttpMethod): PluginExecutor => {
 		// TODO: typecheck headers
 		const headers = ctx.get('headers') as any;
 		const object = ctx.get('object');
-		const options = defaultOptions;
-		options['method'] = m;
-		if (object) options['body'] = JSON.stringify(object);
-		if (headers) options['headers'] = { ...DefaultHeaders, ...headers };
+		const conf: AxiosRequestConfig = { url: url, method: m };
+		if (object) conf.data = object;
+		if (headers) conf.headers = headers;
 		try {
-			const response = await fetch(url, options);
-			let data = await response.text();
-			try {
-				data = JSON.parse(data);
-			} catch(e) {}
-			const responseHeaders: Record<string, any> = {}
-			response.headers.forEach((v, k) => {
-				responseHeaders[k] = v
-			})
-			return ctx.pass({ status: response.status.toString(), result: data, headers: responseHeaders });
+			const req = await request(conf);
+			return ctx.pass({ status: req.status.toString(), result: req.data });
 		} catch (e) {
-			if (e.isFetchError) return ctx.pass({ status: e.code ?? '', result: e.message, headers: {} });
+			if (axios.isAxiosError(e)) return ctx.pass({ status: e.code ?? '', result: '' });
 			throw e;
 		}
 	};
@@ -50,18 +42,19 @@ const defaultRequest = (m: HttpMethod): PluginExecutor => {
 
 const sameParallelRequest = (m: HttpMethod, isSame: boolean): PluginExecutor => {
 	return async (ctx) => {
-		const reqs: Promise<Response>[] = [];
+		const reqs: ReturnType<typeof request<any>>[] = [];
 		const urls = ctx.fetchConnect();
-		const options = defaultOptions;
-		options['method'] = m;
 		// TODO: typecheck headers
 		const headers = ctx.get('headers') as any;
-		if (headers) options['headers'] = { ...DefaultHeaders, ...headers };
+
 		if (isSame) {
 			// TODO: typecheck object JsonableObject
 			const object = ctx.get('object') as undefined | JsonableObject;
 			for (const u of urls) {
-				reqs.push(fetch(u, { ...options, body: JSON.stringify(object) }));
+				const conf: AxiosRequestConfig = { url: u, method: m };
+				if (headers) conf.headers = headers;
+				if (object) conf.data = object;
+				reqs.push(request(conf));
 			}
 		}
 		// parallel
@@ -69,29 +62,22 @@ const sameParallelRequest = (m: HttpMethod, isSame: boolean): PluginExecutor => 
 			// TODO: typecheck object (JsonableArray of JsonableObject)
 			const objects = ctx.get('object') as undefined | JsonableArray;
 			for (const [i, u] of urls.entries()) {
-				reqs.push(fetch(u, { ...options, body: JSON.stringify(objects && objects[i]) }));
+				const conf: AxiosRequestConfig = { url: u, method: m };
+				if (headers) conf.headers = headers;
+				if (objects) conf.data = objects[i];
+				reqs.push(request(conf));
 			}
 		}
 
-		const results = await Promise.all((await Promise.allSettled(reqs)).map(async (x) => {
-			if (x.status === 'fulfilled') {
-				let data = await x.value.text();
-				try {
-					data = JSON.parse(data);
-				} catch(e) {}
-				const responseHeaders: Record<string, any> = {}
-				x.value.headers.forEach((v, k) => {
-					responseHeaders[k] = v
-				})
-				return { status: x.value.status.toString(), result: data, headers: responseHeaders };
-			}
-
+		const results = (await Promise.allSettled(reqs)).map((x) => {
+			if (x.status === 'fulfilled')
+				return { status: x.value.status.toString(), result: x.value.data };
 
 			const err = x.reason;
-			if (err.isFetchError) return { status: err.code ?? '', result: err.message, headers: {} };
+			if (axios.isAxiosError(err)) return { status: err.code ?? '', result: '' };
 
 			throw x.reason;
-		}));
+		});
 
 		return ctx.pass(results);
 	};

@@ -1,9 +1,10 @@
 {
 	"name": "@slangroom/http",
-	"version": "1.27.7",
+	"version": "1.28.1",
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
-		"@slangroom/shared": "workspace:*"
+		"@slangroom/shared": "workspace:*",
+		"axios": "^1.6.2"
 	},
 	"repository": "https://github.com/dyne/slangroom",
 	"license": "AGPL-3.0-only",
