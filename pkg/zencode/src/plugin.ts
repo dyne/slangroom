@@ -26,9 +26,12 @@ export const zencodeExecPlugin = p.new(['script', 'data', 'keys' ], 'execute zen
 	const extra = {} as JsonableObject;
 	const conf = "";
 
-	const zout = await exec(script, data, keys, extra, conf);
-
-	return ctx.pass(zout.result)
+	try {
+		const zout = await exec(script, data, keys, extra, conf);
+		return ctx.pass(zout.result);
+	} catch (e) {
+		return ctx.fail(e);
+	}
 });
 
 /**
@@ -41,9 +44,12 @@ export const zencodeExecFullPlugin = p.new(['script', 'data', 'keys', 'extra', '
 	const extra = (ctx.get('extra') || {}) as JsonableObject;
 	const conf = (ctx.get('conf') || "") as string;
 
-	const zout = await exec(script, data, keys, extra, conf);
-
-	return ctx.pass(zout.result)
+	try {
+		const zout = await exec(script, data, keys, extra, conf);
+		return ctx.pass(zout.result);
+	} catch (e) {
+		return ctx.fail(e);
+	}
 });
 
 

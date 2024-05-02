@@ -69,3 +69,28 @@ Then print data
 	});
 
 });
+
+test('run zencode that fails', async (t) => {
+	const scriptCreate = `
+Rule unknown ignore
+Given I send keys 'neo_keys' and send script 'neo_script' and send data 'neo_data' and send conf 'neo_conf' and send extra 'neo_extra' and execute zencode and output into 'something'
+Given I have a 'string dictionary' named 'ecdh_public_key'
+Then print data
+`;
+	const slangroom = new Slangroom(zencode);
+	const fn = slangroom.execute(scriptCreate, {
+		keys: {
+			neo_keys: {},
+			neo_conf: "",
+			neo_data: {},
+			neo_extra: {},
+			neo_script: `
+				Given I have the 'string' named 'variable_that_does_not_exists'
+				Then print the string 'this should fail'
+			`
+		},
+	});
+	const error = await t.throwsAsync(fn);
+	t.true(((error as Error).message).includes("[!] Zencode runtime error"));
+    t.true(((error as Error).message).includes("Zencode line 2: Given I have the 'string' named 'variable_that_does_not_exists'"));
+});
