@@ -108,7 +108,7 @@ export const setupClient = p.new('connect', 'start pb client', async (ctx) => {
 		if (!(await isPbRunning())) return ctx.fail('Client is not running');
 		return ctx.pass('pb client successfully created');
 	} catch (e) {
-		throw new Error(e)
+		return ctx.fail(e)
 	}
 });
 
@@ -117,6 +117,7 @@ const init = async (key: string) => { return (await Preferences.get({ key })).va
 export const setupCapacitorClient = p.new('connect', 'start capacitor pb client', async (ctx) => {
 	if (typeof window === 'undefined') return ctx.fail('Can not start capacitor client in node environment');
 	const address = ctx.fetchConnect()[0];
+	if (typeof address !== 'string') return ctx.fail('Invalid address');
 	const PB_AUTH_KEY:string = 'pb_auth'
 
 	const store = new AsyncAuthStore({
@@ -125,13 +126,12 @@ export const setupCapacitorClient = p.new('connect', 'start capacitor pb client'
 		}),
 		initial: init(PB_AUTH_KEY),
 	});
-	if (typeof address !== 'string') return ctx.fail('Invalid address');
 	try {
 		pb = new PocketBase(address, store);
 		if (!(await isPbRunning())) return ctx.fail('Client is not running');
 		return ctx.pass('pb client successfully created');
 	} catch (e) {
-		throw new Error(e)
+		return ctx.fail(e)
 	}
 });
 
@@ -151,7 +151,7 @@ export const authWithPassword = p.new(['my_credentials'], 'login', async (ctx) =
 			.authWithPassword(credentials!.email, credentials!.password, { requestKey: null });
 		return ctx.pass({ token: res.token, record: res.record });
 	} catch (err) {
-		throw new Error(err)
+		return ctx.fail(err)
 	}
 });
 
@@ -198,7 +198,7 @@ export const showRecord = p.new(['show_parameters'], 'get one record', async (ct
 		const res = await pb.collection(p.collection).getOne(p.id, options);
 		return ctx.pass(res);
 	} catch (err) {
-		throw new Error(err)
+		return ctx.fail(err)
 	}
 });
 
@@ -224,7 +224,7 @@ export const createRecord = p.new(
 			const res = await pb.collection(collection).create(record, options);
 			return ctx.pass(res);
 		} catch (err) {
-			throw new Error(err.message);
+			return ctx.fail(err);
 		}
 	},
 );
@@ -251,7 +251,7 @@ export const updateRecord = p.new(
 			const res = await pb.collection(collection).update(id, record, options);
 			return ctx.pass(res);
 		} catch (err) {
-			throw new Error(err.message);
+			return ctx.fail(err);
 		}
 	},
 );
