@@ -35,7 +35,7 @@ const defaultRequest = (m: HttpMethod): PluginExecutor => {
 			return ctx.pass({ status: req.status.toString(), result: req.data });
 		} catch (e) {
 			if (axios.isAxiosError(e)) return ctx.pass({ status: e.code ?? '', result: '' });
-			throw e;
+			return ctx.fail(e);
 		}
 	};
 };
@@ -76,7 +76,7 @@ const sameParallelRequest = (m: HttpMethod, isSame: boolean): PluginExecutor => 
 			const err = x.reason;
 			if (axios.isAxiosError(err)) return { status: err.code ?? '', result: '' };
 
-			throw x.reason;
+			return ctx.fail(x.reason);
 		});
 
 		return ctx.pass(results);
