@@ -14,9 +14,7 @@ import * as path from 'node:path';
  */
 export const sandboxDir = () => {
 	// TODO: sanitize sandboxDir
-	const ret = process.env['FILES_DIR'];
-	if (!ret) throw new Error('$FILES_DIR must be provided');
-	return ret;
+	return process.env['FILES_DIR'];
 };
 
 const sandboxizeDir = (unsafe: string) => {
@@ -25,7 +23,9 @@ const sandboxizeDir = (unsafe: string) => {
 	const doesDirectoryTraversal = normalized.startsWith('/') || normalized.startsWith('..');
 	// Unlike `resolveFilepath`, we allow `.` to be used here, obviously.
 	if (doesDirectoryTraversal) return { error: `dirpath is unsafe: ${unsafe}` };
-	return { dirpath: path.join(sandboxDir(), normalized) };
+	const sandboxdir = sandboxDir();
+	if (!sandboxdir) return { error: '$FILES_DIR must be provided' };
+	return { dirpath: path.join(sandboxdir, normalized) };
 };
 
 const sandboxizeFile = (sandboxdir: string, unsafe: string) => {
