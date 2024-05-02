@@ -92,5 +92,5 @@ Then print data
 	});
 	const error = await t.throwsAsync(fn);
 	t.true(((error as Error).message).includes("[!] Zencode runtime error"));
-    t.true(((error as Error).message).includes("Zencode line 2: Given I have the 'string' named 'variable_that_does_not_exists'"));
+	t.true(((error as Error).message).includes("Zencode line 2: Given I have the 'string' named 'variable_that_does_not_exists'"));
 });
