@@ -6,6 +6,8 @@ import { Slangroom } from '@slangroom/core';
 import { helpers } from '@slangroom/helpers';
 import test from 'ava';
 
+const stripAnsiCodes = (str: string) => str.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
+
 test('@slangroom/helpers 🧲 concat arrays ', async (t) => {
     const picked = `Rule unknown ignore
 Given I send array 'the_array' and send values 'v' and manipulate and concat and output into 'r'
@@ -50,7 +52,13 @@ Then print 'r'
         },
     });
     const error = await t.throwsAsync(fn);
-    t.is((error as Error).message, 'ParseError: "concat" between (50, 55) must be one of: compact');
+    t.is(stripAnsiCodes((error as Error).message),
+	`0 | Rule unknown ignore
+1 | Given I send array 'the_array' and manipulate and concat and output into 'r'
+                                                      ^^^^^^
+2 | Given I have a 'string array' named 'the_array'
+3 | Given I have a 'string dictionary' named 'r'
+ParseError: "concat" at 2:51-56 must be one of: "compact"`);
 });
 
 test('@slangroom/helpers 🧲 concat empty array', async (t) => {

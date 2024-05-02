@@ -175,12 +175,12 @@ Then print 'r'
         },
     });
     const error = await t.throwsAsync(fn);
-    t.is((error as Error).message, `MANIPULATION ERRROR: 
-None of the properties 
+    t.is((error as Error).message, `Slangroom @slangroom/helper Error: MANIPULATION ERRROR:
+None of the properties
 
- "a" 
+ "a"
 
- exist in the object: 
+ exist in the object:
 
  {
    "r": {
