@@ -44,7 +44,6 @@ export const getIgnoredStatements = async (
 			// skip if not found
 			return;
 		if (!l.groups || l.groups['statement'] == null || l.groups['lineNo'] == null) {
-			console.log('YOOOO', x, l);
 			throw new Error('no match');
 		}
 		const lineNo = l.groups['lineNo'],

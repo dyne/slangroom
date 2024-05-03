@@ -461,7 +461,7 @@ export class AuthorizeHandler {
 	buildErrorRedirectUri(redirectUri: string, error: Error) {
 		//TODO
 		const uri = url.parse(redirectUri);
-		console.log(error);
+		// console.log(error);
 		// uri.query = {
 		// 	error: error.name,
 		// };
