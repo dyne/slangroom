@@ -166,6 +166,11 @@ export type Match = {
 	err: {message: ParseError, lineNo: number, start?: number, end?: number}[];
 
 	/**
+	 * The line number of the match.
+	 */
+	lineNo: number;
+
+	/**
 	 * Whether this line wants to output the result of its plugin to a variable,
 	 * later to be used in other statements, perhaps.
 	 */
@@ -223,7 +228,7 @@ export const parse = (p: PluginMap, t: Token[], lineNo: number): Cst => {
 
 	p.forEach(([k]) => {
 		let i = 1;
-		const m: Match = { key: k, bindings: new Map(), err: [] };
+		const m: Match = { key: k, bindings: new Map(), err: [], lineNo: lineNo };
 		const curErrLen = cst.matches[0]?.err.length;
 		const lemmeout = {};
 		const newErr = (i: number, wantsFirst: string, ...wantsRest: string[]) => {

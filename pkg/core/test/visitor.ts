@@ -20,6 +20,7 @@ test('visitor works', (t) => {
 							key: { phrase: 'love asche' },
 							bindings: new Map(),
 							err: [],
+							lineNo: 1
 						},
 					],
 				},
@@ -41,6 +42,7 @@ test('visitor works', (t) => {
 							},
 							bindings: new Map([['howmuch', 'value']]),
 							err: [],
+							lineNo: 1
 						},
 					],
 				},
@@ -70,6 +72,7 @@ test('visitor works', (t) => {
 							bindings: new Map([['object', 'myObj']]),
 							connect: 'myUrl',
 							err: [],
+							lineNo: 1
 						},
 					],
 				},
@@ -98,6 +101,7 @@ test('visitor works', (t) => {
 							bindings: new Map(),
 							open: 'myFile',
 							err: [],
+							lineNo: 1
 						},
 					],
 				},

@@ -24,6 +24,7 @@ test('parser works', (t) => {
 					key: { phrase: 'love asche' },
 					bindings: new Map(),
 					err: [{message: ParseError.missing(1, 'love'), lineNo: 1}, {message: ParseError.missing(1, 'asche'), lineNo: 1}],
+					lineNo: 1
 				},
 			],
 		},
@@ -40,6 +41,7 @@ test('parser works', (t) => {
 						{message: ParseError.missing(1, 'love'), lineNo: 1},
 						{message: ParseError.missing(1, 'asche'), lineNo: 1}
 					],
+					lineNo: 1
 				},
 			],
 		},
@@ -56,6 +58,7 @@ test('parser works', (t) => {
 						{message: ParseError.missing(1, 'love'), lineNo: 1},
 						{message: ParseError.missing(1, 'asche'), lineNo: 1}
 					],
+					lineNo: 1
 				},
 			],
 		},
@@ -71,6 +74,7 @@ test('parser works', (t) => {
 						{message: ParseError.missing(1, 'love'), lineNo: 1},
 						{message: ParseError.missing(1, 'asche'), lineNo: 1}
 					],
+					lineNo: 1
 				},
 			],
 		},
@@ -85,6 +89,7 @@ test('parser works', (t) => {
 						{message: ParseError.missing(1, 'love'), lineNo: 1},
 						{message: ParseError.missing(1, 'asche'), lineNo: 1}
 					],
+					lineNo: 1
 				},
 			],
 		},
@@ -97,6 +102,7 @@ test('parser works', (t) => {
 					key: { phrase: 'love asche' },
 					bindings: new Map(),
 					err: [{message: ParseError.wrong(new Token('notAsche', 1, 13, 20), 'asche'), lineNo: 1, start: 13, end: 20}],
+					lineNo: 1
 				},
 			],
 		},
@@ -108,6 +114,7 @@ test('parser works', (t) => {
 					key: { phrase: 'a b c' },
 					bindings: new Map(),
 					err: [{message: ParseError.wrong(new Token('foobar', 1, 11, 16), 'c'), lineNo: 1, start: 11, end: 16}],
+					lineNo: 1
 				},
 			],
 		},
@@ -124,6 +131,7 @@ test('parser works', (t) => {
 						{message: ParseError.wrong(new Token('patates', 1, 16, 22), 'biber'), lineNo: 1, start: 16, end: 22},
 						{message: ParseError.wrong(new Token('biber', 1, 24, 28), 'patlican'), lineNo: 1, start: 24, end: 28}
 					],
+					lineNo: 1
 				},
 			],
 		},
@@ -139,6 +147,7 @@ test('parser works', (t) => {
 					open: 'xfiles',
 					bindings: new Map([]),
 					err: [{message: ParseError.wrong(new Token('files', 1, 32, 36), 'file'), lineNo: 1, start: 32, end: 36}],
+					lineNo: 1
 				},
 			],
 		},
@@ -151,6 +160,7 @@ test('parser works', (t) => {
 					key: { phrase: 'love asche' },
 					bindings: new Map(),
 					err: [{message: ParseError.wrong(new Token('Like', 1, 7, 10), 'love'), lineNo: 1, start: 7, end: 10}],
+					lineNo: 1
 				},
 			],
 		},
@@ -162,6 +172,7 @@ test('parser works', (t) => {
 					key: { phrase: 'a b c' },
 					bindings: new Map(),
 					err: [{message: ParseError.wrong(new Token('biber', 1, 10, 14), 'b'), lineNo: 1, start: 10, end: 14}],
+					lineNo: 1
 				},
 			],
 		},
@@ -176,6 +187,7 @@ test('parser works', (t) => {
 						{message: ParseError.wrong(new Token('domates', 1, 7, 13), 'a'), lineNo: 1, start: 7, end: 13},
 						{message: ParseError.wrong(new Token('patates', 1, 17, 23), 'c'), lineNo: 1, start: 17, end: 23},
 					],
+					lineNo: 1
 				},
 				{
 					key: { phrase: 'domates biber patlican' },
@@ -184,6 +196,7 @@ test('parser works', (t) => {
 						{message: ParseError.wrong(new Token('b', 1, 15, 15), 'biber'), lineNo: 1, start: 15, end: 15},
 						{message: ParseError.wrong(new Token('patates', 1, 17, 23), 'patlican'), lineNo: 1, start: 17, end: 23}
 					],
+					lineNo: 1
 				},
 			],
 		},
@@ -199,6 +212,7 @@ test('parser works', (t) => {
 						{message: ParseError.extra(new Token('and', 1, 19, 21)), lineNo: 1, start: 19, end: 21},
 						{message: ParseError.extra(new Token('so', 1, 23, 24)), lineNo: 1, start: 23, end: 24}
 					],
+					lineNo: 1
 				},
 			],
 		},
@@ -213,6 +227,7 @@ test('parser works', (t) => {
 						{message: ParseError.extra(new Token('and', 1, 13, 15)), lineNo: 1, start: 13, end: 15},
 						{message: ParseError.extra(new Token('d', 1, 17, 17)), lineNo: 1, start: 17, end: 17}
 					],
+					lineNo: 1
 				},
 			],
 		},
@@ -224,6 +239,7 @@ test('parser works', (t) => {
 					key: { phrase: 'domates biber patlican' },
 					bindings: new Map(),
 					err: [{message: ParseError.extra(new Token('patates', 1, 30, 36)), lineNo: 1, start: 30, end: 36}],
+					lineNo: 1
 				},
 			],
 		},
@@ -242,6 +258,7 @@ test('parser works', (t) => {
 						{message: ParseError.extra(new Token('and', 1, 37, 39)), lineNo: 1, start: 37, end: 39},
 						{message: ParseError.extra(new Token('stuff', 1, 41, 45)), lineNo: 1, start: 41, end: 45}
 					],
+					lineNo: 1
 				},
 			],
 		},
@@ -258,6 +275,7 @@ test('parser works', (t) => {
 						{message: ParseError.extra(new Token('so', 1, 23, 24)), lineNo: 1, start: 23, end: 24}
 					],
 					into: 'foo',
+					lineNo: 1
 				},
 			],
 		},
@@ -273,6 +291,7 @@ test('parser works', (t) => {
 						{message: ParseError.extra(new Token('d', 1, 17, 17)), lineNo: 1, start: 17, end: 17}
 					],
 					into: 'bar',
+					lineNo: 1
 				},
 			],
 		},
@@ -285,6 +304,7 @@ test('parser works', (t) => {
 					bindings: new Map(),
 					err: [{message: ParseError.extra(new Token('patates', 1, 30, 36)), lineNo: 1, start: 30, end: 36}],
 					into: 'baz',
+					lineNo: 1
 				},
 			],
 		},
@@ -304,6 +324,7 @@ test('parser works', (t) => {
 						{message: ParseError.extra(new Token('stuff', 1, 41, 45)), lineNo: 1, start: 41, end: 45}
 					],
 					into: 'quz',
+					lineNo: 1
 				},
 			],
 		},
@@ -319,6 +340,7 @@ test('parser works', (t) => {
 						{message: ParseError.extra(new Token('and', 1, 19, 21)), lineNo: 1, start: 19, end: 21},
 						{message: ParseError.wrong(new Token('so', 1, 23, 24), 'and'), lineNo: 1, start: 23, end: 24}
 					],
+					lineNo: 1
 				},
 			],
 		},
@@ -330,6 +352,7 @@ test('parser works', (t) => {
 					key: { phrase: 'a b c' },
 					bindings: new Map(),
 					err: [{message: ParseError.wrong(new Token('d', 1, 17, 17), 'output'), lineNo: 1, start: 17, end: 17}],
+					lineNo: 1
 				},
 			],
 		},
@@ -344,6 +367,7 @@ test('parser works', (t) => {
 						{message: ParseError.extra(new Token('patates', 1, 30, 36)), lineNo: 1, start: 30, end: 36},
 						{message: ParseError.extra(new Token("'baz'", 1, 38, 42)), lineNo: 1, start: 38, end: 42}
 					],
+					lineNo: 1
 				},
 			],
 		},
@@ -364,6 +388,7 @@ test('parser works', (t) => {
 						{message: ParseError.wrong(new Token('and', 1, 47, 49), 'output'), lineNo: 1, start: 47, end: 49},
 						{message: ParseError.wrong(new Token('output', 1, 51, 56), 'into'), lineNo: 1, start: 51, end: 56}
 					],
+					lineNo: 1
 				},
 			],
 		},
@@ -376,6 +401,7 @@ test('parser works', (t) => {
 					key: { phrase: 'love asche' },
 					bindings: new Map(),
 					err: [{message: ParseError.wrong(new Token('save', 1, 19, 22), 'and'), lineNo: 1, start: 19, end: 22}],
+					lineNo: 1
 				},
 			],
 		},
@@ -388,18 +414,19 @@ test('parser works', (t) => {
 					key: { phrase: 'love asche' },
 					bindings: new Map(),
 					err: [],
+					lineNo: 1
 				},
 			],
 		},
 		'Then I a b c': {
 			givenThen: 'then',
 			errors: [],
-			matches: [{ key: { phrase: 'a b c' }, bindings: new Map(), err: [] }],
+			matches: [{ key: { phrase: 'a b c' }, bindings: new Map(), err: [],lineNo: 1 }],
 		},
 		'Given I domates Biber patlIcan': {
 			givenThen: 'given',
 			errors: [],
-			matches: [{ key: { phrase: 'domates biber patlican' }, bindings: new Map(), err: [] }],
+			matches: [{ key: { phrase: 'domates biber patlican' }, bindings: new Map(), err: [], lineNo: 1 }],
 		},
 		"Given I open 'xfiles' and write file": {
 			givenThen: 'given',
@@ -413,6 +440,7 @@ test('parser works', (t) => {
 					open: 'xfiles',
 					bindings: new Map([]),
 					err: [],
+					lineNo: 1
 				},
 			],
 		},
@@ -429,6 +457,7 @@ test('parser works', (t) => {
 					bindings: new Map([['object', 'myObj']]),
 					connect: 'url',
 					err: [],
+					lineNo: 1
 				},
 			],
 		},
@@ -441,6 +470,7 @@ test('parser works', (t) => {
 					key: { phrase: 'love asche' },
 					bindings: new Map(),
 					err: [],
+					lineNo: 1,
 					into: 'foo',
 				},
 			],
@@ -453,6 +483,7 @@ test('parser works', (t) => {
 					key: { phrase: 'a b c' },
 					bindings: new Map(),
 					err: [],
+					lineNo: 1,
 					into: 'bar',
 				},
 			],
@@ -465,6 +496,7 @@ test('parser works', (t) => {
 					key: { phrase: 'domates biber patlican' },
 					bindings: new Map(),
 					err: [],
+					lineNo: 1,
 					into: 'baz',
 				},
 			],
@@ -481,6 +513,7 @@ test('parser works', (t) => {
 					open: 'xfiles',
 					bindings: new Map([]),
 					err: [],
+					lineNo: 1,
 					into: 'Quz',
 				},
 			],
@@ -499,6 +532,7 @@ test('parser works', (t) => {
 						bindings: new Map([['object', 'myObj']]),
 						connect: 'url',
 						err: [],
+						lineNo: 1,
 						into: 'result',
 					},
 				],
@@ -517,6 +551,7 @@ test('parser works', (t) => {
 						['foo', 'foo_ident'],
 					]),
 					err: [],
+					lineNo: 1
 				},
 			],
 		},
