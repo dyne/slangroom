@@ -7,6 +7,8 @@ import { Slangroom } from '@slangroom/core';
 import { shell } from '@slangroom/shell';
 import { $ } from 'execa';
 
+const stripAnsiCodes = (str: string) => str.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
+
 test('execute shell command `ls -a`', async (t) => {
     const { stdout } = await $`ls -a`
     const ls = `Rule unknown ignore
@@ -40,8 +42,15 @@ Then print data
         },
     });
     const error = await t.throwsAsync(fn);
-    t.is((error as Error).message, `Error: Command failed with ENOENT: notfound -v
-spawn notfound ENOENT`);
+    t.is(stripAnsiCodes((error as Error).message),
+`0 | Rule unknown ignore
+1 | Given I send command 'c' and execute in shell and output into 'r'
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2 | Given I have a 'string' named 'r'
+3 | 
+Error: Slangroom @slangroom/shell Error: Command failed with ENOENT: notfound -v
+spawn notfound ENOENT
+`);
 });
 
 test('expect stderr and exit code when command fails', async (t) => {
@@ -59,6 +68,13 @@ Then print data
         },
     });
     const error = await t.throwsAsync(fn);
-    t.is((error as Error).message, `Error: Command failed with exit code 1: cat notfound.txt
-cat: notfound.txt: No such file or directory`);
+    t.is(stripAnsiCodes((error as Error).message),
+`0 | Rule unknown ignore
+1 | Given I send command 'c' and execute in shell and output into 'r'
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2 | Given I have a 'string' named 'r'
+3 | 
+Error: Slangroom @slangroom/shell Error: Command failed with exit code 1: cat notfound.txt
+cat: notfound.txt: No such file or directory
+`);
 });
