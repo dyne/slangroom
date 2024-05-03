@@ -24,7 +24,7 @@ export const sandboxDir = () => {
 	return process.env['FILES_DIR'];
 };
 
-const resolveDirPath = (unsafe: string): ({ok: true, dirpath: any} | {ok: false, error: string}) => {
+const resolveDirPath = (unsafe: string): ({ok: true, dirpath: string} | {ok: false, error: string}) => {
 	const normalized = path.normalize(unsafe);
 	// `/` and `..` prevent directory traversal
 	const doesDirectoryTraversal = normalized.startsWith('/') || normalized.startsWith('..');
@@ -35,7 +35,7 @@ const resolveDirPath = (unsafe: string): ({ok: true, dirpath: any} | {ok: false,
 	return { ok: true, dirpath: path.join(sandboxdir, normalized) };
 };
 
-const resolveFilepath = (unsafe: string): ({ok: true, filepath: any} | {ok: false, error: string}) => {
+const resolveFilepath = (unsafe: string): ({ok: true, filepath: string} | {ok: false, error: string}) => {
 	const normalized = path.normalize(unsafe);
 	// `/` and `..` prevent directory traversal
 	const doesDirectoryTraversal = normalized.startsWith('/') || normalized.startsWith('..');
