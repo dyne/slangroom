@@ -7,6 +7,13 @@ import Ajv, { type ValidationError } from 'ajv';
 
 export { ValidationError };
 
+export class JsonSchemaError extends Error {
+	constructor(message: string) {
+		super(message);
+		this.name = 'Slangroom @slangroom/json-schema Error';
+	}
+}
+
 //
 
 const p = new Plugin();
@@ -41,8 +48,7 @@ export const validateJSON = p.new(
 				errors: validate.errors ?? [],
 			});
 		} catch (e) {
-			console.log(e.message);
-			return ctx.fail('JSON Schema not valid' + e);
+			return ctx.fail(new JsonSchemaError('JSON Schema not valid' + e.message));
 		}
 	},
 );
