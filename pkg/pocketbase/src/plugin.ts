@@ -8,6 +8,12 @@ import { Plugin } from '@slangroom/core';
 import { z } from 'zod';
 import { Preferences } from '@capacitor/preferences';
 
+export class PocketBaseError extends Error {
+	constructor(message: string) {
+		super(message);
+		this.name = 'Slangroom @slangroom/pocketbase Error';
+	}
+}
 
 let pb: PocketBase;
 const p = new Plugin();
@@ -102,22 +108,22 @@ const createRecordOptions = (p: RecordBaseParameters) => {
  */
 export const setupClient = p.new('connect', 'start pb client', async (ctx) => {
 	const address = ctx.fetchConnect()[0];
-	if (typeof address !== 'string') return ctx.fail('Invalid address');
+	if (typeof address !== 'string') return ctx.fail(new PocketBaseError('Invalid address'));
 	try {
 		pb = new PocketBase(address);
-		if (!(await isPbRunning())) return ctx.fail('Client is not running');
+		if (!(await isPbRunning())) return ctx.fail(new PocketBaseError('Client is not running'));
 		return ctx.pass('pb client successfully created');
 	} catch (e) {
-		return ctx.fail(e)
+		return ctx.fail(new PocketBaseError(e.message));
 	}
 });
 
 const init = async (key: string) => { return (await Preferences.get({ key })).value }
 
 export const setupCapacitorClient = p.new('connect', 'start capacitor pb client', async (ctx) => {
-	if (typeof window === 'undefined') return ctx.fail('Can not start capacitor client in node environment');
+	if (typeof window === 'undefined') return ctx.fail(new PocketBaseError('Can not start capacitor client in node environment'));
 	const address = ctx.fetchConnect()[0];
-	if (typeof address !== 'string') return ctx.fail('Invalid address');
+	if (typeof address !== 'string') return ctx.fail(new PocketBaseError('Invalid address'));
 	const PB_AUTH_KEY:string = 'pb_auth'
 
 	const store = new AsyncAuthStore({
@@ -128,10 +134,10 @@ export const setupCapacitorClient = p.new('connect', 'start capacitor pb client'
 	});
 	try {
 		pb = new PocketBase(address, store);
-		if (!(await isPbRunning())) return ctx.fail('Client is not running');
+		if (!(await isPbRunning())) return ctx.fail(new PocketBaseError('Client is not running'));
 		return ctx.pass('pb client successfully created');
 	} catch (e) {
-		return ctx.fail(e)
+		return ctx.fail(new PocketBaseError(e.message));
 	}
 });
 
@@ -142,8 +148,8 @@ export const authWithPassword = p.new(['my_credentials'], 'login', async (ctx) =
 	const credentials = ctx.fetch('my_credentials') as Credentials;
 
 	const validation = credentialsSchema.safeParse(credentials);
-	if (!validation.success) return ctx.fail(validation.error);
-	if (!(await isPbRunning())) return ctx.fail('Client is not running');
+	if (!validation.success) return ctx.fail(new PocketBaseError(validation.error.message));
+	if (!(await isPbRunning())) return ctx.fail(new PocketBaseError('Client is not running'));
 
 	try {
 		const res = await pb
@@ -151,7 +157,7 @@ export const authWithPassword = p.new(['my_credentials'], 'login', async (ctx) =
 			.authWithPassword(credentials!.email, credentials!.password, { requestKey: null });
 		return ctx.pass({ token: res.token, record: res.record });
 	} catch (err) {
-		return ctx.fail(err)
+		return ctx.fail(new PocketBaseError(err.message));
 	}
 });
 
@@ -161,10 +167,10 @@ export const authWithPassword = p.new(['my_credentials'], 'login', async (ctx) =
 export const getList = p.new(['list_parameters'], 'get some records', async (ctx) => {
 	const params = ctx.fetch('list_parameters') as ListParameters;
 	const validation = listParametersSchema.safeParse(params);
-	if (!validation.success) return ctx.fail(validation.error);
+	if (!validation.success) return ctx.fail(new PocketBaseError(validation.error.message));
 
 	const { collection, sort, filter, expand, type, requestKey } = params;
-	if (!(await isPbRunning())) return ctx.fail('client is not working');
+	if (!(await isPbRunning())) return ctx.fail(new PocketBaseError('client is not working'));
 
 	const options: FullListOptions = { requestKey: requestKey || type };
 	if (sort) options.sort = sort;
@@ -190,7 +196,7 @@ export const getList = p.new(['list_parameters'], 'get some records', async (ctx
 export const showRecord = p.new(['show_parameters'], 'get one record', async (ctx) => {
 	const p = ctx.fetch('show_parameters') as ShowRecordParameters;
 	const validation = showParametersSchema.safeParse(p);
-	if (!validation.success) return ctx.fail(validation.error);
+	if (!validation.success) return ctx.fail(new PocketBaseError(validation.error.message));
 
 	const options = createRecordOptions(p);
 
@@ -198,7 +204,7 @@ export const showRecord = p.new(['show_parameters'], 'get one record', async (ct
 		const res = await pb.collection(p.collection).getOne(p.id, options);
 		return ctx.pass(res);
 	} catch (err) {
-		return ctx.fail(err)
+		return ctx.fail(new PocketBaseError(err.message));
 	}
 });
 
@@ -214,8 +220,8 @@ export const createRecord = p.new(
 
 		const validateCreateParams = createRecordParametersSchema.safeParse(p);
 		const validateRecordParams = baseRecordParametersSchema.safeParse(r);
-		if (!validateCreateParams.success) return ctx.fail(validateCreateParams.error);
-		if (!validateRecordParams.success) return ctx.fail(validateRecordParams.error);
+		if (!validateCreateParams.success) return ctx.fail(new PocketBaseError(validateCreateParams.error.message));
+		if (!validateRecordParams.success) return ctx.fail(new PocketBaseError(validateRecordParams.error.message));
 
 		const { collection, record } = p;
 		const options = createRecordOptions(r);
@@ -224,7 +230,7 @@ export const createRecord = p.new(
 			const res = await pb.collection(collection).create(record, options);
 			return ctx.pass(res);
 		} catch (err) {
-			return ctx.fail(err);
+			return ctx.fail(new PocketBaseError(err.message));
 		}
 	},
 );
@@ -241,8 +247,8 @@ export const updateRecord = p.new(
 
 		const validateUpdateParams = updateRecordParametersSchema.safeParse(p);
 		const validateRecordParams = baseRecordParametersSchema.safeParse(r);
-		if (!validateUpdateParams.success) return ctx.fail(validateUpdateParams.error);
-		if (!validateRecordParams.success) return ctx.fail(validateRecordParams.error);
+		if (!validateUpdateParams.success) return ctx.fail(new PocketBaseError(validateUpdateParams.error.message));
+		if (!validateRecordParams.success) return ctx.fail(new PocketBaseError(validateRecordParams.error.message));
 
 		const { collection, record, id } = p;
 		const options = createRecordOptions(r);
@@ -251,7 +257,7 @@ export const updateRecord = p.new(
 			const res = await pb.collection(collection).update(id, record, options);
 			return ctx.pass(res);
 		} catch (err) {
-			return ctx.fail(err);
+			return ctx.fail(new PocketBaseError(err.message));
 		}
 	},
 );
@@ -263,12 +269,12 @@ export const deleteRecord = p.new(['delete_parameters'], 'delete record', async 
 	const p = ctx.fetch('delete_parameters') as DeleteRecordParameters;
 
 	const validation = deleteParametersSchema.safeParse(p);
-	if (!validation.success) return ctx.fail(validation.error);
+	if (!validation.success) return ctx.fail(new PocketBaseError(validation.error.message));
 
 	const { collection, id } = p;
 	const res = await pb.collection(collection).delete(id);
 	if (res) return ctx.pass('deleted');
-	return ctx.fail('shit happened');
+	return ctx.fail(new PocketBaseError('shit happened'));
 });
 
 const sendParametersSchema = z.object({
@@ -288,15 +294,15 @@ export const sendRequest = p.new(['url','send_parameters'], 'send request', asyn
 	const u = ctx.fetch('url')
 
 	const validation = sendParametersSchema.safeParse(p);
-	if (!validation.success) return ctx.fail(validation.error);
+	if (!validation.success) return ctx.fail(new PocketBaseError(validation.error.message));
 
-	const validateUrl = urlSchema.safeParse(u)
-	if (!validateUrl.success) return ctx.fail(validateUrl.error)
+	const validateUrl = urlSchema.safeParse(u);
+	if (!validateUrl.success) return ctx.fail(new PocketBaseError(validateUrl.error.message));
 
 	// @ts-expect-error - Somehow, "send" requires properties that are not
-	const res = await pb.send(u, p)
+	const res = await pb.send(u, p);
 	if (res) return ctx.pass(res);
-	return ctx.fail('shit happened');
+	return ctx.fail(new PocketBaseError('shit happened'));
 })
 
 export const pocketbase = p;
