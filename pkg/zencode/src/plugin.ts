@@ -6,6 +6,13 @@ import { Plugin } from '@slangroom/core';
 import type { JsonableObject } from '@slangroom/shared';
 import { zencodeExec } from '@slangroom/shared';
 
+export class ZencodeError extends Error {
+	constructor(message: string) {
+		super(message);
+		this.name = 'Slangroom @slangroom/zencode Error';
+	}
+}
+
 const p = new Plugin();
 
 const exec = async (script: string, data: JsonableObject, keys: JsonableObject, extra: JsonableObject, conf: string = '') => {
@@ -30,7 +37,7 @@ export const zencodeExecPlugin = p.new(['script', 'data', 'keys' ], 'execute zen
 		const zout = await exec(script, data, keys, extra, conf);
 		return ctx.pass(zout.result);
 	} catch (e) {
-		return ctx.fail(e);
+		return ctx.fail(new ZencodeError(e.message));
 	}
 });
 
@@ -48,7 +55,7 @@ export const zencodeExecFullPlugin = p.new(['script', 'data', 'keys', 'extra', '
 		const zout = await exec(script, data, keys, extra, conf);
 		return ctx.pass(zout.result);
 	} catch (e) {
-		return ctx.fail(e);
+		return ctx.fail(new ZencodeError(e.message));
 	}
 });
 
