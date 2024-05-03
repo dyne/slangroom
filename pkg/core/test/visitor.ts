@@ -117,7 +117,7 @@ test('visitor works', (t) => {
 			],
 		] as [ZenParams, Cst, Ast][]
 	).forEach(([params, cst, want]) => {
-		const have = visit(cst, params);
+		const { ast: have } = visit(cst, params);
 		t.deepEqual(have, want, inspect(cst, false, null));
 	});
 });

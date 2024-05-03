@@ -102,7 +102,7 @@ export type Ast = {
  * @throws {@link Error}
  * If the given {@link cst}'s match contains any errors.
  */
-export const visit = (cst: Cst, params: ZenParams): Ast => {
+export const visit = (cst: Cst, params: ZenParams): { ast: Ast; lineNo: number } => {
 	if (cst.errors.length) throw new Error('cst must not have any general errors');
 	if (cst.matches.length !== 1) throw new Error('cst must have only one match');
 	const m = cst.matches[0] as Match;
@@ -122,7 +122,7 @@ export const visit = (cst: Cst, params: ZenParams): Ast => {
 		ast.params.set(name, val);
 	});
 
-	return ast;
+	return { ast, lineNo: m.lineNo };
 };
 
 /**
