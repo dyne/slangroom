@@ -15,6 +15,7 @@ import {
 	ethBytes,
 	ethGasPrice,
 	ethNonce,
+	EthereumError
 } from '@slangroom/ethereum';
 
 const test = ava as TestFn<{ web3: Web3 }>;
@@ -125,7 +126,7 @@ test('erc20 with invalid address', async (t) => {
 	const res = await erc20symbol(ctx);
 	t.deepEqual(res, {
 		ok: false,
-		error: `sc must be a valid ethereum address: ${sc}`,
+		error: new EthereumError(`sc must be a valid ethereum address: ${sc}`)
 	});
 });
 

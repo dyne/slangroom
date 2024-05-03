@@ -9,13 +9,20 @@ import { isAddress } from 'web3-validator';
 
 const p = new Plugin();
 
+export class EthereumError extends Error {
+    constructor(e: string) {
+        super(e)
+        this.name = 'Slangroom @slangroom/ethereum Error'
+    }
+}
+
 /*
  * @internal
  */
 export const ethNonce = p.new('connect', ['address'], 'read the ethereum nonce', async (ctx) => {
 	const web3 = new Web3(ctx.fetchConnect()[0]);
 	const addr = ctx.fetch('address');
-	if (typeof addr !== 'string') return ctx.fail('address must be string');
+	if (typeof addr !== 'string') return ctx.fail(new EthereumError('address must be string'));
 	const nonce = await web3.eth.getTransactionCount(addr);
 	return ctx.pass(nonce.toString());
 });
@@ -30,17 +37,17 @@ export const ethBytes = p.new(
 	async (ctx) => {
 		const web3 = new Web3(ctx.fetchConnect()[0]);
 		const tag = ctx.fetch('transaction_id');
-		if (typeof tag !== 'string') return ctx.fail('tag must be string');
+		if (typeof tag !== 'string') return ctx.fail(new EthereumError('tag must be string'));
 		const receipt = await web3.eth.getTransactionReceipt(
 			tag.startsWith('0x') ? tag : '0x' + tag,
 		);
-		if (!receipt) return ctx.fail("Transaction id doesn't exist");
-		if (!receipt.status) return ctx.fail('Failed transaction');
+		if (!receipt) return ctx.fail(new EthereumError("Transaction id doesn't exist"));
+		if (!receipt.status) return ctx.fail(new EthereumError('Failed transaction'));
 		try {
 			const dataRead = receipt.logs[0]?.data?.slice(2);
 			return ctx.pass(dataRead?.toString() || '');
 		} catch (e) {
-			return ctx.fail('Empty transaction');
+			return ctx.fail(new EthereumError('Empty transaction'));
 		}
 	},
 );
@@ -55,7 +62,7 @@ export const ethBalanceAddr = p.new(
 	async (ctx) => {
 		const web3 = new Web3(ctx.fetchConnect()[0]);
 		const addr = ctx.get('address');
-		if (typeof addr !== 'string') return ctx.fail('address must be string');
+		if (typeof addr !== 'string') return ctx.fail(new EthereumError('address must be string'));
 		return ctx.pass((await web3.eth.getBalance(addr)).toString());
 	},
 );
@@ -71,7 +78,7 @@ export const ethBalanceAddrs = p.new(
 		const web3 = new Web3(ctx.fetchConnect()[0]);
 		const addrs = ctx.fetch('addresses') as string[]; // next line will ensure type
 		if (!Array.isArray(addrs) || !addrs.every((x) => typeof x === 'string'))
-			return ctx.fail('addresses must be string array');
+			return ctx.fail(new EthereumError('addresses must be string array'));
 		const balances = await Promise.all(addrs.map((addr) => web3.eth.getBalance(addr)));
 		return ctx.pass(balances.map((b) => b.toString()));
 	},
@@ -100,11 +107,11 @@ export const ethBrodcast = p.new(
 	async (ctx) => {
 		const web3 = new Web3(ctx.fetchConnect()[0]);
 		const rawtx = ctx.fetch('transaction');
-		if (typeof rawtx !== 'string') return ctx.fail('transaction must be string');
+		if (typeof rawtx !== 'string') return ctx.fail(new EthereumError('transaction must be string'));
 		const receipt = await web3.eth.sendSignedTransaction(
 			rawtx.startsWith('0x') ? rawtx : '0x' + rawtx,
 		);
-		if (!receipt.status) ctx.fail('transaction failed');
+		if (!receipt.status) ctx.fail(new EthereumError('transaction failed'));
 		return ctx.pass(receipt.transactionHash.toString().substring(2)); // remove 0x
 	},
 );
@@ -115,11 +122,11 @@ const erc20helper = (
 	return async (ctx) => {
 		const web3 = new Web3(ctx.fetchConnect()[0]);
 		const sc = ctx.fetch('sc');
-		if (typeof sc !== 'string') return ctx.fail('sc must be string');
-		if (!isAddress(sc)) return ctx.fail(`sc must be a valid ethereum address: ${sc}`);
+		if (typeof sc !== 'string') return ctx.fail(new EthereumError('sc must be string'));
+		if (!isAddress(sc)) return ctx.fail(new EthereumError(`sc must be a valid ethereum address: ${sc}`));
 		const erc20 = new web3.eth.Contract(erc20abi, sc);
 		const res = (await erc20.methods[name]?.().call())?.toString();
-		if (!res) return ctx.fail(`${name} call failed`);
+		if (!res) return ctx.fail(new EthereumError(`${name} call failed`));
 		return ctx.pass(res);
 	};
 };
@@ -187,7 +194,7 @@ export const erc721id = p.new(
 		const log = receipt.logs.find(
 			(v) => v && v.topics && v.topics.length > 0 && v.topics[0] === ERC721_TRANSFER_EVENT,
 		);
-		if (!log || !log.topics) return ctx.fail('Token Id not found');
+		if (!log || !log.topics) return ctx.fail(new EthereumError('Token Id not found'));
 		return ctx.pass(parseInt(log.topics[3]?.toString() || '', 16));
 	},
 );
@@ -196,14 +203,14 @@ export const erc721id = p.new(
  * @internal
  */
 export const erc712owner = p.new('connect', 'read the erc721 owner', async (ctx) => {
-	return ctx.fail('not implemented');
+	return ctx.fail(new EthereumError('not implemented'));
 });
 
 /**
  * @internal
  */
 export const erc721asset = p.new('connect', 'read the erc721 asset', async (ctx) => {
-	return ctx.fail('not implemented');
+	return ctx.fail(new EthereumError('not implemented'));
 });
 
 export const ethereum = p;
