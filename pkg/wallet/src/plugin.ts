@@ -36,6 +36,13 @@ import {
 } from '@meeco/sd-jwt-vc';
 import type { JsonableArray, JsonableObject } from '@slangroom/shared';
 
+export class WalletError extends Error {
+	constructor(message: string) {
+		super(message);
+		this.name = 'Slangroom @slangroom/wallet Error';
+	}
+}
+
 const hasherCallbackFn = (alg: string = defaultHashAlgorithm): Hasher => {
 	return (data: string): string => {
 		const digest = createHash(alg).update(data).digest();
@@ -142,7 +149,7 @@ export const createVcSdJwt = p.new(
 			const issuer = new Issuer(signer, hasher);
 			result = await issuer.createVCSDJWT(vcClaims, payload, sdVCClaimsDisclosureFrame);
 		} catch (e) {
-			return ctx.fail(e);
+			return ctx.fail(new WalletError(e.message));
 		}
 		return ctx.pass(result);
 	},
@@ -156,11 +163,11 @@ export const presentVcSdJwt = p.new(
 	'present vc sd jwt',
 	async (ctx) => {
 		const verifierUrl = ctx.fetch('verifier_url');
-		if (typeof verifierUrl !== 'string') return ctx.fail('verifier_url must be string');
+		if (typeof verifierUrl !== 'string') return ctx.fail(new WalletError('verifier_url must be string'));
 		const issuedVc = ctx.fetch('issued_vc');
-		if (typeof issuedVc !== 'string') return ctx.fail('issued_vc must be string');
+		if (typeof issuedVc !== 'string') return ctx.fail(new WalletError('issued_vc must be string'));
 		const nonce = ctx.fetch('nonce') as string;
-		if (typeof nonce !== 'string') return ctx.fail('nonce must be string');
+		if (typeof nonce !== 'string') return ctx.fail(new WalletError('nonce must be string'));
 		// TODO: typecheck disclosed
 		const disclosed = ctx.fetch('disclosed') as JsonableObject[];
 		// TODO: typecheck holderSk
@@ -193,7 +200,7 @@ export const presentVcSdJwt = p.new(
 				keyBindingVerifyCallbackFn: keyBindingVerifierCallbackFn(),
 			}));
 		} catch (e) {
-			return ctx.fail(e);
+			return ctx.fail(new WalletError(e.messsage));
 		}
 		return ctx.pass(vcSDJWTWithkeyBindingJWT);
 	},
@@ -207,11 +214,11 @@ export const verifyVcSdJwt = p.new(
 	'verify vc sd jwt',
 	async (ctx) => {
 		const verifierUrl = ctx.fetch('verifier_url');
-		if (typeof verifierUrl !== 'string') return ctx.fail('verifier_url must be string');
+		if (typeof verifierUrl !== 'string') return ctx.fail(new WalletError('verifier_url must be string'));
 		const issuedVc = ctx.fetch('issued_vc');
-		if (typeof issuedVc !== 'string') return ctx.fail('issued_vc must be string');
+		if (typeof issuedVc !== 'string') return ctx.fail(new WalletError('issued_vc must be string'));
 		const nonce = ctx.fetch('nonce');
-		if (typeof nonce !== 'string') return ctx.fail('nonce must be string');
+		if (typeof nonce !== 'string') return ctx.fail(new WalletError('nonce must be string'));
 		// TODO: typecheck issuer
 		const issuer = ctx.fetch('issuer') as JsonableObject;
 
@@ -225,7 +232,7 @@ export const verifyVcSdJwt = p.new(
 				kbVerifierCallbackFn(verifierUrl, nonce),
 			);
 		} catch (e) {
-			return ctx.fail(e);
+			return ctx.fail(new WalletError(e.message));
 		}
 		return ctx.pass(result as JsonableObject);
 	},
@@ -240,7 +247,7 @@ export const keyGen = p.new('create p-256 key', async (ctx) => {
 	try {
 		sk = await exportJWK((await generateKeyPair(supportedAlgorithm.ES256)).privateKey);
 	} catch (e) {
-		return ctx.fail(e);
+		return ctx.fail(new WalletError(e.message));
 	}
 
 	return ctx.pass({
@@ -269,7 +276,7 @@ export const pubGen = p.new(['sk'], 'create p-256 public key', async (ctx) => {
 
 export const prettyPrintSdJwt = p.new(['token'], 'pretty print sd jwt', async (ctx) => {
 	const jwt = ctx.fetch('token');
-	if (typeof jwt !== 'string') return ctx.fail('token must be string');
+	if (typeof jwt !== 'string') return ctx.fail(new WalletError('token must be string'));
 	const tokens = jwt.split('~');
 	const res = [];
 	const tryDecode = (s: string) => {
