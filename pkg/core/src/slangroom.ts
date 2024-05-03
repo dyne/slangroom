@@ -139,8 +139,9 @@ const requirifyZenParams = (params?: Partial<ZenParams>): Required<ZenParams> =>
 const thorwErrors = (errorArray: GenericError[], contract: string) => {
 	const contractLines = contract.split('\n');
 	const lineNumber = errorArray[0]!.lineNo;
-	const colStart = errorArray[0]!.start ? errorArray[0]!.start+1 : 1;
-	const colEnd = errorArray[0]!.end ? errorArray[0]!.end+1 : contractLines[lineNumber-1]!.length;
+	const initialWS = contractLines[lineNumber-1]!.match(/^[\s]+/) || [''];
+	const colStart = errorArray[0]!.start ? errorArray[0]!.start+initialWS[0].length : initialWS[0].length;
+	const colEnd = errorArray[0]!.end ? errorArray[0]!.end+1+initialWS[0].length : contractLines[lineNumber-1]!.length;
 	const lineStart = lineNumber > 2 ? lineNumber - 2 : 0;
 	const lineEnd = lineNumber + 2 > contractLines.length ? contractLines.length : lineNumber + 2;
 	let e = "";
@@ -148,8 +149,7 @@ const thorwErrors = (errorArray: GenericError[], contract: string) => {
 		const linePrefix = `${i} | `;
 		e = e.concat(`\x1b[33m${linePrefix}\x1b[0m${contractLines[i]}\n`);
 		if (i === lineNumber -1) {
-			const initialWS = contractLines[i]!.match(/^[\s]+/) || [''];
-			e = e.concat(initialWS[0], ' '.repeat(colStart - 1 + linePrefix.length) + '\x1b[31m' + '^'.repeat(colEnd - colStart + 1) + '\x1b[0m', '\n');
+			e = e.concat(' '.repeat(colStart + linePrefix.length) + '\x1b[31m' + '^'.repeat(colEnd - colStart) + '\x1b[0m', '\n');
 		}
 	}
 	for (let err of errorArray) {
