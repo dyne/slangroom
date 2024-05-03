@@ -6,6 +6,13 @@ import type { JsonableArray, JsonableObject } from '@slangroom/shared';
 import { Plugin, type PluginExecutor } from '@slangroom/core';
 import axios, { type AxiosRequestConfig } from 'axios';
 
+export class HttpError extends Error {
+	constructor(message: string) {
+		super(message);
+		this.name = 'Slangroom @slangroom/http Error';
+	}
+}
+
 export type HttpMethod = 'get' | 'post' | 'put' | 'patch' | 'delete';
 
 const p = new Plugin();
@@ -35,7 +42,7 @@ const defaultRequest = (m: HttpMethod): PluginExecutor => {
 			return ctx.pass({ status: req.status.toString(), result: req.data });
 		} catch (e) {
 			if (axios.isAxiosError(e)) return ctx.pass({ status: e.code ?? '', result: '' });
-			return ctx.fail(e);
+			return ctx.fail(new HttpError(e.message));
 		}
 	};
 };
@@ -76,7 +83,7 @@ const sameParallelRequest = (m: HttpMethod, isSame: boolean): PluginExecutor => 
 			const err = x.reason;
 			if (axios.isAxiosError(err)) return { status: err.code ?? '', result: '' };
 
-			return ctx.fail(x.reason);
+			return ctx.fail(new HttpError(err.message));
 		});
 
 		return ctx.pass(results);
@@ -117,7 +124,7 @@ export const sames = {} as typeof defaults;
 			cb = defaultRequest(m);
 		} else if (x === sequentials) {
 			phrase = `do sequential ${m}`;
-			cb = (ctx) => ctx.fail('not implemented');
+			cb = (ctx) => ctx.fail(new HttpError('sequential requests are not implemented'));
 		} else if (x === parallels) {
 			phrase = `do parallel ${m}`;
 			cb = sameParallelRequest(m, false);
