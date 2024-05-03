@@ -9,6 +9,13 @@ import { AuthenticateHandler, InMemoryCache, AuthorizeHandler } from '@slangroom
 import { JsonableObject } from '@slangroom/shared';
 import { JWK } from 'jose';
 
+export class OauthError extends Error {
+	constructor(message: string) {
+		super(message);
+		this.name = 'Slangroom @slangroom/oauth Error';
+	}
+}
+
 const p = new Plugin();
 
 /* Parse QueryString using String Splitting */
@@ -73,10 +80,10 @@ export const createToken = p.new(
 		const params = ctx.fetch('request') as JsonableObject;
 		const body = params['body'];
 		const headers = params['headers'];
-		if (!body || !headers) return ctx.fail("Input request is not valid");
-		if (typeof body !== 'string') return ctx.fail("Request body must be a string");
+		if (!body || !headers) return ctx.fail(new OauthError("Input request is not valid"));
+		if (typeof body !== 'string') return ctx.fail(new OauthError("Request body must be a string"));
 		const serverData = ctx.fetch('server_data') as { jwk: JWK, url: string, authenticationUrl: string };
-		if (!serverData['jwk'] || !serverData['url']) return ctx.fail("Server data is missing some parameters");
+		if (!serverData['jwk'] || !serverData['url']) return ctx.fail(new OauthError("Server data is missing some parameters"));
 		const bodyDict = parseQueryStringToDictionary(body);
 		const request = new Request({
 			body: bodyDict,
@@ -105,11 +112,11 @@ export const createToken = p.new(
 			await model.verifyDpopHeader(request);
 			res_token = await server.token(request, response, options);
 		} catch(e) {
-			return ctx.fail(e);
+			return ctx.fail(new OauthError(e.message));
 		}
 
 		const removed = model.revokeClient(res_token.client);
-		if (!removed) return ctx.fail("Failed to revoke Client");
+		if (!removed) return ctx.fail(new OauthError("Failed to revoke Client"));
 
 		model.revokeAuthorizationDetails(res_token['authorizationCode']);
 
@@ -143,10 +150,10 @@ export const createAuthorizationCode = p.new(
 		const params = ctx.fetch('request') as JsonableObject;
 		const body = params['body'];
 		const headers = params['headers'];
-		if (!body || !headers) return ctx.fail("Input request is not valid");
-		if (typeof body !== 'string') return ctx.fail("Request body must be a string");
+		if (!body || !headers) return ctx.fail(new OauthError("Input request is not valid"));
+		if (typeof body !== 'string') return ctx.fail(new OauthError("Request body must be a string"));
 		const serverData = ctx.fetch('server_data') as { jwk: JWK, url: string, authenticationUrl: string };
-		if (!serverData['jwk'] || !serverData['url']) return ctx.fail("Server data is missing some parameters");
+		if (!serverData['jwk'] || !serverData['url']) return ctx.fail(new OauthError("Server data is missing some parameters"));
 
 		const request = new Request({
 			body: parseQueryStringToDictionary(body),
@@ -176,7 +183,7 @@ export const createAuthorizationCode = p.new(
 			}
 			res_authCode = await new AuthorizeHandler(authorize_options).handle(request, response);
 		} catch(e) {
-			return ctx.fail(e);
+			return ctx.fail(new OauthError(e.message));
 		}
 		return ctx.pass({ code: res_authCode.authorizationCode });
 	},
@@ -193,11 +200,11 @@ export const createRequestUri = p.new(
 		const params = ctx.fetch('request') as JsonableObject;
 		const body = params['body'];
 		const headers = params['headers'];
-		if (!body || !headers) return ctx.fail("Input request is not valid");
-		if (typeof body !== 'string') return ctx.fail("Request body must be a string");
+		if (!body || !headers) return ctx.fail(new OauthError("Input request is not valid"));
+		if (typeof body !== 'string') return ctx.fail(new OauthError("Request body must be a string"));
 		const client = ctx.fetch('client') as JsonableObject;
 		const serverData = ctx.fetch('server_data') as { jwk: JWK, url: string, authenticationUrl: string };
-		if (!serverData['jwk'] || !serverData['url']) return ctx.fail("Server data is missing some parameters");
+		if (!serverData['jwk'] || !serverData['url']) return ctx.fail(new OauthError("Server data is missing some parameters"));
 		const expires_in = ctx.fetch('expires_in') as number;
 
 		const request = new Request({
@@ -229,7 +236,7 @@ export const createRequestUri = p.new(
 			}
 			res = await new AuthorizeHandler(authorize_options).handle_par(request, response, expires_in);
 		} catch(e) {
-			return ctx.fail(e);
+			return ctx.fail(new OauthError(e.message));
 		}
 		return ctx.pass(res);
 	},
@@ -260,7 +267,7 @@ export const getClaims = p.new(
 		try {
 			res = await model.getClaimsFromToken(accessToken);
 		} catch(e) {
-			return ctx.fail(e);
+			return ctx.fail(new OauthError(e.message));
 		}
 		return ctx.pass(res);
 	},
