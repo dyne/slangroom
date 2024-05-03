@@ -44,7 +44,9 @@ jobs:
         continue-on-error: true
         run: pnpm lint
       - name: 🤖 Start pocketbase
-        run: ./pkg/pocketbase/test/pocketbase serve &
+        run: |
+          ./pkg/pocketbase/test/pocketbase serve &
+          while ! nc -z 0.0.0.0 8090; do echo "pocketbase not ready" && sleep 1; done
       - name: 🧪 Run the tests
         run: pnpm coverage
       - name: 📨 Setup playwright
