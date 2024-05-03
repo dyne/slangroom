@@ -458,7 +458,7 @@ export class AuthorizeHandler {
 	 * Build an error response that redirects the user-agent to the client-provided url.
 	 */
 
-	buildErrorRedirectUri(redirectUri: string, error: Error) {
+	buildErrorRedirectUri(redirectUri: string, _error: Error) {
 		//TODO
 		const uri = url.parse(redirectUri);
 		// console.log(error);
