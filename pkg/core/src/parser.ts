@@ -61,7 +61,7 @@ export class ParseError extends Error {
 	 * if (tokenDoesntExist)
 	 * 	throw ParseError.missing(1, "given", "then")
 	 * ```
-	 * 
+	 *
 	 * @example
 	 * If the first parameter is a token found previously,
 	 * it creates diagnostic messages according to that.
@@ -119,7 +119,7 @@ export type Cst = {
 	 * Errors such as "Given is not found" or "I needs to be capitalized" would
 	 * fit in this category.
 	 */
-	errors: ParseError[];
+	errors: {message: ParseError, lineNo: number, start?: number, end?: number}[];
 
 	/**
 	 * List of possible matches of plugins with their possible errors for ranking and
@@ -163,7 +163,7 @@ export type Match = {
 	 * List of possible parsing errors specific to the plugin.  Currently, this
 	 * is what allows us to rank the list of possible matches.
 	 */
-	err: ParseError[];
+	err: {message: ParseError, lineNo: number, start?: number, end?: number}[];
 
 	/**
 	 * Whether this line wants to output the result of its plugin to a variable,
@@ -212,13 +212,13 @@ export const parse = (p: PluginMap, t: Token[], lineNo: number): Cst => {
 
 	if (t[0]) {
 		if (t[0].name != 'given' && t[0].name != 'then')
-			cst.errors.push(ParseError.wrong(t[0], 'given', 'then'));
+			cst.errors.push({ message: ParseError.wrong(t[0], 'given', 'then'), lineNo, start: t[0].start, end: t[0].end });
 		else givenThen = t[0].name;
 		if (t[1]) {
-			if (t[1].raw !== 'I') cst.errors.push(ParseError.wrong(t[1], 'I'));
-		} else cst.errors.push(ParseError.missing(t[0], 'I'));
+			if (t[1].raw !== 'I') cst.errors.push({message: ParseError.wrong(t[1], 'I'), lineNo, start: t[1].start, end: t[1].end});
+		} else cst.errors.push({ message: ParseError.missing(t[0], 'I'), lineNo, start: t[0].start, end: t[0].end});
 	} else {
-		cst.errors.push(ParseError.missing(lineNo, 'Given I', 'Then I'));
+		cst.errors.push({ message: ParseError.missing(lineNo, 'Given I', 'Then I'), lineNo});
 	}
 
 	p.forEach(([k]) => {
@@ -228,10 +228,10 @@ export const parse = (p: PluginMap, t: Token[], lineNo: number): Cst => {
 		const lemmeout = {};
 		const newErr = (i: number, wantsFirst: string, ...wantsRest: string[]) => {
 			const have = t[i];
-			if (have) m.err.push(ParseError.wrong(have, wantsFirst, ...wantsRest));
+			if (have) m.err.push({message: ParseError.wrong(have, wantsFirst, ...wantsRest), lineNo, start: have.start, end: have.end});
 			else
 				m.err.push(
-					ParseError.missing((i > 2 && t[i - 1]) || lineNo, wantsFirst, ...wantsRest),
+					{message: ParseError.missing((i > 2 && t[i - 1]) || lineNo, wantsFirst, ...wantsRest), lineNo},
 				);
 			if (curErrLen !== undefined && m.err.length > curErrLen) throw lemmeout;
 		};
@@ -281,7 +281,7 @@ export const parse = (p: PluginMap, t: Token[], lineNo: number): Cst => {
 			// Save Output Into 'ident'
 			const ident = t[t.length - 1];
 			if (t.length - i >= 5 && ident?.isIdent) {
-				for (++i; i < t.length - 4; ++i) m.err.push(ParseError.extra(t[i] as Token));
+				for (++i; i < t.length - 4; ++i) m.err.push({message: ParseError.extra(t[i] as Token), lineNo, start: (t[i] as Token).start, end: (t[i] as Token).end});
 				if (t[t.length - 4]?.name !== 'and') newErr(t.length - 4, 'and');
 				if (t[t.length - 3]?.name !== 'output') newErr(t.length - 3, 'output');
 				if (t[t.length - 2]?.name !== 'into') newErr(t.length - 2, 'into');
@@ -292,7 +292,7 @@ export const parse = (p: PluginMap, t: Token[], lineNo: number): Cst => {
 				)
 					m.into = ident.raw.slice(1, -1);
 			} else {
-				for (++i; i < t.length; ++i) m.err.push(ParseError.extra(t[i] as Token));
+				for (++i; i < t.length; ++i) m.err.push({message: ParseError.extra(t[i] as Token), lineNo, start: (t[i] as Token).start, end: (t[i] as Token).end});
 			}
 
 			if (curErrLen !== undefined && m.err.length > curErrLen) throw lemmeout;

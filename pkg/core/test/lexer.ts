@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import test from 'ava';
-import { lex, Token, LexError } from '@slangroom/core';
+import { lex, Token } from '@slangroom/core';
 
 test('lexer works', (t) => {
 	Object.entries<Token[][]>({
@@ -129,12 +129,12 @@ test('lexer works', (t) => {
 			const lineNo = i + 1;
 			const want = [wants[i], lineNo];
 			const have = lex(give, lineNo);
-			t.deepEqual(have, want);
+			if (!have.ok) throw new Error(have.error.message.message);
+			t.deepEqual(have.value, want);
 		});
 	});
 
-	const err = t.throws(() => lex("When I encrypt the secret message 'message", 1), {
-		instanceOf: LexError,
-	}) as LexError;
-	t.is(err.message, `unclosed single-quote at 1:35-42: 'message`);
+	const res = lex("When I encrypt the secret message 'message", 1);
+	if (res.ok) throw new Error("Lex fail to dectect unclosed single-quote");
+	t.is(res.error.message.message as string, `unclosed single-quote at 1:35-42: 'message`);
 });

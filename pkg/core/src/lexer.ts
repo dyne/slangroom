@@ -93,12 +93,27 @@ export class LexError extends Error {
 }
 
 /**
+ * Result of a lexer execution.
+ */
+export type LexResult = LexOk | LexErr;
+
+/**
+ * Result of a lexer execution, indicating success.
+ */
+export type LexOk = { ok: true, value: [Token[], number]};
+
+/**
+ * Result of a lexer execution, indicating failure.
+ */
+export type LexErr = { ok: false, error: {message: LexError, lineNo: number, start: number, end: number}};
+
+
+/**
  * Analyzes the given line lexically to generate an array of tokens.
  *
- * @throws {@link LexError}
- * If any error during lexing is encountered.
+ * @return {LexOk | LexErr} based on the fact that the line is valid or not
  */
-export const lex = (stmt: string, lineNo: number): [Token[], number] => {
+export const lex = (stmt: string, lineNo: number): LexResult => {
 	const tokens: Token[] = [];
 	const c = [...stmt];
 	let raw = '';
@@ -111,7 +126,7 @@ export const lex = (stmt: string, lineNo: number): [Token[], number] => {
 			const start = i;
 			raw += c[i++];
 			while (i < c.length && c[i] !== "'") raw += c[i++];
-			if (i >= c.length) throw new LexError(new Token(raw, lineNo, start, c.length - 1));
+			if (i >= c.length) return { ok: false, error: { message: new LexError(new Token(raw, lineNo, start, c.length - 1)), lineNo, start, end: c.length - 1 }};
 			raw += c[i++];
 			tokens.push(new Token(raw, lineNo, start, i - 1));
 			raw = '';
@@ -123,5 +138,5 @@ export const lex = (stmt: string, lineNo: number): [Token[], number] => {
 		}
 	}
 
-	return [tokens, lineNo];
+	return { ok: true, value: [tokens, lineNo]};
 };

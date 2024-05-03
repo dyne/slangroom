@@ -11,6 +11,12 @@ import { lex, parse, visit, Plugin, PluginMap, PluginContextImpl } from '@slangr
  */
 export type Plugins = Plugin | Plugin[];
 
+type GenericError = {
+	message: Error,
+	lineNo: number,
+	start?: number,
+	end?: number
+}
 /**
  * The entrypoint to the Slangroom software.
  *
@@ -66,14 +72,19 @@ export class Slangroom {
 	 * If no plugin definitions can be matched against a custom statement.
 	 */
 	async execute(contract: string, optParams?: Partial<ZenParams>): Promise<ZenOutput> {
+		// substitute all tabs with 4 spaces in contract for better error reporting
+		contract = contract.replaceAll('\t', '    ');
 		const paramsGiven = requirifyZenParams(optParams);
 		const ignoredLines = await getIgnoredStatements(contract, paramsGiven);
-		const lexedLines = ignoredLines.map((ignored) => lex(...ignored));
+		// lex
+		const lexedResult = ignoredLines.map((ignored) => lex(...ignored));
+		const lexedErrors = lexedResult.flatMap((x) => {if (!x.ok) return x.error; return [];});
+		if (typeof lexedErrors[0] !== "undefined") thorwErrors(lexedErrors, contract);
+		const lexedLines = lexedResult.flatMap((x) => {if(x.ok) return [x.value]; return [];});
+		// parse
 		const parsedLines = lexedLines.map((lexed) => parse(this.#plugins, ...lexed));
-		const errs = parsedLines
-			.flatMap((x) => [...x.errors, ...(x.matches[0]?.err ?? [])])
-			.join('\n');
-		if (errs.length) thorwErrors(errs, contract);
+		const parsedErrors = parsedLines.flatMap((x) => [...x.errors, ...(x.matches[0]?.err ?? [])])
+		if (typeof parsedErrors[0] !== "undefined") thorwErrors(parsedErrors, contract);
 
 		const cstGivens = parsedLines.filter((x) => x.givenThen === 'given');
 		for (const cst of cstGivens) {
@@ -118,18 +129,18 @@ const requirifyZenParams = (params?: Partial<ZenParams>): Required<ZenParams> =>
 	return { extra: {}, conf: '', ...params } as Required<ZenParams>;
 };
 
-// first draft of improved error throwing starting from a parseError
-// TODO: move the retireve of errorLine and errorColumns out of this function
-// TODO: some problems raised in case of use of tabs in the contract
-//       maybe to be converted into all spaces at the beginning
+/**
+ * Pretty Error handling
+ * first draft of improved error throwing, can handle parsing and lexing errors
+ * @param error {message, lineNo, ?start, ?end}
+ * @param contract {string}
+*/
 // TODO: make it working with all type of errors in slangroom
-const thorwErrors = (error: string, contract: string) => {
+const thorwErrors = (errorArray: GenericError[], contract: string) => {
 	const contractLines = contract.split('\n');
-	const lc = error.match(/\d+:\d+-\d+/) || ['1:1-1'];
-	const [ line, col ] = lc[0].split(':');
-	const lineNumber = Number(line);
-	const colStart = Number(col!.split('-')[0]);
-	const colEnd = Number(col!.split('-')[1]);
+	const lineNumber = errorArray[0]!.lineNo;
+	const colStart = errorArray[0]!.start ? errorArray[0]!.start+1 : 0;
+	const colEnd = errorArray[0]!.end ? errorArray[0]!.end+1 : contractLines[lineNumber-1]!.length;
 	const lineStart = lineNumber > 2 ? lineNumber - 2 : 0;
 	const lineEnd = lineNumber + 2 > contractLines.length ? contractLines.length : lineNumber + 2;
 	let e = "";
@@ -137,14 +148,12 @@ const thorwErrors = (error: string, contract: string) => {
 		const linePrefix = `${i} | `;
 		e = e.concat(`\x1b[33m${linePrefix}\x1b[0m${contractLines[i]}\n`);
 		if (i === lineNumber -1) {
-			const cLine = contractLines[i] || '';
-			const initialWS = cLine.match(/^[\s\t]+/) || [''];
-			// tabs includes lineprefix
-			const linePrefixLength = cLine.search(/\t/) >= 0 ? 0 : linePrefix.length;
-			e = e.concat(initialWS[0], ' '.repeat(colStart - 1 + linePrefixLength) + '\x1b[31m' + '^'.repeat(colEnd - colStart + 1) + '\x1b[0m', '\n');
+			const initialWS = contractLines[i]!.match(/^[\s]+/) || [''];
+			e = e.concat(initialWS[0], ' '.repeat(colStart - 1 + linePrefix.length) + '\x1b[31m' + '^'.repeat(colEnd - colStart + 1) + '\x1b[0m', '\n');
 		}
 	}
-	e = e.concat(error)
-	console.log(e)
+	for (let err of errorArray) {
+		e = e.concat(err.message + '\n');
+	}
 	throw new Error(e);
 }
