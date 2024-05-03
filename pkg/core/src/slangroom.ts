@@ -88,11 +88,11 @@ export class Slangroom {
 
 		const cstGivens = parsedLines.filter((x) => x.givenThen === 'given');
 		for (const cst of cstGivens) {
-			const ast = visit(cst, paramsGiven);
+			const { ast, lineNo } = visit(cst, paramsGiven);
 			const exec = this.#plugins.get(ast.key);
-			if (!exec) throw new Error('no statements matched');
+			if (!exec) return thorwErrors( [{message: new Error('no statements matched'), lineNo}], contract);
 			const res = await exec(new PluginContextImpl(ast));
-			if (!res.ok) throw new Error(res.error);
+			if (!res.ok) return thorwErrors( [{message: new Error(res.error), lineNo}], contract);
 			if (res.ok && ast.into) paramsGiven.data[ast.into] = res.value;
 		}
 
@@ -101,11 +101,11 @@ export class Slangroom {
 
 		const cstThens = parsedLines.filter((x) => x.givenThen === 'then');
 		for (const cst of cstThens) {
-			const ast = visit(cst, paramsThen);
+			const { ast, lineNo } = visit(cst, paramsThen);
 			const exec = this.#plugins.get(ast.key);
-			if (!exec) throw new Error('no statements matched');
+			if (!exec) return thorwErrors( [{message: new Error('no statements matched'), lineNo}], contract);
 			const res = await exec(new PluginContextImpl(ast));
-			if (!res.ok) throw new Error(res.error);
+			if (!res.ok) return thorwErrors( [{message: new Error(res.error), lineNo}], contract);
 			if (res.ok && ast.into) paramsThen.data[ast.into] = res.value;
 		}
 
@@ -139,7 +139,7 @@ const requirifyZenParams = (params?: Partial<ZenParams>): Required<ZenParams> =>
 const thorwErrors = (errorArray: GenericError[], contract: string) => {
 	const contractLines = contract.split('\n');
 	const lineNumber = errorArray[0]!.lineNo;
-	const colStart = errorArray[0]!.start ? errorArray[0]!.start+1 : 0;
+	const colStart = errorArray[0]!.start ? errorArray[0]!.start+1 : 1;
 	const colEnd = errorArray[0]!.end ? errorArray[0]!.end+1 : contractLines[lineNumber-1]!.length;
 	const lineStart = lineNumber > 2 ? lineNumber - 2 : 0;
 	const lineEnd = lineNumber + 2 > contractLines.length ? contractLines.length : lineNumber + 2;
