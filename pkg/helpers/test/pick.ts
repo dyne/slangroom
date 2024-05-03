@@ -6,6 +6,8 @@ import { Slangroom } from '@slangroom/core';
 import { helpers } from '@slangroom/helpers';
 import test from 'ava';
 
+const stripAnsiCodes = (str: string) => str.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
+
 const expected = {
     r: {
         a: 'b',
@@ -175,7 +177,13 @@ Then print 'r'
         },
     });
     const error = await t.throwsAsync(fn);
-    t.is((error as Error).message, `Slangroom @slangroom/helper Error: MANIPULATION ERRROR:
+    t.is(stripAnsiCodes((error as Error).message),
+`0 | Rule unknown ignore
+1 | Given I send properties 'props' and send object 'complex_object' and manipulate and pick and output into 'r'
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2 | Given I have a 'string dictionary' named 'complex_object'
+3 | Given I have a 'string dictionary' named 'r'
+Slangroom @slangroom/helper Error: MANIPULATION ERRROR:
 None of the properties
 
  "a"
@@ -191,6 +199,7 @@ None of the properties
          }
       }
    }
-}`);
+}
+`);
 });
 

@@ -92,7 +92,7 @@ export class Slangroom {
 			const exec = this.#plugins.get(ast.key);
 			if (!exec) return thorwErrors( [{message: new Error('no statements matched'), lineNo}], contract);
 			const res = await exec(new PluginContextImpl(ast));
-			if (!res.ok) return thorwErrors( [{message: new Error(res.error), lineNo}], contract);
+			if (!res.ok) return thorwErrors( [{message: res.error, lineNo}], contract);
 			if (res.ok && ast.into) paramsGiven.data[ast.into] = res.value;
 		}
 
@@ -105,7 +105,7 @@ export class Slangroom {
 			const exec = this.#plugins.get(ast.key);
 			if (!exec) return thorwErrors( [{message: new Error('no statements matched'), lineNo}], contract);
 			const res = await exec(new PluginContextImpl(ast));
-			if (!res.ok) return thorwErrors( [{message: new Error(res.error), lineNo}], contract);
+			if (!res.ok) return thorwErrors( [{message: res.error, lineNo}], contract);
 			if (res.ok && ast.into) paramsThen.data[ast.into] = res.value;
 		}
 

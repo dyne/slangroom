@@ -98,7 +98,7 @@ Then print data
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 3 | Given I have a 'string dictionary' named 'ecdh_public_key'
 4 | Then print data
-Error: Slangroom @slangroom/zencode Error:`))
+Slangroom @slangroom/zencode Error:`))
 	t.true(((error as Error).message).includes("[!] Zencode runtime error"));
 	t.true(((error as Error).message).includes("Zencode line 2: Given I have the 'string' named 'variable_that_does_not_exists'"));
 });

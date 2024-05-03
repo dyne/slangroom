@@ -48,7 +48,7 @@ Then print data
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 2 | Given I have a 'string' named 'r'
 3 | 
-Error: Slangroom @slangroom/shell Error: Command failed with ENOENT: notfound -v
+Slangroom @slangroom/shell Error: Command failed with ENOENT: notfound -v
 spawn notfound ENOENT
 `);
 });
@@ -74,7 +74,7 @@ Then print data
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 2 | Given I have a 'string' named 'r'
 3 | 
-Error: Slangroom @slangroom/shell Error: Command failed with exit code 1: cat notfound.txt
+Slangroom @slangroom/shell Error: Command failed with exit code 1: cat notfound.txt
 cat: notfound.txt: No such file or directory
 `);
 });

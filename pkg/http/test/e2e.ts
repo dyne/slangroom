@@ -116,6 +116,6 @@ Then print data
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 3 | Given I have a 'string' named 'greeting_es'
 4 | Then print data
-Error: Slangroom @slangroom/http Error: sequential requests are not implemented
+Slangroom @slangroom/http Error: sequential requests are not implemented
 `);
 });

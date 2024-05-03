@@ -63,7 +63,7 @@ test('should create a new slangroom capacitor client', async (t) => {
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 3 |     Given I have a 'string' named 'res'
 4 |     Then print data
-Error: Slangroom @slangroom/pocketbase Error: Can not start capacitor client in node environment
+Slangroom @slangroom/pocketbase Error: Can not start capacitor client in node environment
 `);
 });
 
