@@ -130,12 +130,10 @@ const requirifyZenParams = (params?: Partial<ZenParams>): Required<ZenParams> =>
 };
 
 /**
- * Pretty Error handling
- * first draft of improved error throwing, can handle parsing and lexing errors
+ * Print Error in a pretty wa
  * @param error {message, lineNo, ?start, ?end}
  * @param contract {string}
 */
-// TODO: make it working with all type of errors in slangroom
 const thorwErrors = (errorArray: GenericError[], contract: string) => {
 	const contractLines = contract.split('\n');
 	const lineNumber = errorArray[0]!.lineNo;
