@@ -329,6 +329,8 @@ export class Plugin {
 			phrase = phraseOrParamsOrOpenconnect;
 			executor = executorOrPhraseOrParams;
 		} else {
+			/* c8 ignore next 3 */
+			// This should be unreachable.
 			throw new Error('unreachable');
 		}
 
@@ -519,7 +521,7 @@ export class PluginContextImpl implements PluginContext {
 	 */
 	fetchOpen(): [string, ...string[]] {
 		const val = this.getOpen();
-		if (val.length === 0) throw new Error('a connect is required');
+		if (val.length === 0) throw new Error('a open is required');
 		return val as [string, ...string[]];
 	}
 
@@ -621,7 +623,9 @@ export class PluginContextTest implements PluginContext {
 	 * {@inheritDoc PluginContext.fetchOpen}
 	 */
 	fetchOpen(): [string, ...string[]] {
-		return this.fetchConnect();
+		const val = this.getOpen();
+		if (val.length === 0) throw new Error('a open is required');
+		return val as [string, ...string[]];
 	}
 
 	/**
