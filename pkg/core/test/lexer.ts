@@ -138,3 +138,14 @@ test('lexer works', (t) => {
 	if (res.ok) throw new Error("Lex fail to dectect unclosed single-quote");
 	t.is(res.error.message.message as string, `unclosed single-quote at 1:35-42: 'message`);
 });
+
+test('token constructor erros', (t) => {
+	let err = t.throws(() => new Token("", 1, 0, 0), {instanceOf: Error});
+	t.is(err.message, "raw cannot be empty string");
+	err = t.throws(() => new Token("a", 0, 0, 0), {instanceOf: Error});
+	t.is(err.message, "lineNo must be positive")
+	err = t.throws(() => new Token("a", 1, -1, 0), {instanceOf: Error});
+	t.is(err.message, "start cannot be negative")
+	err = t.throws(() => new Token("a", 1, 0, -1), {instanceOf: Error});
+	t.is(err.message, "end cannot be less than start")
+})
