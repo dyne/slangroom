@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import test from 'ava';
-import { DuplicatePluginError, Plugin, Slangroom } from '@slangroom/core';
+import { DuplicatePluginError, Plugin, Slangroom, type PluginMapKey } from '@slangroom/core';
 
 test("doesn't allow duplicated plugins", (t) => {
 	const p0 = new Plugin();
@@ -82,3 +82,17 @@ Then I connect to 'a' and F g
 	t.true(usedP4);
 	t.deepEqual(res.result, { a: 'foo', b: 'bar', mimmo: 'foobar' }, res.logs);
 });
+
+test('getPlugin works', (t) => {
+	const p0 = new Plugin();
+	p0.new('love asche', (ctx) => ctx.pass(null));
+	const p1 = new Plugin();
+	p1.new('connect', ['obj'], 'a b', (ctx) => ctx.pass(null));
+	const slangroom = new Slangroom(p0, p1);
+	const p = slangroom.getPlugin();
+	const res: Record<string, PluginMapKey> = {};
+	p.forEach(([k]) => {
+		res[k.phrase] = k;
+	});
+	t.deepEqual(res, {'love asche':{phrase: 'love asche'}, 'a b': {phrase: 'a b', openconnect: 'connect',params: ['obj']}});
+})
