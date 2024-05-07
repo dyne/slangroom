@@ -250,7 +250,7 @@ export const parse = (p: PluginMap, t: Token[], lineNo: number): Cst => {
 				if (t[++i]?.name !== 'and') newErr(i, 'and');
 			} else if (k.openconnect === 'connect') {
 				if (t[++i]?.name !== 'connect') newErr(i, 'connect');
-				if (t[++i]?.name !== 'to') newErr(i, 'connect');
+				if (t[++i]?.name !== 'to') newErr(i, 'to');
 				const ident = t[++i];
 				if (ident?.isIdent) m.connect = ident.raw.slice(1, -1);
 				else newErr(i, '<identifier>');
