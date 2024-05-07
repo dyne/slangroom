@@ -555,6 +555,52 @@ test('parser works', (t) => {
 				},
 			],
 		},
+		"Then I connect to 'url' send object 'myObj' and send http request": {
+			givenThen: 'then',
+			errors: [],
+			matches: [
+				{
+					key: {
+						openconnect: 'connect',
+						phrase: 'send http request',
+						params: ['object'],
+					},
+					bindings: new Map(),
+					connect: 'url',
+					err: [
+						{message: ParseError.wrong(new Token('send', 1, 24, 27), 'and'), lineNo: 1, start: 24, end: 27},
+						{message: ParseError.wrong(new Token('object', 1, 29, 34), 'send'), lineNo: 1, start: 29, end: 34},
+						{message: ParseError.wrong(new Token('\'myObj\'', 1, 36, 42), 'object'), lineNo: 1, start: 36, end: 42},
+						{message: ParseError.wrong(new Token('and', 1, 44, 46), '<identifier>'), lineNo: 1, start: 44, end: 46},
+						{message: ParseError.wrong(new Token('send', 1, 48, 51), 'and'), lineNo: 1, start: 48, end: 51},
+						{message: ParseError.wrong(new Token('http', 1, 53, 56), 'send'), lineNo: 1, start: 53, end: 56},
+						{message: ParseError.wrong(new Token('request', 1, 58, 64), 'http'), lineNo: 1, start: 58, end: 64},
+						{message: ParseError.missing(new Token('request', 1, 58, 64), 'request'), lineNo: 1}
+					],
+					lineNo: 1,
+				},
+			],
+		},
+		"Given I love asche and be crazy and output into wrong 'result'": {
+			givenThen: 'given',
+			errors: [],
+			matches: [
+				{
+					key: {phrase: 'love asche'},
+					bindings: new Map(),
+					err: [
+						{message: ParseError.extra(new Token('and', 1, 19, 21)), lineNo: 1, start: 19, end: 21},
+						{message: ParseError.extra(new Token('be', 1, 23, 24)), lineNo: 1, start: 23, end: 24},
+						{message: ParseError.extra(new Token('crazy', 1, 26, 30)), lineNo: 1, start: 26, end: 30},
+						{message: ParseError.extra(new Token('and', 1, 32, 34)), lineNo: 1, start: 32, end: 34},
+						{message: ParseError.wrong(new Token('output', 1, 36, 41), 'and'), lineNo: 1, start: 36, end: 41},
+						{message: ParseError.wrong(new Token('into', 1, 43, 46), 'output'), lineNo: 1, start: 43, end: 46},
+						{message: ParseError.wrong(new Token('wrong', 1, 48, 52), 'into'), lineNo: 1, start: 48, end: 52},
+					],
+					lineNo: 1,
+				},
+			],
+		},
 	}).forEach(([give, want], index) => {
 		const lexed = lex(give, 1);
 		if (!lexed.ok) throw new Error(lexed.error.message.message);
