@@ -58,7 +58,15 @@ Then print 'r'
                                                       ^^^^^^
 2 | Given I have a 'string array' named 'the_array'
 3 | Given I have a 'string dictionary' named 'r'
-ParseError: "concat" at 2:51-56 must be one of: "compact"
+
+Error colors:
+ - error
+ - suggested words
+ - missing words
+ - extra words
+
+ParseError: at 2:51-56
+ "concat" may be "compact"
 `);
 });
 

@@ -116,6 +116,13 @@ Then print data
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 3 | Given I have a 'string' named 'greeting_es'
 4 | Then print data
+
+Error colors:
+ - error
+ - suggested words
+ - missing words
+ - extra words
+
 Slangroom @slangroom/http Error: sequential requests are not implemented
 `);
 });
