@@ -88,7 +88,7 @@ export class LexError extends Error {
 	constructor(t: Token) {
 		super();
 		this.name = 'LexError';
-		this.message = `unclosed single-quote at ${t.lineNo}:${t.start + 1}-${t.end + 1}: ${t.raw}`;
+		this.message = `at ${t.lineNo}:${t.start + 1}-${t.end + 1}\n unclosed single-quote \x1b[41m${t.raw}\x1b[0m`;
 	}
 }
 
