@@ -130,7 +130,7 @@ const requirifyZenParams = (params?: Partial<ZenParams>): Required<ZenParams> =>
 };
 
 /**
- * Print Error in a pretty wa
+ * Print Error in a pretty way
  * @param error {message, lineNo, ?start, ?end}
  * @param contract {string}
 */
