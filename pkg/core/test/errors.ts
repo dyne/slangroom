@@ -5,7 +5,7 @@ import test from 'ava';
 import { errorColor, suggestedColor, missingColor, extraColor } from '@slangroom/core';
 
 
-test.skip('@slangroom/core errors are shown and context is shown with line number', async (t) => {
+test('@slangroom/core errors are shown and context is shown with line number', async (t) => {
     const plugin = new Plugin();
     plugin.new(['param'], 'do some action', (_) => _.pass(null));
 
@@ -53,7 +53,7 @@ ParseError: at 2
     t.is(err?.message, expected);
 });
 
-test.skip('@slangroom/core lexer error', async (t) => {
+test('@slangroom/core lexer error', async (t) => {
     const plugin = new Plugin();
     plugin.new(['param'], 'do some action', (_) => _.pass(null));
 
