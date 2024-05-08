@@ -4,6 +4,12 @@
 
 import { PluginMap, Token, type PluginMapKey } from '@slangroom/core';
 
+const arrToStrColor = (arr: string | string[]) => Array.isArray(arr) && arr.length > 0 ? arr.join(', ') : arr;
+export const errorColor = (s: string | string[]): string => '\x1b[41m' + arrToStrColor(s) + '\x1b[0m';
+export const suggestedColor = (s: string | string[]): string => '\x1b[42m' + arrToStrColor(s) + '\x1b[0m';
+export const missingColor = (s: string | string[]): string => '\x1b[46m' + arrToStrColor(s) + '\x1b[0m';
+export const extraColor = (s: string | string[]): string => '\x1b[45m' + arrToStrColor(s) + '\x1b[0m';
+
 /**
  * Represents an error encountered during the parsing phrase.
  *
@@ -39,8 +45,8 @@ export class ParseError extends Error {
 		const wantsQuoted = [wantFirst, ...wantRest].map((x) => JSON.stringify(x)).join(' ');
 		const haveQuoted = JSON.stringify(have.raw);
 		return new ParseError(
-			`${haveQuoted} at ${have.lineNo}:${have.start + 1}-${have.end + 1
-			} must be one of: ${wantsQuoted}`,
+			`at ${have.lineNo}:${have.start + 1}-${have.end + 1
+			}\n ${errorColor(haveQuoted)} may be ${suggestedColor(wantsQuoted)}`,
 		);
 	}
 
@@ -72,12 +78,12 @@ export class ParseError extends Error {
 		const wantsQuoted = [wantFirst, ...wantRest].map((x) => JSON.stringify(x)).join(' ');
 		if (typeof prevTokenOrLineNo == 'number') {
 			const lineNo = prevTokenOrLineNo;
-			return new ParseError(`at ${lineNo}, missing one of: ${wantsQuoted}`);
+			return new ParseError(`at ${lineNo}\n missing one of: ${missingColor(wantsQuoted)}`);
 		}
 		const token = prevTokenOrLineNo;
 		return new ParseError(
 			`at ${token.lineNo}:${token.start + 1}-${token.end + 1
-			}, must be followed by one of: ${wantsQuoted}`,
+			}\n must be followed by one of: ${missingColor(wantsQuoted)}`,
 		);
 	}
 
@@ -92,7 +98,8 @@ export class ParseError extends Error {
 	 */
 	static extra(token: Token) {
 		return new ParseError(
-			`extra token ${token.lineNo}:${token.start + 1}-${token.end + 1}: ${token.raw}`,
+			`at ${token.lineNo}:${token.start + 1}-${token.end + 1
+			}\n extra token ${extraColor(token.raw)}`,
 		);
 	}
 
@@ -214,7 +221,6 @@ export const parse = (p: PluginMap, t: Token[], lineNo: number): Cst => {
 		errors: [],
 	};
 	let givenThen: 'given' | 'then' | undefined;
-
 	if (t[0]) {
 		if (t[0].name != 'given' && t[0].name != 'then')
 			cst.errors.push({ message: ParseError.wrong(t[0], 'given', 'then'), lineNo, start: t[0].start, end: t[0].end });
