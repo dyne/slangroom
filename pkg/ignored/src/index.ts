@@ -17,7 +17,7 @@ import { zencodeExec, type ZenParams } from '@slangroom/shared';
 export const getIgnoredStatements = async (
 	contract: string,
 	params: ZenParams,
-): Promise<string[]> => {
+): Promise<[string, number][]> => {
 	// Since we want to get the list of ignored statements, we don't want to
 	// throw if Zenroom execution fails (but we do fail if something other than
 	// that happens).  When Zenroom fails, the ZenroomError type's message
@@ -36,6 +36,19 @@ export const getIgnoredStatements = async (
 		// 	throw e;
 		logs = JSON.parse(e.message);
 	}
-	const regexIgnored = /(?<=\[W\] Zencode line [0-9]+ pattern ignored: ).*/;
-	return logs.flatMap((log) => log.match(regexIgnored) || []);
+	const regexIgnored = /^\[W\] Zencode line (?<lineNo>[0-9]+) pattern ignored: (?<statement>.*)$/;
+	const ret: [string, number][] = [];
+	logs.forEach((x) => {
+		const l = x.match(regexIgnored);
+		if (!l)
+			// skip if not found
+			return;
+		if (!l.groups || l.groups['statement'] == null || l.groups['lineNo'] == null) {
+			throw new Error('no match');
+		}
+		const lineNo = l.groups['lineNo'],
+			stmnt = l.groups['statement'];
+		ret.push([stmnt, parseInt(lineNo)]);
+	});
+	return ret;
 };

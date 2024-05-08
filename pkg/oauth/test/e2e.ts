@@ -93,7 +93,7 @@ Then print data
 			},
 		},
 	});
-	console.log(res.result['request_uri_out']);
+	//console.log(res.result['request_uri_out']);
 	t.truthy(res.result['request_uri_out']);
 
 	const scriptCreateBodyRequest1 = `
@@ -147,7 +147,7 @@ Then print data
 			}
 		},
 	});
-	console.log(res_auth.result['authCode']);
+	//console.log(res_auth.result['authCode']);
 	t.truthy(res_auth.result['authCode']);
 
 	const scriptCreateBodyRequest = `
@@ -202,7 +202,7 @@ Then print data
 			},
 		},
 	});
-	console.log(res3.result['accessToken_jwt']);
+	//console.log(res3.result['accessToken_jwt']);
 	t.truthy(res3.result['accessToken_jwt']);
 	const scriptGetClaims = `
 Rule unknown ignore
@@ -223,7 +223,7 @@ Then print data
 			token: token_str
 		},
 	});
-	console.log(res4.result['claims']);
+	//console.log(res4.result['claims']);
 	t.truthy(res4.result['claims']);
 
 });

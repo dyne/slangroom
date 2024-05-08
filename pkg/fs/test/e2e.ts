@@ -6,6 +6,8 @@ import test from 'ava';
 import { Slangroom } from '@slangroom/core';
 import { fs } from '@slangroom/fs';
 
+const stripAnsiCodes = (str: string) => str.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
+
 const READ = `Rule unknown ignore
 Given I send path 'filename' and read verbatim file content and output into 'content'
 Given I have a 'string' named 'filename'
@@ -22,7 +24,14 @@ test.serial('unset FILES_DIR', async (t) => {
         },
     });
     const error = await t.throwsAsync(fn);
-    t.is((error as Error).message, "$FILES_DIR must be provided");
+    t.is(stripAnsiCodes((error as Error).message),
+`0 | Rule unknown ignore
+1 | Given I send path 'filename' and read verbatim file content and output into 'content'
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2 | Given I have a 'string' named 'filename'
+3 | Given I have a 'string' named 'content'
+Slangroom @slangroom/fs Error: $FILES_DIR must be provided
+`);
 });
 
 test.serial('File not found', async (t) => {
@@ -63,7 +72,14 @@ test.serial('path not a string', async (t) => {
 		},
 	});
 	const error = await t.throwsAsync(fn);
-	t.is((error as Error).message, 'path must be string');
+	t.is(stripAnsiCodes((error as Error).message),
+`0 | Rule unknown ignore
+1 | Given I send path 'filename' and read verbatim file content and output into 'content'
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2 | Given I have a 'string' named 'filename'
+3 | Given I have a 'string' named 'content'
+Slangroom @slangroom/fs Error: path must be string
+`);
 });
 
 test.serial('File exists', async (t) => {
@@ -91,7 +107,14 @@ Then print the string 'the file exists'
 		},
 	});
 	const error = await t.throwsAsync(resultNotExists);
-	t.is((error as Error).message, 'no such file or directory: test/test_not_exist.txt');
+	t.is(stripAnsiCodes((error as Error).message),
+`0 | Rule unknown ignore
+1 | Given I send path 'filename' and verify file exists
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2 | Given I have a 'string' named 'filename'
+3 | Then print the 'filename'
+Slangroom @slangroom/fs Error: no such file or directory: test/test_not_exist.txt
+`);
 });
 
 test.serial('File does not exist', async (t) => {
@@ -109,7 +132,14 @@ Then print the string 'the file does not exist'
 		},
 	});
 	const error = await t.throwsAsync(resultExists);
-	t.is((error as Error).message, 'file or directory found under: test/test.txt');
+	t.is(stripAnsiCodes((error as Error).message),
+`0 | Rule unknown ignore
+1 | Given I send path 'filename' and verify file does not exist
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2 | Given I have a 'string' named 'filename'
+3 | Then print the 'filename'
+Slangroom @slangroom/fs Error: file or directory found under: test/test.txt
+`);
 	const resultNotExists = slangroom.execute(verifyDoesNotExists, {
 		data: {
 			filename: "test_not_exist.txt"

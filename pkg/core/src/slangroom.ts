@@ -11,6 +11,12 @@ import { lex, parse, visit, Plugin, PluginMap, PluginContextImpl } from '@slangr
  */
 export type Plugins = Plugin | Plugin[];
 
+type GenericError = {
+	message: Error,
+	lineNo: number,
+	start?: number,
+	end?: number
+}
 /**
  * The entrypoint to the Slangroom software.
  *
@@ -66,23 +72,27 @@ export class Slangroom {
 	 * If no plugin definitions can be matched against a custom statement.
 	 */
 	async execute(contract: string, optParams?: Partial<ZenParams>): Promise<ZenOutput> {
+		// substitute all tabs with 4 spaces in contract for better error reporting
+		contract = contract.replaceAll('\t', '    ');
 		const paramsGiven = requirifyZenParams(optParams);
 		const ignoredLines = await getIgnoredStatements(contract, paramsGiven);
-		const lexedLines = ignoredLines.map(lex);
-		const parsedLines = lexedLines.map((x) => parse(this.#plugins, x));
-		parsedLines.forEach((x) => {
-			if (x.errors.length) throw new Error(`general errors: ${x.errors.join('\n')}`);
-			if (x.matches[0]?.err.length)
-				throw new Error(`${x.matches.map((y) => y.err).join('\n')}`);
-		});
+		// lex
+		const lexedResult = ignoredLines.map((ignored) => lex(...ignored));
+		const lexedErrors = lexedResult.flatMap((x) => {if (!x.ok) return x.error; return [];});
+		if (typeof lexedErrors[0] !== "undefined") thorwErrors(lexedErrors, contract);
+		const lexedLines = lexedResult.flatMap((x) => {if(x.ok) return [x.value]; return [];});
+		// parse
+		const parsedLines = lexedLines.map((lexed) => parse(this.#plugins, ...lexed));
+		const parsedErrors = parsedLines.flatMap((x) => [...x.errors, ...(x.matches[0]?.err ?? [])])
+		if (typeof parsedErrors[0] !== "undefined") thorwErrors(parsedErrors, contract);
 
 		const cstGivens = parsedLines.filter((x) => x.givenThen === 'given');
 		for (const cst of cstGivens) {
-			const ast = visit(cst, paramsGiven);
+			const { ast, lineNo } = visit(cst, paramsGiven);
 			const exec = this.#plugins.get(ast.key);
-			if (!exec) throw new Error('no statements matched');
+			if (!exec) return thorwErrors( [{message: new Error('no statements matched'), lineNo}], contract);
 			const res = await exec(new PluginContextImpl(ast));
-			if (!res.ok) throw new Error(res.error);
+			if (!res.ok) return thorwErrors( [{message: res.error, lineNo}], contract);
 			if (res.ok && ast.into) paramsGiven.data[ast.into] = res.value;
 		}
 
@@ -91,11 +101,11 @@ export class Slangroom {
 
 		const cstThens = parsedLines.filter((x) => x.givenThen === 'then');
 		for (const cst of cstThens) {
-			const ast = visit(cst, paramsThen);
+			const { ast, lineNo } = visit(cst, paramsThen);
 			const exec = this.#plugins.get(ast.key);
-			if (!exec) throw new Error('no statements matched');
+			if (!exec) return thorwErrors( [{message: new Error('no statements matched'), lineNo}], contract);
 			const res = await exec(new PluginContextImpl(ast));
-			if (!res.ok) throw new Error(res.error);
+			if (!res.ok) return thorwErrors( [{message: res.error, lineNo}], contract);
 			if (res.ok && ast.into) paramsThen.data[ast.into] = res.value;
 		}
 
@@ -118,3 +128,30 @@ const requirifyZenParams = (params?: Partial<ZenParams>): Required<ZenParams> =>
 	if (!params.keys) params.keys = {};
 	return { extra: {}, conf: '', ...params } as Required<ZenParams>;
 };
+
+/**
+ * Print Error in a pretty way
+ * @param error {message, lineNo, ?start, ?end}
+ * @param contract {string}
+*/
+const thorwErrors = (errorArray: GenericError[], contract: string) => {
+	const contractLines = contract.split('\n');
+	const lineNumber = errorArray[0]!.lineNo;
+	const initialWS = contractLines[lineNumber-1]!.match(/^[\s]+/) || [''];
+	const colStart = errorArray[0]!.start ? errorArray[0]!.start+initialWS[0].length : initialWS[0].length;
+	const colEnd = errorArray[0]!.end ? errorArray[0]!.end+1+initialWS[0].length : contractLines[lineNumber-1]!.length;
+	const lineStart = lineNumber > 2 ? lineNumber - 2 : 0;
+	const lineEnd = lineNumber + 2 > contractLines.length ? contractLines.length : lineNumber + 2;
+	let e = "";
+	for (let i = lineStart; i < lineEnd; i++) {
+		const linePrefix = `${i} | `;
+		e = e.concat(`\x1b[33m${linePrefix}\x1b[0m${contractLines[i]}\n`);
+		if (i === lineNumber -1) {
+			e = e.concat(' '.repeat(colStart + linePrefix.length) + '\x1b[31m' + '^'.repeat(colEnd - colStart) + '\x1b[0m', '\n');
+		}
+	}
+	for (let err of errorArray) {
+		e = e.concat(err.message + '\n');
+	}
+	throw new Error(e);
+}

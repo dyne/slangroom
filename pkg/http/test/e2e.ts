@@ -7,6 +7,8 @@ import nock from 'nock';
 import { Slangroom } from '@slangroom/core';
 import { http } from '@slangroom/http';
 
+const stripAnsiCodes = (str: string) => str.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
+
 nock('http://localhost')
 	.get('/greeting-es')
 	.reply(200, { req: 'Hola chico!' })
@@ -92,4 +94,28 @@ Then print data
 		},
 		res.logs,
 	);
+});
+
+test('sequential not yet implemented', async (t) => {
+	const script = `
+Rule unknown ignore
+Given I connect to 'greeting_es' and do sequential get and output into 'res'
+Given I have a 'string' named 'greeting_es'
+Then print data
+`;
+	const slangroom = new Slangroom(http);
+	const fn = slangroom.execute(script, {
+		data: {
+			greeting_es: 'http://localhost/greeting-es'
+		},
+	});
+	const error = await t.throwsAsync(fn);
+	t.is(stripAnsiCodes((error as Error).message),
+`1 | Rule unknown ignore
+2 | Given I connect to 'greeting_es' and do sequential get and output into 'res'
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+3 | Given I have a 'string' named 'greeting_es'
+4 | Then print data
+Slangroom @slangroom/http Error: sequential requests are not implemented
+`);
 });

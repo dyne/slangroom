@@ -20,6 +20,7 @@ test('visitor works', (t) => {
 							key: { phrase: 'love asche' },
 							bindings: new Map(),
 							err: [],
+							lineNo: 1
 						},
 					],
 				},
@@ -41,6 +42,7 @@ test('visitor works', (t) => {
 							},
 							bindings: new Map([['howmuch', 'value']]),
 							err: [],
+							lineNo: 1
 						},
 					],
 				},
@@ -70,6 +72,7 @@ test('visitor works', (t) => {
 							bindings: new Map([['object', 'myObj']]),
 							connect: 'myUrl',
 							err: [],
+							lineNo: 1
 						},
 					],
 				},
@@ -98,6 +101,36 @@ test('visitor works', (t) => {
 							bindings: new Map(),
 							open: 'myFile',
 							err: [],
+							lineNo: 1
+						},
+					],
+				},
+				{
+					key: {
+						openconnect: 'open',
+						params: new Set(),
+						phrase: 'read file',
+					},
+					params: new Map(),
+					open: ['pathway/to/hell'],
+				},
+			],
+			[
+				{ data: { myFile: ['pathway/to/hell'] }, keys: {} },
+				{
+					givenThen: 'given',
+					errors: [],
+					matches: [
+						{
+							key: {
+								openconnect: 'open',
+								params: new Set(),
+								phrase: 'read file',
+							},
+							bindings: new Map(),
+							open: 'myFile',
+							err: [],
+							lineNo: 1
 						},
 					],
 				},
@@ -113,7 +146,80 @@ test('visitor works', (t) => {
 			],
 		] as [ZenParams, Cst, Ast][]
 	).forEach(([params, cst, want]) => {
-		const have = visit(cst, params);
+		const { ast: have } = visit(cst, params);
 		t.deepEqual(have, want, inspect(cst, false, null));
+	});
+});
+
+
+test('visitor throws error correctly', (t) => {
+	(
+		[
+			[
+				{ data: {}, keys: {} },
+				{
+					givenThen: 'given',
+					errors: [],
+					matches: [
+						{
+							key: {
+								openconnect: 'open',
+								phrase: 'love asche'
+							},
+							bindings: new Map(),
+							open: 'myFile',
+							err: [],
+							lineNo: 1
+						},
+					],
+				},
+				'myFile must contain a value'
+			],
+			[
+				{ data: {myFile: 42}, keys: {} },
+				{
+					givenThen: 'given',
+					errors: [],
+					matches: [
+						{
+							key: {
+								openconnect: 'open',
+								phrase: 'love asche'
+							},
+							bindings: new Map(),
+							open: 'myFile',
+							err: [],
+							lineNo: 1
+						},
+					],
+				},
+				'myFile must contain a value'
+			],
+			[
+				{ data: {myFile: ['pathway/to/hell', 42]}, keys: {} },
+				{
+					givenThen: 'given',
+					errors: [],
+					matches: [
+						{
+							key: {
+								openconnect: 'open',
+								phrase: 'love asche'
+							},
+							bindings: new Map(),
+							open: 'myFile',
+							err: [],
+							lineNo: 1
+						},
+					],
+				},
+				'the array referenced by myFile must solely composed of strings'
+			],
+		] as [ZenParams, Cst, string][]
+	).forEach(([params, cst, errMessage]) => {
+		const err = t.throws(() => {
+			visit(cst, params);
+		})
+		t.is(err.message, errMessage);
 	});
 });

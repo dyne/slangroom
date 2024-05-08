@@ -5,19 +5,26 @@
 import { Plugin } from '@slangroom/core';
 import { execaCommand } from 'execa'
 
+export class ShellError extends Error {
+	constructor(message: string) {
+		super(message);
+		this.name = 'Slangroom @slangroom/shell Error';
+	}
+}
+
 const p = new Plugin()
 
 /**
  * @internal
  */
 export const runCommand = p.new(['command'], 'execute in shell', async (ctx) => {
-    const command = ctx.fetch('command')
-    if (typeof command !== 'string') return ctx.fail("the command must be string, including args")
+    const command = ctx.fetch('command');
+    if (typeof command !== 'string') return ctx.fail(new ShellError("the command must be string, including args"));
     try {
         const { stdout } = await execaCommand(command);
-        return ctx.pass(stdout)
+        return ctx.pass(stdout);
     } catch (e) {
-        throw Error(e)
+        return ctx.fail(new ShellError(e.message));
     }
 })
 

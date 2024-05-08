@@ -6,16 +6,12 @@ import test from 'ava';
 import { getIgnoredStatements } from '@slangroom/ignored';
 
 test("zenroom ignores statements it doesn't know in general", async (t) => {
-	// Given I have a contract with a general rule unknown statemets in it
-	const uknowns = [
-		'Given I test the rule with a statement that does not exist 1',
-		'Given I test the rule with a statement that does not exist 2',
-		'Given I test the rule with a statement that does not exist 2',
-		'Given I test the rule with a statement that does not exist 3',
-	];
 	const contract = `Rule unknown ignore
 
-${uknowns.join('\n')}
+Given I test the rule with a statement that does not exist 1
+Given I test the rule with a statement that does not exist 2
+Given I test the rule with a statement that does not exist 2
+Given I test the rule with a statement that does not exist 3
 Given nothing
 When I write string 'test passed' in 'result'
 Then print the data
@@ -23,7 +19,12 @@ Then print the data
 	// When I get the unknown statements
 	const ignoreds = await getIgnoredStatements(contract, { data: {}, keys: {} });
 	// Then it must be the given unknown statements
-	t.deepEqual(ignoreds, uknowns);
+	t.deepEqual(ignoreds, [
+		['Given I test the rule with a statement that does not exist 1', 3],
+		['Given I test the rule with a statement that does not exist 2', 4],
+		['Given I test the rule with a statement that does not exist 2', 5],
+		['Given I test the rule with a statement that does not exist 3', 6],
+	]);
 });
 
 test("zenroom doesn't ignore ecdh but ignores restroom statements", async (t) => {
@@ -88,9 +89,9 @@ Then print the 'outputData.signature'
 	const ignoreds = await getIgnoredStatements(contract, { data: data, keys: {} });
 	// Then it must be equal to the statements of restroom
 	t.deepEqual(ignoreds, [
-		"Given that I have an endpoint named 'endpoint'",
-		"Given that I have an endpoint named 'timeServer'",
-		"Given I connect to 'endpoint' and save the output into 'dataFromEndpoint'",
-		"Given I connect to 'timeServer' and save the output into 'timestamp-output'",
+		["Given that I have an endpoint named 'endpoint'", 7],
+		["Given that I have an endpoint named 'timeServer'", 8],
+		["Given I connect to 'endpoint' and save the output into 'dataFromEndpoint'", 11],
+		["Given I connect to 'timeServer' and save the output into 'timestamp-output'", 12],
 	]);
 });

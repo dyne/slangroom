@@ -65,7 +65,7 @@ export type Ast = {
 	 */
 	into?: string;
 } & (
-		| {
+	| {
 			/**
 			 * The value of the variable used in Open, must be a string or a
 			 * list of string, former of which is converted to an array for
@@ -73,8 +73,8 @@ export type Ast = {
 			 */
 			open?: [string, ...string[]];
 			connect?: never;
-		}
-		| {
+	  }
+	| {
 			open?: never;
 			/**
 			 * The value of the variable used in Connect, must be a string or a
@@ -82,8 +82,8 @@ export type Ast = {
 			 * convenience.
 			 */
 			connect?: [string, ...string[]];
-		}
-	);
+	  }
+);
 
 /**
  * Visits the given CST with parameters and generates the AST for it.
@@ -102,7 +102,7 @@ export type Ast = {
  * @throws {@link Error}
  * If the given {@link cst}'s match contains any errors.
  */
-export const visit = (cst: Cst, params: ZenParams): Ast => {
+export const visit = (cst: Cst, params: ZenParams): { ast: Ast; lineNo: number } => {
 	if (cst.errors.length) throw new Error('cst must not have any general errors');
 	if (cst.matches.length !== 1) throw new Error('cst must have only one match');
 	const m = cst.matches[0] as Match;
@@ -122,7 +122,7 @@ export const visit = (cst: Cst, params: ZenParams): Ast => {
 		ast.params.set(name, val);
 	});
 
-	return ast;
+	return { ast, lineNo: m.lineNo };
 };
 
 /**

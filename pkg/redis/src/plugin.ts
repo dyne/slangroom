@@ -6,6 +6,13 @@ import { Plugin, PluginContext } from '@slangroom/core';
 import type { JsonableObject } from '@slangroom/shared';
 import * as redisClient from "@redis/client";
 
+export class RedisError extends Error {
+	constructor(message: string) {
+		super(message);
+		this.name = 'Slangroom @slangroom/redis Error';
+	}
+}
+
 const p = new Plugin();
 
 /**
@@ -19,7 +26,7 @@ export const write = p.new('connect',
 		const client = redisClient.createClient({ url: redisUrl });
 		await client.connect();
 		const key = ctx.fetch("key") as string;
-		if (typeof key !== 'string') return ctx.fail('key must be string');
+		if (typeof key !== 'string') return ctx.fail(new RedisError('key must be string'));
 		const data = ctx.fetch("object") as JsonableObject;
 
 		return ctx.pass(await client.set(key, JSON.stringify(data)));
@@ -33,7 +40,7 @@ export const read = p.new('connect',
 		const redisUrl = ctx.fetchConnect()[0];
 		const client = redisClient.createClient({ url: redisUrl });
 		const key = ctx.fetch("key") as string;
-		if (typeof key !== 'string') return ctx.fail('key must be string');
+		if (typeof key !== 'string') return ctx.fail(new RedisError('key must be string'));
 		await client.connect();
 		await client.sendCommand(["SETNX", key, "{}"]);
 
@@ -47,7 +54,7 @@ export const deleteRedis = p.new('connect',
 		const redisUrl = ctx.fetchConnect()[0];
 		const client = redisClient.createClient({ url: redisUrl });
 		const key = ctx.fetch("key") as string;
-		if (typeof key !== 'string') return ctx.fail('key must be string');
+		if (typeof key !== 'string') return ctx.fail(new RedisError('key must be string'));
 		await client.connect();
 
 		return ctx.pass(await client.del(key))

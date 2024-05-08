@@ -16,6 +16,7 @@ import test from 'ava';
 import { Slangroom } from '@slangroom/core';
 import { JsonableObject } from '@slangroom/shared';
 
+const stripAnsiCodes = (str: string) => str.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
 
 const email = "test@test.eu";
 const password = "testtest";
@@ -56,7 +57,14 @@ test('should create a new slangroom capacitor client', async (t) => {
 	});
 	// check error from slangroom execution
 	const error = await t.throwsAsync(fn);
-	t.is((error as Error).message, "Can not start capacitor client in node environment");
+	t.is(stripAnsiCodes((error as Error).message),
+`1 |     Rule unknown ignore
+2 |     Given I connect to 'pb_address' and start capacitor pb client and output into 'res'
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+3 |     Given I have a 'string' named 'res'
+4 |     Then print data
+Slangroom @slangroom/pocketbase Error: Can not start capacitor client in node environment
+`);
 });
 
 test('should login with credentials', async (t) => {
