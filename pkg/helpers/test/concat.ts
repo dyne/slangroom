@@ -66,7 +66,7 @@ Error colors:
  - extra words
 
 ParseError: at 2:51-56
- "concat" may be "compact"
+ concat may be compact
 `);
 });
 

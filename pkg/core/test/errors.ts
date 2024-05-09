@@ -28,25 +28,25 @@ Error colors:
  - ${extraColor('extra words')}
 
 ParseError: at 2:9-17
- ${errorColor('"gibberish"')} may be ${suggestedColor('"send"')}
+ ${errorColor('gibberish')} may be ${suggestedColor('send')}
 
 ParseError: at 2:9-17
- must be followed by one of: ${missingColor('"param"')}
+ must be followed by one of: ${missingColor('param')}
 
 ParseError: at 2
- missing one of: ${missingColor('"<identifier>"')}
+ missing one of: ${missingColor('\'<identifier>\'')}
 
 ParseError: at 2
- missing one of: ${missingColor('"and"')}
+ missing one of: ${missingColor('and')}
 
 ParseError: at 2
- missing one of: ${missingColor('"do"')}
+ missing one of: ${missingColor('do')}
 
 ParseError: at 2
- missing one of: ${missingColor('"some"')}
+ missing one of: ${missingColor('some')}
 
 ParseError: at 2
- missing one of: ${missingColor('"action"')}
+ missing one of: ${missingColor('action')}
 `
 
     const err = await t.throwsAsync(fn);
@@ -107,43 +107,43 @@ Error colors:
  - ${extraColor('extra words')}
 
 ParseError: at 2:1-9
- ${errorColor('"Gibberish"')} may be ${suggestedColor('"given" "then"')}
+ ${errorColor('Gibberish')} may be ${suggestedColor('given, then')}
 
 ParseError: at 2:11-17
- ${errorColor('"connect"')} may be ${suggestedColor('"I"')}
+ ${errorColor('connect')} may be ${suggestedColor('I')}
 
 ParseError: at 2:19-20
- ${errorColor('"to"')} may be ${suggestedColor('"connect"')}
+ ${errorColor('to')} may be ${suggestedColor('connect')}
 
 ParseError: at 2:22-26
- ${errorColor('"\'url\'"')} may be ${suggestedColor('"to"')}
+ ${errorColor('\'url\'')} may be ${suggestedColor('to')}
 
 ParseError: at 2:28-30
- ${errorColor('"and"')} may be ${suggestedColor('"<identifier>"')}
+ ${errorColor('and')} may be ${suggestedColor('\'<identifier>\'')}
 
 ParseError: at 2:32-35
- ${errorColor('"send"')} may be ${suggestedColor('"and"')}
+ ${errorColor('send')} may be ${suggestedColor('and')}
 
 ParseError: at 2:37-41
- ${errorColor('"param"')} may be ${suggestedColor('"send"')}
+ ${errorColor('param')} may be ${suggestedColor('send')}
 
 ParseError: at 2:43-49
- ${errorColor('"\'param\'"')} may be ${suggestedColor('"param"')}
+ ${errorColor('\'param\'')} may be ${suggestedColor('param')}
 
 ParseError: at 2:51-53
- ${errorColor('"and"')} may be ${suggestedColor('"<identifier>"')}
+ ${errorColor('and')} may be ${suggestedColor('\'<identifier>\'')}
 
 ParseError: at 2:55-56
- ${errorColor('"do"')} may be ${suggestedColor('"and"')}
+ ${errorColor('do')} may be ${suggestedColor('and')}
 
 ParseError: at 2:58-61
- ${errorColor('"some"')} may be ${suggestedColor('"do"')}
+ ${errorColor('some')} may be ${suggestedColor('do')}
 
 ParseError: at 2:63-68
- ${errorColor('"action"')} may be ${suggestedColor('"some"')}
+ ${errorColor('action')} may be ${suggestedColor('some')}
 
 ParseError: at 2:70-72
- ${errorColor('"and"')} may be ${suggestedColor('"action"')}
+ ${errorColor('and')} may be ${suggestedColor('action')}
 
 ParseError: at 2:74-84
  extra token ${extraColor('aoibndwebnd')}

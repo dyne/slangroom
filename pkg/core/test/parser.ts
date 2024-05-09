@@ -571,7 +571,7 @@ test('parser works', (t) => {
 						{message: ParseError.wrong(new Token('send', 1, 24, 27), 'and'), lineNo: 1, start: 24, end: 27},
 						{message: ParseError.wrong(new Token('object', 1, 29, 34), 'send'), lineNo: 1, start: 29, end: 34},
 						{message: ParseError.wrong(new Token('\'myObj\'', 1, 36, 42), 'object'), lineNo: 1, start: 36, end: 42},
-						{message: ParseError.wrong(new Token('and', 1, 44, 46), '<identifier>'), lineNo: 1, start: 44, end: 46},
+						{message: ParseError.wrong(new Token('and', 1, 44, 46), '\'<identifier>\''), lineNo: 1, start: 44, end: 46},
 						{message: ParseError.wrong(new Token('send', 1, 48, 51), 'and'), lineNo: 1, start: 48, end: 51},
 						{message: ParseError.wrong(new Token('http', 1, 53, 56), 'send'), lineNo: 1, start: 53, end: 56},
 						{message: ParseError.wrong(new Token('request', 1, 58, 64), 'http'), lineNo: 1, start: 58, end: 64},
