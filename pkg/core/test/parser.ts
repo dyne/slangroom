@@ -601,6 +601,33 @@ test('parser works', (t) => {
 				},
 			],
 		},
+		"Given I connect to": {
+			givenThen: 'given',
+			errors: [],
+			matches: [
+				{
+					key: {
+						openconnect: 'connect',
+						phrase: 'send http request',
+						params: ['object'],
+					},
+					bindings: new Map(),
+					err: [
+						{message: ParseError.missing(new Token('to', 1, 16, 17), '\'<identifier>\''), lineNo: 1},
+						{message: ParseError.missing(1, 'and'), lineNo: 1},
+						{message: ParseError.missing(1, 'send'), lineNo: 1},
+						{message: ParseError.missing(1, 'object'), lineNo: 1},
+						{message: ParseError.missing(1, '\'<identifier>\''), lineNo: 1},
+						{message: ParseError.missing(1, 'and'), lineNo: 1},
+						{message: ParseError.missing(1, 'send'), lineNo: 1},
+						{message: ParseError.missing(1, 'http'), lineNo: 1},
+						{message: ParseError.missing(1, 'request'), lineNo: 1},
+
+					],
+					lineNo: 1,
+				},
+			],
+		},
 	}).forEach(([give, want], index) => {
 		const lexed = lex(give, 1);
 		if (!lexed.ok) throw new Error(lexed.error.message.message);

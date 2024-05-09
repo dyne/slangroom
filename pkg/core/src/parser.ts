@@ -220,12 +220,17 @@ export const parse = (p: PluginMap, t: Token[], lineNo: number): Cst => {
 		errors: [],
 	};
 	let givenThen: 'given' | 'then' | undefined;
+	let openConnect: 'open' | 'connect' | undefined;
 	if (t[0]) {
 		if (t[0].name != 'given' && t[0].name != 'then')
 			cst.errors.push({ message: ParseError.wrong(t[0], 'given', 'then'), lineNo, start: t[0].start, end: t[0].end });
 		else givenThen = t[0].name;
 		if (t[1]) {
 			if (t[1].raw !== 'I') cst.errors.push({message: ParseError.wrong(t[1], 'I'), lineNo, start: t[1].start, end: t[1].end});
+			if (t[2]) {
+				if (t[2].raw == 'open') openConnect = 'open';
+				else if (t[2].raw == 'connect') openConnect = 'connect';
+			}
 		} else cst.errors.push({ message: ParseError.missing(t[0], 'I'), lineNo, start: t[0].start, end: t[0].end});
 	} else {
 		cst.errors.push({ message: ParseError.missing(lineNo, 'Given I', 'Then I'), lineNo});
@@ -246,6 +251,9 @@ export const parse = (p: PluginMap, t: Token[], lineNo: number): Cst => {
 			if (curErrLen !== undefined && m.err.length > curErrLen) throw lemmeout;
 		};
 		try {
+			// check open and connect statement only against the correct statements
+			if(openConnect && (openConnect !== k.openconnect)) throw lemmeout;
+
 			// Open 'ident' and|Connect to 'ident' and
 			if (k.openconnect === 'open') {
 				if (t[++i]?.name !== 'open') newErr(i, 'open');
