@@ -4,11 +4,10 @@
 
 import { PluginMap, Token, type PluginMapKey } from '@slangroom/core';
 
-const arrToStrColor = (arr: string | string[]) => Array.isArray(arr) && arr.length > 0 ? arr.join(', ') : arr;
-export const errorColor = (s: string | string[]): string => '\x1b[41m' + arrToStrColor(s) + '\x1b[0m';
-export const suggestedColor = (s: string | string[]): string => '\x1b[42m' + arrToStrColor(s) + '\x1b[0m';
-export const missingColor = (s: string | string[]): string => '\x1b[46m' + arrToStrColor(s) + '\x1b[0m';
-export const extraColor = (s: string | string[]): string => '\x1b[45m' + arrToStrColor(s) + '\x1b[0m';
+export const errorColor = (s: string): string => '\x1b[31m' + s + '\x1b[0m';
+export const suggestedColor = (s: string): string => '\x1b[32m' + s + '\x1b[0m';
+export const missingColor = (s: string): string => '\x1b[36m' + s + '\x1b[0m';
+export const extraColor = (s: string): string => '\x1b[35m' + s + '\x1b[0m';
 
 /**
  * Represents an error encountered during the parsing phrase.
@@ -42,11 +41,11 @@ export class ParseError extends Error {
 	 * ```
 	 */
 	static wrong(have: Token, wantFirst: string, ...wantRest: string[]) {
-		const wantsQuoted = [wantFirst, ...wantRest].map((x) => JSON.stringify(x)).join(' ');
-		const haveQuoted = JSON.stringify(have.raw);
+		const wants = [wantFirst, ...wantRest].join(', ');
+		const haveRaw = have.raw;
 		return new ParseError(
 			`at ${have.lineNo}:${have.start + 1}-${have.end + 1
-			}\n ${errorColor(haveQuoted)} may be ${suggestedColor(wantsQuoted)}`,
+			}\n ${errorColor(haveRaw)} may be ${suggestedColor(wants)}`,
 		);
 	}
 
@@ -75,15 +74,15 @@ export class ParseError extends Error {
 	 * which means that there exist no prior token.
 	 */
 	static missing(prevTokenOrLineNo: Token | number, wantFirst: string, ...wantRest: string[]) {
-		const wantsQuoted = [wantFirst, ...wantRest].map((x) => JSON.stringify(x)).join(' ');
+		const wants = [wantFirst, ...wantRest].map((x) => x).join(' ');
 		if (typeof prevTokenOrLineNo == 'number') {
 			const lineNo = prevTokenOrLineNo;
-			return new ParseError(`at ${lineNo}\n missing one of: ${missingColor(wantsQuoted)}`);
+			return new ParseError(`at ${lineNo}\n missing one of: ${missingColor(wants)}`);
 		}
 		const token = prevTokenOrLineNo;
 		return new ParseError(
 			`at ${token.lineNo}:${token.start + 1}-${token.end + 1
-			}\n must be followed by one of: ${missingColor(wantsQuoted)}`,
+			}\n must be followed by one of: ${missingColor(wants)}`,
 		);
 	}
 
@@ -252,14 +251,14 @@ export const parse = (p: PluginMap, t: Token[], lineNo: number): Cst => {
 				if (t[++i]?.name !== 'open') newErr(i, 'open');
 				const ident = t[++i];
 				if (ident?.isIdent) m.open = ident.raw.slice(1, -1);
-				else newErr(i, '<identifier>');
+				else newErr(i, '\'<identifier>\'');
 				if (t[++i]?.name !== 'and') newErr(i, 'and');
 			} else if (k.openconnect === 'connect') {
 				if (t[++i]?.name !== 'connect') newErr(i, 'connect');
 				if (t[++i]?.name !== 'to') newErr(i, 'to');
 				const ident = t[++i];
 				if (ident?.isIdent) m.connect = ident.raw.slice(1, -1);
-				else newErr(i, '<identifier>');
+				else newErr(i, '\'<identifier>\'');
 				if (t[++i]?.name !== 'and') newErr(i, 'and');
 			}
 
@@ -281,7 +280,7 @@ export const parse = (p: PluginMap, t: Token[], lineNo: number): Cst => {
 				if (ident?.isIdent) {
 					if (tokName) m.bindings.set(tokName.name, ident.raw.slice(1, -1));
 				} else {
-					newErr(i, '<identifier>');
+					newErr(i, '\'<identifier>\'');
 				}
 				if (t[++i]?.name !== 'and') newErr(i, 'and');
 			});
