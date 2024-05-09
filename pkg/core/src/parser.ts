@@ -41,11 +41,11 @@ export class ParseError extends Error {
 	 * ```
 	 */
 	static wrong(have: Token, wantFirst: string, ...wantRest: string[]) {
-		const wants = [wantFirst, ...wantRest].join(', ');
+		const wantsColored = [wantFirst, ...wantRest].map((x) => suggestedColor(x)).join(' or ');
 		const haveRaw = have.raw;
 		return new ParseError(
 			`at ${have.lineNo}:${have.start + 1}-${have.end + 1
-			}\n ${errorColor(haveRaw)} may be ${suggestedColor(wants)}`,
+			}\n ${errorColor(haveRaw)} may be ${wantsColored}`,
 		);
 	}
 
@@ -74,15 +74,15 @@ export class ParseError extends Error {
 	 * which means that there exist no prior token.
 	 */
 	static missing(prevTokenOrLineNo: Token | number, wantFirst: string, ...wantRest: string[]) {
-		const wants = [wantFirst, ...wantRest].map((x) => x).join(' ');
+		const wantsColored = [wantFirst, ...wantRest].map((x) => missingColor(x)).join(', ');
 		if (typeof prevTokenOrLineNo == 'number') {
 			const lineNo = prevTokenOrLineNo;
-			return new ParseError(`at ${lineNo}\n missing one of: ${missingColor(wants)}`);
+			return new ParseError(`at ${lineNo}\n missing one of: ${wantsColored}`);
 		}
 		const token = prevTokenOrLineNo;
 		return new ParseError(
 			`at ${token.lineNo}:${token.start + 1}-${token.end + 1
-			}\n must be followed by one of: ${missingColor(wants)}`,
+			}\n must be followed by one of: ${wantsColored}`,
 		);
 	}
 

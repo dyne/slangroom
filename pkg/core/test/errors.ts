@@ -107,7 +107,7 @@ Error colors:
  - ${extraColor('extra words')}
 
 ParseError: at 2:1-9
- ${errorColor('Gibberish')} may be ${suggestedColor('given, then')}
+ ${errorColor('Gibberish')} may be ${suggestedColor('given')} or ${suggestedColor('then')}
 
 ParseError: at 2:11-17
  ${errorColor('connect')} may be ${suggestedColor('I')}
