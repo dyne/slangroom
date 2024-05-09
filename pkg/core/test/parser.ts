@@ -571,7 +571,7 @@ test('parser works', (t) => {
 						{message: ParseError.wrong(new Token('send', 1, 24, 27), 'and'), lineNo: 1, start: 24, end: 27},
 						{message: ParseError.wrong(new Token('object', 1, 29, 34), 'send'), lineNo: 1, start: 29, end: 34},
 						{message: ParseError.wrong(new Token('\'myObj\'', 1, 36, 42), 'object'), lineNo: 1, start: 36, end: 42},
-						{message: ParseError.wrong(new Token('and', 1, 44, 46), '<identifier>'), lineNo: 1, start: 44, end: 46},
+						{message: ParseError.wrong(new Token('and', 1, 44, 46), '\'<identifier>\''), lineNo: 1, start: 44, end: 46},
 						{message: ParseError.wrong(new Token('send', 1, 48, 51), 'and'), lineNo: 1, start: 48, end: 51},
 						{message: ParseError.wrong(new Token('http', 1, 53, 56), 'send'), lineNo: 1, start: 53, end: 56},
 						{message: ParseError.wrong(new Token('request', 1, 58, 64), 'http'), lineNo: 1, start: 58, end: 64},
@@ -596,6 +596,33 @@ test('parser works', (t) => {
 						{message: ParseError.wrong(new Token('output', 1, 36, 41), 'and'), lineNo: 1, start: 36, end: 41},
 						{message: ParseError.wrong(new Token('into', 1, 43, 46), 'output'), lineNo: 1, start: 43, end: 46},
 						{message: ParseError.wrong(new Token('wrong', 1, 48, 52), 'into'), lineNo: 1, start: 48, end: 52},
+					],
+					lineNo: 1,
+				},
+			],
+		},
+		"Given I connect to": {
+			givenThen: 'given',
+			errors: [],
+			matches: [
+				{
+					key: {
+						openconnect: 'connect',
+						phrase: 'send http request',
+						params: ['object'],
+					},
+					bindings: new Map(),
+					err: [
+						{message: ParseError.missing(new Token('to', 1, 16, 17), '\'<identifier>\''), lineNo: 1},
+						{message: ParseError.missing(1, 'and'), lineNo: 1},
+						{message: ParseError.missing(1, 'send'), lineNo: 1},
+						{message: ParseError.missing(1, 'object'), lineNo: 1},
+						{message: ParseError.missing(1, '\'<identifier>\''), lineNo: 1},
+						{message: ParseError.missing(1, 'and'), lineNo: 1},
+						{message: ParseError.missing(1, 'send'), lineNo: 1},
+						{message: ParseError.missing(1, 'http'), lineNo: 1},
+						{message: ParseError.missing(1, 'request'), lineNo: 1},
+
 					],
 					lineNo: 1,
 				},

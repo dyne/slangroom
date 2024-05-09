@@ -47,7 +47,7 @@ export const getIgnoredStatements = async (
 			throw new Error('no match');
 		}
 		const lineNo = l.groups['lineNo'],
-			stmnt = l.groups['statement'];
+			stmnt = l.groups['statement'].trim();
 		ret.push([stmnt, parseInt(lineNo)]);
 	});
 	return ret;

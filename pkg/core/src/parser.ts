@@ -4,6 +4,11 @@
 
 import { PluginMap, Token, type PluginMapKey } from '@slangroom/core';
 
+export const errorColor = (s: string): string => '\x1b[31m' + s + '\x1b[0m';
+export const suggestedColor = (s: string): string => '\x1b[32m' + s + '\x1b[0m';
+export const missingColor = (s: string): string => '\x1b[36m' + s + '\x1b[0m';
+export const extraColor = (s: string): string => '\x1b[35m' + s + '\x1b[0m';
+
 /**
  * Represents an error encountered during the parsing phrase.
  *
@@ -36,11 +41,11 @@ export class ParseError extends Error {
 	 * ```
 	 */
 	static wrong(have: Token, wantFirst: string, ...wantRest: string[]) {
-		const wantsQuoted = [wantFirst, ...wantRest].map((x) => JSON.stringify(x)).join(' ');
-		const haveQuoted = JSON.stringify(have.raw);
+		const wantsColored = [wantFirst, ...wantRest].map((x) => suggestedColor(x)).join(' or ');
+		const haveRaw = have.raw;
 		return new ParseError(
-			`${haveQuoted} at ${have.lineNo}:${have.start + 1}-${have.end + 1
-			} must be one of: ${wantsQuoted}`,
+			`at ${have.lineNo}:${have.start + 1}-${have.end + 1
+			}\n ${errorColor(haveRaw)} may be ${wantsColored}`,
 		);
 	}
 
@@ -69,15 +74,15 @@ export class ParseError extends Error {
 	 * which means that there exist no prior token.
 	 */
 	static missing(prevTokenOrLineNo: Token | number, wantFirst: string, ...wantRest: string[]) {
-		const wantsQuoted = [wantFirst, ...wantRest].map((x) => JSON.stringify(x)).join(' ');
+		const wantsColored = [wantFirst, ...wantRest].map((x) => missingColor(x)).join(', ');
 		if (typeof prevTokenOrLineNo == 'number') {
 			const lineNo = prevTokenOrLineNo;
-			return new ParseError(`at ${lineNo}, missing one of: ${wantsQuoted}`);
+			return new ParseError(`at ${lineNo}\n missing one of: ${wantsColored}`);
 		}
 		const token = prevTokenOrLineNo;
 		return new ParseError(
 			`at ${token.lineNo}:${token.start + 1}-${token.end + 1
-			}, must be followed by one of: ${wantsQuoted}`,
+			}\n must be followed by one of: ${wantsColored}`,
 		);
 	}
 
@@ -92,7 +97,8 @@ export class ParseError extends Error {
 	 */
 	static extra(token: Token) {
 		return new ParseError(
-			`extra token ${token.lineNo}:${token.start + 1}-${token.end + 1}: ${token.raw}`,
+			`at ${token.lineNo}:${token.start + 1}-${token.end + 1
+			}\n extra token ${extraColor(token.raw)}`,
 		);
 	}
 
@@ -214,13 +220,17 @@ export const parse = (p: PluginMap, t: Token[], lineNo: number): Cst => {
 		errors: [],
 	};
 	let givenThen: 'given' | 'then' | undefined;
-
+	let openConnect: 'open' | 'connect' | undefined;
 	if (t[0]) {
 		if (t[0].name != 'given' && t[0].name != 'then')
 			cst.errors.push({ message: ParseError.wrong(t[0], 'given', 'then'), lineNo, start: t[0].start, end: t[0].end });
 		else givenThen = t[0].name;
 		if (t[1]) {
 			if (t[1].raw !== 'I') cst.errors.push({message: ParseError.wrong(t[1], 'I'), lineNo, start: t[1].start, end: t[1].end});
+			if (t[2]) {
+				if (t[2].raw == 'open') openConnect = 'open';
+				else if (t[2].raw == 'connect') openConnect = 'connect';
+			}
 		} else cst.errors.push({ message: ParseError.missing(t[0], 'I'), lineNo, start: t[0].start, end: t[0].end});
 	} else {
 		cst.errors.push({ message: ParseError.missing(lineNo, 'Given I', 'Then I'), lineNo});
@@ -241,19 +251,22 @@ export const parse = (p: PluginMap, t: Token[], lineNo: number): Cst => {
 			if (curErrLen !== undefined && m.err.length > curErrLen) throw lemmeout;
 		};
 		try {
+			// check open and connect statement only against the correct statements
+			if(openConnect && (openConnect !== k.openconnect)) throw lemmeout;
+
 			// Open 'ident' and|Connect to 'ident' and
 			if (k.openconnect === 'open') {
 				if (t[++i]?.name !== 'open') newErr(i, 'open');
 				const ident = t[++i];
 				if (ident?.isIdent) m.open = ident.raw.slice(1, -1);
-				else newErr(i, '<identifier>');
+				else newErr(i, '\'<identifier>\'');
 				if (t[++i]?.name !== 'and') newErr(i, 'and');
 			} else if (k.openconnect === 'connect') {
 				if (t[++i]?.name !== 'connect') newErr(i, 'connect');
 				if (t[++i]?.name !== 'to') newErr(i, 'to');
 				const ident = t[++i];
 				if (ident?.isIdent) m.connect = ident.raw.slice(1, -1);
-				else newErr(i, '<identifier>');
+				else newErr(i, '\'<identifier>\'');
 				if (t[++i]?.name !== 'and') newErr(i, 'and');
 			}
 
@@ -275,7 +288,7 @@ export const parse = (p: PluginMap, t: Token[], lineNo: number): Cst => {
 				if (ident?.isIdent) {
 					if (tokName) m.bindings.set(tokName.name, ident.raw.slice(1, -1));
 				} else {
-					newErr(i, '<identifier>');
+					newErr(i, '\'<identifier>\'');
 				}
 				if (t[++i]?.name !== 'and') newErr(i, 'and');
 			});

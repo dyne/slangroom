@@ -30,6 +30,13 @@ test.serial('unset FILES_DIR', async (t) => {
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 2 | Given I have a 'string' named 'filename'
 3 | Given I have a 'string' named 'content'
+
+Error colors:
+ - error
+ - suggested words
+ - missing words
+ - extra words
+
 Slangroom @slangroom/fs Error: $FILES_DIR must be provided
 `);
 });
@@ -43,7 +50,20 @@ test.serial('File not found', async (t) => {
         },
     });
     const error = await t.throwsAsync(fn);
-    t.is((error as Error).message, 'ENOENT: no such file or directory, open \'test.txt\'');
+    t.is(stripAnsiCodes((error as Error).message), `0 | Rule unknown ignore
+1 | Given I send path 'filename' and read verbatim file content and output into 'content'
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2 | Given I have a 'string' named 'filename'
+3 | Given I have a 'string' named 'content'
+
+Error colors:
+ - error
+ - suggested words
+ - missing words
+ - extra words
+
+Slangroom @slangroom/fs Error: ENOENT: no such file or directory, open 'test.txt'
+`);
 });
 
 test.serial('Read verbatim file', async (t) => {
@@ -78,6 +98,13 @@ test.serial('path not a string', async (t) => {
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 2 | Given I have a 'string' named 'filename'
 3 | Given I have a 'string' named 'content'
+
+Error colors:
+ - error
+ - suggested words
+ - missing words
+ - extra words
+
 Slangroom @slangroom/fs Error: path must be string
 `);
 });
@@ -113,6 +140,13 @@ Then print the string 'the file exists'
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 2 | Given I have a 'string' named 'filename'
 3 | Then print the 'filename'
+
+Error colors:
+ - error
+ - suggested words
+ - missing words
+ - extra words
+
 Slangroom @slangroom/fs Error: no such file or directory: test/test_not_exist.txt
 `);
 });
@@ -138,6 +172,13 @@ Then print the string 'the file does not exist'
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 2 | Given I have a 'string' named 'filename'
 3 | Then print the 'filename'
+
+Error colors:
+ - error
+ - suggested words
+ - missing words
+ - extra words
+
 Slangroom @slangroom/fs Error: file or directory found under: test/test.txt
 `);
 	const resultNotExists = slangroom.execute(verifyDoesNotExists, {

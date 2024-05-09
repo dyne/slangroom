@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import { Plugin } from '@slangroom/core';
+import { JsonableObject } from '@slangroom/shared';
 import * as path from 'node:path';
 import * as fspkg from 'node:fs/promises';
 import * as os from 'node:os';
@@ -49,14 +50,21 @@ const resolveFilepath = (unsafe: string): ({ok: true, filepath: string} | {ok: f
 	return { ok: true, filepath: path.join(sandboxdir, normalized) };
 };
 
-const readFile = async (safePath: string) => {
-	const str = await fspkg.readFile(safePath, 'utf8');
-	return str;
+const readFile = async (safePath: string): Promise<{ok: true, value: string} | {ok: false, error: string}> => {
+	try {
+		return {ok: true, value: await fspkg.readFile(safePath, 'utf8')};
+	} catch(e) {
+		return {ok: false, error: e.message};
+	}
 };
 
-const readJSON = async (safePath: string) => {
-	const str = await fspkg.readFile(safePath, 'utf8');
-	return JSON.parse(str);
+const readJSON = async (safePath: string): Promise<{ok: true, value: JsonableObject} | {ok: false, error: string}> => {
+	try {
+		const str = await fspkg.readFile(safePath, 'utf8');
+		return {ok: true, value: JSON.parse(str)};
+	} catch (e) {
+		return {ok: false, error: e.message};
+	}
 };
 
 const checkFileExists = async (safePath: string) => {
@@ -111,7 +119,9 @@ export const readFileContent = p.new(['path'], 'read file content', async (ctx) 
 	const res = resolveFilepath(unsafe);
 	if (!res.ok) return ctx.fail(new FsError(res.error));
 
-	return ctx.pass(await readJSON(res.filepath));
+	const cont = await readJSON(res.filepath);
+	if (!cont.ok) return ctx.fail(new FsError(cont.error));
+	return ctx.pass(cont.value);
 });
 
 /**
@@ -123,8 +133,9 @@ export const readVerbatimFileContent = p.new(['path'], 'read verbatim file conte
 
 	const res = resolveFilepath(unsafe);
 	if (!res.ok) return ctx.fail(new FsError(res.error));
-
-	return ctx.pass(await readFile(res.filepath));
+	const cont = await readFile(res.filepath)
+	if (!cont.ok) return ctx.fail(new FsError(cont.error));
+	return ctx.pass(cont.value);
 });
 
 /**
@@ -139,8 +150,13 @@ export const storeInFile = p.new(['content', 'path'], 'store in file', async (ct
 	const res = resolveFilepath(unsafe);
 	if (!res.ok) return ctx.fail(new FsError(res.error));
 
-	await fspkg.mkdir(path.dirname(res.filepath), { recursive: true });
-	await fspkg.writeFile(res.filepath, content);
+	try {
+		await fspkg.mkdir(path.dirname(res.filepath), { recursive: true });
+		await fspkg.writeFile(res.filepath, content);
+	} catch (e) {
+		return ctx.fail(new FsError(e.message));
+	}
+
 	return ctx.pass(null);
 });
 

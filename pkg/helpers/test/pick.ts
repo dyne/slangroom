@@ -183,6 +183,13 @@ Then print 'r'
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 2 | Given I have a 'string dictionary' named 'complex_object'
 3 | Given I have a 'string dictionary' named 'r'
+
+Error colors:
+ - error
+ - suggested words
+ - missing words
+ - extra words
+
 Slangroom @slangroom/helper Error: MANIPULATION ERRROR:
 None of the properties
 

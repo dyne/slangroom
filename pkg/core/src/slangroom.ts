@@ -5,6 +5,8 @@
 import { getIgnoredStatements } from '@slangroom/ignored';
 import { type ZenOutput, ZenParams, zencodeExec } from '@slangroom/shared';
 import { lex, parse, visit, Plugin, PluginMap, PluginContextImpl } from '@slangroom/core';
+// error colors
+import { errorColor, suggestedColor, missingColor, extraColor } from '@slangroom/core';
 
 /**
  * Just a utility type to ease typing.
@@ -145,13 +147,21 @@ const thorwErrors = (errorArray: GenericError[], contract: string) => {
 	let e = "";
 	for (let i = lineStart; i < lineEnd; i++) {
 		const linePrefix = `${i} | `;
-		e = e.concat(`\x1b[33m${linePrefix}\x1b[0m${contractLines[i]}\n`);
 		if (i === lineNumber -1) {
+			let bold = '\x1b[1;30m' + contractLines[i]!.slice(colStart, colEnd) + '\x1b[0m' + '\x1b[41m';
+			const redBackground = '\x1b[41m' + contractLines[i]!.slice(0, colStart) + bold + contractLines[i]!.slice(colEnd) + '\x1b[0m';
+			e = e.concat(`\x1b[33m${linePrefix}\x1b[0m${redBackground}\n`);
 			e = e.concat(' '.repeat(colStart + linePrefix.length) + '\x1b[31m' + '^'.repeat(colEnd - colStart) + '\x1b[0m', '\n');
-		}
+		} else { e = e.concat(`\x1b[33m${linePrefix}\x1b[0m${contractLines[i]}\n`); }
 	}
+	e = e.concat('\n' + 'Error colors:\n');
+	e = e.concat(` - ${errorColor('error')}\n`);
+	e = e.concat(` - ${suggestedColor('suggested words')}\n`);
+	e = e.concat(` - ${missingColor('missing words')}\n`);
+	e = e.concat(` - ${extraColor('extra words')}\n`);
+
 	for (let err of errorArray) {
-		e = e.concat(err.message + '\n');
+		e = e.concat('\n' + err.message + '\n');
 	}
 	throw new Error(e);
 }
