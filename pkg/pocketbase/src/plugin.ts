@@ -178,13 +178,17 @@ export const getList = p.new(['list_parameters'], 'get some records', async (ctx
 	if (expand) options['expand'] = expand;
 
 	let res: RecordModel | RecordModel[] | ListResult<RecordModel>;
-	if (type === 'all') {
-		res = await pb.collection(collection).getFullList(options);
-	} else if (type === 'list') {
-		const { page, perPage } = params.pagination;
-		res = await pb.collection(collection).getList(page, perPage, options);
-	} else {
-		res = await pb.collection(collection).getFirstListItem(filter, options);
+	try {
+		if (type === 'all') {
+			res = await pb.collection(collection).getFullList(options);
+		} else if (type === 'list') {
+			const { page, perPage } = params.pagination;
+			res = await pb.collection(collection).getList(page, perPage, options);
+		} else {
+			res = await pb.collection(collection).getFirstListItem(filter, options);
+		}
+	} catch (err) {
+		return ctx.fail(new PocketBaseError(err.message));
 	}
 	//@ts-expect-error Jsonable should take also ListResult
 	return ctx.pass({ records: res });
