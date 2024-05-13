@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-import { zencodeExec, type ZenParams } from '@slangroom/shared';
+import { zencodeParse } from '@slangroom/shared';
 
 /**
  * Finds statements ignored by Zenroom in the provided contract.
@@ -16,39 +16,15 @@ import { zencodeExec, type ZenParams } from '@slangroom/shared';
  */
 export const getIgnoredStatements = async (
 	contract: string,
-	params: ZenParams,
-): Promise<[string, number][]> => {
-	// Since we want to get the list of ignored statements, we don't want to
-	// throw if Zenroom execution fails (but we do fail if something other than
-	// that happens).  When Zenroom fails, the ZenroomError type's message
-	// contains the logs.
-	let logs: string[];
+): Promise<{ignoredLines: [string, number][], invalidLines: {message: Error, lineNo: number}[]}> => {
+	let zout: {result: {ignored: [string, number][], invalid: [string, number, string][]}; logs: string};
 	try {
-		// TODO: the zencodeExec() call could potentially be optimized, as
-		// zencodeExec() parses the output result.  Keep in mind: optimization bad.
-		const zout = await zencodeExec(contract, params);
-		logs = JSON.parse(zout.logs);
+		zout = await zencodeParse(contract);
 	} catch (e) {
-		// Currently, only ZenError is available.
-		// Normally, I'd let this code be, but we're trying to achieve 100%
-		// coverage, so my "future-proof" code needs to be commented out here.
-		// if (!(e instanceof ZenroomError))
-		// 	throw e;
-		logs = JSON.parse(e.message);
+		throw e;
 	}
-	const regexIgnored = /^\[W\] Zencode line (?<lineNo>[0-9]+) pattern ignored: (?<statement>.*)$/;
-	const ret: [string, number][] = [];
-	logs.forEach((x) => {
-		const l = x.match(regexIgnored);
-		if (!l)
-			// skip if not found
-			return;
-		if (!l.groups || l.groups['statement'] == null || l.groups['lineNo'] == null) {
-			throw new Error('no match');
-		}
-		const lineNo = l.groups['lineNo'],
-			stmnt = l.groups['statement'].trim();
-		ret.push([stmnt, parseInt(lineNo)]);
-	});
-	return ret;
+	return {
+		ignoredLines: zout.result.ignored.map((x) => [x[0].trim(), x[1]]),
+		invalidLines: zout.result.invalid.map((x) => ({ message: new Error(x[2]), lineNo: x[1] }))
+	};
 };

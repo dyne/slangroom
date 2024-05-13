@@ -17,14 +17,17 @@ When I write string 'test passed' in 'result'
 Then print the data
 `;
 	// When I get the unknown statements
-	const ignoreds = await getIgnoredStatements(contract, { data: {}, keys: {} });
+	const ignoreds = await getIgnoredStatements(contract);
 	// Then it must be the given unknown statements
-	t.deepEqual(ignoreds, [
-		['Given I test the rule with a statement that does not exist 1', 3],
-		['Given I test the rule with a statement that does not exist 2', 4],
-		['Given I test the rule with a statement that does not exist 2', 5],
-		['Given I test the rule with a statement that does not exist 3', 6],
-	]);
+	t.deepEqual(ignoreds, {
+		ignoredLines: [
+			['Given I test the rule with a statement that does not exist 1', 3],
+			['Given I test the rule with a statement that does not exist 2', 4],
+			['Given I test the rule with a statement that does not exist 2', 5],
+			['Given I test the rule with a statement that does not exist 3', 6],
+		],
+		invalidLines: [],
+	});
 });
 
 test("zenroom doesn't ignore ecdh but ignores restroom statements", async (t) => {
@@ -62,8 +65,8 @@ When I create the 'string dictionary'
 and I rename the 'string dictionary' to 'outputData'
 
 # Organize the output of the endpoints in the string dictionary
-When I insert 'timestamp' in 'outputData'
-When I insert 'random-from-endpoint' in 'outputData'
+When I move 'timestamp' in 'outputData'
+When I move 'random-from-endpoint' in 'outputData'
 
 # ECDSA signature
 When I create the ecdh key
@@ -74,7 +77,7 @@ When I rename the 'signature' to 'outputData.signature'
 Then print the 'outputData'
 Then print the 'outputData.signature'
 `;
-	// And params to zenroom
+	/* And params to zenroom
 	const data = {
 		endpoint: 'https://apiroom.net/api/dyneorg/512-bits-random-generator',
 		timeServer: 'http://showcase.api.linx.twenty57.net/UnixTime/tounix?date=now',
@@ -85,13 +88,17 @@ Then print the 'outputData.signature'
 			result: '',
 		},
 	};
+	*/
 	// When I get the ignored statements
-	const ignoreds = await getIgnoredStatements(contract, { data: data, keys: {} });
+	const ignoreds = await getIgnoredStatements(contract);
 	// Then it must be equal to the statements of restroom
-	t.deepEqual(ignoreds, [
-		["Given that I have an endpoint named 'endpoint'", 7],
-		["Given that I have an endpoint named 'timeServer'", 8],
-		["Given I connect to 'endpoint' and save the output into 'dataFromEndpoint'", 11],
-		["Given I connect to 'timeServer' and save the output into 'timestamp-output'", 12],
-	]);
+	t.deepEqual(ignoreds, {
+		ignoredLines: [
+			["Given that I have an endpoint named 'endpoint'", 7],
+			["Given that I have an endpoint named 'timeServer'", 8],
+			["Given I connect to 'endpoint' and save the output into 'dataFromEndpoint'", 11],
+			["Given I connect to 'timeServer' and save the output into 'timestamp-output'", 12],
+		],
+		invalidLines: [],
+	});
 });
