@@ -3,7 +3,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import { Plugin } from '@slangroom/core';
-import { Jsonable } from '@slangroom/shared';
 import { BindOrReplacements, DataTypes, Model, Sequelize } from "sequelize";
 import { QueryGetRecord, QuerySaveVar } from "./interfaces.js";
 
@@ -55,7 +54,7 @@ export const execute = p.new('connect',
 			const t = await db.transaction();
 			const [o, m] = await db.query(statement, { transaction: t });
 			await t.commit();
-			const output = { output: o ? o : m } as Jsonable;
+			const output: {[key:string]: any} = { output: o ? o : m };
 			db.close();
 			return ctx.pass(output);
 		} catch (error) {
@@ -83,7 +82,7 @@ export const executeParams = p.new('connect',
 				replacements: parameters
 			});
 			await t.commit();
-			const output = { output: o ? o : m } as Jsonable;
+			const output: {[key:string]: any} = { output: o ? o : m };
 			db.close();
 			return ctx.pass(output);
 		} catch (error) {

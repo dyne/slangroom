@@ -1,10 +1,13 @@
-import { SuperTest, Test } from "supertest";
-import anyTest, { TestFn } from "ava";
+// SPDX-FileCopyrightText: 2024 Dyne.org foundation
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+import test from "ava";
 import { Slangroom } from '@slangroom/core';
 import { db } from '@slangroom/db';
 import sqlite3 from "sqlite3";
 
-const test = anyTest as TestFn<{ app: SuperTest<Test> }>;
+const stripAnsiCodes = (str: string) => str.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
 
 test('Db should execute raw queries', async (t) => {
 	const rawQuery = `Rule unknown ignore
@@ -74,4 +77,77 @@ test('Db should execute raw queries', async (t) => {
 	const res_6 = res.result['result_6'] as { output?: { changes?: string, lastID?: string } };
 	const lastID_6 = Number(res_6?.output?.lastID);
 	t.true(lastID_6 && lastID_6 > 1);
+});
+
+test('Db should fail for wrong database', async (t) => {
+	const rawQuery = `Rule unknown ignore
+	Given I connect to 'database' and send statement 'query_1' and execute sql statement and output into 'result_1'
+	Given I connect to 'database' and send statement 'query_5' and send parameters 'query5_params'  and execute sql statement with parameters and output into 'result_5'
+	Given I have a 'string dictionary' named 'result_1'
+	Given I have a 'string dictionary' named 'result_5'
+	Then print all data
+`;
+
+	const slangroom = new Slangroom(db);
+	const res = slangroom.execute(rawQuery, {
+		data: {
+			"database": "sqlite://./test/fake_test.db",
+			"query_1": "INSERT INTO member (name) VALUES ('Alice')",
+			"query_5": "INSERT INTO member (name) VALUES (?)",
+			"query5_params": ["Eve"],
+		},
+	});
+	const error = await t.throwsAsync(res);
+    t.is(stripAnsiCodes((error as Error).message),
+`0 | Rule unknown ignore
+1 |     Given I connect to 'database' and send statement 'query_1' and execute sql statement and output into 'result_1'
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2 |     Given I connect to 'database' and send statement 'query_5' and send parameters 'query5_params'  and execute sql statement with parameters and output into 'result_5'
+3 |     Given I have a 'string dictionary' named 'result_1'
+
+Error colors:
+ - error
+ - suggested words
+ - missing words
+ - extra words
+
+Slangroom @slangroom/db Error: SQLITE_ERROR: no such table: member
+`);
+});
+
+
+test('Db should fail for wrong statement', async (t) => {
+	const rawQuery = `Rule unknown ignore
+	Given I connect to 'database' and send statement 'query_1' and execute sql statement and output into 'result_1'
+	Given I connect to 'database' and send statement 'query_5' and send parameters 'query5_params'  and execute sql statement with parameters and output into 'result_5'
+	Given I have a 'string dictionary' named 'result_1'
+	Given I have a 'string dictionary' named 'result_5'
+	Then print all data
+`;
+
+	const slangroom = new Slangroom(db);
+	const res = slangroom.execute(rawQuery, {
+		data: {
+			"database": "sqlite://./test/test.db",
+			"query_1": "INSTERT INTO member (name) VALUES ('Alice')",
+			"query_5": "INSERT INTO member (name) VALUES (?)",
+			"query5_params": ["Eve"],
+		},
+	});
+	const error = await t.throwsAsync(res);
+    t.is(stripAnsiCodes((error as Error).message),
+`0 | Rule unknown ignore
+1 |     Given I connect to 'database' and send statement 'query_1' and execute sql statement and output into 'result_1'
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2 |     Given I connect to 'database' and send statement 'query_5' and send parameters 'query5_params'  and execute sql statement with parameters and output into 'result_5'
+3 |     Given I have a 'string dictionary' named 'result_1'
+
+Error colors:
+ - error
+ - suggested words
+ - missing words
+ - extra words
+
+Slangroom @slangroom/db Error: SQLITE_ERROR: near "INSTERT": syntax error
+`);
 });

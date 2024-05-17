@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2024 Dyne.org foundation
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import test from 'ava';
 import { Slangroom } from '@slangroom/core';
 import { db } from '@slangroom/db';
@@ -7,6 +11,8 @@ import fs from "fs";
 process.env['FILES_DIR'] = "./test";
 const dbPath1 = "sqlite://./test/db1.db";
 const dbPath2 = "sqlite://./test/db2.db";
+
+const stripAnsiCodes = (str: string) => str.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
 
 const complexQuery = `Rule unknown ignore
 		Scenario 'ecdh': Create the keypair
@@ -156,3 +162,106 @@ test.serial(
 		}
 	}
 );
+
+test.serial('Db should fail for wrong record', async (t) => {
+	const failQuery = `Rule unknown ignore
+		Scenario 'ecdh': Create the keypair
+		Given I connect to 'myDb2' and send variable 'obj_1' and send name 'var_name' and send table 'myCache' and save the variable in the database table
+		# the value of the record could be 0 to max could be
+		Given I connect to 'myDb1' and send record 'n' and send table 'myTable' and read the record of the table and output into 'myZenroomStringDictionary'
+		Given I am 'John'
+		Given I have a 'string' named 'myDb1'
+		Given I have a 'string' named 'myDb2'
+		Given I have a 'string' named 'myTable'
+		Given I have a 'string' named 'myCache'
+		Given I have a 'string dictionary' named 'myZenroomStringDictionary'
+		Then print all data
+		`;
+	const slangroom = new Slangroom(db);
+	const result = slangroom.execute(failQuery, {
+		data: {
+			"n": 30,
+			"var_name": "obj_1",
+			"obj_1": "pippo",
+			"myDb1": "sqlite://./test/db1.db",
+			"myDb2": "sqlite://./test/db2.db",
+			"myTable": "firstTable",
+			"myCache": "firstCache",
+			"myOtherZenroomStringDictionary": {
+				"data": {
+					"data1": "9WgBlK+Kcq3AKpmhituXQe4UPkzH3zpZiQa4Szm1Q40=",
+					"data2": "BCEo8MgRiSxtLfxE4UEDVnbdZ21h+xc+egLIRk3VTagpJxlBfu9MjqXGUi2N7tIewpcDrr5V7Z2cmMcNsbKWSGQ="
+				}
+			}
+		},
+	});
+
+	const error = await t.throwsAsync(result);
+    t.is(stripAnsiCodes((error as Error).message),
+`3 |         # the value of the record could be 0 to max could be
+4 |         Given I connect to 'myDb1' and send record 'n' and send table 'myTable' and read the record of the table and output into 'myZenroomStringDictionary'
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+5 |         Given I am 'John'
+6 |         Given I have a 'string' named 'myDb1'
+
+Error colors:
+ - error
+ - suggested words
+ - missing words
+ - extra words
+
+Slangroom @slangroom/db Error: [DATABASE]
+				Returned null for id "30" in table "firstTable" in db "sqlite://./test/db1.db".
+`);
+});
+
+test.serial('Db should fail for wrong db', async (t) => {
+	const failQuery = `Rule unknown ignore
+		Scenario 'ecdh': Create the keypair
+		# the value of the record could be 0 to max could be
+		Given I connect to 'myDb1' and send record 'n' and send table 'myTable' and read the record of the table and output into 'myZenroomStringDictionary'
+		Given I am 'John'
+		Given I have a 'string' named 'obj_1'
+		Given I have a 'string' named 'var_name'
+		Given I have a 'string' named 'myDb1'
+		Given I have a 'string' named 'myDb2'
+		Given I have a 'string' named 'myTable'
+		Given I have a 'string' named 'myCache'
+		Given I have a 'string dictionary' named 'myZenroomStringDictionary'
+		Then print all data
+		Then I connect to 'myDb2' and send variable 'obj_1' and send name 'var_name' and send table 'myCache' and save the variable in the database table
+		Then I connect to 'myTable' and send variable 'obj_1' and send name 'var_name' and send table 'myCache' and save the variable in the database table`;
+	const slangroom = new Slangroom(db);
+	const result = slangroom.execute(failQuery, {
+		data: {
+			"n": 3,
+			"var_name": "obj_1",
+			"obj_1": "pippo",
+			"myDb1": "sqlite://./test/db1.db",
+			"myDb2": "sqlite://./test/db2.db",
+			"myTable": "firstTable",
+			"myCache": "firstCache",
+			"myOtherZenroomStringDictionary": {
+				"data": {
+					"data1": "9WgBlK+Kcq3AKpmhituXQe4UPkzH3zpZiQa4Szm1Q40=",
+					"data2": "BCEo8MgRiSxtLfxE4UEDVnbdZ21h+xc+egLIRk3VTagpJxlBfu9MjqXGUi2N7tIewpcDrr5V7Z2cmMcNsbKWSGQ="
+				}
+			}
+		},
+	});
+
+	const error = await t.throwsAsync(result);
+    t.is(stripAnsiCodes((error as Error).message),
+`13 |         Then I connect to 'myDb2' and send variable 'obj_1' and send name 'var_name' and send table 'myCache' and save the variable in the database table
+14 |         Then I connect to 'myTable' and send variable 'obj_1' and send name 'var_name' and send table 'myCache' and save the variable in the database table
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Error colors:
+ - error
+ - suggested words
+ - missing words
+ - extra words
+
+Slangroom @slangroom/db Error: [DATABASE] Database error: TypeError: Cannot read properties of null (reading 'replace')
+`);
+});
