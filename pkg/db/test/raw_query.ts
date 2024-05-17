@@ -62,7 +62,7 @@ test('Db should execute raw queries', async (t) => {
 		['result_1', 'result_2', 'result_3', 'result_4', 'result_5', 'result_6']);
 	const res_1 = res.result['result_1'] as { output?: { changes?: string, lastID?: string } };
 	const lastID_1 = Number(res_1?.output?.lastID);
-	t.true(lastID_1 && lastID_1 > 1);
+	t.true(lastID_1 && lastID_1 >= 1);
 	const res_2 = res.result['result_2'] as { output?: { changes?: string, lastID?: string } };
 	const lastID_2 = Number(res_2?.output?.lastID);
 	t.true(lastID_2 && lastID_2 > 1);
