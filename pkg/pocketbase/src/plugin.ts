@@ -164,6 +164,46 @@ export const authWithPassword = p.new(['my_credentials'], 'login', async (ctx) =
 /**
  * @internal
  */
+export const requestPasswordReset = p.new(['email'], 'ask password reset', async (ctx) => {
+	const email = ctx.fetch('email') as string;
+	if (!(await isPbRunning())) return ctx.fail('Client is not running');
+
+	try {
+		const res = await pb.collection('users').requestPasswordReset(email);
+		return ctx.pass({res});
+	} catch (err) {
+		return ctx.fail(new PocketBaseError(err.message));
+	}
+});
+
+// At the moment this statement is not used
+// and there is not a simple way to test it
+// thus it is commented out
+/*
+const confirmPassswordResetParametersSchema = z.object({
+	token: z.string(),
+	newPassword: z.string().min(8).max(73),
+	newPasswordConfirm: z.string().min(8).max(73),
+});
+export type ConfirmPassswordResetParameters = z.infer<typeof confirmPassswordResetParametersSchema>;
+export const confirmPassswordReset = p.new(['reset_parameters'], 'confirm password reset', async (ctx) => {
+const p = ctx.fetch('reset_parameters') as ConfirmPassswordResetParameters;
+
+const validation = confirmPassswordResetParametersSchema.safeParse(p);
+	if (!validation.success) return ctx.fail(validation.error);
+	if (!(await isPbRunning())) return ctx.fail('Client is not running');
+	try {
+		const res = await pb.collection('users').confirmPasswordReset(p.token, p.newPassword, p.newPasswordConfirm);
+		return ctx.pass(res);
+	} catch (err) {
+		return ctx.fail(new PocketBaseError(err.message));
+	}
+});
+*/
+
+/**
+ * @internal
+ */
 export const getList = p.new(['list_parameters'], 'get some records', async (ctx) => {
 	const params = ctx.fetch('list_parameters') as ListParameters;
 	const validation = listParametersSchema.safeParse(params);
@@ -276,9 +316,12 @@ export const deleteRecord = p.new(['delete_parameters'], 'delete record', async 
 	if (!validation.success) return ctx.fail(new PocketBaseError(validation.error.message));
 
 	const { collection, id } = p;
-	const res = await pb.collection(collection).delete(id);
-	if (res) return ctx.pass('deleted');
-	return ctx.fail(new PocketBaseError('shit happened'));
+	try {
+		await pb.collection(collection).delete(id);
+		return ctx.pass('deleted');
+	} catch (err) {
+		return ctx.fail(new PocketBaseError(err.message));
+	}
 });
 
 const sendParametersSchema = z.object({
@@ -303,10 +346,13 @@ export const sendRequest = p.new(['url','send_parameters'], 'send request', asyn
 	const validateUrl = urlSchema.safeParse(u);
 	if (!validateUrl.success) return ctx.fail(new PocketBaseError(validateUrl.error.message));
 
-	// @ts-expect-error - Somehow, "send" requires properties that are not
-	const res = await pb.send(u, p);
-	if (res) return ctx.pass(res);
-	return ctx.fail(new PocketBaseError('shit happened'));
+	try {
+		// @ts-expect-error - Somehow, "send" requires properties that are not
+		const res = await pb.send(u, p);
+		return ctx.pass(res);
+	} catch(err) {
+		return ctx.fail(new PocketBaseError(err.message));
+	}
 })
 
 export const pocketbase = p;
