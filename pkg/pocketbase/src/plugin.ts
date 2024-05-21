@@ -183,22 +183,24 @@ const confirmPassswordResetParametersSchema = z.object({
 });
 export type ConfirmPassswordResetParameters = z.infer<typeof confirmPassswordResetParametersSchema>;
 
-/**
- * @internal
- */
-export const confirmPassswordReset = p.new(['reset_parameters'], 'confirm password reset', async (ctx) => {
-	const p = ctx.fetch('reset_parameters') as ConfirmPassswordResetParameters;
 
-	const validation = confirmPassswordResetParametersSchema.safeParse(p);
-	if (!validation.success) return ctx.fail(validation.error);
-	if (!(await isPbRunning())) return ctx.fail('Client is not running');
-	try {
-		const res = await pb.collection('users').confirmPasswordReset(p.token, p.newPassword, p.newPasswordConfirm);
-		return ctx.pass(res);
-	} catch (err) {
-		return ctx.fail(err.message);
-	}
-});
+// Not needed for now
+// /**
+//  * @internal
+//  */
+// export const confirmPassswordReset = p.new(['reset_parameters'], 'confirm password reset', async (ctx) => {
+// 	const p = ctx.fetch('reset_parameters') as ConfirmPassswordResetParameters;
+
+// 	const validation = confirmPassswordResetParametersSchema.safeParse(p);
+// 	if (!validation.success) return ctx.fail(validation.error);
+// 	if (!(await isPbRunning())) return ctx.fail('Client is not running');
+// 	try {
+// 		const res = await pb.collection('users').confirmPasswordReset(p.token, p.newPassword, p.newPasswordConfirm);
+// 		return ctx.pass(res);
+// 	} catch (err) {
+// 		return ctx.fail(err.message);
+// 	}
+// });
 
 /**
  * @internal
