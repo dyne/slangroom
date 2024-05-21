@@ -164,6 +164,45 @@ export const authWithPassword = p.new(['my_credentials'], 'login', async (ctx) =
 /**
  * @internal
  */
+export const requestPasswordReset = p.new(['email'], 'ask password reset', async (ctx) => {
+	const email = ctx.fetch('email') as string;
+	if (!(await isPbRunning())) return ctx.fail('Client is not running');
+
+	try {
+		const res = await pb.collection('users').requestPasswordReset(email);
+		return ctx.pass({res});
+	} catch (err) {
+		throw new Error(err)
+	}
+});
+
+const confirmPassswordResetParametersSchema = z.object({
+	token: z.string(),
+	newPassword: z.string().min(8).max(73),
+	newPasswordConfirm: z.string().min(8).max(73),
+});
+export type ConfirmPassswordResetParameters = z.infer<typeof confirmPassswordResetParametersSchema>;
+
+/**
+ * @internal
+ */
+export const confirmPassswordReset = p.new(['reset_parameters'], 'confirm password reset', async (ctx) => {
+	const p = ctx.fetch('reset_parameters') as ConfirmPassswordResetParameters;
+
+	const validation = confirmPassswordResetParametersSchema.safeParse(p);
+	if (!validation.success) return ctx.fail(validation.error);
+	if (!(await isPbRunning())) return ctx.fail('Client is not running');
+	try {
+		const res = await pb.collection('users').confirmPasswordReset(p.token, p.newPassword, p.newPasswordConfirm);
+		return ctx.pass(res);
+	} catch (err) {
+		throw new Error(err)
+	}
+});
+
+/**
+ * @internal
+ */
 export const getList = p.new(['list_parameters'], 'get some records', async (ctx) => {
 	const params = ctx.fetch('list_parameters') as ListParameters;
 	const validation = listParametersSchema.safeParse(params);

@@ -454,3 +454,40 @@ test('should make a request', async (t) => {
 	t.is(res.result['output']["message"], `Hello ${param}`);
 });
 
+test('should create a user then ask for password reset', async (t) => {
+	const script = `
+	Rule unknown ignore
+	Given I connect to 'pb_address' and start pb client
+	Given I send create_parameters 'create_parameters' and send record_parameters 'record_parameters' and create record
+ 	Given I send email 'my_email' and ask password reset and output into 'output'
+	Given I have a 'string dictionary' named 'output'
+ 	Then print data
+	`;
+	const slangroom = new Slangroom(pocketbase);
+
+	const email = `${randomString()}@test.eu`;
+
+	const data = {
+		pb_address,
+		create_parameters: {
+			collection: 'users',
+			record: {
+				email,
+				password,
+				passwordConfirm: password,
+				name: email
+			},
+		},
+		record_parameters: {
+			requestKey: "testPasswordReset",
+		},
+		my_email: email,
+	};
+
+	const res = await slangroom.execute(script, {
+		data,
+	});
+	// @ts-expect-error - Don't know the shape of the object in advance
+	t.truthy(res?.result?.['output']?.res);
+
+})
