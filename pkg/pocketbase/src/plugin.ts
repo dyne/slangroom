@@ -172,7 +172,7 @@ export const requestPasswordReset = p.new(['email'], 'ask password reset', async
 		const res = await pb.collection('users').requestPasswordReset(email);
 		return ctx.pass({res});
 	} catch (err) {
-		throw new Error(err)
+		ctx.fail(err.message)
 	}
 });
 
@@ -196,7 +196,7 @@ export const confirmPassswordReset = p.new(['reset_parameters'], 'confirm passwo
 		const res = await pb.collection('users').confirmPasswordReset(p.token, p.newPassword, p.newPasswordConfirm);
 		return ctx.pass(res);
 	} catch (err) {
-		throw new Error(err)
+		ctx.fail(err.message)
 	}
 });
 
