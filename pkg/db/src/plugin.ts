@@ -4,7 +4,6 @@
 
 import { Plugin } from '@slangroom/core';
 import { BindOrReplacements, DataTypes, Model, Sequelize } from "sequelize";
-import { QueryGetRecord, QuerySaveVar } from "./interfaces.js";
 
 class Result extends Model {
 	public result!: string;
@@ -54,7 +53,7 @@ export const execute = p.new('connect',
 			const t = await db.transaction();
 			const [o, m] = await db.query(statement, { transaction: t });
 			await t.commit();
-			const output: {[key:string]: any} = { output: o ? o : m };
+			const output: any = o ? o : m;
 			db.close();
 			return ctx.pass(output);
 		} catch (error) {
@@ -82,7 +81,7 @@ export const executeParams = p.new('connect',
 				replacements: parameters
 			});
 			await t.commit();
-			const output: {[key:string]: any} = { output: o ? o : m };
+			const output: any = o ? o : m;
 			db.close();
 			return ctx.pass(output);
 		} catch (error) {
@@ -109,45 +108,35 @@ export const getRecord = p.new('connect',
 
 		const parse = (o: string) => safeJSONParse(o, `[DATABASE] Error in JSON format "${o}"`)
 
-		// create object(s) with the FOUR values of each GET_RECORD
-		const dbQueries: QueryGetRecord[] = [];
-
-		dbQueries.push({
-			id: record,
-			table: table,
-			database: database
-		});
 		try {
 			var output = {}
-			for (const query of dbQueries) {
-				const db = new Sequelize(query.database, { logging: false });
-				Result.init(
-					{ result: DataTypes.TEXT },
-					{
-						tableName: query.table,
-						freezeTableName: true,
-						sequelize: db,
-					}
-				);
-				await Result.sync();
-				try {
-					let result = await Result.findByPk(query.id);
-					if (result) {
-						result = result.get({ plain: true });
-						// column name is result
-						const resultData = parse(result!.result);
-						if (!resultData.ok) return ctx.fail(new DbError(resultData.error));
-						output = resultData.parsed;
-					} else {
-						return ctx.fail(new DbError(`[DATABASE]
-				Returned null for id "${query.id}" in table "${query.table}" in db "${query.database}".`));
-					}
-				} catch (e) {
-					return ctx.fail(new DbError(`[DATABASE]
-				Something went wrong for id "${query.id}" in table "${query.table}" in db "${query.database}".`));
+			const db = new Sequelize(database, { logging: false });
+			Result.init(
+				{ result: DataTypes.TEXT },
+				{
+					tableName: table,
+					freezeTableName: true,
+					sequelize: db,
 				}
-				db.close();
+			);
+			await Result.sync();
+			try {
+				let result = await Result.findByPk(record);
+				if (result) {
+					result = result.get({ plain: true });
+					// column name is result
+					const resultData = parse(result!.result);
+					if (!resultData.ok) return ctx.fail(new DbError(resultData.error));
+					output = resultData.parsed;
+				} else {
+					return ctx.fail(new DbError(`[DATABASE]
+			Returned null for id "${record}" in table "${table}" in db "${database}".`));
+				}
+			} catch (e) {
+				return ctx.fail(new DbError(`[DATABASE]
+			Something went wrong for id "${record}" in table "${table}" in db "${database}".`));
 			}
+			db.close();
 		} catch (e) {
 			return ctx.fail(new DbError(`[DATABASE] Database error: ${e}`));
 		}
@@ -162,47 +151,34 @@ export const saveVar = p.new('connect',
 	['variable', 'name', 'table'],
 	'save the variable in the database table',
 	async (ctx) => {
-		const elem = ctx.fetch('variable') as object;
+		const varObj = ctx.fetch('variable') as object;
 		const varName = ctx.fetch('name') as string;
 		const database = ctx.fetchConnect()[0] as string;
 		const table = ctx.fetch('table') as string;
 
-		const dbQueries: QuerySaveVar[] = [];
-
-		// create object(s) with the THREE values in each GET_RECORD
-		dbQueries.push({
-			varName: varName,
-			varObj: elem,
-			database: database,
-			table: table,
-		});
-
 		try {
-			for (const query of dbQueries) {
-
-				const db = new Sequelize(query.database, { logging: false });
-				Result.init(
-					{ result: DataTypes.TEXT },
-					{
-						tableName: query.table,
-						freezeTableName: true,
-						sequelize: db,
-					}
-				);
-				await Result.sync();
-				try {
-					// column name must be result
-					await Result.create({
-						result: JSON.stringify({
-							[query.varName]: query.varObj,
-						}),
-					});
-				} catch (e) {
-					return ctx.fail(new DbError(`[DATABASE]
-					Error in table "${query.table}" in db "${query.database}": ${e}`));
+			const db = new Sequelize(database, { logging: false });
+			Result.init(
+				{ result: DataTypes.TEXT },
+				{
+					tableName: table,
+					freezeTableName: true,
+					sequelize: db,
 				}
-				db.close();
+			);
+			await Result.sync();
+			try {
+				// column name must be result
+				await Result.create({
+					result: JSON.stringify({
+						[varName]: varObj,
+					}),
+				});
+			} catch (e) {
+				return ctx.fail(new DbError(`[DATABASE]
+				Error in table "${table}" in db "${database}": ${e}`));
 			}
+			db.close();
 		} catch (e) {
 			return ctx.fail(new DbError(`[DATABASE] Database error: ${e}`));
 		}

@@ -60,22 +60,22 @@ test('Db should execute raw queries', async (t) => {
 	const results = Object.keys(res.result);
 	t.deepEqual(results,
 		['result_1', 'result_2', 'result_3', 'result_4', 'result_5', 'result_6']);
-	const res_1 = res.result['result_1'] as { output?: { changes?: string, lastID?: string } };
-	const lastID_1 = Number(res_1?.output?.lastID);
+	const res_1 = res.result['result_1'] as { changes?: string, lastID?: string };
+	const lastID_1 = Number(res_1?.lastID);
 	t.true(lastID_1 && lastID_1 >= 1);
-	const res_2 = res.result['result_2'] as { output?: { changes?: string, lastID?: string } };
-	const lastID_2 = Number(res_2?.output?.lastID);
+	const res_2 = res.result['result_2'] as { changes?: string, lastID?: string };
+	const lastID_2 = Number(res_2?.lastID);
 	t.true(lastID_2 && lastID_2 > 1);
-	const res_3 = res.result['result_3'] as { output?: string[] };
-	t.deepEqual(res_3?.output, []);
-	const res_4 = res.result['result_4'] as { output?: Record<string, any>[] };
-	const elem = typeof (res_4.output) !== 'undefined' ? res_4.output[0] || {} : {};
+	const res_3 = res.result['result_3'] as string[];
+	t.deepEqual(res_3, []);
+	const res_4 = res.result['result_4'] as Record<string, any>[];
+	const elem = typeof (res_4) !== 'undefined' ? res_4[0] || {} : {};
 	t.deepEqual(Object.keys(elem), ['date', 'name']);
-	const res_5 = res.result['result_5'] as { output?: { changes?: string, lastID?: string } };
-	const lastID_5 = Number(res_5?.output?.lastID);
+	const res_5 = res.result['result_5'] as { changes?: string, lastID?: string };
+	const lastID_5 = Number(res_5?.lastID);
 	t.true(lastID_5 && lastID_5 > 1);
-	const res_6 = res.result['result_6'] as { output?: { changes?: string, lastID?: string } };
-	const lastID_6 = Number(res_6?.output?.lastID);
+	const res_6 = res.result['result_6'] as { changes?: string, lastID?: string };
+	const lastID_6 = Number(res_6?.lastID);
 	t.true(lastID_6 && lastID_6 > 1);
 });
 
@@ -98,8 +98,8 @@ test('Db should fail for wrong database', async (t) => {
 		},
 	});
 	const error = await t.throwsAsync(res);
-    t.is(stripAnsiCodes((error as Error).message),
-`0 | Rule unknown ignore
+	t.is(stripAnsiCodes((error as Error).message),
+		`0 | Rule unknown ignore
 1 |     Given I connect to 'database' and send statement 'query_1' and execute sql statement and output into 'result_1'
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 2 |     Given I connect to 'database' and send statement 'query_5' and send parameters 'query5_params'  and execute sql statement with parameters and output into 'result_5'
@@ -135,8 +135,8 @@ test('Db should fail for wrong statement', async (t) => {
 		},
 	});
 	const error = await t.throwsAsync(res);
-    t.is(stripAnsiCodes((error as Error).message),
-`0 | Rule unknown ignore
+	t.is(stripAnsiCodes((error as Error).message),
+		`0 | Rule unknown ignore
 1 |     Given I connect to 'database' and send statement 'query_1' and execute sql statement and output into 'result_1'
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 2 |     Given I connect to 'database' and send statement 'query_5' and send parameters 'query5_params'  and execute sql statement with parameters and output into 'result_5'

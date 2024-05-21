@@ -47,7 +47,7 @@ test.afterEach(() => {
 });
 
 test.beforeEach(async () => {
-	const sequelize = new Sequelize(dbPath1, {logging: false});
+	const sequelize = new Sequelize(dbPath1, { logging: false });
 	const Table = sequelize.define("firstTable", {
 		result: {
 			type: DataTypes.STRING,
@@ -130,7 +130,7 @@ test.serial(
 				},
 			});
 			const res = await result;
-			const sequelize2 = new Sequelize(dbPath2, {logging: false});
+			const sequelize2 = new Sequelize(dbPath2, { logging: false });
 			const Result2 = sequelize2.define(
 				"firstCache", {
 				result: {
@@ -197,8 +197,8 @@ test.serial('Db should fail for wrong record', async (t) => {
 	});
 
 	const error = await t.throwsAsync(result);
-    t.is(stripAnsiCodes((error as Error).message),
-`3 |         # the value of the record could be 0 to max could be
+	t.is(stripAnsiCodes((error as Error).message),
+		`3 |         # the value of the record could be 0 to max could be
 4 |         Given I connect to 'myDb1' and send record 'n' and send table 'myTable' and read the record of the table and output into 'myZenroomStringDictionary'
             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 5 |         Given I am 'John'
@@ -211,7 +211,7 @@ Error colors:
  - extra words
 
 Slangroom @slangroom/db Error: [DATABASE]
-				Returned null for id "30" in table "firstTable" in db "sqlite://./test/db1.db".
+			Returned null for id "30" in table "firstTable" in db "sqlite://./test/db1.db".
 `);
 });
 
@@ -251,8 +251,8 @@ test.serial('Db should fail for wrong db', async (t) => {
 	});
 
 	const error = await t.throwsAsync(result);
-    t.is(stripAnsiCodes((error as Error).message),
-`13 |         Then I connect to 'myDb2' and send variable 'obj_1' and send name 'var_name' and send table 'myCache' and save the variable in the database table
+	t.is(stripAnsiCodes((error as Error).message),
+		`13 |         Then I connect to 'myDb2' and send variable 'obj_1' and send name 'var_name' and send table 'myCache' and save the variable in the database table
 14 |         Then I connect to 'myTable' and send variable 'obj_1' and send name 'var_name' and send table 'myCache' and save the variable in the database table
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
