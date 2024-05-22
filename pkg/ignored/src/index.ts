@@ -3,6 +3,10 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import { zencodeParse } from '@slangroom/shared';
+// read the version from the package.json
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const packageJson = require('@slangroom/ignored/package.json');
 
 /**
  * Represent zencode invalid statement error
@@ -11,7 +15,7 @@ export class InvalidStatementError extends Error {
     constructor(e: string, couldBeIgnore: boolean) {
 		if (couldBeIgnore) e = 'Maybe missing: \x1b[35mRule unknown ignore\x1b[0m\n' + e;
         super(e);
-        this.name = 'Zencode Invalid Statement Error';
+        this.name = 'Zencode Invalid Statement @slangroom/ignored@' + packageJson.version + ' Error';
     }
 }
 
