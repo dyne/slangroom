@@ -24,7 +24,7 @@ test('Db should execute raw queries', async (t) => {
 	Given I have a 'string dictionary' named 'result_1'
 	Given I have a 'string dictionary' named 'result_2'
 	Given I have a 'string dictionary' named 'result_3'
-	Given I have a 'string dictionary' named 'result_4'
+	Given I have a 'string array' named 'result_4'
 	Given I have a 'string dictionary' named 'result_5'
 	Given I have a 'string dictionary' named 'result_6'
 	Then print all data
