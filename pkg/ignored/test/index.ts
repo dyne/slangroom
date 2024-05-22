@@ -5,6 +5,8 @@
 import test from 'ava';
 import { getIgnoredStatements } from '@slangroom/ignored';
 
+const stripAnsiCodes = (str: string | undefined) => str && str.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
+
 test("zenroom ignores statements it doesn't know in general", async (t) => {
 	const contract = `Rule unknown ignore
 
@@ -77,18 +79,6 @@ When I rename the 'signature' to 'outputData.signature'
 Then print the 'outputData'
 Then print the 'outputData.signature'
 `;
-	/* And params to zenroom
-	const data = {
-		endpoint: 'https://apiroom.net/api/dyneorg/512-bits-random-generator',
-		timeServer: 'http://showcase.api.linx.twenty57.net/UnixTime/tounix?date=now',
-		dataFromEndpoint: {
-			result: '',
-		},
-		'timestamp-output': {
-			result: '',
-		},
-	};
-	*/
 	// When I get the ignored statements
 	const ignoreds = await getIgnoredStatements(contract);
 	// Then it must be equal to the statements of restroom
@@ -101,4 +91,53 @@ Then print the 'outputData.signature'
 		],
 		invalidLines: [],
 	});
+});
+
+test("Report invalid statement correctly", async (t) => {
+	const contract = `Not a valid statement
+Given gibberish
+Another not valid statement
+Given nothing
+Not a valid statement
+Then print the data
+Then gibberish
+`;
+	const ignoreds = await getIgnoredStatements(contract);
+	t.deepEqual(ignoreds.ignoredLines, []);
+	t.is(ignoreds.invalidLines.length, 5);
+	t.is(ignoreds.invalidLines[0]?.lineNo, 1);
+	t.is(stripAnsiCodes(ignoreds.invalidLines[0]?.message?.message),
+		"Maybe missing: Rule unknown ignore\nInvalid Zencode prefix");
+	t.is(ignoreds.invalidLines[1]?.lineNo, 2);
+	t.true(stripAnsiCodes(ignoreds.invalidLines[1]?.message?.message)?.includes("Maybe missing: Rule unknown ignore\n"));
+	t.true(ignoreds.invalidLines[1]?.message?.message.includes("Zencode line 2 pattern not found (given): Given gibberish"));
+	t.is(ignoreds.invalidLines[2]?.lineNo, 3);
+	t.is(stripAnsiCodes(ignoreds.invalidLines[2]?.message?.message), "Maybe missing: Rule unknown ignore\nInvalid Zencode prefix");
+	t.is(ignoreds.invalidLines[3]?.lineNo, 5);
+	t.is(ignoreds.invalidLines[3]?.message?.message, 'Invalid Zencode prefix');
+	t.is(ignoreds.invalidLines[4]?.lineNo, 7);
+	t.true(stripAnsiCodes(ignoreds.invalidLines[4]?.message?.message)?.includes("Maybe missing: Rule unknown ignore\n"));
+	t.true(ignoreds.invalidLines[4]?.message?.message.includes("Zencode line 7 pattern not found (then): Then gibberish"))
+});
+
+test("Report invalid and ignored statement correctly", async (t) => {
+	const contract = `Rule unknown ignore
+Not a valid statement
+Given gibberish
+Another not valid statement
+Given nothing
+Not a valid statement
+Then print the data
+Then gibberish
+`;
+	const ignoreds = await getIgnoredStatements(contract);
+	t.deepEqual(ignoreds.ignoredLines, [
+		["Not a valid statement", 2],
+		["Given gibberish", 3],
+		["Another not valid statement", 4],
+		["Then gibberish", 8]
+	]);
+	t.is(ignoreds.invalidLines.length, 1);
+	t.is(ignoreds.invalidLines[0]?.lineNo, 6);
+	t.is(stripAnsiCodes(ignoreds.invalidLines[0]?.message?.message), 'Invalid Zencode line');
 });
