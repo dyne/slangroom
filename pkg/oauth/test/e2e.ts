@@ -208,7 +208,7 @@ Then print data
 Rule unknown ignore
 
 Given I send token 'token' and send server_data 'server' and get claims from token and output into 'claims'
-Given I have a 'string dictionary' named 'claims'
+Given I have a 'string array' named 'claims'
 
 Then print data
 `;

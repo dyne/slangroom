@@ -22,7 +22,7 @@ Given I have a 'string dictionary' named 'holder_jwk'
 Given I have a 'string dictionary' named 'holder_public_jwk'
 Given I have a 'string dictionary' named 'issuer_public_jwk'
 Given I have a 'string' named 'vcsdjwt'
-Given I have a 'string dictionary' named 'pretty_jwt'
+Given I have a 'string array' named 'pretty_jwt'
 Then print data
 `;
 	const nonce = 'nIdBbNgRqCXBl8YOkfVdg==';

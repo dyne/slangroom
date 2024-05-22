@@ -77,7 +77,8 @@ export class Slangroom {
 		// substitute all tabs with 4 spaces in contract for better error reporting
 		contract = contract.replaceAll('\t', '    ');
 		const paramsGiven = requirifyZenParams(optParams);
-		const ignoredLines = await getIgnoredStatements(contract, paramsGiven);
+		const { ignoredLines, invalidLines } = await getIgnoredStatements(contract);
+		if (typeof invalidLines[0] !== "undefined") {thorwErrors(invalidLines, contract)}
 		// lex
 		const lexedResult = ignoredLines.map((ignored) => lex(...ignored));
 		const lexedErrors = lexedResult.flatMap((x) => {if (!x.ok) return x.error; return [];});
