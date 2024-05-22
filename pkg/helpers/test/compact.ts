@@ -39,7 +39,7 @@ test('@slangroom/helpers 🔇 compact arrays ', async (t) => {
     const picked = `Rule unknown ignore
 Given I send array 'the_array' and manipulate and compact and output into 'mimmo'
 Given I have a 'string array' named 'the_array'
-Given I have a 'string dictionary' named 'mimmo'
+Given I have a 'string array' named 'mimmo'
 
 Then print 'mimmo'
 `;

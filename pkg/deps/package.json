@@ -5,7 +5,7 @@
 		"chevrotain": "^10.5.0"
 	},
 	"peerDependencies": {
-		"zenroom": "^4.0.0"
+		"zenroom": "^4.31.2"
 	},
 	"repository": "https://github.com/dyne/slangroom",
 	"license": "AGPL-3.0-only",

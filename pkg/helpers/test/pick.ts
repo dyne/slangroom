@@ -17,7 +17,7 @@ const expected = {
         a: 'b',
         c: {
             d: {
-                e: '42',
+                e: 42,
             },
         },
     },
@@ -159,7 +159,7 @@ Then print 'r'
             }
         },
     });
-    const reuslt = { ...expected.r, random: "value", 123: "123" }
+    const reuslt = { ...expected.r, random: "value", 123: 123 }
     t.deepEqual(res.result, { r: reuslt }, res.logs);
 });
 
@@ -206,7 +206,7 @@ None of the properties
       "a": "b",
       "c": {
          "d": {
-            "e": "42"
+            "e": 42
          }
       }
    }

@@ -151,11 +151,11 @@ test('should retrieve paginated list of records', async (t) => {
 		data:retypedData,
 	});
 	const output = res.result['output'] as {
-		records?: { items?: []; page?: string; perPage?: string};
+		records?: { items?: []; page?: number; perPage?: number};
 	};
 	t.truthy(Array.isArray(output.records?.items));
-	t.is(output.records?.page, '2');
-	t.is(output.records?.perPage, '20');
+	t.is(output.records?.page, 2);
+	t.is(output.records?.perPage, 20);
 });
 
 test('should retrieve first record that match filters', async (t) => {

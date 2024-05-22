@@ -16,7 +16,7 @@ test('@slangroom/helpers 🧲 concat arrays ', async (t) => {
     const picked = `Rule unknown ignore
 Given I send array 'the_array' and send values 'v' and manipulate and concat and output into 'r'
 Given I have a 'string array' named 'the_array'
-Given I have a 'string dictionary' named 'r'
+Given I have a 'string array' named 'r'
 
 Then print 'r'
 `;
@@ -44,7 +44,7 @@ test('@slangroom/helpers 🧲 concat arrays with missing values', async (t) => {
     const picked = `Rule unknown ignore
 Given I send array 'the_array' and manipulate and concat and output into 'r'
 Given I have a 'string array' named 'the_array'
-Given I have a 'string dictionary' named 'r'
+Given I have a 'string array' named 'r'
 
 Then print 'r'
 `;
@@ -61,7 +61,7 @@ Then print 'r'
 1 | Given I send array 'the_array' and manipulate and concat and output into 'r'
                                                       ^^^^^^
 2 | Given I have a 'string array' named 'the_array'
-3 | Given I have a 'string dictionary' named 'r'
+3 | Given I have a 'string array' named 'r'
 
 Error colors:
  - error
@@ -78,7 +78,7 @@ test('@slangroom/helpers 🧲 concat empty array', async (t) => {
     const picked = `Rule unknown ignore
 Given I send array 'the_array' and send values 'v' and manipulate and concat and output into 'r'
 Given I have a 'string array' named 'the_array'
-Given I have a 'string dictionary' named 'r'
+Given I have a 'string array' named 'r'
 
 Then print 'r'
 `;
@@ -99,7 +99,7 @@ test('@slangroom/helpers 🧲 concat empty values', async (t) => {
     const picked = `Rule unknown ignore
 Given I send array 'the_array' and send values 'v' and manipulate and concat and output into 'r'
 Given I have a 'string array' named 'the_array'
-Given I have a 'string dictionary' named 'r'
+Given I have a 'string array' named 'r'
 
 Then print 'r'
 `;
@@ -120,7 +120,7 @@ test('@slangroom/helpers 🧲 concat empty values and empty array', async (t) =>
     const picked = `Rule unknown ignore
 Given I send array 'the_array' and send values 'v' and manipulate and concat and output into 'r'
 Given I have a 'string array' named 'the_array'
-Given I have a 'string dictionary' named 'r'
+Given I have a 'string array' named 'r'
 
 Then print 'r'
 `;
