@@ -111,7 +111,7 @@ export class ParseError extends Error {
 	 */
 	constructor(message: string) {
 		super(message);
-		this.name = 'ParseError v' + packageJson.version;
+		this.name = 'ParseError @slangroom/core@' + packageJson.version;
 	}
 }
 
