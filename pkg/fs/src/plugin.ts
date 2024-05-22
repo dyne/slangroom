@@ -9,11 +9,15 @@ import * as fspkg from 'node:fs/promises';
 import * as os from 'node:os';
 import axios from 'axios';
 import extractZip from 'extract-zip';
+// read the version from the package.json
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const packageJson = require('@slangroom/fs/package.json');
 
 export class FsError extends Error {
     constructor(e: string) {
         super(e)
-        this.name = 'Slangroom @slangroom/fs Error'
+        this.name = 'Slangroom @slangroom/fs@' + packageJson.version + ' Error'
     }
 }
 

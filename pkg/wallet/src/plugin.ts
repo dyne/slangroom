@@ -35,11 +35,15 @@ import {
 	type VCClaims,
 } from '@meeco/sd-jwt-vc';
 import type { JsonableArray, JsonableObject } from '@slangroom/shared';
+// read the version from the package.json
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const packageJson = require('@slangroom/wallet/package.json');
 
 export class WalletError extends Error {
 	constructor(message: string) {
 		super(message);
-		this.name = 'Slangroom @slangroom/wallet Error';
+		this.name = 'Slangroom @slangroom/wallet@' + packageJson.version + ' Error';
 	}
 }
 

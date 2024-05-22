@@ -4,11 +4,15 @@
 
 import { Plugin } from '@slangroom/core';
 import QrCode from 'qrcode'
+// read the version from the package.json
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const packageJson = require('@slangroom/qrcode/package.json');
 
 export class QrCodeError extends Error {
 	constructor(message: string) {
 		super(message);
-		this.name = 'Slangroom @slangroom/qrcode Error';
+		this.name = 'Slangroom @slangroom/qrcode@' + packageJson.version + ' Error';
 	}
 }
 

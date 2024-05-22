@@ -6,13 +6,17 @@ import { Plugin, type PluginExecutor } from '@slangroom/core';
 import { erc20abi } from '@slangroom/ethereum';
 import { Web3 } from 'web3';
 import { isAddress } from 'web3-validator';
+// read the version from the package.json
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const packageJson = require('@slangroom/ethereum/package.json');
 
 const p = new Plugin();
 
 export class EthereumError extends Error {
     constructor(e: string) {
         super(e)
-        this.name = 'Slangroom @slangroom/ethereum Error'
+        this.name = 'Slangroom @slangroom/ethereum@' + packageJson.version + ' Error'
     }
 }
 

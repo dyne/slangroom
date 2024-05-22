@@ -4,13 +4,17 @@
 
 import { Plugin } from '@slangroom/core';
 import Ajv, { type ValidationError } from 'ajv';
+// read the version from the package.json
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const packageJson = require('@slangroom/json-schema/package.json');
 
 export { ValidationError };
 
 export class JsonSchemaError extends Error {
 	constructor(message: string) {
 		super(message);
-		this.name = 'Slangroom @slangroom/json-schema Error';
+		this.name = 'Slangroom @slangroom/json-schema@' + packageJson.version + ' Error';
 	}
 }
 

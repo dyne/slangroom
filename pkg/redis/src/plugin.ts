@@ -5,11 +5,15 @@
 import { Plugin, PluginContext } from '@slangroom/core';
 import type { JsonableObject } from '@slangroom/shared';
 import * as redisClient from "@redis/client";
+// read the version from the package.json
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const packageJson = require('@slangroom/redis/package.json');
 
 export class RedisError extends Error {
 	constructor(message: string) {
 		super(message);
-		this.name = 'Slangroom @slangroom/redis Error';
+		this.name = 'Slangroom @slangroom/redis@' + packageJson.version + ' Error';
 	}
 }
 

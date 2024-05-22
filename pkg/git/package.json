@@ -30,7 +30,8 @@
 				"types": "./build/cjs/src/*.d.ts",
 				"default": "./build/cjs/src/*.js"
 			}
-		}
+		},
+		"./package.json": "./package.json"
 	},
 	"publishConfig": {
 		"access": "public"

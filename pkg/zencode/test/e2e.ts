@@ -6,6 +6,10 @@ import test from 'ava';
 import { Slangroom } from '@slangroom/core';
 import { zencode } from '@slangroom/zencode';
 import type { JsonableObject } from '@slangroom/shared';
+// read the version from the package.json
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const packageJson = require('@slangroom/zencode/package.json');
 
 const stripAnsiCodes = (str: string) => str.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
 
@@ -105,7 +109,7 @@ Error colors:
  - missing words
  - extra words
 
-Slangroom @slangroom/zencode Error:`))
+Slangroom @slangroom/zencode@${packageJson.version} Error:`))
 	t.true(((error as Error).message).includes("[!] Zencode runtime error"));
 	t.true(((error as Error).message).includes("Zencode line 2: Given I have the 'string' named 'variable_that_does_not_exists'"));
 });
