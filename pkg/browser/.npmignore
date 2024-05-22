@@ -1,17 +1,1 @@
-# SPDX-FileCopyrightText: 2024 Dyne.org foundation
-#
-# SPDX-License-Identifier: AGPL-3.0-or-later
-
-*
-!*/
-
-!/package.json
-
-!/build/esm/src/**/*.js
-!/build/esm/src/**/*.js.map
-!/build/esm/src/**/*.d.ts
-
-!/build/cjs/package.json
-!/build/cjs/src/**/*.js
-!/build/cjs/src/**/*.js.map
-!/build/cjs/src/**/*.d.ts
+../../.npmignore
