@@ -7,6 +7,10 @@ import { Slangroom } from '@slangroom/core';
 import { db } from '@slangroom/db';
 import { DataTypes, Model, Sequelize } from 'sequelize';
 import fs from "fs";
+// read the version from the package.json
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const packageJson = require('@slangroom/db/package.json');
 
 process.env['FILES_DIR'] = "./test";
 const dbPath1 = "sqlite://./test/db1.db";
@@ -210,7 +214,7 @@ Error colors:
  - missing words
  - extra words
 
-Slangroom @slangroom/db Error: [DATABASE]
+Slangroom @slangroom/db@${packageJson.version} Error: [DATABASE]
 			Returned null for id "30" in table "firstTable" in db "sqlite://./test/db1.db".
 `);
 });
@@ -262,6 +266,6 @@ Error colors:
  - missing words
  - extra words
 
-Slangroom @slangroom/db Error: [DATABASE] Database error: TypeError: Cannot read properties of null (reading 'replace')
+Slangroom @slangroom/db@${packageJson.version} Error: [DATABASE] Database error: TypeError: Cannot read properties of null (reading 'replace')
 `);
 });

@@ -6,6 +6,10 @@ import test from "ava";
 import { Slangroom } from '@slangroom/core';
 import { db } from '@slangroom/db';
 import sqlite3 from "sqlite3";
+// read the version from the package.json
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const packageJson = require('@slangroom/db/package.json');
 
 const stripAnsiCodes = (str: string) => str.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
 
@@ -111,7 +115,7 @@ Error colors:
  - missing words
  - extra words
 
-Slangroom @slangroom/db Error: SQLITE_ERROR: no such table: member
+Slangroom @slangroom/db@${packageJson.version} Error: SQLITE_ERROR: no such table: member
 `);
 });
 
@@ -148,6 +152,6 @@ Error colors:
  - missing words
  - extra words
 
-Slangroom @slangroom/db Error: SQLITE_ERROR: near "INSTERT": syntax error
+Slangroom @slangroom/db@${packageJson.version} Error: SQLITE_ERROR: near "INSTERT": syntax error
 `);
 });
