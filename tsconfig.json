@@ -2,9 +2,9 @@
 	"include": ["src/**/*", "test/**/*"],
 	"compilerOptions": {
 		"rootDir": ".",
-		"target": "es2016",
-		"module": "Node16",
-		"moduleResolution": "node16",
+		"target": "ESNext",
+		"module": "esnext",
+		"moduleResolution": "bundler",
 		"incremental": true,
 		"newLine": "lf",
 		"declaration": true,
