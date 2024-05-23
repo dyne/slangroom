@@ -5,9 +5,7 @@
 import { Plugin } from '@slangroom/core';
 import QrCode from 'qrcode'
 // read the version from the package.json
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const packageJson = require('@slangroom/qrcode/package.json');
+import packageJson from '@slangroom/qrcode/package.json' assert { type: 'json' };
 
 export class QrCodeError extends Error {
 	constructor(message: string) {

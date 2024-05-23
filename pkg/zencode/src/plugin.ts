@@ -6,9 +6,7 @@ import { Plugin } from '@slangroom/core';
 import type { JsonableObject } from '@slangroom/shared';
 import { zencodeExec } from '@slangroom/shared';
 // read the version from the package.json
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const packageJson = require('@slangroom/zencode/package.json');
+import packageJson from '@slangroom/zencode/package.json' assert { type: 'json' };
 
 export class ZencodeError extends Error {
 	constructor(message: string) {

@@ -9,9 +9,7 @@ import http from 'isomorphic-git/http/node/index.js';
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
 // read the version from the package.json
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const packageJson = require('@slangroom/git/package.json');
+import packageJson from '@slangroom/git/package.json' assert { type: 'json' };
 
 export class GitError extends Error {
     constructor(e: string) {

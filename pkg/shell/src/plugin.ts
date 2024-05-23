@@ -5,9 +5,7 @@
 import { Plugin } from '@slangroom/core';
 import { execaCommand } from 'execa';
 // read the version from the package.json
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const packageJson = require('@slangroom/shell/package.json');
+import packageJson from '@slangroom/shell/package.json' assert { type: 'json' };
 
 export class ShellError extends Error {
 	constructor(message: string) {

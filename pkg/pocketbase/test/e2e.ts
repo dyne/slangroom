@@ -16,9 +16,7 @@ import test from 'ava';
 import { Slangroom } from '@slangroom/core';
 import { JsonableObject } from '@slangroom/shared';
 // read the version from the package.json
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const packageJson = require('@slangroom/pocketbase/package.json');
+import packageJson from '@slangroom/pocketbase/package.json' assert { type: 'json' };
 
 const stripAnsiCodes = (str: string) => str.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
 

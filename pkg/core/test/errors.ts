@@ -2,9 +2,7 @@
 import { Plugin, Slangroom } from '@slangroom/core';
 import test from 'ava';
 // read the version from the package.json
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const packageJson = require('@slangroom/core/package.json');
+import packageJson from '@slangroom/core/package.json' assert { type: 'json' };
 // error colors
 import { errorColor, suggestedColor, missingColor, extraColor } from '@slangroom/core';
 

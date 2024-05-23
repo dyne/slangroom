@@ -5,9 +5,7 @@
 import { Plugin } from '@slangroom/core';
 import { BindOrReplacements, DataTypes, Model, Sequelize } from "sequelize";
 // read the version from the package.json
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const packageJson = require('@slangroom/db/package.json');
+import packageJson from '@slangroom/db/package.json' assert { type: 'json' };
 
 class Result extends Model {
 	public result!: string;

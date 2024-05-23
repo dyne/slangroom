@@ -5,9 +5,7 @@
 import { Plugin } from '@slangroom/core';
 import _ from 'lodash';
 // read the version from the package.json
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const packageJson = require('@slangroom/helpers/package.json');
+import packageJson from '@slangroom/helpers/package.json' assert { type: 'json' };
 
 const p = new Plugin()
 

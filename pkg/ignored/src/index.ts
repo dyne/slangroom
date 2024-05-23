@@ -4,9 +4,7 @@
 
 import { zencodeParse } from '@slangroom/shared';
 // read the version from the package.json
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const packageJson = require('@slangroom/ignored/package.json');
+import packageJson from '@slangroom/ignored/package.json' assert { type: 'json' };
 
 /**
  * Represent zencode invalid statement error

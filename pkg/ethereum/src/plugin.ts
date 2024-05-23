@@ -7,9 +7,7 @@ import { erc20abi } from '@slangroom/ethereum';
 import { Web3 } from 'web3';
 import { isAddress } from 'web3-validator';
 // read the version from the package.json
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const packageJson = require('@slangroom/ethereum/package.json');
+import packageJson from '@slangroom/ethereum/package.json' assert { type: 'json' };
 
 const p = new Plugin();
 

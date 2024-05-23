@@ -2,9 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // read the version from the package.json
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const packageJson = require('@slangroom/core/package.json');
+import packageJson from '@slangroom/core/package.json' assert { type: 'json' };
 
 /**
  * A whitespace-separated string of characters with position information.

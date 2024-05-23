@@ -7,9 +7,7 @@ import { Slangroom } from '@slangroom/core';
 import { shell } from '@slangroom/shell';
 import { $ } from 'execa';
 // read the version from the package.json
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const packageJson = require('@slangroom/shell/package.json');
+import packageJson from '@slangroom/shell/package.json' assert { type: 'json' };
 
 const stripAnsiCodes = (str: string) => str.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
 
