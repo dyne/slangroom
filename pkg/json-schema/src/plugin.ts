@@ -3,11 +3,9 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import { Plugin } from '@slangroom/core';
-import Ajv, { type ValidationError } from 'ajv';
+import { Ajv, type ValidationError } from 'ajv';
 // read the version from the package.json
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const packageJson = require('@slangroom/json-schema/package.json');
+import packageJson from '@slangroom/json-schema/package.json' assert { type: 'json' };
 
 export { ValidationError };
 
@@ -41,7 +39,7 @@ export const validateJSON = p.new(
 		const schema = ctx.fetch(ARG_JSON_SCHEMA);
 
 		try {
-			const ajv = new Ajv.default({ allErrors: true });
+			const ajv = new Ajv({ allErrors: true });
 
 			// @ts-ignore
 			const validate = ajv.compile(schema);
