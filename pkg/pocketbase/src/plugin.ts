@@ -7,11 +7,13 @@ import type { FullListOptions, ListResult, RecordModel, RecordOptions } from 'po
 import { Plugin } from '@slangroom/core';
 import { z } from 'zod';
 import { Preferences } from '@capacitor/preferences';
+// read the version from the package.json
+import packageJson from '@slangroom/pocketbase/package.json' assert { type: 'json' };
 
 export class PocketBaseError extends Error {
 	constructor(message: string) {
 		super(message);
-		this.name = 'Slangroom @slangroom/pocketbase Error';
+		this.name = 'Slangroom @slangroom/pocketbase@' + packageJson.version + ' Error';
 	}
 }
 

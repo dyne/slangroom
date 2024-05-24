@@ -5,6 +5,8 @@
 import { Slangroom } from '@slangroom/core';
 import { helpers } from '@slangroom/helpers';
 import test from 'ava';
+// read the version from the package.json
+import packageJson from '@slangroom/helpers/package.json' assert { type: 'json' };
 
 const stripAnsiCodes = (str: string) => str.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
 
@@ -190,7 +192,7 @@ Error colors:
  - missing words
  - extra words
 
-Slangroom @slangroom/helper Error: MANIPULATION ERRROR:
+Slangroom @slangroom/helper@${packageJson.version} Error: MANIPULATION ERRROR:
 None of the properties
 
  "a"

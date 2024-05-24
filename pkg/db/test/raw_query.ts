@@ -6,6 +6,8 @@ import test from "ava";
 import { Slangroom } from '@slangroom/core';
 import { db } from '@slangroom/db';
 import sqlite3 from "sqlite3";
+// read the version from the package.json
+import packageJson from '@slangroom/db/package.json' assert { type: 'json' };
 
 const stripAnsiCodes = (str: string) => str.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
 
@@ -20,7 +22,7 @@ test('Db should execute raw queries', async (t) => {
 	Given I have a 'string dictionary' named 'result_1'
 	Given I have a 'string dictionary' named 'result_2'
 	Given I have a 'string dictionary' named 'result_3'
-	Given I have a 'string dictionary' named 'result_4'
+	Given I have a 'string array' named 'result_4'
 	Given I have a 'string dictionary' named 'result_5'
 	Given I have a 'string dictionary' named 'result_6'
 	Then print all data
@@ -111,7 +113,7 @@ Error colors:
  - missing words
  - extra words
 
-Slangroom @slangroom/db Error: SQLITE_ERROR: no such table: member
+Slangroom @slangroom/db@${packageJson.version} Error: SQLITE_ERROR: no such table: member
 `);
 });
 
@@ -148,6 +150,6 @@ Error colors:
  - missing words
  - extra words
 
-Slangroom @slangroom/db Error: SQLITE_ERROR: near "INSTERT": syntax error
+Slangroom @slangroom/db@${packageJson.version} Error: SQLITE_ERROR: near "INSTERT": syntax error
 `);
 });

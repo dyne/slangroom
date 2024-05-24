@@ -5,6 +5,8 @@
 import test from 'ava';
 import { Slangroom } from '@slangroom/core';
 import { fs } from '@slangroom/fs';
+// read the version from the package.json
+import packageJson from '@slangroom/fs/package.json' assert { type: 'json' };
 
 const stripAnsiCodes = (str: string) => str.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
 
@@ -37,7 +39,7 @@ Error colors:
  - missing words
  - extra words
 
-Slangroom @slangroom/fs Error: $FILES_DIR must be provided
+Slangroom @slangroom/fs@${packageJson.version} Error: $FILES_DIR must be provided
 `);
 });
 
@@ -62,7 +64,7 @@ Error colors:
  - missing words
  - extra words
 
-Slangroom @slangroom/fs Error: ENOENT: no such file or directory, open 'test.txt'
+Slangroom @slangroom/fs@${packageJson.version} Error: ENOENT: no such file or directory, open 'test.txt'
 `);
 });
 
@@ -105,7 +107,7 @@ Error colors:
  - missing words
  - extra words
 
-Slangroom @slangroom/fs Error: path must be string
+Slangroom @slangroom/fs@${packageJson.version} Error: path must be string
 `);
 });
 
@@ -147,7 +149,7 @@ Error colors:
  - missing words
  - extra words
 
-Slangroom @slangroom/fs Error: no such file or directory: test/test_not_exist.txt
+Slangroom @slangroom/fs@${packageJson.version} Error: no such file or directory: test/test_not_exist.txt
 `);
 });
 
@@ -179,7 +181,7 @@ Error colors:
  - missing words
  - extra words
 
-Slangroom @slangroom/fs Error: file or directory found under: test/test.txt
+Slangroom @slangroom/fs@${packageJson.version} Error: file or directory found under: test/test.txt
 `);
 	const resultNotExists = slangroom.execute(verifyDoesNotExists, {
 		data: {

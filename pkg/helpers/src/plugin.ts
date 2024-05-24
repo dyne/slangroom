@@ -4,13 +4,15 @@
 
 import { Plugin } from '@slangroom/core';
 import _ from 'lodash';
+// read the version from the package.json
+import packageJson from '@slangroom/helpers/package.json' assert { type: 'json' };
 
 const p = new Plugin()
 
 class HelperError extends Error {
     constructor(e: Error) {
         super(e.message)
-        this.name = 'Slangroom @slangroom/helper Error'
+        this.name = 'Slangroom @slangroom/helper@' + packageJson.version + ' Error'
     }
 }
 

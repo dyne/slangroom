@@ -14,7 +14,7 @@
     "test": "pnpm build && pnpm -F @slangroom/* exec ava --verbose build/esm/test",
     "coverage": "c8 -r text -r lcov -o .coverage --exclude '**/test/' pnpm test",
     "clean": "rm -rf .coverage && pnpm -F @slangroom/* exec -- rm -rf build",
-    "build": "pnpm -F @slangroom/* exec tsc --outdir build/esm --module node16",
+    "build": "pnpm -F @slangroom/* exec tsc --outdir build/esm",
     "publish:ci": "lerna version --no-changelog --conventional-commits --yes && pnpm publish -r --no-git-checks --filter './pkg/*'",
     "docs:api": "node docs/statements/index.mjs",
     "docs:ci": "node docs/statements/index.mjs ci",

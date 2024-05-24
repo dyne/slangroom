@@ -6,6 +6,8 @@ import test from 'ava';
 import { Slangroom } from '@slangroom/core';
 import { shell } from '@slangroom/shell';
 import { $ } from 'execa';
+// read the version from the package.json
+import packageJson from '@slangroom/shell/package.json' assert { type: 'json' };
 
 const stripAnsiCodes = (str: string) => str.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
 
@@ -55,7 +57,7 @@ Error colors:
  - missing words
  - extra words
 
-Slangroom @slangroom/shell Error: Command failed with ENOENT: notfound -v
+Slangroom @slangroom/shell@${packageJson.version} Error: Command failed with ENOENT: notfound -v
 spawn notfound ENOENT
 `);
 });
@@ -88,7 +90,7 @@ Error colors:
  - missing words
  - extra words
 
-Slangroom @slangroom/shell Error: Command failed with exit code 1: cat notfound.txt
+Slangroom @slangroom/shell@${packageJson.version} Error: Command failed with exit code 1: cat notfound.txt
 cat: notfound.txt: No such file or directory
 `);
 });

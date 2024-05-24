@@ -23,7 +23,8 @@
 				"types": "./build/esm/src/*.d.ts",
 				"default": "./build/esm/src/*.js"
 			}
-		}
+		},
+		"./package.json": "./package.json"
 	},
 	"publishConfig": {
 		"access": "public"

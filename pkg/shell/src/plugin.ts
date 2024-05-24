@@ -3,12 +3,14 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import { Plugin } from '@slangroom/core';
-import { execaCommand } from 'execa'
+import { execaCommand } from 'execa';
+// read the version from the package.json
+import packageJson from '@slangroom/shell/package.json' assert { type: 'json' };
 
 export class ShellError extends Error {
 	constructor(message: string) {
 		super(message);
-		this.name = 'Slangroom @slangroom/shell Error';
+		this.name = 'Slangroom @slangroom/shell@' + packageJson.version + ' Error';
 	}
 }
 

@@ -15,6 +15,8 @@ import { pocketbase } from '@slangroom/pocketbase';
 import test from 'ava';
 import { Slangroom } from '@slangroom/core';
 import { JsonableObject } from '@slangroom/shared';
+// read the version from the package.json
+import packageJson from '@slangroom/pocketbase/package.json' assert { type: 'json' };
 
 const stripAnsiCodes = (str: string) => str.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
 
@@ -70,7 +72,7 @@ Error colors:
  - missing words
  - extra words
 
-Slangroom @slangroom/pocketbase Error: Can not start capacitor client in node environment
+Slangroom @slangroom/pocketbase@${packageJson.version} Error: Can not start capacitor client in node environment
 `);
 });
 

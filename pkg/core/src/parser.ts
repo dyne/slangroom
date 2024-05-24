@@ -3,6 +3,8 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import { PluginMap, Token, type PluginMapKey } from '@slangroom/core';
+// read the version from the package.json
+import packageJson from '@slangroom/core/package.json' assert { type: 'json' };
 
 export const errorColor = (s: string): string => '\x1b[31m' + s + '\x1b[0m';
 export const suggestedColor = (s: string): string => '\x1b[32m' + s + '\x1b[0m';
@@ -107,7 +109,7 @@ export class ParseError extends Error {
 	 */
 	constructor(message: string) {
 		super(message);
-		this.name = 'ParseError';
+		this.name = 'ParseError @slangroom/core@' + packageJson.version;
 	}
 }
 

@@ -8,11 +8,13 @@ import gitpkg from 'isomorphic-git';
 import http from 'isomorphic-git/http/node/index.js';
 import * as fs from 'node:fs/promises';
 import * as path from 'node:path';
+// read the version from the package.json
+import packageJson from '@slangroom/git/package.json' assert { type: 'json' };
 
 export class GitError extends Error {
     constructor(e: string) {
         super(e)
-        this.name = 'Slangroom @slangroom/git Error'
+        this.name = 'Slangroom @slangroom/git@' + packageJson.version + ' Error'
     }
 }
 

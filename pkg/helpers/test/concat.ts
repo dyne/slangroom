@@ -5,6 +5,8 @@
 import { Slangroom } from '@slangroom/core';
 import { helpers } from '@slangroom/helpers';
 import test from 'ava';
+// read the version from the package.json
+import packageJson from '@slangroom/helpers/package.json' assert { type: 'json' };
 
 const stripAnsiCodes = (str: string) => str.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
 
@@ -65,7 +67,7 @@ Error colors:
  - missing words
  - extra words
 
-ParseError: at 2:51-56
+ParseError @slangroom/core@${packageJson.version}: at 2:51-56
  concat may be compact
 `);
 });

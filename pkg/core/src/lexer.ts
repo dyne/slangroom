@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: 2024 Dyne.org foundation
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
+// read the version from the package.json
+import packageJson from '@slangroom/core/package.json' assert { type: 'json' };
 
 /**
  * A whitespace-separated string of characters with position information.
@@ -87,7 +89,7 @@ export class Token {
 export class LexError extends Error {
 	constructor(t: Token) {
 		super();
-		this.name = 'LexError';
+		this.name = 'LexError @slangroom/core@' + packageJson.version;
 		this.message = `at ${t.lineNo}:${t.start + 1}-${t.end + 1}\n unclosed single-quote \x1b[31m${t.raw}\x1b[0m`;
 	}
 }

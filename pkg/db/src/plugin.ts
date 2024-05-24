@@ -4,6 +4,8 @@
 
 import { Plugin } from '@slangroom/core';
 import { BindOrReplacements, DataTypes, Model, Sequelize } from "sequelize";
+// read the version from the package.json
+import packageJson from '@slangroom/db/package.json' assert { type: 'json' };
 
 class Result extends Model {
 	public result!: string;
@@ -12,7 +14,7 @@ class Result extends Model {
 export class DbError extends Error {
 	constructor(e: string) {
 		super(e)
-		this.name = 'Slangroom @slangroom/db Error'
+		this.name = 'Slangroom @slangroom/db@' + packageJson.version + ' Error'
 	}
 }
 

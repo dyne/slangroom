@@ -5,11 +5,13 @@
 import type { JsonableArray, JsonableObject } from '@slangroom/shared';
 import { Plugin, type PluginExecutor } from '@slangroom/core';
 import axios, { type AxiosRequestConfig } from 'axios';
+// read the version from the package.json
+import packageJson from '@slangroom/http/package.json' assert { type: 'json' };
 
 export class HttpError extends Error {
 	constructor(message: string) {
 		super(message);
-		this.name = 'Slangroom @slangroom/http Error';
+		this.name = 'Slangroom @slangroom/http@' + packageJson.version + ' Error';
 	}
 }
 

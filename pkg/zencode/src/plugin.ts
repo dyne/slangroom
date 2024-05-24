@@ -5,11 +5,13 @@
 import { Plugin } from '@slangroom/core';
 import type { JsonableObject } from '@slangroom/shared';
 import { zencodeExec } from '@slangroom/shared';
+// read the version from the package.json
+import packageJson from '@slangroom/zencode/package.json' assert { type: 'json' };
 
 export class ZencodeError extends Error {
 	constructor(message: string) {
 		super(message);
-		this.name = 'Slangroom @slangroom/zencode Error';
+		this.name = 'Slangroom @slangroom/zencode@' + packageJson.version + ' Error';
 	}
 }
 

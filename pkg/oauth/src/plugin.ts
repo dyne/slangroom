@@ -8,11 +8,13 @@ import { Request, Response } from '@node-oauth/oauth2-server';
 import { AuthenticateHandler, InMemoryCache, AuthorizeHandler } from '@slangroom/oauth';
 import { JsonableObject } from '@slangroom/shared';
 import { JWK } from 'jose';
+// read the version from the package.json
+import packageJson from '@slangroom/oauth/package.json' assert { type: 'json' };
 
 export class OauthError extends Error {
 	constructor(message: string) {
 		super(message);
-		this.name = 'Slangroom @slangroom/oauth Error';
+		this.name = 'Slangroom @slangroom/oauth@' + packageJson.version + ' Error';
 	}
 }
 
