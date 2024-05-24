@@ -1,6 +1,6 @@
 {
 	"name": "@slangroom/shared",
-	"version": "1.27.6",
+	"version": "1.32.0",
 	"dependencies": {
 		"@slangroom/deps": "workspace:*"
 	},
