@@ -26,7 +26,7 @@ const pb_address = "http://127.0.0.1:8090/" as ServerUrl;
 
 const randomString = ()=>(Math.random() + 1).toString(36).substring(7);
 
-test('should create a new slangroom client', async (t) => {
+test.serial('should create a new slangroom client', async (t) => {
 	const script = `
     Rule unknown ignore
     Given I connect to 'pb_address' and start pb client and output into 'res'
@@ -42,7 +42,7 @@ test('should create a new slangroom client', async (t) => {
 	t.is(res.result['res'], 'pb client successfully created');
 });
 
-test('should create a new slangroom capacitor client', async (t) => {
+test.serial('should create a new slangroom capacitor client', async (t) => {
 	const script = `
     Rule unknown ignore
     Given I connect to 'pb_address' and start capacitor pb client and output into 'res'
@@ -74,7 +74,7 @@ Slangroom @slangroom/pocketbase Error: Can not start capacitor client in node en
 `);
 });
 
-test('should login with credentials', async (t) => {
+test.serial('should login with credentials', async (t) => {
 	const script = `
     Rule unknown ignore
     Given I connect to 'pb_address' and start pb client
@@ -97,7 +97,7 @@ test('should login with credentials', async (t) => {
 	t.truthy(output.token);
 });
 
-test('should retrieve full list of records', async (t) => {
+test.serial('should retrieve full list of records', async (t) => {
 	const script = `
     Rule unknown ignore
     Given I connect to 'pb_address' and start pb client
@@ -120,7 +120,7 @@ test('should retrieve full list of records', async (t) => {
 	t.truthy(res.result['output']);
 });
 
-test('should retrieve paginated list of records', async (t) => {
+test.serial('should retrieve paginated list of records', async (t) => {
 	const script = `
     Rule unknown ignore
     Given I connect to 'pb_address' and start pb client
@@ -154,7 +154,7 @@ test('should retrieve paginated list of records', async (t) => {
 	t.is(output.records?.perPage, 20);
 });
 
-test('should retrieve first record that match filters', async (t) => {
+test.serial('should retrieve first record that match filters', async (t) => {
 	const script = `
     Rule unknown ignore
     Given I connect to 'pb_address' and start pb client
@@ -186,7 +186,7 @@ test('should retrieve first record that match filters', async (t) => {
 	t.truthy(res.result['output']);
 });
 
-test('should retrieve one record', async (t) => {
+test.serial('should retrieve one record', async (t) => {
 	const script = `
     Rule unknown ignore
     Given I connect to 'pb_address' and start pb client
@@ -219,7 +219,7 @@ test('should retrieve one record', async (t) => {
 });
 
 
-test('should create a record', async (t) => {
+test.serial('should create a record', async (t) => {
     const name = `test-${randomString()}`
 
 	const script = `
@@ -256,7 +256,7 @@ test('should create a record', async (t) => {
 	t.is(output.name, name, res.logs);
 });
 
-test('should update a record', async (t) => {
+test.serial('should update a record', async (t) => {
 
 
     const scriptCreate = `
@@ -346,7 +346,7 @@ test('should update a record', async (t) => {
 	t.is(output.name, updatedName, res.logs);
 });
 
-test('should delete a record', async (t) => {
+test.serial('should delete a record', async (t) => {
     const scriptCreate = `
     Rule unknown ignore
     Given I connect to 'pb_address' and start pb client
@@ -422,7 +422,7 @@ test('should delete a record', async (t) => {
 	t.is(res.result['output'], 'deleted');
 });
 
-test('should make a request', async (t) => {
+test.serial('should make a request', async (t) => {
 	const script = `
 	Rule unknown ignore
 	Given I connect to 'pb_address' and start pb client
@@ -454,7 +454,7 @@ test('should make a request', async (t) => {
 	t.is(res.result['output']["message"], `Hello ${param}`);
 });
 
-test('should create a user then ask for password reset', async (t) => {
+test.serial('should create a user then ask for password reset', async (t) => {
 	const script = `
 	Rule unknown ignore
 	Given I connect to 'pb_address' and start pb client
