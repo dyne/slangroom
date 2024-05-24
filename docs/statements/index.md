@@ -29,6 +29,14 @@ neither the open/connect part nor the parameters part are present.
 
 ## Tables of all slangroom statements
 
+## db plugin
+| open/connect | params               | phrase                                  |
+| ------------ | -------------------- | --------------------------------------- |
+| connect      | statement            | execute sql statement                   |
+| connect      | statement,parameters | execute sql statement with parameters   |
+| connect      | record,table         | read the record of the table            |
+| connect      | variable,name,table  | save the variable in the database table |
+
 ## ethereum plugin
 | open/connect | params         | phrase                                           |
 | ------------ | -------------- | ------------------------------------------------ |
@@ -162,17 +170,18 @@ neither the open/connect part nor the parameters part are present.
 |              | token,server_data                     | get claims from token       |
 
 ## pocketbase plugin
-| open/connect | params                              | phrase                             |
-| ------------ | ----------------------------------- | ---------------------------------- |
-|              | pb_address                          | connect to pb_address              |
-|              | pb_address                          | connect capacitor app to pb_client |
-|              | my_credentials                      | login                              |
-|              | list_parameters                     | get some records                   |
-|              | show_parameters                     | get one record                     |
-|              | create_parameters,record_parameters | create record                      |
-|              | update_parameters,record_parameters | update record                      |
-|              | delete_parameters                   | delete record                      |
-|              | url,send_parameters                 | send request                       |
+| open/connect | params                              | phrase                    |
+| ------------ | ----------------------------------- | ------------------------- |
+| connect      |                                     | start pb client           |
+| connect      |                                     | start capacitor pb client |
+|              | my_credentials                      | login                     |
+|              | email                               | ask password reset        |
+|              | list_parameters                     | get some records          |
+|              | show_parameters                     | get one record            |
+|              | create_parameters,record_parameters | create record             |
+|              | update_parameters,record_parameters | update record             |
+|              | delete_parameters                   | delete record             |
+|              | url,send_parameters                 | send request              |
 
 ## qrcode plugin
 | open/connect | params | phrase         |

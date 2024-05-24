@@ -9,6 +9,7 @@ import {markdownTable} from "markdown-table";
 // slangroom
 import {Slangroom} from "@slangroom/core";
 // packages
+import {db} from "@slangroom/db";
 import {ethereum} from "@slangroom/ethereum";
 import {fs as sl_fs} from "@slangroom/fs";
 import {git} from "@slangroom/git";
@@ -52,7 +53,8 @@ const generateTable = (plugin, name) => {
 }
 
 [
-    [ethereum, 'ethereum'],
+	[db, 'db'],
+	[ethereum, 'ethereum'],
 	[sl_fs, 'fs'],
 	[git, 'git'],
 	[helpers, 'helpers'],
