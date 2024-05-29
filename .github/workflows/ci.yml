@@ -26,7 +26,7 @@ jobs:
       fail-fast: false
       max-parallel: 1
       matrix:
-        node: [ 20, 22 ]
+        node: [ lts/*, current ]
 
     steps:
       - name: 🛠️ Prepare pnpm workspace
@@ -60,8 +60,6 @@ jobs:
     steps:
       - name: 🛠️ Prepare pnpm workspace
         uses: dyne/pnpm@main
-        with:
-          node-version: 20
       - name: 📖 Setup Pages
         uses: actions/configure-pages@v5
       - name: 🏗️ update sentences tabled and build the docs
@@ -90,8 +88,6 @@ jobs:
     steps:
     - name: 🛠️ Prepare pnpm workspace
       uses: dyne/pnpm@main
-      with:
-        node-version: 20
     - name: 🏗️ Build all
       run: pnpm build
     - name: 🌍 Build @slangroom/browser
