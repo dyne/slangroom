@@ -1,6 +1,6 @@
 {
 	"name": "@slangroom/http",
-	"version": "1.32.0",
+	"version": "1.32.1",
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
 		"@slangroom/shared": "workspace:*",
