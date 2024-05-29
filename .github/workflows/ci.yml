@@ -45,10 +45,23 @@ jobs:
           while ! nc -z 0.0.0.0 8090; do echo "pocketbase not ready" && sleep 1; done
       - name: 🧪 Run the tests
         run: pnpm coverage
+      - name: 📜 Get version of playwright
+        run: echo "PLAYWRIGHT_VERSION=$(pnpm list | grep @playwright/test | cut -d " " -f 2)" >> $GITHUB_ENV
+        working-directory: ./pkg/browser
+      - name: 💾 Cache playwright binaries
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
       - name: 📨 Setup playwright
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: |
           npx playwright install
           npx playwright install-deps
+        working-directory: ./pkg/browser
+      - name: 🧪 Run playwright tests
+        run: |
           pnpm build
           pnpm exec playwright test
         working-directory: ./pkg/browser
