@@ -2,7 +2,7 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // read the version from the package.json
-import packageJson from '@slangroom/core/package.json' assert { type: 'json' };
+import packageJson from '@slangroom/core/package.json' with { type: 'json' };
 
 /**
  * A whitespace-separated string of characters with position information.

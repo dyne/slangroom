@@ -9,7 +9,7 @@ import { AuthenticateHandler, InMemoryCache, AuthorizeHandler } from '@slangroom
 import { JsonableObject } from '@slangroom/shared';
 import { JWK } from 'jose';
 // read the version from the package.json
-import packageJson from '@slangroom/oauth/package.json' assert { type: 'json' };
+import packageJson from '@slangroom/oauth/package.json' with { type: 'json' };
 
 export class OauthError extends Error {
 	constructor(message: string) {

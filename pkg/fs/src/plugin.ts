@@ -10,7 +10,7 @@ import * as os from 'node:os';
 import axios from 'axios';
 import extractZip from 'extract-zip';
 // read the version from the package.json
-import packageJson from '@slangroom/fs/package.json' assert { type: 'json' };
+import packageJson from '@slangroom/fs/package.json' with { type: 'json' };
 
 export class FsError extends Error {
     constructor(e: string) {

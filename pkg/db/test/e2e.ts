@@ -8,7 +8,7 @@ import { db } from '@slangroom/db';
 import { DataTypes, Model, Sequelize } from 'sequelize';
 import fs from "fs";
 // read the version from the package.json
-import packageJson from '@slangroom/db/package.json' assert { type: 'json' };
+import packageJson from '@slangroom/db/package.json' with { type: 'json' };
 
 process.env['FILES_DIR'] = "./test";
 const dbPath1 = "sqlite://./test/db1.db";

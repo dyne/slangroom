@@ -7,7 +7,7 @@ import nock from 'nock';
 import { Slangroom } from '@slangroom/core';
 import { http } from '@slangroom/http';
 // read the version from the package.json
-import packageJson from '@slangroom/http/package.json' assert { type: 'json' };
+import packageJson from '@slangroom/http/package.json' with { type: 'json' };
 
 const stripAnsiCodes = (str: string) => str.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
 

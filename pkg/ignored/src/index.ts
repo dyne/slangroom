@@ -4,7 +4,7 @@
 
 import { zencodeParse } from '@slangroom/shared';
 // read the version from the package.json
-import packageJson from '@slangroom/ignored/package.json' assert { type: 'json' };
+import packageJson from '@slangroom/ignored/package.json' with { type: 'json' };
 
 /**
  * Represent zencode invalid statement error

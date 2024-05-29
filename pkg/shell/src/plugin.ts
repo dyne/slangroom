@@ -5,7 +5,7 @@
 import { Plugin } from '@slangroom/core';
 import { execaCommand } from 'execa';
 // read the version from the package.json
-import packageJson from '@slangroom/shell/package.json' assert { type: 'json' };
+import packageJson from '@slangroom/shell/package.json' with { type: 'json' };
 
 export class ShellError extends Error {
 	constructor(message: string) {

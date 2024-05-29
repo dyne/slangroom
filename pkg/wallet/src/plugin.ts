@@ -36,7 +36,7 @@ import {
 } from '@meeco/sd-jwt-vc';
 import type { JsonableArray, JsonableObject } from '@slangroom/shared';
 // read the version from the package.json
-import packageJson from '@slangroom/wallet/package.json' assert { type: 'json' };
+import packageJson from '@slangroom/wallet/package.json' with { type: 'json' };
 
 export class WalletError extends Error {
 	constructor(message: string) {
