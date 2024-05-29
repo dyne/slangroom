@@ -5,7 +5,7 @@
 import { Plugin } from '@slangroom/core';
 import { Ajv, type ValidationError } from 'ajv';
 // read the version from the package.json
-import packageJson from '@slangroom/json-schema/package.json' assert { type: 'json' };
+import packageJson from '@slangroom/json-schema/package.json' with { type: 'json' };
 
 export { ValidationError };
 

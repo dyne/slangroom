@@ -2,7 +2,7 @@
 import { Plugin, Slangroom } from '@slangroom/core';
 import test from 'ava';
 // read the version from the package.json
-import packageJson from '@slangroom/core/package.json' assert { type: 'json' };
+import packageJson from '@slangroom/core/package.json' with { type: 'json' };
 // error colors
 import { errorColor, suggestedColor, missingColor, extraColor } from '@slangroom/core';
 

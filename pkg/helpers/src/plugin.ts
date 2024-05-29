@@ -5,7 +5,7 @@
 import { Plugin } from '@slangroom/core';
 import _ from 'lodash';
 // read the version from the package.json
-import packageJson from '@slangroom/helpers/package.json' assert { type: 'json' };
+import packageJson from '@slangroom/helpers/package.json' with { type: 'json' };
 
 const p = new Plugin()
 

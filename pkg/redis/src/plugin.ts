@@ -6,7 +6,7 @@ import { Plugin, PluginContext } from '@slangroom/core';
 import type { JsonableObject } from '@slangroom/shared';
 import * as redisClient from "@redis/client";
 // read the version from the package.json
-import packageJson from '@slangroom/redis/package.json' assert { type: 'json' };
+import packageJson from '@slangroom/redis/package.json' with { type: 'json' };
 
 export class RedisError extends Error {
 	constructor(message: string) {

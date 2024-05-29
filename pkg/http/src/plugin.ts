@@ -6,7 +6,7 @@ import type { JsonableArray, JsonableObject } from '@slangroom/shared';
 import { Plugin, type PluginExecutor } from '@slangroom/core';
 import axios, { type AxiosRequestConfig } from 'axios';
 // read the version from the package.json
-import packageJson from '@slangroom/http/package.json' assert { type: 'json' };
+import packageJson from '@slangroom/http/package.json' with { type: 'json' };
 
 export class HttpError extends Error {
 	constructor(message: string) {

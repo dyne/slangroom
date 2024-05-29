@@ -8,7 +8,7 @@ import { Plugin } from '@slangroom/core';
 import { z } from 'zod';
 import { Preferences } from '@capacitor/preferences';
 // read the version from the package.json
-import packageJson from '@slangroom/pocketbase/package.json' assert { type: 'json' };
+import packageJson from '@slangroom/pocketbase/package.json' with { type: 'json' };
 
 export class PocketBaseError extends Error {
 	constructor(message: string) {
