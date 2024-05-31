@@ -144,6 +144,53 @@ export const createToken = p.new(
 /**
  * @internal
  */
+// Sentence that allows to verify the parameters of the /authorize request
+export const verifyRequestUri = p.new(
+	['request', 'server_data'],
+	'verify request parameters',
+	async (ctx) => {
+		const params = ctx.fetch('request') as JsonableObject;
+		const body = params['body'];
+		const headers = params['headers'];
+		if (!body || !headers) return ctx.fail(new OauthError("Input request is not valid"));
+		if (typeof body !== 'string') return ctx.fail(new OauthError("Request body must be a string"));
+		const serverData = ctx.fetch('server_data') as { jwk: JWK, url: string, authenticationUrl: string };
+		if (!serverData['jwk'] || !serverData['url']) return ctx.fail(new OauthError("Server data is missing some parameters"));
+
+		const request = new Request({
+			body: parseQueryStringToDictionary(body),
+			headers: headers,
+			method: 'GET',
+			query: {},
+		});
+
+		const options = {
+			accessTokenLifetime: 60 * 60, // 1 hour.
+			refreshTokenLifetime: 60 * 60 * 24 * 14, // 2 weeks.
+			allowExtendedTokenAttributes: true,
+			requireClientAuthentication: {}, // defaults to true for all grant types
+		};
+
+		const model = getInMemoryCache(serverData, options);
+		try {
+			const handler = getAuthenticateHandler(model, serverData.authenticationUrl);
+			const authorize_options = {
+				model: model,
+				authenticateHandler: handler,
+				allowEmptyState: false,
+				authorizationCodeLifetime: 5 * 60   // 5 minutes.
+			}
+			await new AuthorizeHandler(authorize_options).verifyAuthorizeParams(request);
+		} catch(e) {
+			return ctx.fail(new OauthError(e.message));
+		}
+		return ctx.pass("Given request_uri and client_id are valid");
+	},
+);
+
+/**
+ * @internal
+ */
 // Sentence that allows to generate and output a valid authorization code for an authenticated request
 export const createAuthorizationCode = p.new(
 	['request', 'server_data'],
@@ -274,5 +321,37 @@ export const getClaims = p.new(
 		return ctx.pass(res);
 	},
 );
+
+/**
+ * @internal
+ */
+// Sentence that allows to add a string dict(?) to the authorization_details binded to the given request_uri
+export const changeAuthDetails = p.new(
+	['request_uri', 'data', 'server_data'],
+	'add data to authorization_details',
+	async (ctx) => {
+		const params = ctx.fetch('data') as JsonableObject;
+		const uri = ctx.fetch('request_uri') as string;
+		const serverData = ctx.fetch('server_data') as { jwk: JWK, url: string, authenticationUrl: string };
+		if (!serverData['jwk'] || !serverData['url']) return ctx.fail(new OauthError("Server data is missing some parameters"));
+
+		const options = {
+			accessTokenLifetime: 60 * 60, // 1 hour.
+			refreshTokenLifetime: 60 * 60 * 24 * 14, // 2 weeks.
+			allowExtendedTokenAttributes: true,
+			requireClientAuthentication: {}, // defaults to true for all grant types
+		};
+
+		const model = getInMemoryCache(serverData, options);
+		let res
+		try {
+			res = await model.updateAuthorizationDetails(uri, params);
+		} catch(e) {
+			return ctx.fail(new OauthError(e.message));
+		}
+		return ctx.pass(res);
+	},
+);
+
 
 export const oauth = p;
