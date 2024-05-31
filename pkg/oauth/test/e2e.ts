@@ -121,7 +121,7 @@ Then print the 'request_uri'
 Rule unknown ignore
 
 Given I send request 'request' and send server_data 'server' and verify request parameters
-Given I send request_uri 'request_uri' and send data 'data' and send server_data 'server' and add data to authorization_details and output into 'auth_details'
+Given I send request_uri 'request_uri' and send data 'data' and send server_data 'server' and add data to authorization details and output into 'auth_details'
 Given I send request 'request' and send server_data 'server' and generate authorization code and output into 'authCode'
 
 Given I have a 'string array' named 'auth_details'
