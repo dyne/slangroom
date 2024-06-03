@@ -5,3 +5,4 @@
 export * from '@slangroom/shared/jsonable';
 export * from '@slangroom/shared/tokens';
 export * from '@slangroom/shared/zenroom';
+export * from '@slangroom/shared/colors';
