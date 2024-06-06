@@ -83,6 +83,34 @@ export class AuthorizeHandler {
 		this.model = options.model;
 	}
 
+	async verifyAuthorizeParams(request: Request) {
+		if (!(request instanceof Request)) {
+			throw new InvalidArgumentError(
+				'Invalid argument: `request` must be an instance of Request',
+			);
+		}
+		if (!request.body.request_uri) throw new InvalidRequestError("Missing parameter: request_uri");
+		if (!request.body.client_id) throw new InvalidRequestError("Missing parameter: client_id");
+
+		const base_uri = "urn:ietf:params:oauth:request_uri:";
+		let rand_uri = request.body.request_uri;
+		rand_uri = rand_uri.replace(base_uri, "");
+
+		const timestamp = Math.round(new Date(rand_uri.substring(0, 10)).getTime() / 1000);
+		const time_now = Math.round(Date.now() / 1000);
+		if (time_now - timestamp > par_expires_in) {
+			this.model.revokeAuthCodeFromUri(rand_uri, true);
+			throw new InvalidRequestError(`'${request.body.request_uri}' has expired`);
+		}
+
+		const client = await this.getClient(request);
+		if (!client) throw new InvalidClientError(`Failed to get Client from '${request.body.client_id}'`);
+
+		const code = this.getAuthorizationCode(rand_uri);
+		if (!code) throw new Error(`request_uri '${request.body.request_uri}' is not valid`);
+		return;
+	}
+
 	/**
 	 * Authorize Handler.
 	 */
@@ -100,23 +128,9 @@ export class AuthorizeHandler {
 			);
 		}
 
-		if (!request.body.request_uri) throw new InvalidRequestError("Missing parameter: request_uri");
-		if (!request.body.client_id) throw new InvalidRequestError("Missing parameter: client_id");
-
 		const base_uri = "urn:ietf:params:oauth:request_uri:";
 		let rand_uri = request.body.request_uri;
 		rand_uri = rand_uri.replace(base_uri, "");
-
-		//TODO: check if we can convert timestamp in a better way
-		const timestamp = Math.round(new Date(rand_uri.substring(0, 10)).getTime() / 1000);
-		const time_now = Math.round(Date.now() / 1000);
-		if (time_now - timestamp > par_expires_in) {
-			this.model.revokeAuthCodeFromUri(rand_uri, true);
-			throw new InvalidRequestError(`'${request.body.request_uri}' has expired`);
-		}
-
-		const client = await this.getClient(request);
-		if (!client) throw new InvalidClientError(`Failed to get Client from '${request.body.client_id}'`);
 
 		const code = this.getAuthorizationCode(rand_uri);
 		if (!code) throw new Error(`Failed to get Authorization Code from '${request.body.request_uri}'`);
@@ -311,10 +325,10 @@ export class AuthorizeHandler {
 			const verified_credentials = await this.model.verifyCredentialId(dict['credential_configuration_id'], dict['locations'][0]);
 			if (verified_credentials.valid_credentials.length == 0) throw new OAuthError(`Invalid authorization_details: '${dict['credential_configuration_id']}' is not a valid credential_id `)
 
-			const claims = verified_credentials.credential_claims.get(dict['credential_configuration_id']);
-			claims!.map((claim: string) => {
-				if (!dict[claim]) throw new OAuthError(`Invalid authorization_details: missing parameter '${claim}'`);
-			});
+			// const claims = verified_credentials.credential_claims.get(dict['credential_configuration_id']);
+			// claims!.map((claim: string) => {
+			// 	if (!dict[claim]) throw new OAuthError(`Invalid authorization_details: missing parameter '${claim}'`);
+			// });
 
 			// TODO: verify content of authorization_details claims
 

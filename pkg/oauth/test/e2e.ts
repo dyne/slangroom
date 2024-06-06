@@ -7,7 +7,7 @@ import { Slangroom } from '@slangroom/core';
 import { oauth } from '@slangroom/oauth';
 import { SignJWT, importJWK } from 'jose';
 import { randomBytes } from 'crypto';
-import { JsonableObject } from '@slangroom/shared';
+import { JsonableObject, JsonableArray } from '@slangroom/shared';
 
 //For reference see Section 4 of https://datatracker.ietf.org/doc/html/rfc9449.html
 async function create_dpop_proof() {
@@ -75,8 +75,7 @@ Then print data
 			},
 			request: {
 				//&scope=Auth1&resource=http%3A%2F%2Fissuer1.zenswarm.forkbomb.eu%3A3100%2Fcredential_issuer%2F
-				//authorization_details=%5B%7B%22type%22%3A%20%22openid_credential%22%2C%20%22credential_configuration_id%22%3A%20%22Auth1%22%2C%22locations%22%3A%20%5B%22http%3A%2F%2Fissuer1.zenswarm.forkbomb.eu%3A3100%2Fcredential_issuer%2F%22%5D%7D%5D
-				body: 'response_type=code&client_id=did:dyne:sandbox.genericissuer:6Cp8mPUvJmQaMxQPSnNyhb74f9Ga4WqfXCkBneFgikm5&state=xyz&code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM&code_challenge_method=S256&redirect_uri=https%3A%2F%2FWallet.example.org%2Fcb&authorization_details=%5B%7B%22type%22%3A+%22openid_credential%22%2C+%22credential_configuration_id%22%3A+%22Auth1%22%2C%22locations%22%3A+%5B%22http%3A%2F%2Fissuer1.zenswarm.forkbomb.eu%3A3100%2Fcredential_issuer%2F%22%5D%2C%22given_name%22%3A%22Pippo%22%2C+%22family_name%22%3A%22Peppe%22%2C%22is_human%22%3Atrue%7D%5D',
+				body: 'response_type=code&client_id=did:dyne:sandbox.genericissuer:6Cp8mPUvJmQaMxQPSnNyhb74f9Ga4WqfXCkBneFgikm5&state=xyz&code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM&code_challenge_method=S256&redirect_uri=https%3A%2F%2FWallet.example.org%2Fcb&authorization_details=%5B%7B%22type%22%3A+%22openid_credential%22%2C+%22credential_configuration_id%22%3A+%22Auth1%22%2C%22locations%22%3A+%5B%22http%3A%2F%2Fissuer1.zenswarm.forkbomb.eu%3A3100%2Fcredential_issuer%2F%22%5D%7D%5D',
 				headers: {
 					Authorization: '',
 				},
@@ -93,7 +92,7 @@ Then print data
 			},
 		},
 	});
-	//console.log(res.result['request_uri_out']);
+
 	t.truthy(res.result['request_uri_out']);
 
 	const scriptCreateBodyRequest1 = `
@@ -105,8 +104,10 @@ Given I have a 'string dictionary' named 'request_uri_out'
 When I create the copy of 'request_uri' from dictionary 'request_uri_out'
 # TODO: check if we need encoding before append
 When I append 'copy' to 'body'
+When I rename 'copy' to 'request_uri'
 
 Then print the 'body'
+Then print the 'request_uri'
 `;
 	const resb = await slangroom.execute(scriptCreateBodyRequest1, {
 		keys: {
@@ -119,8 +120,11 @@ Then print the 'body'
 	const scriptAuthCode = `
 Rule unknown ignore
 
+Given I send request 'request' and send server_data 'server' and verify request parameters
+Given I send request_uri 'request_uri' and send data 'data' and send server_data 'server' and add data to authorization details and output into 'auth_details'
 Given I send request 'request' and send server_data 'server' and generate authorization code and output into 'authCode'
 
+Given I have a 'string array' named 'auth_details'
 Given I have a 'string dictionary' named 'authCode'
 
 Then print data
@@ -144,11 +148,19 @@ Then print data
 				headers: {
 					Authorization: '',
 				},
+			},
+			request_uri: resb.result['request_uri'] || '',
+			data: {
+				email_address: 'pippo@pippo.com'
 			}
 		},
 	});
-	//console.log(res_auth.result['authCode']);
+
 	t.truthy(res_auth.result['authCode']);
+	t.truthy(res_auth.result['auth_details']);
+	let authDet = res_auth.result['auth_details']! as JsonableArray;
+	let authDet_dict = authDet[0]! as JsonableObject;
+	t.truthy(authDet_dict['claims']);
 
 	const scriptCreateBodyRequest = `
 Rule unknown ignore
@@ -202,7 +214,7 @@ Then print data
 			},
 		},
 	});
-	//console.log(res3.result['accessToken_jwt']);
+
 	t.truthy(res3.result['accessToken_jwt']);
 	const scriptGetClaims = `
 Rule unknown ignore
@@ -223,7 +235,7 @@ Then print data
 			token: token_str
 		},
 	});
-	//console.log(res4.result['claims']);
+
 	t.truthy(res4.result['claims']);
 
 });
