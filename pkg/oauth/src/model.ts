@@ -161,6 +161,20 @@ export class InMemoryCache implements AuthorizationCodeModel {
 
 	getAuthorizationDetails(authorizationCode: string) {
 		const auth_details = this.authorization_details.get(authorizationCode);
+		if (!auth_details) throw new OAuthError("Failed to get authorization_details: given authorization_code is not valid");
+		return auth_details;
+	}
+
+	updateAuthorizationDetails(request_uri: string, data: any) {
+		const base_uri = "urn:ietf:params:oauth:request_uri:";
+		const rand_uri = request_uri.replace(base_uri, "");
+		const auth_code = this.getAuthCodeFromUri(rand_uri);
+		let auth_details = this.getAuthorizationDetails(auth_code.authorizationCode);
+		//TODO: case of multiple elem in auth_details
+		if (auth_details[0]) {
+			auth_details[0]['claims'] = data;
+		}
+		this.authorization_details.set(auth_code.authorizationCode, auth_details);
 		return auth_details;
 	}
 
