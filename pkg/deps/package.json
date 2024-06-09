@@ -1,6 +1,6 @@
 {
 	"name": "@slangroom/deps",
-	"version": "1.33.0",
+	"version": "1.33.1",
 	"dependencies": {
 		"chevrotain": "^10.5.0"
 	},
@@ -30,6 +30,6 @@
 		"access": "public"
 	},
 	"engines": {
-	  "node": "^18.20.0 || ^20.10.0 || ^22"
+		"node": "^18.20.0 || ^20.10.0 || ^22"
 	}
 }

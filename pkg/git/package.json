@@ -1,6 +1,6 @@
 {
 	"name": "@slangroom/git",
-	"version": "1.33.0",
+	"version": "1.33.1",
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
 		"isomorphic-git": "^1.25.1"
@@ -37,6 +37,6 @@
 		"access": "public"
 	},
 	"engines": {
-	  "node": "^18.20.0 || ^20.10.0 || ^22"
+		"node": "^18.20.0 || ^20.10.0 || ^22"
 	}
 }

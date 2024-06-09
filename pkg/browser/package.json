@@ -7,7 +7,7 @@
 		"@slangroom/pocketbase": "workspace:*",
 		"@slangroom/qrcode": "workspace:*"
 	},
-	"version": "1.33.0",
+	"version": "1.33.1",
 	"repository": "https://github.com/dyne/slangroom",
 	"license": "AGPL-3.0-only",
 	"type": "module",
@@ -43,6 +43,6 @@
 		"build": "pnpm exec esbuild --bundle src/index.ts --outfile=build/slangroom.js --target=es2016 --external:fs --external:path --external:crypto && cp build/slangroom.js public"
 	},
 	"engines": {
-	  "node": "^18.20.0 || ^20.10.0 || ^22"
+		"node": "^18.20.0 || ^20.10.0 || ^22"
 	}
 }

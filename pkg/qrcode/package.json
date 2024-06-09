@@ -1,6 +1,6 @@
 {
 	"name": "@slangroom/qrcode",
-	"version": "1.33.0",
+	"version": "1.33.1",
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
 		"qrcode": "^1.5.3"
@@ -32,6 +32,6 @@
 		"@types/qrcode": "^1.5.5"
 	},
 	"engines": {
-	  "node": "^18.20.0 || ^20.10.0 || ^22"
+		"node": "^18.20.0 || ^20.10.0 || ^22"
 	}
 }

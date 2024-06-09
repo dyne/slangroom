@@ -1,6 +1,6 @@
 {
 	"name": "@slangroom/wallet",
-	"version": "1.33.0",
+	"version": "1.33.1",
 	"dependencies": {
 		"@meeco/sd-jwt": "^0.0.3",
 		"@meeco/sd-jwt-vc": "^0.0.4",
@@ -33,6 +33,6 @@
 		"access": "public"
 	},
 	"engines": {
-	  "node": "^18.20.0 || ^20.10.0 || ^22"
+		"node": "^18.20.0 || ^20.10.0 || ^22"
 	}
 }

@@ -1,6 +1,6 @@
 {
 	"name": "@slangroom/ignored",
-	"version": "1.33.0",
+	"version": "1.33.1",
 	"dependencies": {
 		"@slangroom/deps": "workspace:*",
 		"@slangroom/shared": "workspace:*"
@@ -29,6 +29,6 @@
 		"access": "public"
 	},
 	"engines": {
-	  "node": "^18.20.0 || ^20.10.0 || ^22"
+		"node": "^18.20.0 || ^20.10.0 || ^22"
 	}
 }
