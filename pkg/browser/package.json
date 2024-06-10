@@ -2,13 +2,13 @@
 	"name": "@slangroom/browser",
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
+		"@slangroom/helpers": "workspace:*",
 		"@slangroom/http": "workspace:*",
 		"@slangroom/json-schema": "workspace:*",
 		"@slangroom/pocketbase": "workspace:*",
-		"@slangroom/qrcode": "workspace:*",
-		"@slangroom/helpers": "workspace:*"
+		"@slangroom/qrcode": "workspace:*"
 	},
-	"version": "1.33.1",
+	"version": "1.33.2",
 	"repository": "https://github.com/dyne/slangroom",
 	"license": "AGPL-3.0-only",
 	"type": "module",
