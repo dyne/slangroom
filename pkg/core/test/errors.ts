@@ -3,8 +3,15 @@ import { Plugin, Slangroom } from '@slangroom/core';
 import test from 'ava';
 // read the version from the package.json
 import packageJson from '@slangroom/core/package.json' with { type: 'json' };
-// error colors
-import { errorColor, suggestedColor, missingColor, extraColor } from '@slangroom/core';
+import {
+	sentenceHighlight,
+	textHighlight,
+	errorColor,
+	suggestedColor,
+	missingColor,
+	extraColor,
+	lineNoColor
+} from '@slangroom/shared';
 
 
 test('@slangroom/core errors are shown and context is shown with line number', async (t) => {
@@ -17,11 +24,11 @@ test('@slangroom/core errors are shown and context is shown with line number', a
     Given nothing
     Then print data`)
 
-    const expected = `\x1b[33m0 | \x1b[0mRule unknown ignore
-\x1b[33m1 | \x1b[0m\x1b[41m    Given I \x1b[1;30mgibberish\x1b[0m\x1b[41m\x1b[0m
-                \x1b[31m^^^^^^^^^\x1b[0m
-\x1b[33m2 | \x1b[0m    Given nothing
-\x1b[33m3 | \x1b[0m    Then print data
+    const expected = `${lineNoColor('0 | ')}Rule unknown ignore
+${lineNoColor('1 | ')}${sentenceHighlight(`    Given I ${textHighlight('gibberish')}`)}
+                ${errorColor('^^^^^^^^^')}
+${lineNoColor('2 | ')}    Given nothing
+${lineNoColor('3 | ')}    Then print data
 
 Error colors:
  - ${errorColor('error')}
@@ -65,11 +72,11 @@ test('@slangroom/core lexer error', async (t) => {
     Given nothing
     Then print data`)
 
-    const expected = `\x1b[33m0 | \x1b[0mRule unknown ignore
-\x1b[33m1 | \x1b[0m\x1b[41m    Given I send param \x1b[1;30m'param and do some action\x1b[0m\x1b[41m\x1b[0m
-                           \x1b[31m^^^^^^^^^^^^^^^^^^^^^^^^^\x1b[0m
-\x1b[33m2 | \x1b[0m    Given nothing
-\x1b[33m3 | \x1b[0m    Then print data
+    const expected = `${lineNoColor('0 | ')}Rule unknown ignore
+${lineNoColor('1 | ')}${sentenceHighlight(`    Given I send param ${textHighlight('\'param and do some action')}`)}
+                           ${errorColor('^^^^^^^^^^^^^^^^^^^^^^^^^')}
+${lineNoColor('2 | ')}    Given nothing
+${lineNoColor('3 | ')}    Then print data
 
 Error colors:
  - ${errorColor('error')}
@@ -96,11 +103,11 @@ test('@slangroom/core parser error does not start with given', async (t) => {
     Given nothing
     Then print data`)
 
-    const expected = `\x1b[33m0 | \x1b[0mRule unknown ignore
-\x1b[33m1 | \x1b[0m\x1b[41m    \x1b[1;30mGibberish\x1b[0m\x1b[41m connect to 'url' and send param 'param' and do some action and aoibndwebnd\x1b[0m
-        \x1b[31m^^^^^^^^^\x1b[0m
-\x1b[33m2 | \x1b[0m    Given nothing
-\x1b[33m3 | \x1b[0m    Then print data
+    const expected = `${lineNoColor('0 | ')}Rule unknown ignore
+${lineNoColor('1 | ')}${sentenceHighlight(`    ${textHighlight('Gibberish')} connect to 'url' and send param 'param' and do some action and aoibndwebnd`)}
+        ${errorColor('^^^^^^^^^')}
+${lineNoColor('2 | ')}    Given nothing
+${lineNoColor('3 | ')}    Then print data
 
 Error colors:
  - ${errorColor('error')}

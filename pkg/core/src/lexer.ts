@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 // read the version from the package.json
 import packageJson from '@slangroom/core/package.json' with { type: 'json' };
+import { errorColor } from '@slangroom/shared';
 
 /**
  * A whitespace-separated string of characters with position information.
@@ -90,7 +91,7 @@ export class LexError extends Error {
 	constructor(t: Token) {
 		super();
 		this.name = 'LexError @slangroom/core@' + packageJson.version;
-		this.message = `at ${t.lineNo}:${t.start + 1}-${t.end + 1}\n unclosed single-quote \x1b[31m${t.raw}\x1b[0m`;
+		this.message = `at ${t.lineNo}:${t.start + 1}-${t.end + 1}\n unclosed single-quote ${errorColor(t.raw)}`;
 	}
 }
 

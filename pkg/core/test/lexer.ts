@@ -4,6 +4,7 @@
 
 import test from 'ava';
 import { lex, Token } from '@slangroom/core';
+import { errorColor } from '@slangroom/shared';
 
 test('lexer works', (t) => {
 	Object.entries<Token[][]>({
@@ -136,7 +137,7 @@ test('lexer works', (t) => {
 
 	const res = lex("When I encrypt the secret message 'message", 1);
 	if (res.ok) throw new Error("Lex fail to dectect unclosed single-quote");
-	t.is(res.error.message.message as string, `at 1:35-42\n unclosed single-quote \x1b[31m'message\x1b[0m`);
+	t.is(res.error.message.message as string, `at 1:35-42\n unclosed single-quote ${errorColor('\'message')}`);
 });
 
 test('token constructor erros', (t) => {

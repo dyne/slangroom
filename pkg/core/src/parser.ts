@@ -3,13 +3,9 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import { PluginMap, Token, type PluginMapKey } from '@slangroom/core';
+import { errorColor, suggestedColor, missingColor, extraColor } from '@slangroom/shared';
 // read the version from the package.json
 import packageJson from '@slangroom/core/package.json' with { type: 'json' };
-
-export const errorColor = (s: string): string => '\x1b[31m' + s + '\x1b[0m';
-export const suggestedColor = (s: string): string => '\x1b[32m' + s + '\x1b[0m';
-export const missingColor = (s: string): string => '\x1b[36m' + s + '\x1b[0m';
-export const extraColor = (s: string): string => '\x1b[35m' + s + '\x1b[0m';
 
 /**
  * Represents an error encountered during the parsing phrase.
