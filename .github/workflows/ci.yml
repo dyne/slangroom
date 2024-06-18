@@ -26,7 +26,7 @@ jobs:
       fail-fast: false
       max-parallel: 1
       matrix:
-        node: [ lts/*, current ]
+        node: [ lts/*, 22.2.0 ]
 
     steps:
       - name: 🛠️ Prepare pnpm workspace
