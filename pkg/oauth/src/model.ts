@@ -519,20 +519,13 @@ export class InMemoryCache implements AuthorizationCodeModel {
 
 	}
 
-	async getClaimsFromToken(accessToken: string) {
+	async getAuthDetailsFromToken(accessToken: string) {
 		const token = await this.getAccessToken(accessToken);
 		if (!token) throw new InvalidTokenError("Given token is not valid");
 		const auth_details = token['authorization_details'];
 		if (!auth_details) throw new InvalidTokenError("authorization_details not found in accessToken");
-		var claims: { [key: string]: any }[] = [];
-		auth_details.map((dict: { [key: string]: any }) => {
-			delete dict['type'];
-			delete dict['locations'];
-			delete dict['credential_configuration_id'];
-			claims.push(dict);
-		});
 
-		return claims;
+		return auth_details;
 	}
 }
 
