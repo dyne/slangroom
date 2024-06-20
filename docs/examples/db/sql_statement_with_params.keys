@@ -1,0 +1,3 @@
+{
+	"database": "sqlite://user:password@url/to/your/db"
+}
