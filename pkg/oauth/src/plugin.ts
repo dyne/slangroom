@@ -343,7 +343,7 @@ export const createRequestUri = p.new(
  */
 //Sentence that given an access token return the authorization_details
 /**
-Given I send token 'token' and send server_data 'server' and get claims from token and output into 'claims'
+Given I send token 'token' and send server_data 'server' and get authorization details from token and output into 'claims'
 Input:
 	server_data: MUST be a string dictionary with keys
 			jwk: JWK containing the public key of the authorization_server
@@ -351,11 +351,11 @@ Input:
 			authentication_url: did resolver for client pk
 	token: MUST be a string representing a valid access_token
 Output:
-	claims: string array of the authorization_details linked to the access_token (without `locations` and `credentail_configuration_id`)
+	claims: string array of the authorization_details linked to the access_token
 */
 export const getClaims = p.new(
 	['token', 'server_data'],
-	'get claims from token',
+	'get authorization details from token',
 	async (ctx) => {
 		const serverData = ctx.fetch('server_data') as { jwk: JWK, url: string, authenticationUrl: string };
 		const accessToken = ctx.fetch('token') as string;
@@ -371,7 +371,7 @@ export const getClaims = p.new(
 
 		let res
 		try {
-			res = await model.getClaimsFromToken(accessToken);
+			res = await model.getAuthDetailsFromToken(accessToken);
 		} catch(e) {
 			return ctx.fail(new OauthError(e.message));
 		}
