@@ -1,0 +1,12 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Slangroom
+Upstream-Contact: Matteo Cristino <matteo@dyne.org>
+Source: https://github.com/dyne/slangroom
+
+Files: docs/examples/**/*.keys docs/examples/**/*.data docs/examples/**/*.zen
+Copyright: 2024 Dyne.org foundation
+License: AGPL-3.0-or-later
+
+Files: pkg/pocketbase/test/pb_migrations/*
+Copyright: 2024 Dyne.org foundation
+License: AGPL-3.0-or-later

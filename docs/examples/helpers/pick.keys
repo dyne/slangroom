@@ -1,0 +1,6 @@
+{
+	"properties": [
+		"name",
+		"personal_information.email.first"
+	]
+}
