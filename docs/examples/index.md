@@ -9,4 +9,5 @@ SPDX-License-Identifier: CC-BY-NC-SA-4.0
 <!--@include: db/index.md-->
 <!--@include: ethereum/index.md-->
 <!--@include: fs/index.md-->
+<!--@include: git/index.md-->
 <!--@include: http/index.md-->
