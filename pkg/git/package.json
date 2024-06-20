@@ -3,7 +3,7 @@
 	"version": "1.33.5",
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
-		"isomorphic-git": "^1.25.1"
+		"isomorphic-git": "^1.25.10"
 	},
 	"repository": "https://github.com/dyne/slangroom",
 	"license": "AGPL-3.0-only",
