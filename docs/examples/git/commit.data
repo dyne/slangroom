@@ -1,0 +1,8 @@
+{
+	"commit": {
+		"author": "Jhon Doe",
+		"message": "docs: update readme",
+		"email": "jhon.doe@example.com",
+		"files": [ "README.md" ]
+	},
+}

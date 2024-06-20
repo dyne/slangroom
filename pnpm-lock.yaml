@@ -214,8 +214,8 @@ importers:
         specifier: workspace:*
         version: link:../core
       isomorphic-git:
-        specifier: ^1.25.1
-        version: 1.25.1
+        specifier: ^1.25.10
+        version: 1.25.10
 
   pkg/helpers:
     dependencies:
@@ -1605,8 +1605,8 @@ packages:
     resolution: {integrity: sha512-tLkvA81vQG/XqE2mjDkGQHoOINtMHtysSnemrmoGe6PydDPMRbVugqyk4A6V/WDWEfm3l+0d8anA9r8cv/5Jaw==}
     engines: {node: '>=12'}
 
-  async-lock@1.4.0:
-    resolution: {integrity: sha512-coglx5yIWuetakm3/1dsX9hxCNox22h7+V80RQOu2XUUMidtArxKoZoOtHUPuR84SycKTXzgGzAUR5hJxujyJQ==}
+  async-lock@1.4.1:
+    resolution: {integrity: sha512-Az2ZTpuytrtqENulXwO3GGv1Bztugx6TT37NIo7imr/Qo0gsYiGtSdBa2B6fsXhTpVZDNfu1Qn3pk531e3q+nQ==}
 
   async-sema@3.1.1:
     resolution: {integrity: sha512-tLRNUXati5MFePdAk8dw7Qt7DpxPB60ofAgn8WRhW6a2rcimZnYBP9oxHiv0OHy+Wz7kPMG+t4LGdt31+4EmGg==}
@@ -2688,8 +2688,8 @@ packages:
     resolution: {integrity: sha512-WhB9zCku7EGTj/HQQRz5aUQEUeoQZH2bWcltRErOpymJ4boYE6wL9Tbr23krRPSZ+C5zqNSrSw+Cc7sZZ4b7vg==}
     engines: {node: '>=0.10.0'}
 
-  isomorphic-git@1.25.1:
-    resolution: {integrity: sha512-1gJnJvW87mCPlwV1q8UBrqSE/AaFJltVmHRGignkSUgDvwK/7y2ijxGFoNHBp39mX07rffm3F915RWbJ5VVtqQ==}
+  isomorphic-git@1.25.10:
+    resolution: {integrity: sha512-IxGiaKBwAdcgBXwIcxJU6rHLk+NrzYaaPKXXQffcA0GW3IUrQXdUPDXDo+hkGVcYruuz/7JlGBiuaeTCgIgivQ==}
     engines: {node: '>=12'}
     hasBin: true
 
@@ -3855,6 +3855,9 @@ packages:
   tslib@2.6.2:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
 
+  tslib@2.6.3:
+    resolution: {integrity: sha512-xNvxJEOUiWPGhUuUdQgAJPKOOJfGnIyKySOc09XkKsgdUV/3E2zvwZYdejjmRgPCgcym1juLH3226yA7sEFJKQ==}
+
   tuf-js@2.2.0:
     resolution: {integrity: sha512-ZSDngmP1z6zw+FIkIBjvOp/II/mIub/O7Pp12j1WNsiCpg5R5wAc//i555bBQsE44O94btLt0xM/Zr2LQjwdCg==}
     engines: {node: ^16.14.0 || >=18.0.0}
@@ -4398,7 +4401,7 @@ snapshots:
 
   '@capacitor/core@6.0.0':
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   '@capacitor/preferences@6.0.0(@capacitor/core@6.0.0)':
     dependencies:
@@ -5587,7 +5590,7 @@ snapshots:
 
   arrify@3.0.0: {}
 
-  async-lock@1.4.0: {}
+  async-lock@1.4.1: {}
 
   async-sema@3.1.1: {}
 
@@ -6802,9 +6805,9 @@ snapshots:
 
   isobject@3.0.1: {}
 
-  isomorphic-git@1.25.1:
+  isomorphic-git@1.25.10:
     dependencies:
-      async-lock: 1.4.0
+      async-lock: 1.4.1
       clean-git-ref: 2.0.1
       crc-32: 1.2.2
       diff3: 0.0.3
@@ -8017,6 +8020,8 @@ snapshots:
       yn: 3.1.1
 
   tslib@2.6.2: {}
+
+  tslib@2.6.3: {}
 
   tuf-js@2.2.0:
     dependencies:
