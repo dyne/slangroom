@@ -1,0 +1,8 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Slangroom
+Upstream-Contact: Matteo Cristino <matteo@dyne.org>
+Source: https://github.com/dyne/slangroom
+
+Files: docs/examples/*
+Copyright: 2024 Dyne.org foundation
+License: AGPL-3.0-or-later
