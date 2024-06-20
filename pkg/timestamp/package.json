@@ -1,6 +1,6 @@
 {
 	"name": "@slangroom/timestamp",
-	"version": "1.33.5",
+	"version": "1.33.6",
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
 		"@slangroom/shared": "workspace:*"
