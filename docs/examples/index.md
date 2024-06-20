@@ -6,5 +6,7 @@ SPDX-License-Identifier: CC-BY-NC-SA-4.0
 
 # Slangroom examples
 
+<!--@include: db/index.md-->
+<!--@include: ethereum/index.md-->
 <!--@include: fs/index.md-->
 <!--@include: http/index.md-->

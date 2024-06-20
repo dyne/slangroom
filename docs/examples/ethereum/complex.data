@@ -1,0 +1,5 @@
+{
+    "gas_limit": "100000",
+	"storage_contract": "0x662c4017C01bA23c94257289Dab8C2757b472B81",
+	"to_be_srtored": "Some data",
+}

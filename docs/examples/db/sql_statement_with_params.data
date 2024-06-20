@@ -1,0 +1,4 @@
+{
+	"statement": "INSERT INTO table (name) VALUES (?)",
+	"params": ["John Doe"]
+}
