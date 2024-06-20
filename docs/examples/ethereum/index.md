@@ -37,14 +37,7 @@ SPDX-License-Identifier: CC-BY-NC-SA-4.0
 
 ### read the ethereum transaction id after broadcast
 ::: code-group
-<<< @/examples/ethereum/read_tx_id.zen{4 gherkin:line-numbers}
-<<< @/examples/ethereum/read_tx_id.data{json}
-<<< @/examples/ethereum/read_tx_id.keys{json}
-:::
-
-### read the ethereum transaction id after broadcast
-::: code-group
-<<< @/examples/ethereum/read_tx_id.zen{4 gherkin:line-numbers}
+<<< @/examples/ethereum/read_tx_id.zen{3 gherkin:line-numbers}
 <<< @/examples/ethereum/read_tx_id.data{json}
 <<< @/examples/ethereum/read_tx_id.keys{json}
 :::
