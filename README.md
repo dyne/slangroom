@@ -3,6 +3,7 @@ SPDX-FileCopyrightText: 2023 Dyne.org foundation
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
+[![REUSE status](https://api.reuse.software/badge/github.com/dyne/slangroom)](https://api.reuse.software/info/github.com/dyne/slangroom)
 
 <h1 align="center">
   Slangroom</br>
@@ -36,11 +37,11 @@ Zencode helps developers to **empower people** who know what to do with data: on
 <details id="toc">
  <summary><strong>🚩 Table of Contents</strong> (click to expand)</summary>
 
-* [Quick start](#-quick-start)
-* [Customize](#-customize)
-* [Acknowledgements](#-acknowledgements)
-* [Contributing](#-contributing)
-* [License](#-license)
+- [🎮 Quick start](#-quick-start)
+- [🔧 Customize](#-customize)
+- [😍 Acknowledgements](#-acknowledgements)
+- [👤 Contributing](#-contributing)
+- [💼 License](#-license)
 </details>
 
 ***
