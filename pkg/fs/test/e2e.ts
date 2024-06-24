@@ -40,6 +40,14 @@ Error colors:
  - extra words
 
 Slangroom @slangroom/fs@${packageJson.version} Error: $FILES_DIR must be provided
+
+Heap:
+{
+    "data": {
+        "filename": "test.txt"
+    },
+    "keys": {}
+}
 `);
 });
 
@@ -65,6 +73,14 @@ Error colors:
  - extra words
 
 Slangroom @slangroom/fs@${packageJson.version} Error: ENOENT: no such file or directory, open 'test.txt'
+
+Heap:
+{
+    "data": {
+        "filename": "test.txt"
+    },
+    "keys": {}
+}
 `);
 });
 
@@ -108,6 +124,16 @@ Error colors:
  - extra words
 
 Slangroom @slangroom/fs@${packageJson.version} Error: path must be string
+
+Heap:
+{
+    "data": {
+        "filename": {
+            "path": "test.txt"
+        }
+    },
+    "keys": {}
+}
 `);
 });
 
@@ -150,6 +176,14 @@ Error colors:
  - extra words
 
 Slangroom @slangroom/fs@${packageJson.version} Error: no such file or directory: test/test_not_exist.txt
+
+Heap:
+{
+    "data": {
+        "filename": "test_not_exist.txt"
+    },
+    "keys": {}
+}
 `);
 });
 
@@ -182,6 +216,14 @@ Error colors:
  - extra words
 
 Slangroom @slangroom/fs@${packageJson.version} Error: file or directory found under: test/test.txt
+
+Heap:
+{
+    "data": {
+        "filename": "test.txt"
+    },
+    "keys": {}
+}
 `);
 	const resultNotExists = slangroom.execute(verifyDoesNotExists, {
 		data: {

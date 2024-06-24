@@ -164,3 +164,56 @@ ParseError @slangroom/core@${packageJson.version}: at 2:74-84
 	const err = await t.throwsAsync(fn);
 	t.is(err?.message, expected);
 });
+
+test('Slangroom error are shown with context', async (t) => {
+	const plugin = new Plugin();
+    plugin.new('connect', ['param'], 'do some action', (_) => _.fail(new Error("Something went horribly wrong")));
+
+    const slang = new Slangroom(plugin);
+    const fn = slang.execute(`Rule unknown ignore
+    Given I connect to 'url' and send param 'param' and do some action and output into 'res'
+    Given I have a 'string' named 'res'
+    Then print data`,
+	{
+		data: {
+			url: 'https://example.com',
+			param: {
+				foo: 'bar'
+			}
+		},
+		keys: {
+			something: 'else'
+		}
+	});
+
+	const expected = `${lineNoColor('0 | ')}Rule unknown ignore
+${lineNoColor('1 | ')}${sentenceHighlight(`    ${textHighlight(`Given I connect to 'url' and send param 'param' and do some action and output into 'res'`)}`)}
+        ${errorColor('^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^')}
+${lineNoColor('2 | ')}    Given I have a 'string' named 'res'
+${lineNoColor('3 | ')}    Then print data
+
+Error colors:
+ - ${errorColor('error')}
+ - ${suggestedColor('suggested words')}
+ - ${missingColor('missing words')}
+ - ${extraColor('extra words')}
+
+Error: Something went horribly wrong
+
+Heap:
+{
+    "data": {
+        "url": "https://example.com",
+        "param": {
+            "foo": "bar"
+        }
+    },
+    "keys": {
+        "something": "else"
+    }
+}
+`;
+
+	const err = await t.throwsAsync(fn);
+	t.is(err?.message, expected, err?.message);
+});

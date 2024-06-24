@@ -59,6 +59,14 @@ Error colors:
 
 Slangroom @slangroom/shell@${packageJson.version} Error: Command failed with ENOENT: notfound -v
 spawn notfound ENOENT
+
+Heap:
+{
+    "data": {
+        "c": "notfound -v"
+    },
+    "keys": {}
+}
 `);
 });
 
@@ -92,5 +100,13 @@ Error colors:
 
 Slangroom @slangroom/shell@${packageJson.version} Error: Command failed with exit code 1: cat notfound.txt
 cat: notfound.txt: No such file or directory
+
+Heap:
+{
+    "data": {
+        "c": "cat notfound.txt"
+    },
+    "keys": {}
+}
 `);
 });
