@@ -102,7 +102,7 @@ export class Slangroom {
 			const exec = this.#plugins.get(ast.key);
 			if (!exec) return thorwErrors( [{message: new Error('no statements matched'), lineNo}], contract);
 			const res = await exec(new PluginContextImpl(ast));
-			if (!res.ok) return thorwErrors( [{message: res.error, lineNo}], contract);
+			if (!res.ok) return thorwErrors( [{message: res.error, lineNo}], contract, paramsGiven);
 			if (res.ok && ast.into) paramsGiven.data[ast.into] = res.value;
 		}
 
@@ -115,7 +115,7 @@ export class Slangroom {
 			const exec = this.#plugins.get(ast.key);
 			if (!exec) return thorwErrors( [{message: new Error('no statements matched'), lineNo}], contract);
 			const res = await exec(new PluginContextImpl(ast));
-			if (!res.ok) return thorwErrors( [{message: res.error, lineNo}], contract);
+			if (!res.ok) return thorwErrors( [{message: res.error, lineNo}], contract, paramsThen);
 			if (res.ok && ast.into) paramsThen.data[ast.into] = res.value;
 		}
 
@@ -144,7 +144,7 @@ const requirifyZenParams = (params?: Partial<ZenParams>): Required<ZenParams> =>
  * @param error {message, lineNo, ?start, ?end}
  * @param contract {string}
 */
-const thorwErrors = (errorArray: GenericError[], contract: string) => {
+const thorwErrors = (errorArray: GenericError[], contract: string, params?: ZenParams) => {
 	const contractLines = contract.split('\n');
 	const lineNumber = errorArray[0]!.lineNo;
 	const initialWS = contractLines[lineNumber-1]!.match(/^[\s]+/) || [''];
@@ -170,6 +170,11 @@ const thorwErrors = (errorArray: GenericError[], contract: string) => {
 
 	for (let err of errorArray) {
 		e = e.concat('\n' + err.message + '\n');
+	}
+	if(params) {
+		delete params.extra;
+		delete params.conf;
+		e = e.concat('\n' + 'Heap:\n' + JSON.stringify(params, null, 4) + '\n');
 	}
 	throw new Error(e);
 }
