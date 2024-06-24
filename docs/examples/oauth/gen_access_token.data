@@ -1,0 +1,16 @@
+{
+	"json_body": {
+		"grant_type": "authorization_code",
+		"client_id": "did:dyne:sandbox.genericissuer:6Cp8mPUvJmQaMxQPSnNyhb74f9Ga4WqfXCkBneFgikm5",
+		"code_verifier": "dBjftJeZ4CVP-mB92K27uhbUJU1p1r_wW1gFWFOEjXk",
+		"redirect_uri": "https://Wallet.example.org/cb",
+		"code": "eyJhbGciOiJFUzI1NiIsImp3ayI6eyJrdHkiOiJFQyIsIngiOiJ0R3hhcWJYR3JsNm92VC11NXNWMU1vUFRESG5ZTEtZbkNpZzM0NW5zSmc4IiwieSI6IlFOT3RBRzd4Sm52cHlGS2lGdmJJdFBxaVBiN2VZSVMtQlRvU0YwaHM3NTgiLCJjcnYiOiJQLTI1NiJ9fQ.eyJzdWIiOiI1NDJiYWNjODAyMDUxZTdhYjBjMWZhNDAxZjAwYzhjNWJjN2Y0NzVhIiwiaWF0IjoxNzE5MjQxMTYzLCJpc3MiOiJodHRwczovL2Rldi5hdXRoei1zZXJ2ZXIxLmZvcmtib21iLmV1L2F1dGh6X3NlcnZlciIsImF1ZCI6ImRpZDpkeW5lOnNhbmRib3guc2lnbnJvb206NEtFeW1XZ0xEVWYxTE5ja2V4WTk2ZGZLejV2SDc5ZGlEZWtnTE1SOUZXcEgiLCJleHAiOjE3MTkyNDQ3NjJ9.1OhQ5FKXuh_QWxm4XMufNqFS2Zkql7bmBzfMuT8GzVEil3HzYM7dAwUo5Zl9shu-w7bEGlKkOIhXssVrMeMlXg"
+	},
+	"request": {
+		"headers": {
+			"content-length": 42,
+			"Content-Type": "application/x-www-form-urlencoded",
+			"DPoP": "eyJhbGciOiJFUzI1NiIsImp3ayI6eyJjcnYiOiJQLTI1NiIsImt0eSI6IkVDIiwieCI6InpKLTR1d0VWVlYxQW9GcW1yZVlzUlh1SjhGbzVHRVVUeTZ0aklBdjdUcFkiLCJ5IjoiVm9YdmEzVEpHc0o5bjlZVzV3MGplMHp6U2hmYnN3QWd6SHI1TEZCSDNsZyJ9LCJ0eXAiOiJkcG9wK2p3dCJ9.eyJodG0iOiJQT1NUIiwiaHR1IjoiaHR0cHM6Ly9kZXYuYXV0aHotc2VydmVyMS5mb3JrYm9tYi5ldS9hdXRoel9zZXJ2ZXIvdG9rZW4iLCJpYXQiOjE3MTkyNDEzMjYsImp0aSI6IkFad0VwZ2tOTlhrbllWT1JZbjNYNW9HVW1iTVp3V3d1UF9xSDNnOFRjbHcifQ.X2sO6h3GUcTu0h_qNyOsXEB2Z3qzPUd1azOJIeMmfH4zIk-Hd8sHm1RG2RaxZ3n22qSDbKjBap2G9U3Kjw5gLA"
+		}
+	}
+}
