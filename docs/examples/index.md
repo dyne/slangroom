@@ -14,3 +14,4 @@ SPDX-License-Identifier: CC-BY-NC-SA-4.0
 <!--@include: http/index.md-->
 <!--@include: json-schema/index.md-->
 <!--@include: oauth/index.md-->
+<!--@include: pocketbase/index.md-->

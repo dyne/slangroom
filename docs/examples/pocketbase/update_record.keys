@@ -1,0 +1,7 @@
+{
+	"pb_address": "http://127.0.0.1:8090",
+	"my_credentials": {
+		"email": "test@test.eu",
+		"password": "testtest"
+	}
+}

@@ -1,0 +1,11 @@
+{
+	"create_parameters": {
+		"collection": "organizations",
+		"record": {
+			"name": "Jhon org"
+		}
+	},
+	"record_parameters": {
+		"requestKey": "testCreate"
+	}
+}
