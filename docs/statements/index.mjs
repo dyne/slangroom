@@ -15,6 +15,7 @@ import {fs as sl_fs} from "@slangroom/fs";
 import {git} from "@slangroom/git";
 import {helpers} from "@slangroom/helpers";
 import {http} from "@slangroom/http";
+import {JSONSchema} from "@slangroom/json-schema";
 import {oauth} from "@slangroom/oauth";
 import {pocketbase} from "@slangroom/pocketbase";
 import {qrcode} from "@slangroom/qrcode";
@@ -24,7 +25,7 @@ import {timestamp} from "@slangroom/timestamp";
 import {wallet} from "@slangroom/wallet";
 import {zencode} from "@slangroom/zencode";
 
-const IGNORED_PKG = ['browser', 'core', 'deps', 'ignored', 'json-schema', 'shared']
+const IGNORED_PKG = ['browser', 'core', 'deps', 'ignored', 'shared']
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ourDirPath = path.resolve(__dirname, "./");
@@ -59,6 +60,7 @@ const generateTable = (plugin, name) => {
 	[git, 'git'],
 	[helpers, 'helpers'],
 	[http, 'http'],
+	[JSONSchema, 'json-schema'],
 	[oauth, 'oauth'],
 	[pocketbase, 'pocketbase'],
 	[qrcode, 'qrcode'],

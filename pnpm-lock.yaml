@@ -80,6 +80,9 @@ importers:
       '@slangroom/http':
         specifier: workspace:^
         version: link:../../pkg/http
+      '@slangroom/json-schema':
+        specifier: workspace:^
+        version: link:../../pkg/json-schema
       '@slangroom/oauth':
         specifier: workspace:^
         version: link:../../pkg/oauth
