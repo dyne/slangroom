@@ -1,6 +1,6 @@
 {
 	"name": "@slangroom/db",
-	"version": "1.33.9",
+	"version": "1.33.10",
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
 		"sequelize": "^6.16.0",

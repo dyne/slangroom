@@ -1,6 +1,6 @@
 {
 	"name": "@slangroom/shell",
-	"version": "1.33.9",
+	"version": "1.33.10",
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
 		"execa": "^8.0.1"
