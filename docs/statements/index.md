@@ -161,15 +161,20 @@ neither the open/connect part nor the parameters part are present.
 | connect      | object         | do same delete       |
 | connect      | object,headers | do same delete       |
 
+## json-schema plugin
+| open/connect | params                | phrase        |
+| ------------ | --------------------- | ------------- |
+|              | json_data,json_schema | validate json |
+
 ## oauth plugin
-| open/connect | params                                | phrase                            |
-| ------------ | ------------------------------------- | --------------------------------- |
-|              | request,server_data                   | generate access token             |
-|              | request,server_data                   | verify request parameters         |
-|              | request,server_data                   | generate authorization code       |
-|              | request,client,server_data,expires_in | generate request uri              |
-|              | token,server_data                     | get claims from token             |
-|              | request_uri,data,server_data          | add data to authorization details |
+| open/connect | params                                | phrase                               |
+| ------------ | ------------------------------------- | ------------------------------------ |
+|              | request,server_data                   | generate access token                |
+|              | request,server_data                   | verify request parameters            |
+|              | request,server_data                   | generate authorization code          |
+|              | request,client,server_data,expires_in | generate request uri                 |
+|              | token,server_data                     | get authorization details from token |
+|              | request_uri,data,server_data          | add data to authorization details    |
 
 ## pocketbase plugin
 | open/connect | params                              | phrase                    |

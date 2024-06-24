@@ -12,3 +12,4 @@ SPDX-License-Identifier: CC-BY-NC-SA-4.0
 <!--@include: git/index.md-->
 <!--@include: helpers/index.md-->
 <!--@include: http/index.md-->
+<!--@include: json-schema/index.md-->
