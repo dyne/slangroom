@@ -1,6 +1,6 @@
 {
 	"name": "@slangroom/git",
-	"version": "1.33.10",
+	"version": "1.33.11",
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
 		"isomorphic-git": "^1.25.10"
