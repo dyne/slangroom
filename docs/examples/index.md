@@ -18,3 +18,4 @@ SPDX-License-Identifier: CC-BY-NC-SA-4.0
 <!--@include: qrcode/index.md-->
 <!--@include: redis/index.md-->
 <!--@include: shell/index.md-->
+<!--@include: timestamp/index.md-->
