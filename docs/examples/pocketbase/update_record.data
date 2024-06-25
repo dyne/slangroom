@@ -1,0 +1,12 @@
+{
+	"update_parameters": {
+		"id": "q3vijjsacrn32tk",
+		"collection": "organizations",
+		"record": {
+			"name": "new value for name"
+		}
+	},
+	"record_parameters": {
+		"fields": "id, name"
+	}
+}

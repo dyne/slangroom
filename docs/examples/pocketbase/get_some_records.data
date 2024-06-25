@@ -1,0 +1,10 @@
+{
+	"list_parameters": {
+		"type": "list",
+		"pagination": {
+			"page": 2,
+			"perPage": 20
+		},
+		"collection": "organizations"
+	}
+}
