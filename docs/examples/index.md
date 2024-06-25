@@ -17,3 +17,4 @@ SPDX-License-Identifier: CC-BY-NC-SA-4.0
 <!--@include: pocketbase/index.md-->
 <!--@include: qrcode/index.md-->
 <!--@include: redis/index.md-->
+<!--@include: shell/index.md-->
