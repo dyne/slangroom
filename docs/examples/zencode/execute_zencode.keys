@@ -1,0 +1,4 @@
+{
+	"zencode": "Scenario 'ecdh': Create the public key\nGiven I have the 'keyring'\nWhen I create the ecdh public key\nThen print the 'ecdh public key'\n",
+	"data": {}
+}
