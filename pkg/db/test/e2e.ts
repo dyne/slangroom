@@ -212,8 +212,7 @@ Error colors:
  - missing words
  - extra words
 
-Slangroom @slangroom/db@${packageJson.version} Error: [DATABASE]
-			Returned null for id "30" in table "firstTable" in db "sqlite://./test/db1.db".
+Slangroom @slangroom/db@${packageJson.version} Error: Returned null for id "30" in table "firstTable"
 `);
 });
 
@@ -264,6 +263,6 @@ Error colors:
  - missing words
  - extra words
 
-Slangroom @slangroom/db@${packageJson.version} Error: [DATABASE] Database error: TypeError: Cannot read properties of null (reading 'replace')
+Slangroom @slangroom/db@${packageJson.version} Error: Cannot read properties of null (reading 'replace')
 `);
 });

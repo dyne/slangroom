@@ -108,7 +108,7 @@ export const getRecord = p.new('connect',
 		const table = ctx.fetch('table') as string;
 		const database = ctx.fetchConnect()[0] as string;
 
-		const parse = (o: string) => safeJSONParse(o, `[DATABASE] Error in JSON format "${o}"`)
+		const parse = (o: string) => safeJSONParse(o, `Error in JSON format "${o}"`)
 
 		try {
 			var output = {}
@@ -131,16 +131,14 @@ export const getRecord = p.new('connect',
 					if (!resultData.ok) return ctx.fail(new DbError(resultData.error));
 					output = resultData.parsed;
 				} else {
-					return ctx.fail(new DbError(`[DATABASE]
-			Returned null for id "${record}" in table "${table}" in db "${database}".`));
+					return ctx.fail(new DbError(`Returned null for id "${record}" in table "${table}"`));
 				}
 			} catch (e) {
-				return ctx.fail(new DbError(`[DATABASE]
-			Something went wrong for id "${record}" in table "${table}" in db "${database}".`));
+				return ctx.fail(new DbError(e.message));
 			}
 			db.close();
 		} catch (e) {
-			return ctx.fail(new DbError(`[DATABASE] Database error: ${e}`));
+			return ctx.fail(new DbError(e.message));
 		}
 		return ctx.pass(output);
 	},
@@ -177,12 +175,11 @@ export const saveVar = p.new('connect',
 					}),
 				});
 			} catch (e) {
-				return ctx.fail(new DbError(`[DATABASE]
-				Error in table "${table}" in db "${database}": ${e}`));
+				return ctx.fail(new DbError(e.message));
 			}
 			db.close();
 		} catch (e) {
-			return ctx.fail(new DbError(`[DATABASE] Database error: ${e}`));
+			return ctx.fail(new DbError(e.message));
 		}
 		return ctx.pass(null);
 	},
