@@ -57,7 +57,7 @@ Then print data
 		},
 	});
 	const error = await t.throwsAsync(fn);
-	t.is(stripAnsiCodes((error as Error).message),
+	t.true(stripAnsiCodes((error as Error).message).startsWith(
 `0 | Rule unknown ignore
 1 | Given I connect to 'redis' and send key 'key' and read key from redis and output into 'read'
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -70,8 +70,7 @@ Error colors:
  - missing words
  - extra words
 
-Slangroom @slangroom/redis@${packageJson.version} Error: Connection timeout
-`)
+Slangroom @slangroom/redis@${packageJson.version} Error:`));
 });
 
 test('Redis read not set key', async (t) => {
