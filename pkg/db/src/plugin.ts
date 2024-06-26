@@ -5,6 +5,7 @@
 import { Plugin } from '@slangroom/core';
 import { JsonableObject } from '@slangroom/shared';
 import {
+	QueryOptions,
 	ConnectionRefusedError,
 	BindOrReplacements,
 	DataTypes,
@@ -39,7 +40,7 @@ const safeJSONParse = (o: DK):
 }
 
 const safeDbInit = (database: string):
-	({ ok: true, db: any } | { ok: false, error: string }) => {
+	({ ok: true, db: Sequelize } | { ok: false, error: string }) => {
 	try {
 		const urlParts = new URL(database);
 		if (!urlParts.protocol.endsWith(':'))
@@ -51,15 +52,15 @@ const safeDbInit = (database: string):
 	}
 }
 
-const safeDbQuery = async (db: any, statement: string, params?: BindOrReplacements):
+const safeDbQuery = async (db: Sequelize, statement: string, params?: BindOrReplacements):
 	Promise<{ ok: true, res: any } | { ok: false, error: string }> => {
 	try {
 		const t = await db.transaction();
-		const [o, m] = await db.query(statement,
-			{
-				transaction: t,
-				replacements: params
-			});
+		const opt: QueryOptions = {
+			transaction: t
+		};
+		if (params) opt.replacements = params;
+		const [o, m] = await db.query(statement, opt);
 		await t.commit();
 		return { ok: true, res: o ? o : m };
 	} catch (err) {
