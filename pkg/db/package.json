@@ -3,6 +3,7 @@
 	"version": "1.33.13",
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
+		"@slangroom/shared": "workspace:*",
 		"sequelize": "^6.16.0",
 		"sqlite3": "^5.0.0"
 	},
