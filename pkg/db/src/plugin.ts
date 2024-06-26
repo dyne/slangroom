@@ -3,12 +3,13 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import { Plugin } from '@slangroom/core';
+import { JsonableObject } from '@slangroom/shared';
 import { BindOrReplacements, DataTypes, Model, Sequelize } from "sequelize";
 // read the version from the package.json
 import packageJson from '@slangroom/db/package.json' with { type: 'json' };
 
 class Result extends Model {
-	public result!: string;
+	public result: string = "";
 }
 
 export class DbError extends Error {
@@ -20,13 +21,45 @@ export class DbError extends Error {
 
 type DK = string | object | null | undefined;
 
-function safeJSONParse(o: DK, errorMessage?: string): ({ ok: true, parsed: object } | { ok: false, error: string }) {
+const safeJSONParse = (o: DK):
+	({ ok: true, parsed: JsonableObject } | { ok: false, error: string }) => {
 	const notNull = o ?? {};
-	if (typeof notNull === "object") return { ok: true, parsed: notNull };
+	if (typeof notNull === "object") return { ok: true, parsed: notNull as JsonableObject };
 	try {
 		return { ok: true, parsed: JSON.parse(notNull) };
 	} catch (err) {
-		return { ok: false, error: errorMessage ?? err };
+		return { ok: false, error: err.message };
+	}
+}
+
+const safeDbInit = (database: string):
+	({ ok: true, db: any } | { ok: false, error: string }) => {
+	try {
+		const urlParts = new URL(database);
+		if (!urlParts.protocol.endsWith(':'))
+			throw new Error('invalid url, it must start with "dialect://"');
+		const db = new Sequelize(database, { logging: false	});
+		return { ok: true, db };
+	} catch (err) {
+		return { ok: false, error: err.message }
+	}
+}
+
+const safeDbQuery = async (db: any, statement: string, params?: BindOrReplacements):
+	Promise<{ ok: true, res: any } | { ok: false, error: string }> => {
+	try {
+		const t = await db.transaction();
+		const [o, m] = await db.query(statement,
+			{
+				transaction: t,
+				replacements: params
+			});
+		await t.commit();
+		return { ok: true, res: o ? o : m };
+	} catch (err) {
+		return { ok: false, error: err.message }
+	} finally {
+		db.close();
 	}
 }
 
@@ -47,21 +80,12 @@ export const execute = p.new('connect',
 	async (ctx) => {
 		const statement = ctx.fetch('statement') as string;
 		const database = ctx.fetchConnect()[0] as string;
-		try {
-			const db = new Sequelize(database, {
-				// disable logging; default: console.log
-				logging: false
-			});
-			const t = await db.transaction();
-			const [o, m] = await db.query(statement, { transaction: t });
-			await t.commit();
-			const output: any = o ? o : m;
-			db.close();
-			return ctx.pass(output);
-		} catch (error) {
-			return ctx.fail(new DbError(error.message));
-		}
-	},
+		const initRes = safeDbInit(database)
+		if (!initRes.ok) return ctx.fail(new DbError(initRes.error));
+		const queryRes = await safeDbQuery(initRes.db, statement)
+		if (!queryRes.ok) return ctx.fail(new DbError(queryRes.error));
+		return ctx.pass(queryRes.res);
+	}
 );
 
 /**
@@ -75,21 +99,12 @@ export const executeParams = p.new('connect',
 		const statement = ctx.fetch('statement') as string;
 		const parameters = ctx.fetch('parameters') as BindOrReplacements;
 		const database = ctx.fetchConnect()[0] as string;
-		try {
-			const db = new Sequelize(database, { logging: false });
-			const t = await db.transaction();
-			const [o, m] = await db.query(statement, {
-				transaction: t,
-				replacements: parameters
-			});
-			await t.commit();
-			const output: any = o ? o : m;
-			db.close();
-			return ctx.pass(output);
-		} catch (error) {
-			return ctx.fail(new DbError(error.message));
-		}
-	},
+		const initRes = safeDbInit(database)
+		if (!initRes.ok) return ctx.fail(new DbError(initRes.error));
+		const queryRes = await safeDbQuery(initRes.db, statement, parameters)
+		if (!queryRes.ok) return ctx.fail(new DbError(queryRes.error));
+		return ctx.pass(queryRes.res);
+	}
 );
 
 /**
@@ -107,12 +122,11 @@ export const getRecord = p.new('connect',
 		const record = ctx.fetch('record') as string;
 		const table = ctx.fetch('table') as string;
 		const database = ctx.fetchConnect()[0] as string;
-
-		const parse = (o: string) => safeJSONParse(o, `Error in JSON format "${o}"`)
+		const initRes = safeDbInit(database)
+		if (!initRes.ok) return ctx.fail(new DbError(initRes.error));
+		const db = initRes.db;
 
 		try {
-			var output = {}
-			const db = new Sequelize(database, { logging: false });
 			Result.init(
 				{ result: DataTypes.TEXT },
 				{
@@ -122,26 +136,22 @@ export const getRecord = p.new('connect',
 				}
 			);
 			await Result.sync();
-			try {
-				let result = await Result.findByPk(record);
-				if (result) {
-					result = result.get({ plain: true });
-					// column name is result
-					const resultData = parse(result!.result);
-					if (!resultData.ok) return ctx.fail(new DbError(resultData.error));
-					output = resultData.parsed;
-				} else {
-					return ctx.fail(new DbError(`Returned null for id "${record}" in table "${table}"`));
-				}
-			} catch (e) {
-				return ctx.fail(new DbError(e.message));
+			const result = await Result.findByPk(record);
+			if (result) {
+				const res = result.get({ plain: true });
+				// column name is result
+				const parseRes = safeJSONParse(res?.result);
+				if (!parseRes.ok) return ctx.fail(new DbError(parseRes.error));
+				return ctx.pass(parseRes.parsed);
+			} else {
+				return ctx.fail(new DbError(`Returned null for id "${record}" in table "${table}"`));
 			}
-			db.close();
 		} catch (e) {
 			return ctx.fail(new DbError(e.message));
+		} finally {
+			db.close();
 		}
-		return ctx.pass(output);
-	},
+	}
 );
 
 /**
@@ -155,9 +165,11 @@ export const saveVar = p.new('connect',
 		const varName = ctx.fetch('name') as string;
 		const database = ctx.fetchConnect()[0] as string;
 		const table = ctx.fetch('table') as string;
+		const initRes = safeDbInit(database)
+		if (!initRes.ok) return ctx.fail(new DbError(initRes.error));
+		const db = initRes.db;
 
 		try {
-			const db = new Sequelize(database, { logging: false });
 			Result.init(
 				{ result: DataTypes.TEXT },
 				{
@@ -167,22 +179,19 @@ export const saveVar = p.new('connect',
 				}
 			);
 			await Result.sync();
-			try {
-				// column name must be result
-				await Result.create({
-					result: JSON.stringify({
-						[varName]: varObj,
-					}),
-				});
-			} catch (e) {
-				return ctx.fail(new DbError(e.message));
-			}
-			db.close();
+			// column name must be result
+			await Result.create({
+				result: JSON.stringify({
+					[varName]: varObj,
+				}),
+			});
+			return ctx.pass(null);
 		} catch (e) {
 			return ctx.fail(new DbError(e.message));
+		} finally {
+			db.close();
 		}
-		return ctx.pass(null);
-	},
+	}
 );
 
 export const db = p;
