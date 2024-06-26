@@ -4,7 +4,13 @@
 
 import { Plugin } from '@slangroom/core';
 import { JsonableObject } from '@slangroom/shared';
-import { BindOrReplacements, DataTypes, Model, Sequelize } from "sequelize";
+import {
+	ConnectionRefusedError,
+	BindOrReplacements,
+	DataTypes,
+	Model,
+	Sequelize
+} from "sequelize";
 // read the version from the package.json
 import packageJson from '@slangroom/db/package.json' with { type: 'json' };
 
@@ -57,7 +63,9 @@ const safeDbQuery = async (db: any, statement: string, params?: BindOrReplacemen
 		await t.commit();
 		return { ok: true, res: o ? o : m };
 	} catch (err) {
-		return { ok: false, error: err.message }
+		if (err instanceof ConnectionRefusedError)
+			return { ok: false, error: 'connection refused' };
+		return { ok: false, error: err.message };
 	} finally {
 		db.close();
 	}
@@ -80,9 +88,9 @@ export const execute = p.new('connect',
 	async (ctx) => {
 		const statement = ctx.fetch('statement') as string;
 		const database = ctx.fetchConnect()[0] as string;
-		const initRes = safeDbInit(database)
+		const initRes = safeDbInit(database);
 		if (!initRes.ok) return ctx.fail(new DbError(initRes.error));
-		const queryRes = await safeDbQuery(initRes.db, statement)
+		const queryRes = await safeDbQuery(initRes.db, statement);
 		if (!queryRes.ok) return ctx.fail(new DbError(queryRes.error));
 		return ctx.pass(queryRes.res);
 	}
@@ -99,9 +107,9 @@ export const executeParams = p.new('connect',
 		const statement = ctx.fetch('statement') as string;
 		const parameters = ctx.fetch('parameters') as BindOrReplacements;
 		const database = ctx.fetchConnect()[0] as string;
-		const initRes = safeDbInit(database)
+		const initRes = safeDbInit(database);
 		if (!initRes.ok) return ctx.fail(new DbError(initRes.error));
-		const queryRes = await safeDbQuery(initRes.db, statement, parameters)
+		const queryRes = await safeDbQuery(initRes.db, statement, parameters);
 		if (!queryRes.ok) return ctx.fail(new DbError(queryRes.error));
 		return ctx.pass(queryRes.res);
 	}
