@@ -9,6 +9,7 @@ module.exports = {
 	extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'prettier'],
 	rules: {
 		'@typescript-eslint/no-unused-vars': 'error',
-		'@typescript-eslint/consistent-type-definitions': ['error', 'type']
+		'@typescript-eslint/consistent-type-definitions': ['error', 'type'],
+		"no-control-regex": 0
 	}
 };
