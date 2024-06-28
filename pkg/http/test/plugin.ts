@@ -31,11 +31,13 @@ nock('http://localhost')
 		},
 	})
 	.post('/sendresult')
+	// eslint-disable-next-line  @typescript-eslint/no-explicit-any
 	.reply((_, body: any) => {
 		if (body['myData']) return [200, 'received result'];
 		return [500, 'Did not receive the result'];
 	})
 	.put('/sendresultwithput')
+	// eslint-disable-next-line  @typescript-eslint/no-explicit-any
 	.reply((_, body: any) => {
 		if (body['myData']) return [200, 'received result'];
 		return [500, 'Did not receive the result'];

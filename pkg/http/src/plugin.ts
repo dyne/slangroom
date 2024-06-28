@@ -2,9 +2,9 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-import type { JsonableArray, JsonableObject } from '@slangroom/shared';
+import type { Jsonable, JsonableArray, JsonableObject } from '@slangroom/shared';
 import { Plugin, type PluginExecutor } from '@slangroom/core';
-import axios, { type AxiosRequestConfig } from 'axios';
+import axios, { type AxiosRequestConfig, type AxiosHeaders } from 'axios';
 // read the version from the package.json
 import packageJson from '@slangroom/http/package.json' with { type: 'json' };
 
@@ -34,7 +34,7 @@ const defaultRequest = (m: HttpMethod): PluginExecutor => {
 	return async (ctx) => {
 		const url = ctx.fetchConnect()[0];
 		// TODO: typecheck headers
-		const headers = ctx.get('headers') as any;
+		const headers = ctx.get('headers') as AxiosHeaders;
 		const object = ctx.get('object');
 		const conf: AxiosRequestConfig = { url: url, method: m };
 		if (object) conf.data = object;
@@ -51,10 +51,10 @@ const defaultRequest = (m: HttpMethod): PluginExecutor => {
 
 const sameParallelRequest = (m: HttpMethod, isSame: boolean): PluginExecutor => {
 	return async (ctx) => {
-		const reqs: ReturnType<typeof request<any>>[] = [];
+		const reqs: ReturnType<typeof request<AxiosRequestConfig>>[] = [];
 		const urls = ctx.fetchConnect();
 		// TODO: typecheck headers
-		const headers = ctx.get('headers') as any;
+		const headers = ctx.get('headers') as AxiosHeaders;
 
 		if (isSame) {
 			// TODO: typecheck object JsonableObject
@@ -78,11 +78,11 @@ const sameParallelRequest = (m: HttpMethod, isSame: boolean): PluginExecutor => 
 			}
 		}
 
-		const results: { status: string, result: any }[] = [];
+		const results: { status: string, result: Jsonable }[] = [];
 		try {
 			(await Promise.allSettled(reqs)).map((x) => {
 				if (x.status === 'fulfilled') {
-					results.push({ status: x.value.status.toString(), result: x.value.data });
+					results.push({ status: x.value.status.toString(), result: x.value.data as Jsonable });
 					return;
 				}
 
