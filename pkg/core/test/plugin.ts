@@ -165,9 +165,9 @@ test('PluginContext', async (t) => {
 	const objCtx = new PluginContextTest('', {obj: 'obj'});
 	// pass and fail
 	const pass = p.new('test pass', (ctx) => ctx.pass('done'));
-	const fail = p.new('test fail', (ctx) => ctx.fail('failed'));
+	const fail = p.new('test fail', (ctx) => ctx.fail(new Error ('failed')));
 	t.deepEqual(await pass(emptyCtx), { ok: true, value: 'done' });
-	t.deepEqual(await fail(emptyCtx), { ok: false, error: 'failed' });
+	t.deepEqual(await fail(emptyCtx), { ok: false, error: new Error('failed') });
 	// connect
 	const getConnect = p.new('connect', 'test get connect', (ctx) => ctx.pass(ctx.getConnect()));
 	const fetchConnect = p.new('connect', 'test fetch connect', (ctx) => ctx.pass(ctx.fetchConnect()));

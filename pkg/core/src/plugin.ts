@@ -397,7 +397,7 @@ export type ResultOk = { ok: true; value: Jsonable };
 /**
  * Result of a plugin execution, indicating failure.
  */
-export type ResultErr = { ok: false; error: any };
+export type ResultErr = { ok: false; error: Error };
 
 /**
  * The Plugin Context.  It has every info a plugin needs, plus some utilities.
@@ -453,7 +453,7 @@ export type PluginContext = {
 	 * The utility function that makes a {@link Plugin} fail.  Must be used with a
 	 * `return` statement.
 	 */
-	fail(reason: any): PluginResult;
+	fail(reason: Error): PluginResult;
 
 	/**
 	 * The utility function that makes a {@link Plugin} pass/succeed.  Must be used with
@@ -489,7 +489,7 @@ export class PluginContextImpl implements PluginContext {
 	/**
 	 * {@inheritDoc PluginContext.fail}
 	 */
-	fail(reason: any): PluginResult {
+	fail(reason: Error): PluginResult {
 		return { ok: false, error: reason };
 	}
 
@@ -592,7 +592,7 @@ export class PluginContextTest implements PluginContext {
 	/**
 	 * {@inheritDoc PluginContext.fail}
 	 */
-	fail(reason: any): PluginResult {
+	fail(reason: Error): PluginResult {
 		return { ok: false, error: reason };
 	}
 

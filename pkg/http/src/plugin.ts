@@ -78,15 +78,25 @@ const sameParallelRequest = (m: HttpMethod, isSame: boolean): PluginExecutor => 
 			}
 		}
 
-		const results = (await Promise.allSettled(reqs)).map((x) => {
-			if (x.status === 'fulfilled')
-				return { status: x.value.status.toString(), result: x.value.data };
+		const results: { status: string, result: any }[] = [];
+		try {
+			(await Promise.allSettled(reqs)).map((x) => {
+				if (x.status === 'fulfilled') {
+					results.push({ status: x.value.status.toString(), result: x.value.data });
+					return;
+				}
 
-			const err = x.reason;
-			if (axios.isAxiosError(err)) return { status: err.code ?? '', result: '' };
+				const err = x.reason;
+				if (axios.isAxiosError(err)) {
+					results.push({ status: err.code ?? '', result: '' });
+					return;
+				}
 
-			return ctx.fail(new HttpError(err.message));
-		});
+				throw new HttpError(err.message);
+			})
+		} catch (e) {
+			ctx.fail(new HttpError(e.message));
+		}
 
 		return ctx.pass(results);
 	};
