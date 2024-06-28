@@ -16,31 +16,35 @@ const fileDb2 = './test/db2.db';
 const dbPath1 = `sqlite://${fileDb1}`;
 const dbPath2 = `sqlite://${fileDb2}`;
 
+class Result1 extends Model {
+	public result!: string;
+}
+
 const stripAnsiCodes = (str: string) => str.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
 
 const complexQuery = `Rule unknown ignore
-		Scenario 'ecdh': Create the keypair
-		# the value of the record could be 0 to max could be
-		Given I connect to 'myDb1' and send record 'n' and send table 'myTable' and read the record of the table and output into 'myZenroomStringDictionary'
-		Given I am 'John'
-		Given I have a 'string' named 'key_name'
-		Given I have a 'string' named 'myDb1'
-		Given I have a 'string' named 'myDb2'
-		Given I have a 'string' named 'myTable'
-		Given I have a 'string' named 'myCache'
-		Given I have a 'string dictionary' named 'myZenroomStringDictionary'
-		When I create the ecdh key
-		When I create the signature of 'myZenroomStringDictionary'
-		When I create the array of '8' random objects of '256' bits
-		Then print all data
-		Then print the keyring
-		Then I connect to 'myDb2' and send variable 'keyring' and send name 'key_name' and send table 'myCache' and save the variable in the database table
-		`;
+Scenario 'ecdh': Create the keypair
+# the value of the record could be 0 to max could be
+Given I connect to 'myDb1' and send record 'n' and send table 'myTable' and read the record of the table and output into 'myZenroomStringDictionary'
+Given I am 'John'
+Given I have a 'string' named 'key_name'
+Given I have a 'string' named 'myDb1'
+Given I have a 'string' named 'myDb2'
+Given I have a 'string' named 'myTable'
+Given I have a 'string' named 'myCache'
+Given I have a 'string dictionary' named 'myZenroomStringDictionary'
+When I create the ecdh key
+When I create the signature of 'myZenroomStringDictionary'
+When I create the array of '8' random objects of '256' bits
+Then print all data
+Then print the keyring
+Then I connect to 'myDb2' and send variable 'keyring' and send name 'key_name' and send table 'myCache' and save the variable in the database table`;
 
-test.afterEach(() => {
-	if (fs.existsSync(fileDb1)) fs.unlinkSync(fileDb1);
-	if (fs.existsSync(fileDb2)) fs.unlinkSync(fileDb2);
-});
+const readQuery = `Rule unknown ignore
+Given I connect to 'db' and send record 'n' and send table 'myTable' and read the record of the table and output into 'result'
+Given I have a 'string dictionary' named 'result'
+Then print all data`;
+//
 
 test.beforeEach(async () => {
 	const sequelize = new Sequelize(dbPath1, { logging: false });
@@ -52,25 +56,25 @@ test.beforeEach(async () => {
 		freezeTableName: true,
 	});
 	await Table.sync();
-	try {
-		const results = Array(5).fill(JSON.stringify({
-			testkey: "test value"
-		}));
-		for (const result of results) {
-			await Table.create({
-				result
-			});
-		}
-	} catch (e) {
-		throw e;
+	const results = Array(5).fill(JSON.stringify({
+		testkey: "test value"
+	}));
+	for (const result of results) {
+		await Table.create({
+			result
+		});
 	}
 	sequelize.close();
 });
 
+test.afterEach(() => {
+	if (fs.existsSync(fileDb1)) fs.unlinkSync(fileDb1);
+	if (fs.existsSync(fileDb2)) fs.unlinkSync(fileDb2);
+});
 
-test.serial('Middleware db should work and response includes variable for db', async (t) => {
+test.serial('Db read from a db and write in another one', async (t) => {
 	const slangroom = new Slangroom(db);
-	const result = slangroom.execute(complexQuery, {
+	const res = await slangroom.execute(complexQuery, {
 		data: {
 			"n": 3,
 			"key_name": "keyring",
@@ -86,83 +90,42 @@ test.serial('Middleware db should work and response includes variable for db', a
 			}
 		},
 	});
-	const res = await result;
-	try {
-		t.true(
-			Object.keys(res.result).includes("keyring"), ""
-		);
-		t.true(
-			Object.keys(res.result).includes("myZenroomStringDictionary"),
-			'could not find "myZenroomStringDictionary" in response'
-		);
-	} catch (e) {
-		throw e;
-	}
-});
-
-class Result1 extends Model {
-	public result!: any;
-}
-
-test.serial(
-	"Middleware db should save the result of variable given in zencode to db2",
-	async (t) => {
-		try {
-			const slangroom = new Slangroom(db);
-			const result = slangroom.execute(complexQuery, {
-				data: {
-					"n": 3,
-					"key_name": "keyring",
-					"myDb1": "sqlite://./test/db1.db",
-					"myDb2": "sqlite://./test/db2.db",
-					"myTable": "firstTable",
-					"myCache": "firstCache",
-					"myOtherZenroomStringDictionary": {
-						"data": {
-							"data1": "9WgBlK+Kcq3AKpmhituXQe4UPkzH3zpZiQa4Szm1Q40=",
-							"data2": "BCEo8MgRiSxtLfxE4UEDVnbdZ21h+xc+egLIRk3VTagpJxlBfu9MjqXGUi2N7tIewpcDrr5V7Z2cmMcNsbKWSGQ="
-						}
-					}
-				},
-			});
-			const res = await result;
-			const sequelize2 = new Sequelize(dbPath2, { logging: false });
-			const Result2 = sequelize2.define(
-				"firstCache", {
-				result: {
-					type: DataTypes.STRING,
-				},
-			}, {
-				freezeTableName: true,
-			}
-			);
-			await Result2.sync();
-			let ress;
-			try {
-				let query = await Result2.findByPk(1) as Result1;
-				query = query!.get({
-					plain: true
-				});
-				ress = JSON.parse(query!["result"]);
-			} catch (e) {
-				ress = null;
-			}
-			sequelize2.close();
-			t.deepEqual(
-				res.result['keypair'],
-				ress.keypair,
-				"The value stored in the database should be the same as the value in the response body"
-			);
-		} catch (e) {
-			throw e;
+	// check the result
+	t.true(
+		Object.keys(res.result).includes("keyring"),
+		'could not find "keyring" in response'
+	);
+	t.true(
+		Object.keys(res.result).includes("myZenroomStringDictionary"),
+		'could not find "myZenroomStringDictionary" in response'
+	);
+	// check the database
+	const sequelize2 = new Sequelize(dbPath2, { logging: false });
+	const Result2 = sequelize2.define(
+		"firstCache", {
+			result: {
+				type: DataTypes.STRING,
+			},
+		}, {
+			freezeTableName: true,
 		}
+	);
+	await Result2.sync();
+	let res2;
+	try {
+		let query = await Result2.findByPk(1) as Result1;
+		query = query?.get({ plain: true });
+		res2 = JSON.parse(query?.["result"] ?? "{}");
+	} catch (e) {
+		res2 = null;
 	}
-);
-
-const readQuery = `Rule unknown ignore
-Given I connect to 'db' and send record 'n' and send table 'myTable' and read the record of the table and output into 'result'
-Given I have a 'string dictionary' named 'result'
-Then print all data`;
+	sequelize2.close();
+	t.deepEqual(
+		res.result['keypair'],
+		res2.keypair,
+		"The value stored in the database should be the same as the value in the response body"
+	);
+});
 
 test.serial('Db should fail for wrong record', async (t) => {
 	const slangroom = new Slangroom(db);
