@@ -212,20 +212,17 @@ None of the properties
 
 Heap:
 {
-    "data": {
-        "props": "a",
-        "complex_object": {
-            "r": {
-                "a": "b",
-                "c": {
-                    "d": {
-                        "e": 42
-                    }
+    "props": "a",
+    "complex_object": {
+        "r": {
+            "a": "b",
+            "c": {
+                "d": {
+                    "e": 42
                 }
             }
         }
-    },
-    "keys": {}
+    }
 }
 `);
 });

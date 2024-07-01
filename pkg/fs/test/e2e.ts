@@ -43,10 +43,7 @@ Slangroom @slangroom/fs@${packageJson.version} Error: $FILES_DIR must be provide
 
 Heap:
 {
-    "data": {
-        "filename": "test.txt"
-    },
-    "keys": {}
+    "filename": "test.txt"
 }
 `);
 });
@@ -76,10 +73,7 @@ Slangroom @slangroom/fs@${packageJson.version} Error: ENOENT: no such file or di
 
 Heap:
 {
-    "data": {
-        "filename": "test.txt"
-    },
-    "keys": {}
+    "filename": "test.txt"
 }
 `);
 });
@@ -127,12 +121,9 @@ Slangroom @slangroom/fs@${packageJson.version} Error: path must be string
 
 Heap:
 {
-    "data": {
-        "filename": {
-            "path": "test.txt"
-        }
-    },
-    "keys": {}
+    "filename": {
+        "path": "test.txt"
+    }
 }
 `);
 });
@@ -179,10 +170,7 @@ Slangroom @slangroom/fs@${packageJson.version} Error: no such file or directory:
 
 Heap:
 {
-    "data": {
-        "filename": "test_not_exist.txt"
-    },
-    "keys": {}
+    "filename": "test_not_exist.txt"
 }
 `);
 });
@@ -219,10 +207,7 @@ Slangroom @slangroom/fs@${packageJson.version} Error: file or directory found un
 
 Heap:
 {
-    "data": {
-        "filename": "test.txt"
-    },
-    "keys": {}
+    "filename": "test.txt"
 }
 `);
 	const resultNotExists = slangroom.execute(verifyDoesNotExists, {

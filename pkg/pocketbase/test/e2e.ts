@@ -76,10 +76,7 @@ Slangroom @slangroom/pocketbase@${packageJson.version} Error: Can not start capa
 
 Heap:
 {
-    "data": {
-        "pb_address": "http://127.0.0.1:8090/"
-    },
-    "keys": {}
+    "pb_address": "http://127.0.0.1:8090/"
 }
 `);
 });

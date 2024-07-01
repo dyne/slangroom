@@ -129,10 +129,7 @@ Slangroom @slangroom/http@${packageJson.version} Error: sequential requests are 
 
 Heap:
 {
-    "data": {
-        "greeting_es": "http://localhost/greeting-es"
-    },
-    "keys": {}
+    "greeting_es": "http://localhost/greeting-es"
 }
 `);
 });

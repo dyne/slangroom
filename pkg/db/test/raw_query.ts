@@ -117,15 +117,12 @@ Slangroom @slangroom/db@${packageJson.version} Error: SQLITE_ERROR: no such tabl
 
 Heap:
 {
-    "data": {
-        "database": "sqlite://./test/fake_test.db",
-        "query_1": "INSERT INTO member (name) VALUES ('Alice')",
-        "query_5": "INSERT INTO member (name) VALUES (?)",
-        "query5_params": [
-            "Eve"
-        ]
-    },
-    "keys": {}
+    "database": "sqlite://./test/fake_test.db",
+    "query_1": "INSERT INTO member (name) VALUES ('Alice')",
+    "query_5": "INSERT INTO member (name) VALUES (?)",
+    "query5_params": [
+        "Eve"
+    ]
 }
 `);
 });
@@ -167,15 +164,12 @@ Slangroom @slangroom/db@${packageJson.version} Error: SQLITE_ERROR: near "INSTER
 
 Heap:
 {
-    "data": {
-        "database": "sqlite://./test/test.db",
-        "query_1": "INSTERT INTO member (name) VALUES ('Alice')",
-        "query_5": "INSERT INTO member (name) VALUES (?)",
-        "query5_params": [
-            "Eve"
-        ]
-    },
-    "keys": {}
+    "database": "sqlite://./test/test.db",
+    "query_1": "INSTERT INTO member (name) VALUES ('Alice')",
+    "query_5": "INSERT INTO member (name) VALUES (?)",
+    "query5_params": [
+        "Eve"
+    ]
 }
 `);
 });

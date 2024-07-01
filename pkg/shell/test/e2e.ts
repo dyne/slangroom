@@ -62,10 +62,7 @@ spawn notfound ENOENT
 
 Heap:
 {
-    "data": {
-        "c": "notfound -v"
-    },
-    "keys": {}
+    "c": "notfound -v"
 }
 `);
 });
@@ -103,10 +100,7 @@ cat: notfound.txt: No such file or directory
 
 Heap:
 {
-    "data": {
-        "c": "cat notfound.txt"
-    },
-    "keys": {}
+    "c": "cat notfound.txt"
 }
 `);
 });

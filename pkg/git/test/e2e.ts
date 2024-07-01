@@ -44,11 +44,8 @@ Slangroom @slangroom/git@${packageJson.version} Error: Could not find git root f
 
 Heap:
 {
-    "data": {
-        "path": "some/dumb/path",
-        "verified_git_repo": "true"
-    },
-    "keys": {}
+    "path": "some/dumb/path",
+    "verified_git_repo": "true"
 }
 `);
 })
@@ -86,12 +83,9 @@ Slangroom @slangroom/git@${packageJson.version} Error: HTTP Error: 401 Unauthori
 
 Heap:
 {
-    "data": {
-        "url": "https://github.com/matteo-cristino/dumb",
-        "path": "another/dumb/path",
-        "cloned_repository": "true"
-    },
-    "keys": {}
+    "url": "https://github.com/matteo-cristino/dumb",
+    "path": "another/dumb/path",
+    "cloned_repository": "true"
 }
 `);
 })

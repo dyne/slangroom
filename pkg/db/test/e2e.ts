@@ -217,22 +217,19 @@ Slangroom @slangroom/db@${packageJson.version} Error: [DATABASE]
 
 Heap:
 {
-    "data": {
-        "n": 30,
-        "var_name": "obj_1",
-        "obj_1": "pippo",
-        "myDb1": "sqlite://./test/db1.db",
-        "myDb2": "sqlite://./test/db2.db",
-        "myTable": "firstTable",
-        "myCache": "firstCache",
-        "myOtherZenroomStringDictionary": {
-            "data": {
-                "data1": "9WgBlK+Kcq3AKpmhituXQe4UPkzH3zpZiQa4Szm1Q40=",
-                "data2": "BCEo8MgRiSxtLfxE4UEDVnbdZ21h+xc+egLIRk3VTagpJxlBfu9MjqXGUi2N7tIewpcDrr5V7Z2cmMcNsbKWSGQ="
-            }
+    "n": 30,
+    "var_name": "obj_1",
+    "obj_1": "pippo",
+    "myDb1": "sqlite://./test/db1.db",
+    "myDb2": "sqlite://./test/db2.db",
+    "myTable": "firstTable",
+    "myCache": "firstCache",
+    "myOtherZenroomStringDictionary": {
+        "data": {
+            "data1": "9WgBlK+Kcq3AKpmhituXQe4UPkzH3zpZiQa4Szm1Q40=",
+            "data2": "BCEo8MgRiSxtLfxE4UEDVnbdZ21h+xc+egLIRk3VTagpJxlBfu9MjqXGUi2N7tIewpcDrr5V7Z2cmMcNsbKWSGQ="
         }
-    },
-    "keys": {}
+    }
 }
 `);
 });
@@ -288,18 +285,15 @@ Slangroom @slangroom/db@${packageJson.version} Error: [DATABASE] Database error:
 
 Heap:
 {
-    "data": {
-        "myCache": "firstCache",
-        "myDb1": "sqlite://./test/db1.db",
-        "myDb2": "sqlite://./test/db2.db",
-        "myTable": "firstTable",
-        "myZenroomStringDictionary": {
-            "testkey": "test value"
-        },
-        "obj_1": "pippo",
-        "var_name": "obj_1"
+    "myCache": "firstCache",
+    "myDb1": "sqlite://./test/db1.db",
+    "myDb2": "sqlite://./test/db2.db",
+    "myTable": "firstTable",
+    "myZenroomStringDictionary": {
+        "testkey": "test value"
     },
-    "keys": {}
+    "obj_1": "pippo",
+    "var_name": "obj_1"
 }
 `);
 });
