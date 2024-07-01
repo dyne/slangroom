@@ -26,7 +26,11 @@ export const write = p.new('connect',
 	async (ctx: PluginContext) => {
 		const redisUrl = ctx.fetchConnect()[0];
 		const client = redisClient.createClient({ url: redisUrl });
-		await client.connect();
+		try {
+			await client.connect();
+		} catch (e) {
+			return ctx.fail(new RedisError(e.message));
+		}
 		const key = ctx.fetch("key") as string;
 		if (typeof key !== 'string') return ctx.fail(new RedisError('key must be string'));
 		const data = ctx.fetch("object") as JsonableObject;
@@ -43,7 +47,11 @@ export const read = p.new('connect',
 		const client = redisClient.createClient({ url: redisUrl });
 		const key = ctx.fetch("key") as string;
 		if (typeof key !== 'string') return ctx.fail(new RedisError('key must be string'));
-		await client.connect();
+		try {
+			await client.connect();
+		} catch (e) {
+			return ctx.fail(new RedisError(e.message));
+		}
 		await client.sendCommand(["SETNX", key, "{}"]);
 
 		return ctx.pass(JSON.parse((await client.get(key)) || "{}"));
@@ -57,7 +65,11 @@ export const deleteRedis = p.new('connect',
 		const client = redisClient.createClient({ url: redisUrl });
 		const key = ctx.fetch("key") as string;
 		if (typeof key !== 'string') return ctx.fail(new RedisError('key must be string'));
-		await client.connect();
+		try {
+			await client.connect();
+		} catch (e) {
+			return ctx.fail(new RedisError(e.message));
+		}
 
 		return ctx.pass(await client.del(key))
 	},

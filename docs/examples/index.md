@@ -13,3 +13,10 @@ SPDX-License-Identifier: CC-BY-NC-SA-4.0
 <!--@include: helpers/index.md-->
 <!--@include: http/index.md-->
 <!--@include: json-schema/index.md-->
+<!--@include: oauth/index.md-->
+<!--@include: pocketbase/index.md-->
+<!--@include: qrcode/index.md-->
+<!--@include: redis/index.md-->
+<!--@include: shell/index.md-->
+<!--@include: timestamp/index.md-->
+<!--@include: zencode/index.md-->

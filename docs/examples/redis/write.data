@@ -1,0 +1,7 @@
+{
+	"key": "some key",
+	"object": {
+		"foo": "bar",
+		"baz": "qux"
+	}
+}

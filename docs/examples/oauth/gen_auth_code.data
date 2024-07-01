@@ -1,0 +1,8 @@
+{
+	"request": {
+		"body": "client_id=did%3Adyne%3Asandbox%2Egenericissuer%3A6Cp8mPUvJmQaMxQPSnNyhb74f9Ga4WqfXCkBneFgikm5&request_uri=urn%3Aietf%3Aparams%3Aoauth%3Arequest_uri%3A1719239545ed9f269e652d207b90dec394b87225c92346023b",
+        "headers": {
+            "Authorization": ""
+        }
+    }
+}
