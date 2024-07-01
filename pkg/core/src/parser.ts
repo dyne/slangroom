@@ -175,10 +175,16 @@ export type Match = {
 	lineNo: number;
 
 	/**
-	 * Whether this line wants to output the result of its plugin to a variable,
-	 * later to be used in other statements, perhaps.
+	 * Whether this line wants to output the result of its plugin to a variable
+	 * in the data, later to be used in other statements, perhaps.
 	 */
 	into?: string;
+
+	/**
+	 * Whether this line wants to output the result of its plugin to a variable
+	 * in the keys, later to be used in other statements, perhaps.
+	 */
+	intoSecret?: string;
 } & (
 		| {
 			/**
@@ -294,19 +300,41 @@ export const parse = (p: PluginMap, t: Token[], lineNo: number): Cst => {
 			// $buzzwords
 			k.phrase.split(' ').forEach((name) => t[++i]?.name !== name && newErr(i, name));
 
-			// Save Output Into 'ident'
+			// Save Output Into 'ident' || Save Output Secret Into 'ident'
 			const ident = t[t.length - 1];
 			if (t.length - i >= 5 && ident?.isIdent) {
-				for (++i; i < t.length - 4; ++i) m.err.push({message: ParseError.extra(t[i] as Token), lineNo, start: (t[i] as Token).start, end: (t[i] as Token).end});
-				if (t[t.length - 4]?.name !== 'and') newErr(t.length - 4, 'and');
-				if (t[t.length - 3]?.name !== 'output') newErr(t.length - 3, 'output');
-				if (t[t.length - 2]?.name !== 'into') newErr(t.length - 2, 'into');
-				if (
-					t[t.length - 4]?.name === 'and' &&
-					t[t.length - 3]?.name === 'output' &&
-					t[t.length - 2]?.name === 'into'
-				)
-					m.into = ident.raw.slice(1, -1);
+				for (++i; i < t.length - 5; ++i) m.err.push({message: ParseError.extra(t[i] as Token), lineNo, start: (t[i] as Token).start, end: (t[i] as Token).end});
+				if (t.length - i == 4) {
+					if (t[t.length - 4]?.name !== 'and') newErr(t.length - 4, 'and');
+					if (t[t.length - 3]?.name !== 'output') newErr(t.length - 3, 'output');
+					if (t[t.length - 2]?.name !== 'into') newErr(t.length - 2, 'into');
+					if (
+						t[t.length - 4]?.name === 'and' &&
+						t[t.length - 3]?.name === 'output' &&
+						t[t.length - 2]?.name === 'into'
+					)
+						m.into = ident.raw.slice(1, -1);
+				} else {
+					if (
+						t[t.length - 4]?.name === 'and' &&
+						t[t.length - 3]?.name === 'output' &&
+						t[t.length - 2]?.name === 'into'
+					) {
+						m.err.push({message: ParseError.extra(t[t.length-5] as Token), lineNo, start: (t[t.length-5] as Token).start, end: (t[t.length-5] as Token).end});
+					} else {
+						if (t[t.length - 5]?.name !== 'and') newErr(t.length - 5, 'and');
+						if (t[t.length - 4]?.name !== 'output') newErr(t.length - 4, 'output');
+						if (t[t.length - 3]?.name !== 'secret') newErr(t.length - 3, 'secret');
+						if (t[t.length - 2]?.name !== 'into') newErr(t.length - 2, 'into');
+						if (
+							t[t.length - 5]?.name === 'and' &&
+							t[t.length - 4]?.name === 'output' &&
+							t[t.length - 3]?.name === 'secret' &&
+							t[t.length - 2]?.name === 'into'
+						)
+							m.intoSecret = ident.raw.slice(1, -1);
+					}
+				}
 			} else {
 				for (++i; i < t.length; ++i) m.err.push({message: ParseError.extra(t[i] as Token), lineNo, start: (t[i] as Token).start, end: (t[i] as Token).end});
 			}

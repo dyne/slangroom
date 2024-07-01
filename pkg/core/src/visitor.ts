@@ -53,7 +53,7 @@ export type Ast = {
 	params: Map<string, Jsonable>;
 
 	/**
-	 * The name of the variable (if any) to output the result of this plugin.
+	 * The name of the variable in the data (if any) to output the result of this plugin.
 	 *
 	 * @example
 	 * Given a statement like this:
@@ -64,6 +64,19 @@ export type Ast = {
 	 * this would be `result`.
 	 */
 	into?: string;
+
+	/**
+	 * The name of the variable in the key (if any) to output the result of this plugin.
+	 *
+	 * @example
+	 * Given a statement like this:
+	 * ```
+	 * Given I send http request and output secret into 'result'
+	 * ```
+	 *
+	 * this would be `result`.
+	 */
+	intoSecret?: string;
 } & (
 	| {
 			/**

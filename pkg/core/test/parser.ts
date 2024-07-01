@@ -274,7 +274,6 @@ test('parser works', (t) => {
 						{message: ParseError.extra(new Token('and', 1, 19, 21)), lineNo: 1, start: 19, end: 21},
 						{message: ParseError.extra(new Token('so', 1, 23, 24)), lineNo: 1, start: 23, end: 24}
 					],
-					into: 'foo',
 					lineNo: 1
 				},
 			],
@@ -290,7 +289,6 @@ test('parser works', (t) => {
 						{message: ParseError.extra(new Token('and', 1, 13, 15)), lineNo: 1, start: 13, end: 15},
 						{message: ParseError.extra(new Token('d', 1, 17, 17)), lineNo: 1, start: 17, end: 17}
 					],
-					into: 'bar',
 					lineNo: 1
 				},
 			],
@@ -303,12 +301,11 @@ test('parser works', (t) => {
 					key: { phrase: 'domates biber patlican' },
 					bindings: new Map(),
 					err: [{message: ParseError.extra(new Token('patates', 1, 30, 36)), lineNo: 1, start: 30, end: 36}],
-					into: 'baz',
 					lineNo: 1
 				},
 			],
 		},
-		"Given I open 'xfiles' and write file and stuff and output into 'quz'": {
+		"Given I open 'xfiles' and write file and stuff or other stuff and output into 'quz'": {
 			givenThen: 'given',
 			errors: [],
 			matches: [
@@ -321,9 +318,11 @@ test('parser works', (t) => {
 					bindings: new Map([]),
 					err: [
 						{message: ParseError.extra(new Token('and', 1, 37, 39)), lineNo: 1, start: 37, end: 39},
-						{message: ParseError.extra(new Token('stuff', 1, 41, 45)), lineNo: 1, start: 41, end: 45}
+						{message: ParseError.extra(new Token('stuff', 1, 41, 45)), lineNo: 1, start: 41, end: 45},
+						{message: ParseError.extra(new Token('or', 1, 47, 48)), lineNo: 1, start: 47, end: 48},
+						{message: ParseError.extra(new Token('other', 1, 50, 54)), lineNo: 1, start: 50, end: 54},
+						{message: ParseError.extra(new Token('stuff', 1, 56, 60)), lineNo: 1, start: 56, end: 60},
 					],
-					into: 'quz',
 					lineNo: 1
 				},
 			],
@@ -337,8 +336,8 @@ test('parser works', (t) => {
 					key: { phrase: 'love asche' },
 					bindings: new Map(),
 					err: [
-						{message: ParseError.extra(new Token('and', 1, 19, 21)), lineNo: 1, start: 19, end: 21},
-						{message: ParseError.wrong(new Token('so', 1, 23, 24), 'and'), lineNo: 1, start: 23, end: 24}
+						{message: ParseError.wrong(new Token('so', 1, 23, 24), 'output'), lineNo: 1, start: 23, end: 24},
+						{message: ParseError.wrong(new Token('output', 1, 26, 31), 'secret'), lineNo: 1, start: 26, end: 31}
 					],
 					lineNo: 1
 				},
@@ -383,9 +382,8 @@ test('parser works', (t) => {
 					open: 'xfiles',
 					bindings: new Map([]),
 					err: [
-						{message: ParseError.extra(new Token('and', 1, 37, 39)), lineNo: 1, start: 37, end: 39},
-						{message: ParseError.wrong(new Token('stuff', 1, 41, 45), 'and'), lineNo: 1, start: 41, end: 45},
-						{message: ParseError.wrong(new Token('and', 1, 47, 49), 'output'), lineNo: 1, start: 47, end: 49},
+						{message: ParseError.wrong(new Token('stuff', 1, 41, 45), 'output'), lineNo: 1, start: 41, end: 45},
+						{message: ParseError.wrong(new Token('and', 1, 47, 49), 'secret'), lineNo: 1, start: 47, end: 49},
 						{message: ParseError.wrong(new Token('output', 1, 51, 56), 'into'), lineNo: 1, start: 51, end: 56}
 					],
 					lineNo: 1
@@ -592,9 +590,7 @@ test('parser works', (t) => {
 						{message: ParseError.extra(new Token('and', 1, 19, 21)), lineNo: 1, start: 19, end: 21},
 						{message: ParseError.extra(new Token('be', 1, 23, 24)), lineNo: 1, start: 23, end: 24},
 						{message: ParseError.extra(new Token('crazy', 1, 26, 30)), lineNo: 1, start: 26, end: 30},
-						{message: ParseError.extra(new Token('and', 1, 32, 34)), lineNo: 1, start: 32, end: 34},
-						{message: ParseError.wrong(new Token('output', 1, 36, 41), 'and'), lineNo: 1, start: 36, end: 41},
-						{message: ParseError.wrong(new Token('into', 1, 43, 46), 'output'), lineNo: 1, start: 43, end: 46},
+						{message: ParseError.wrong(new Token('into', 1, 43, 46), 'secret'), lineNo: 1, start: 43, end: 46},
 						{message: ParseError.wrong(new Token('wrong', 1, 48, 52), 'into'), lineNo: 1, start: 48, end: 52},
 					],
 					lineNo: 1,
@@ -628,6 +624,21 @@ test('parser works', (t) => {
 				},
 			],
 		},
+		"Given I a b c and output secret into 'foo'" : {
+			givenThen: 'given',
+			errors: [],
+			matches: [
+				{
+					key: {
+						phrase: 'a b c'
+					},
+					bindings: new Map(),
+					err: [],
+					lineNo: 1,
+					intoSecret: 'foo',
+				}
+			]
+		}
 	}).forEach(([give, want], index) => {
 		const lexed = lex(give, 1);
 		if (!lexed.ok) throw new Error(lexed.error.message.message);
