@@ -159,6 +159,9 @@ importers:
       '@slangroom/core':
         specifier: workspace:*
         version: link:../core
+      '@slangroom/shared':
+        specifier: workspace:*
+        version: link:../shared
       sequelize:
         specifier: ^6.16.0
         version: 6.37.3(sqlite3@5.1.7)
