@@ -202,14 +202,9 @@ Error: Something went horribly wrong
 
 Heap:
 {
-    "data": {
-        "url": "https://example.com",
-        "param": {
-            "foo": "bar"
-        }
-    },
-    "keys": {
-        "something": "else"
+    "url": "https://example.com",
+    "param": {
+        "foo": "bar"
     }
 }
 `;
