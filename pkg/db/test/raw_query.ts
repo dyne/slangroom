@@ -4,6 +4,7 @@
 
 import test from "ava";
 import { Slangroom } from '@slangroom/core';
+import type { JsonableArray } from '@slangroom/shared';
 import { db } from '@slangroom/db';
 import sqlite3 from "sqlite3";
 // read the version from the package.json
@@ -70,7 +71,7 @@ test('Db should execute raw queries', async (t) => {
 	t.true(lastID_2 && lastID_2 > 1);
 	const res_3 = res.result['result_3'] as string[];
 	t.deepEqual(res_3, []);
-	const res_4 = res.result['result_4'] as Record<string, any>[];
+	const res_4 = res.result['result_4'] as JsonableArray;
 	const elem = typeof (res_4) !== 'undefined' ? res_4[0] || {} : {};
 	t.deepEqual(Object.keys(elem), ['date', 'name']);
 	const res_5 = res.result['result_5'] as { changes?: string, lastID?: string };
