@@ -168,7 +168,7 @@ export const authWithPassword = p.new(['my_credentials'], 'login', async (ctx) =
  */
 export const requestPasswordReset = p.new(['email'], 'ask password reset', async (ctx) => {
 	const email = ctx.fetch('email') as string;
-	if (!(await isPbRunning())) return ctx.fail('Client is not running');
+	if (!(await isPbRunning())) return ctx.fail(new PocketBaseError('Client is not running'));
 
 	try {
 		const res = await pb.collection('users').requestPasswordReset(email);

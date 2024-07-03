@@ -148,6 +148,6 @@ test.serial('Should create a new git commit', async (t) => {
 	t.truthy(typeof res.result['commit_hash'] === 'string');
 })
 
-test.after.always('guaranteed cleanup', async (_t) => {
+test.after.always('guaranteed cleanup', async () => {
 	await fs.rm('./test/dumb', { recursive: true })
 });

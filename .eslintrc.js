@@ -8,7 +8,14 @@ module.exports = {
 	plugins: ['@typescript-eslint'],
 	extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'prettier'],
 	rules: {
-		'@typescript-eslint/no-unused-vars': 'error',
-		'@typescript-eslint/consistent-type-definitions': ['error', 'type']
+		'@typescript-eslint/no-unused-vars': [
+			'error',
+			{
+				"argsIgnorePattern": "^_",
+				"varsIgnorePattern": "^_"
+			}
+		],
+		'@typescript-eslint/consistent-type-definitions': ['error', 'type'],
+		"no-control-regex": 0
 	}
 };
