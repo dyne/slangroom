@@ -159,6 +159,54 @@ test('visitor throws error correctly', (t) => {
 				{ data: {}, keys: {} },
 				{
 					givenThen: 'given',
+					errors: [
+						{
+							message: new Error('at 1\n missing one of: Given I, Then I'),
+							lineNo: 1
+						}
+					],
+					matches: [],
+				},
+				'cst must not have any general errors'
+			],
+			[
+				{ data: {}, keys: {} },
+				{
+					givenThen: 'given',
+					errors: [],
+					matches: [],
+				},
+				'cst must have only one match'
+			],
+			[
+				{ data: {}, keys: {} },
+				{
+					givenThen: 'given',
+					errors: [],
+					matches: [
+						{
+							key: {
+								phrase: 'a b c'
+							},
+							bindings: new Map(),
+							err: [
+								{
+									message: new Error('at 1:19.22\n save may be and'),
+									lineNo: 1,
+									start: 19,
+									end: 22
+								}
+							],
+							lineNo: 1
+						}
+					]
+				},
+				'cst\'s match must not have any errors'
+			],
+			[
+				{ data: {}, keys: {} },
+				{
+					givenThen: 'given',
 					errors: [],
 					matches: [
 						{
@@ -214,6 +262,25 @@ test('visitor throws error correctly', (t) => {
 					],
 				},
 				'the array referenced by myFile must solely composed of strings'
+			],
+			[
+				{ data: {}, keys: {} },
+				{
+					givenThen: 'given',
+					errors: [],
+					matches: [
+						{
+							key: {
+								params: ['object'],
+								phrase: 'a b c'
+							},
+							bindings: new Map([['object', 'myObj']]),
+							err: [],
+							lineNo: 1
+						},
+					],
+				},
+				'Can\'t find myObj in DATA or KEYS'
 			],
 		] as [ZenParams, Cst, string][]
 	).forEach(([params, cst, errMessage]) => {
