@@ -96,3 +96,33 @@ test('getPlugin works', (t) => {
 	});
 	t.deepEqual(res, {'love asche':{phrase: 'love asche'}, 'a b': {phrase: 'a b', openconnect: 'connect',params: ['obj']}});
 })
+
+
+// this test relies on the fact the keys are derectly passed from
+// the given to the then phase without passing from zencode
+// and the fact that only data is printed at the end
+test("save secret variables", async (t) => {
+	const p0 = new Plugin();
+	p0.new('abc', (ctx) => ctx.pass('secret stuff'));
+	p0.new('def', (ctx) => ctx.pass('another secret stuff'));
+	const p1 = new Plugin();
+	p1.new(['abc'],'bca', (ctx) => {const bca = ctx.fetch('abc'); return ctx.pass(bca);});
+	const slangroom = new Slangroom(p0, p1);
+	const res = await slangroom.execute(`Rule unknown ignore
+		Given I abc and output secret into 'secret stuff'
+		Given I def and output secret into 'another secret stuff'
+
+		Given I have a 'string' named 'not a secret'
+		Then print 'not a secret'
+
+		Then I send abc 'secret stuff' and bca and output into 'no more secret'
+		Then I send abc 'another secret stuff' and bca and output secret into 'still a secret'
+		`,
+		{
+			data: {
+				'not a secret': 'not a secret',
+			}
+		}
+	);
+	t.deepEqual(res.result, { 'no more secret': 'secret stuff', 'not_a_secret': 'not a secret' }, res.logs);
+});
