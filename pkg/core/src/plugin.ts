@@ -328,8 +328,7 @@ export class Plugin {
 		) {
 			phrase = phraseOrParamsOrOpenconnect;
 			executor = executorOrPhraseOrParams;
-		} else {
-			/* c8 ignore next 3 */
+		} /* c8 ignore next 4 */ else {
 			// This should be unreachable.
 			throw new Error('unreachable');
 		}
