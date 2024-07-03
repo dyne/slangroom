@@ -127,6 +127,7 @@ export const visit = (cst: Cst, params: ZenParams): { ast: Ast; lineNo: number }
 	};
 
 	if (m.into) ast.into = m.into;
+	if (m.intoSecret) ast.intoSecret = m.intoSecret;
 	if (m.open) ast.open = fetchOpenconnect(params, m.open);
 	if (m.connect) ast.connect = fetchOpenconnect(params, m.connect);
 
