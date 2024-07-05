@@ -1,6 +1,6 @@
 {
 	"name": "@slangroom/ethereum",
-	"version": "1.33.13",
+	"version": "1.33.15",
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
 		"@slangroom/shared": "workspace:*",

@@ -158,7 +158,7 @@ const thorwErrors = (errorArray: GenericError[], contract: string) => {
 	for (let i = lineStart; i < lineEnd; i++) {
 		const linePrefix = `${i} | `;
 		if (i === lineNumber -1) {
-			let boldError = textHighlight(contractLines[i]!.slice(colStart, colEnd));
+			const boldError = textHighlight(contractLines[i]!.slice(colStart, colEnd));
 			const redBackground = sentenceHighlight(contractLines[i]!.slice(0, colStart) + boldError + contractLines[i]!.slice(colEnd));
 			e = e.concat(`${lineNoColor(linePrefix)}${redBackground}\n`);
 			e = e.concat(' '.repeat(colStart + linePrefix.length) + errorColor('^'.repeat(colEnd - colStart)) + '\n');
@@ -170,7 +170,7 @@ const thorwErrors = (errorArray: GenericError[], contract: string) => {
 	e = e.concat(` - ${missingColor('missing words')}\n`);
 	e = e.concat(` - ${extraColor('extra words')}\n`);
 
-	for (let err of errorArray) {
+	for (const err of errorArray) {
 		e = e.concat('\n' + err.message + '\n');
 	}
 	throw new Error(e);
