@@ -242,6 +242,9 @@ ${lineNoColor('3 | ')}${sentenceHighlight(`    ${textHighlight('Then I do some a
         ${errorColor('^^^^^^^^^^^^^^^^^^^^^')}
 ${errorColorDef}
 Error: failed
+
+Heap:
+[]
 `
 
 	const err = await t.throwsAsync(fn);
