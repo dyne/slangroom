@@ -6,6 +6,8 @@ import { Plugin, Slangroom } from '@slangroom/core';
 import test from 'ava';
 // read the version from the package.json
 import packageJson from '@slangroom/core/package.json' with { type: 'json' };
+import ignoredPackageJson from '@slangroom/ignored/package.json' with { type: 'json' };
+
 import {
 	sentenceHighlight,
 	textHighlight,
@@ -16,6 +18,13 @@ import {
 	lineNoColor
 } from '@slangroom/shared';
 
+const errorColorDef = `
+Error colors:
+ - ${errorColor('error')}
+ - ${suggestedColor('suggested words')}
+ - ${missingColor('missing words')}
+ - ${extraColor('extra words')}
+`
 
 test('@slangroom/core errors are shown and context is shown with line number', async (t) => {
     const plugin = new Plugin();
@@ -32,13 +41,7 @@ ${lineNoColor('1 | ')}${sentenceHighlight(`    Given I ${textHighlight('gibberis
                 ${errorColor('^^^^^^^^^')}
 ${lineNoColor('2 | ')}    Given nothing
 ${lineNoColor('3 | ')}    Then print data
-
-Error colors:
- - ${errorColor('error')}
- - ${suggestedColor('suggested words')}
- - ${missingColor('missing words')}
- - ${extraColor('extra words')}
-
+${errorColorDef}
 ParseError @slangroom/core@${packageJson.version}: at 2:9-17
  ${errorColor('gibberish')} may be ${suggestedColor('send')}
 
@@ -80,13 +83,7 @@ ${lineNoColor('1 | ')}${sentenceHighlight(`    Given I send param ${textHighligh
                            ${errorColor('^^^^^^^^^^^^^^^^^^^^^^^^^')}
 ${lineNoColor('2 | ')}    Given nothing
 ${lineNoColor('3 | ')}    Then print data
-
-Error colors:
- - ${errorColor('error')}
- - ${suggestedColor('suggested words')}
- - ${missingColor('missing words')}
- - ${extraColor('extra words')}
-
+${errorColorDef}
 LexError @slangroom/core@${packageJson.version}: at 2:20-44
  unclosed single-quote ${errorColor('\'param and do some action')}
 `
@@ -111,13 +108,7 @@ ${lineNoColor('1 | ')}${sentenceHighlight(`    ${textHighlight('Gibberish')} con
         ${errorColor('^^^^^^^^^')}
 ${lineNoColor('2 | ')}    Given nothing
 ${lineNoColor('3 | ')}    Then print data
-
-Error colors:
- - ${errorColor('error')}
- - ${suggestedColor('suggested words')}
- - ${missingColor('missing words')}
- - ${extraColor('extra words')}
-
+${errorColorDef}
 ParseError @slangroom/core@${packageJson.version}: at 2:1-9
  ${errorColor('Gibberish')} may be ${suggestedColor('given')} or ${suggestedColor('then')}
 
@@ -211,4 +202,48 @@ Heap:
 
 	const err = await t.throwsAsync(fn);
 	t.is(err?.message, expected, err?.message);
+});
+
+test('@slangroom/core invalid line error', async (t) => {
+    const plugin = new Plugin();
+    plugin.new('connect', ['param'], 'do some action', (_) => _.pass(null));
+
+    const slang = new Slangroom(plugin);
+    const fn = slang.execute(`Rule unknown ignore
+    Given I connect to 'url' and send param 'param' and do some action
+    Given nothing
+	Gibberish
+    Then print data`)
+
+    const expected = `${lineNoColor('2 | ')}    Given nothing
+${lineNoColor('3 | ')}${sentenceHighlight(`    ${textHighlight('Gibberish')}`)}
+        ${errorColor('^^^^^^^^^')}
+${lineNoColor('4 | ')}    Then print data
+${errorColorDef}
+Zencode Invalid Statement @slangroom/ignored@${ignoredPackageJson.version} Error: Invalid Zencode line
+`
+
+	const err = await t.throwsAsync(fn);
+	t.is(err?.message, expected);
+});
+
+test('@slangroom/core error in the then phase', async (t) => {
+    const plugin = new Plugin();
+    plugin.new('do some action', (_) => _.fail(new Error('failed')));
+
+    const slang = new Slangroom(plugin);
+    const fn = slang.execute(`Rule unknown ignore
+    Given nothing
+	Then print data
+	Then I do some action`)
+
+    const expected = `${lineNoColor('2 | ')}    Then print data
+${lineNoColor('3 | ')}${sentenceHighlight(`    ${textHighlight('Then I do some action')}`)}
+        ${errorColor('^^^^^^^^^^^^^^^^^^^^^')}
+${errorColorDef}
+Error: failed
+`
+
+	const err = await t.throwsAsync(fn);
+	t.is(err?.message, expected);
 });

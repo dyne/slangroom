@@ -17,6 +17,7 @@ nock('http://localhost')
 	.get('/greeting-en')
 	.reply(200, { req: 'Hi!' })
 	.post('/sendresult')
+	// eslint-disable-next-line  @typescript-eslint/no-explicit-any
 	.reply((_, body: any) => {
 		const req = body['req'];
 		if (req?.includes('Hola') || req?.includes('Hi')) return [200, 'received result'];

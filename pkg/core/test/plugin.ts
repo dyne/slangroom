@@ -3,7 +3,14 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import test from 'ava';
-import { DuplicatePluginError, Plugin, isSane, PluginContextTest, type PluginExecutor } from '@slangroom/core';
+import {
+	DuplicatePluginError,
+	Plugin,
+	isSane,
+	PluginContextTest,
+	PluginContextImpl,
+	type PluginExecutor
+} from '@slangroom/core';
 
 const insanes = [
 	'',
@@ -118,6 +125,19 @@ test('Plugin.new() duplicates detected', (t) => {
 	);
 });
 
+test('Plugin.new() duplicated params detected', (t) => {
+	t.throws(
+		() => {
+			const p = new Plugin();
+			p.new(['foo', 'foo'], 'a', (ctx) => ctx.pass(null));
+		},
+		{
+			instanceOf: Error,
+			message: `params must not have duplicate values: foo`,
+		},
+	);
+});
+
 test('Plugin.new() clauses work', (t) => {
 	const f: PluginExecutor = (ctx) => ctx.pass(null);
 	{
@@ -157,7 +177,7 @@ test('Plugin.new() clauses work', (t) => {
 	}
 });
 
-test('PluginContext', async (t) => {
+test('PluginContextTest', async (t) => {
 	const p = new Plugin();
 	// ctxs
 	const emptyCtx = new PluginContextTest([], {});
@@ -165,9 +185,9 @@ test('PluginContext', async (t) => {
 	const objCtx = new PluginContextTest('', {obj: 'obj'});
 	// pass and fail
 	const pass = p.new('test pass', (ctx) => ctx.pass('done'));
-	const fail = p.new('test fail', (ctx) => ctx.fail('failed'));
+	const fail = p.new('test fail', (ctx) => ctx.fail(new Error ('failed')));
 	t.deepEqual(await pass(emptyCtx), { ok: true, value: 'done' });
-	t.deepEqual(await fail(emptyCtx), { ok: false, error: 'failed' });
+	t.deepEqual(await fail(emptyCtx), { ok: false, error: new Error('failed') });
 	// connect
 	const getConnect = p.new('connect', 'test get connect', (ctx) => ctx.pass(ctx.getConnect()));
 	const fetchConnect = p.new('connect', 'test fetch connect', (ctx) => ctx.pass(ctx.fetchConnect()));
@@ -181,6 +201,69 @@ test('PluginContext', async (t) => {
 	const fetchOpen = p.new('open', 'test fetch open', (ctx) => ctx.pass(ctx.fetchOpen()));
 	t.deepEqual(await getOpen(connectOpenCtx), { ok: true, value: ['some_path']});
 	t.deepEqual(await fetchOpen(connectOpenCtx), { ok: true, value: ['some_path']});
+	t.deepEqual(await getOpen(emptyCtx), { ok: true, value: []});
+	const fetchOpenErr = await t.throwsAsync(async() => await fetchOpen(emptyCtx));
+	t.is(fetchOpenErr.message, 'a open is required');
+	// get and fetch
+	const get = p.new(['obj'],'test get', (ctx) => ctx.pass(ctx.get('obj') || null));
+	const fetch = p.new(['obj'], 'test fetch', (ctx) => ctx.pass(ctx.fetch('obj') || null));
+	t.deepEqual(await get(objCtx), { ok: true, value: 'obj' });
+	t.deepEqual(await fetch(objCtx), { ok: true, value: 'obj' });
+	t.deepEqual(await get(emptyCtx), { ok: true, value: null });
+	const err = await t.throwsAsync(async() => await fetch(emptyCtx));
+	t.is(err.message, 'the parameter isn\'t provided: obj');
+});
+
+test('PluginContextImpl', async (t) => {
+	const p = new Plugin();
+	const emptyCtx = new PluginContextImpl({
+		key: {
+			phrase: 'abc'
+		},
+		params: new Map([]),
+	});
+	const openCtx = new PluginContextImpl({
+		key: {
+			openconnect: 'open',
+			phrase: 'abc'
+		},
+		params: new Map([]),
+		open: ['some_path'],
+	});
+	const connectCtx = new PluginContextImpl({
+		key: {
+			openconnect: 'connect',
+			phrase: 'abc'
+		},
+		params: new Map([]),
+		connect: ['some_path'],
+	});
+	const objCtx = new PluginContextImpl({
+		key: {
+			params: ['obj'],
+			phrase: 'abc'
+		},
+		params: new Map([['obj', 'obj']]),
+	})
+
+	// pass and fail
+	const pass = p.new('test pass', (ctx) => ctx.pass('done'));
+	const fail = p.new('test fail', (ctx) => ctx.fail(new Error('failed')));
+	t.deepEqual(await pass(emptyCtx), { ok: true, value: 'done' });
+	t.deepEqual(await fail(emptyCtx), { ok: false, error: new Error('failed') });
+	// connect
+	const getConnect = p.new('connect', 'test get connect', (ctx) => ctx.pass(ctx.getConnect()));
+	const fetchConnect = p.new('connect', 'test fetch connect', (ctx) => ctx.pass(ctx.fetchConnect()));
+	t.deepEqual(await getConnect(connectCtx), { ok: true, value: ['some_path']});
+	t.deepEqual(await fetchConnect(connectCtx), { ok: true, value: ['some_path']});
+	t.deepEqual(await getConnect(emptyCtx), { ok: true, value: []});
+	const fetchConnectErr = await t.throwsAsync(async() => await fetchConnect(emptyCtx));
+	t.is(fetchConnectErr.message, 'a connect is required');
+	// open
+	const getOpen = p.new('open', 'test get open', (ctx) => ctx.pass(ctx.getOpen()));
+	const fetchOpen = p.new('open', 'test fetch open', (ctx) => ctx.pass(ctx.fetchOpen()));
+	t.deepEqual(await getOpen(openCtx), { ok: true, value: ['some_path']});
+	t.deepEqual(await fetchOpen(openCtx), { ok: true, value: ['some_path']});
 	t.deepEqual(await getOpen(emptyCtx), { ok: true, value: []});
 	const fetchOpenErr = await t.throwsAsync(async() => await fetchOpen(emptyCtx));
 	t.is(fetchOpenErr.message, 'a open is required');

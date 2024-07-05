@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import { Plugin } from '@slangroom/core';
+import type { JsonableObject, JsonableArray } from '@slangroom/shared';
 import _ from 'lodash';
 // read the version from the package.json
 import packageJson from '@slangroom/helpers/package.json' with { type: 'json' };
@@ -20,7 +21,7 @@ export const get = p.new(['object', 'path'], 'manipulate and get', async (ctx) =
     const object = ctx.fetch('object');
     const path = ctx.fetch('path');
     try {
-        return ctx.pass(_.get(object as any, path as string));
+        return ctx.pass(_.get(object as JsonableObject, path as string));
     } catch (e) {
         return ctx.fail(new HelperError(e));
     }
@@ -31,7 +32,7 @@ export const set = p.new(['object', 'path', 'value'], 'manipulate and set', asyn
     const path = ctx.fetch('path');
     const value = ctx.fetch('value');
     try {
-        return ctx.pass(_.set(object as any, path as string, value));
+        return ctx.pass(_.set(object as JsonableObject, path as string, value));
     } catch (e) {
         return ctx.fail(new HelperError(e));
     }
@@ -41,7 +42,7 @@ export const merge = p.new(['object', 'sources'], 'manipulate and merge', async 
     const object = ctx.fetch('object');
     const sources = ctx.fetch('sources');
     try {
-        return ctx.pass(_.merge(object as any, ...sources as any[]));
+        return ctx.pass(_.merge(object as JsonableObject, ...sources as JsonableArray));
     } catch (e) {
         return ctx.fail(new HelperError(e));
     }
@@ -51,7 +52,7 @@ export const omit = p.new(['object', 'paths'], 'manipulate and omit', async (ctx
     const object = ctx.fetch('object');
     const paths = ctx.fetch('paths');
     try {
-        return ctx.pass(_.omit(object as any, paths as any[]));
+        return ctx.pass(_.omit(object as JsonableObject, paths as string[]));
     } catch (e) {
         return ctx.fail(new HelperError(e));
     }
@@ -61,7 +62,7 @@ export const concat = p.new(['array', 'values'], 'manipulate and concat', async 
     const array = ctx.fetch('array');
     const values = ctx.fetch('values');
     try {
-        return ctx.pass(_.concat(array as any[], ...values as any[]));
+        return ctx.pass(_.concat(array as JsonableArray, ...values as JsonableArray));
     } catch (e) {
         return ctx.fail(new HelperError(e));
     }
@@ -70,7 +71,7 @@ export const concat = p.new(['array', 'values'], 'manipulate and concat', async 
 export const compact = p.new(['array'], 'manipulate and compact', async (ctx) => {
     const array = ctx.fetch('array');
     try {
-        return ctx.pass(_.compact(array as any[]));
+        return ctx.pass(_.compact(array as JsonableArray));
     } catch (e) {
         return ctx.fail(new HelperError(e));
     }
@@ -78,7 +79,7 @@ export const compact = p.new(['array'], 'manipulate and compact', async (ctx) =>
 
 export const pick = p.new(['object', 'properties'], 'manipulate and pick', async (ctx) => {
     const properties = ctx.fetch('properties') as string[] | string;
-    const obj = ctx.fetch('object') as {};
+    const obj = ctx.fetch('object') as JsonableObject;
     try {
         const manipulated = _.pick(obj, properties);
         if (Object.keys(manipulated).length === 0) {

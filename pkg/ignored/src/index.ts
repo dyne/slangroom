@@ -17,6 +17,13 @@ export class InvalidStatementError extends Error {
     }
 }
 
+type ParseResult = {
+	result: {
+		ignored: [string, number][],
+		invalid: [string, number, string][]
+	},
+	logs: string
+}
 
 /**
  * Check if the statement could be an ignored statement and thus adding Rule unknown ignore can solve the problem
@@ -57,12 +64,7 @@ const couldBeIgnored = (lineNo: number, contract: string, invalidLinesNos: numbe
 export const getIgnoredStatements = async (
 	contract: string,
 ): Promise<{ignoredLines: [string, number][], invalidLines: {message: Error, lineNo: number}[]}> => {
-	let zout: {result: {ignored: [string, number][], invalid: [string, number, string][]}; logs: string};
-	try {
-		zout = await zencodeParse(contract);
-	} catch (e) {
-		throw e;
-	}
+	const zout: ParseResult = await zencodeParse(contract);
 	const invalidLinesNos: number[] = zout.result.invalid.map((x) => x[1]);
 	const ruleUnknownIgnore = JSON.parse(zout.logs).some((x: string) => x.toLowerCase().includes('rule unknown ignore'));;
 	return {
