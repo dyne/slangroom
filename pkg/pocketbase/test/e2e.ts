@@ -73,6 +73,11 @@ Error colors:
  - extra words
 
 Slangroom @slangroom/pocketbase@${packageJson.version} Error: Can not start capacitor client in node environment
+
+Heap:
+{
+    "pb_address": "http://127.0.0.1:8090/"
+}
 `);
 });
 

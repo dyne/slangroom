@@ -41,6 +41,12 @@ Error colors:
  - extra words
 
 Slangroom @slangroom/git@${packageJson.version} Error: Could not find git root for ..
+
+Heap:
+{
+    "path": "some/dumb/path",
+    "verified_git_repo": "true"
+}
 `);
 })
 
@@ -74,6 +80,13 @@ Error colors:
  - extra words
 
 Slangroom @slangroom/git@${packageJson.version} Error: HTTP Error: 401 Unauthorized
+
+Heap:
+{
+    "url": "https://github.com/matteo-cristino/dumb",
+    "path": "another/dumb/path",
+    "cloned_repository": "true"
+}
 `);
 })
 

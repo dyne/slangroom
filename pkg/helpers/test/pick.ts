@@ -209,6 +209,21 @@ None of the properties
       }
    }
 }
+
+Heap:
+{
+    "props": "a",
+    "complex_object": {
+        "r": {
+            "a": "b",
+            "c": {
+                "d": {
+                    "e": 42
+                }
+            }
+        }
+    }
+}
 `);
 });
 
