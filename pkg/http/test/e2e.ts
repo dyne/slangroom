@@ -127,5 +127,10 @@ Error colors:
  - extra words
 
 Slangroom @slangroom/http@${packageJson.version} Error: sequential requests are not implemented
+
+Heap:
+{
+    "greeting_es": "http://localhost/greeting-es"
+}
 `);
 });

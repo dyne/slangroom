@@ -152,6 +152,13 @@ Error colors:
  - extra words
 
 Slangroom @slangroom/db@${packageJson.version} Error: Returned null for id "30" in table "firstTable"
+
+Heap:
+{
+    "n": 30,
+    "db": "sqlite://./test/db1.db",
+    "myTable": "firstTable"
+}
 `);
 });
 
@@ -180,6 +187,13 @@ Error colors:
  - extra words
 
 Slangroom @slangroom/db@${packageJson.version} Error: The dialect mariodb is not supported. Supported dialects: mssql, mariadb, mysql, oracle, postgres, db2 and sqlite.
+
+Heap:
+{
+    "n": 3,
+    "myTable": "firstTable",
+    "db": "mariodb://usr:pwd@example.com"
+}
 `);
 });
 
@@ -208,5 +222,12 @@ Error colors:
  - extra words
 
 Slangroom @slangroom/db@${packageJson.version} Error: Invalid URL
+
+Heap:
+{
+    "n": 3,
+    "myTable": "firstTable",
+    "db": "mariadb/user:pwdo@example.com"
+}
 `);
 });
