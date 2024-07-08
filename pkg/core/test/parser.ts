@@ -638,6 +638,22 @@ test('parser works', (t) => {
 					intoSecret: 'foo',
 				}
 			]
+		},
+		"Given I a b c and output wrong 'foo'" : {
+			givenThen: 'given',
+			errors: [],
+			matches: [
+				{
+					key: {
+						phrase: 'a b c'
+					},
+					bindings: new Map(),
+					err: [
+						{message: ParseError.wrong(new Token('wrong', 1, 25, 29), 'into'), lineNo: 1, start: 25, end: 29}
+					],
+					lineNo: 1,
+				}
+			]
 		}
 	}).forEach(([give, want], index) => {
 		const lexed = lex(give, 1);
