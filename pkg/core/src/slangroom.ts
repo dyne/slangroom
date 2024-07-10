@@ -108,7 +108,8 @@ export class Slangroom {
 			if (!exec) return thorwErrors( [{message: new Error('no statements matched'), lineNo}], contract);
 			const res = await exec(new PluginContextImpl(ast));
 			if (!res.ok) return thorwErrors( [{message: res.error, lineNo}], contract, paramsGiven.data);
-			if (res.ok && ast.into) paramsGiven.data[ast.into] = res.value;
+			if (ast.into) paramsGiven.data[ast.into] = res.value;
+			else if (ast.intoSecret) paramsGiven.keys[ast.intoSecret] = res.value;
 		}
 
 		const zout = await zencodeExec(contract, paramsGiven);
@@ -121,7 +122,8 @@ export class Slangroom {
 			if (!exec) return thorwErrors( [{message: new Error('no statements matched'), lineNo}], contract);
 			const res = await exec(new PluginContextImpl(ast));
 			if (!res.ok) return thorwErrors( [{message: res.error, lineNo}], contract, paramsThen.data);
-			if (res.ok && ast.into) paramsThen.data[ast.into] = res.value;
+			if (ast.into) paramsThen.data[ast.into] = res.value;
+			else if (ast.intoSecret) paramsThen.keys[ast.intoSecret] = res.value;
 		}
 
 		// remove null values from output
