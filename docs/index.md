@@ -305,7 +305,6 @@ sidebar: false
 # This is executed by slangroom
 Given I connect to 'address' and do get and output into 'result'
 # Here we run zenroom
-Given I have a 'string' named 'password'
 Given I have a 'string dictionary' named 'result'
 # Here zenroom hashes the result
 When I create the hash of 'result'
@@ -313,7 +312,7 @@ When I create the hash of 'result'
 Then print the 'hash'
 Then print the 'result'"
 			data='{
-  "address": "https://dyne.org/slangroom"
+  "address": "https://did.dyne.org/dids/did:dyne:sandbox.genericissuer:9sz8ZTztc4gsivLQyBJ5hVkbMBJZDHxrEFwjqAk17U9s"
 }'
 			keysMode='none'
 		></dyne-slangroom-editor>
