@@ -228,6 +228,24 @@ sidebar: false
     font-weight: 700;
   }
 
+  .slangroom-editor-container {
+	max-width: 1280px;
+	width: 100%;
+	display: flex;
+	flex-flow: column nowrap;
+	justify-content: stretch
+  }
+
+  .try-title {
+	margin-top: 10px;
+	margin-bottom: 20px;
+	font-size: 20px;
+	font-weight: bold;
+	background: var(--vp-c-bg);
+	width: 100%;
+	text-align: center;
+  }
+
   @media screen and (max-width: 720px) {
     .homepage .container {
       padding: 40px 24px
@@ -280,18 +298,26 @@ sidebar: false
           Deployments
         </a>
       </div>
-      <a class="video-backdrop" href="https://apiroom.net/" target="_blank">
-        <video
-          src="https://user-images.githubusercontent.com/10400064/222474710-bc263775-06b8-4a78-8099-676a9ad3c7a4.mov"
-          autoplay="true"
-          loop="true"
-          muted="true"
-        >
-        </video>
-        <div class="try-link-container">
-          <div class="try-link">Try it yourself →</div>
-        </div>
-      </a>
+	  <h3 class="try-title">Try it out! ⬇️</h3>
+	  <div class="slangroom-editor-container">
+	  	<dyne-slangroom-editor
+			contract="Rule unknown ignore
+# This is executed by slangroom
+Given I connect to 'address' and do get and output into 'result'
+# Here we run zenroom
+Given I have a 'string' named 'password'
+Given I have a 'string dictionary' named 'result'
+# Here zenroom hashes the result
+When I create the hash of 'result'
+# Here we print the output
+Then print the 'hash'
+Then print the 'result'"
+			data='{
+  "address": "https://dyne.org/slangroom"
+}'
+			keysMode='none'
+		></dyne-slangroom-editor>
+	  </div>
     </div>
   </div>
   <div style="background: var(--vp-c-bg-alt)">

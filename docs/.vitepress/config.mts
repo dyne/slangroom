@@ -4,7 +4,26 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: "Slangroom",
   base: "/slangroom/",
-  description: "🎮 Enhance zencode smart contracts with your slang ",
+	description: "🎮 Enhance zencode smart contracts with your slang ",
+
+  head: [
+		[
+			'script',
+			{
+				async: '',
+				type: "module",
+				src: 'https://cdn.jsdelivr.net/npm/@dyne/components/dist/dyne-components/dyne-components.esm.js'
+			}
+		],
+		[
+			'link',
+			{
+				rel: "stylesheet",
+				href: "https://cdn.jsdelivr.net/npm/@dyne/components/dist/dyne-components/dyne-components.css"
+			}
+		]
+	],
+
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
