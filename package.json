@@ -17,11 +17,12 @@
     "build": "pnpm -F @slangroom/* exec tsc --outdir build/esm",
     "publish:ci": "lerna version --no-changelog --conventional-commits --yes && pnpm publish -r --no-git-checks --filter './pkg/*'",
     "docs:api": "node docs/statements/index.mjs",
+    "docs:examples": "node docs/examples/index.mjs",
     "docs:ci": "node docs/statements/index.mjs ci",
     "docs:dev": "vitepress dev docs",
     "docs:build": "vitepress build docs",
     "docs:preview": "vitepress preview docs",
-	"docs": "pnpm run docs:api && pnpm run docs:build"
+    "docs": "pnpm run docs:api && pnpm run docs:examples && pnpm run docs:build"
   },
   "devDependencies": {
     "@lerna-lite/publish": "^3.3.1",
