@@ -8,7 +8,7 @@
 		"@slangroom/pocketbase": "workspace:*",
 		"@slangroom/qrcode": "workspace:*"
 	},
-	"version": "1.35.0",
+	"version": "1.36.0",
 	"repository": "https://github.com/dyne/slangroom",
 	"license": "AGPL-3.0-only",
 	"type": "module",
