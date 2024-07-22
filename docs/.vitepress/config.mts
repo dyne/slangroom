@@ -30,6 +30,7 @@ export default defineConfig({
       { text: 'Home', link: '/' },
       { text: 'Examples', link: '/examples/' },
       { text: 'Reference', link: '/statements/' },
+      { text: 'Playground', link: '/playground/' },
     ],
 
     sidebar: [
