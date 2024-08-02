@@ -12,6 +12,8 @@ import extractZip from 'extract-zip';
 // read the version from the package.json
 import packageJson from '@slangroom/fs/package.json' with { type: 'json' };
 
+export const version = packageJson.version;
+
 export class FsError extends Error {
     constructor(e: string) {
         super(e)

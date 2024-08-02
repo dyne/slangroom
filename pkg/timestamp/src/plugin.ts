@@ -3,6 +3,9 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import { Plugin } from '@slangroom/core';
+import packageJson from '@slangroom/timestamp/package.json' with { type: 'json' };
+
+export const version = packageJson.version;
 
 const p = new Plugin();
 

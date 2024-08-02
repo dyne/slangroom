@@ -15,6 +15,8 @@ import {
 // read the version from the package.json
 import packageJson from '@slangroom/db/package.json' with { type: 'json' };
 
+export const version = packageJson.version;
+
 class Result extends Model {
 	public result: string = "";
 }

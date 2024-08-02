@@ -2,6 +2,7 @@
 	"name": "@slangroom/browser",
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
+		"@slangroom/deps": "workspace:*",
 		"@slangroom/helpers": "workspace:*",
 		"@slangroom/http": "workspace:*",
 		"@slangroom/json-schema": "workspace:*",
@@ -30,7 +31,8 @@
 				"types": "./build/esm/src/*.d.ts",
 				"default": "./build/esm/src/*.js"
 			}
-		}
+		},
+		"./package.json": "./package.json"
 	},
 	"publishConfig": {
 		"access": "public"

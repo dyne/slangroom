@@ -7,6 +7,8 @@ import { Ajv, type ValidationError } from 'ajv';
 // read the version from the package.json
 import packageJson from '@slangroom/json-schema/package.json' with { type: 'json' };
 
+export const version = packageJson.version;
+
 export { ValidationError };
 
 export class JsonSchemaError extends Error {

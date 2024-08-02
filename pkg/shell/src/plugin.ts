@@ -7,6 +7,8 @@ import { execaCommand } from 'execa';
 // read the version from the package.json
 import packageJson from '@slangroom/shell/package.json' with { type: 'json' };
 
+export const version = packageJson.version;
+
 export class ShellError extends Error {
 	constructor(message: string) {
 		super(message);
