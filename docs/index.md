@@ -300,22 +300,11 @@ sidebar: false
       </div>
 	  <h3 class="try-title">Try it out! ⬇️</h3>
 	  <div class="slangroom-editor-container">
-	  	<dyne-slangroom-editor
-			contract="Rule unknown ignore
-# This is executed by slangroom
-Given I connect to 'address' and do get and output into 'result'
-# Here we run zenroom
-Given I have a 'string dictionary' named 'result'
-# Here zenroom hashes the result
-When I create the hash of 'result'
-# Here we print the output
-Then print the 'hash'
-Then print the 'result'"
-			data='{
-  "address": "https://did.dyne.org/dids/did:dyne:sandbox.genericissuer:9sz8ZTztc4gsivLQyBJ5hVkbMBJZDHxrEFwjqAk17U9s"
-}'
-			keysMode='none'
-		></dyne-slangroom-editor>
+	  	<dyne-slangroom-editor id="slangroom-editor" keysMode='none'>
+            <dyne-slangroom-preset-loader slot="topbar-right" editor-id="slangroom-editor">
+                <dyne-slangroom-preset group="helpers" name="Preset Element Test" contract="Test" data="Test"></dyne-slangroom-preset>
+            </dyne-slangroom-preset-loader>
+        </dyne-slangroom-editor>
 	  </div>
     </div>
   </div>
