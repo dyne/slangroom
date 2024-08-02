@@ -7,6 +7,8 @@ import QrCode from 'qrcode'
 // read the version from the package.json
 import packageJson from '@slangroom/qrcode/package.json' with { type: 'json' };
 
+export const version = packageJson.version;
+
 export class QrCodeError extends Error {
 	constructor(message: string) {
 		super(message);

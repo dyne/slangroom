@@ -8,6 +8,8 @@ import _ from 'lodash';
 // read the version from the package.json
 import packageJson from '@slangroom/helpers/package.json' with { type: 'json' };
 
+export const version = packageJson.version;
+
 const p = new Plugin()
 
 class HelperError extends Error {

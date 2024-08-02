@@ -7,6 +7,7 @@ import { errorColor, suggestedColor, missingColor, extraColor } from '@slangroom
 // read the version from the package.json
 import packageJson from '@slangroom/core/package.json' with { type: 'json' };
 
+export const version = packageJson.version;
 /**
  * Represents an error encountered during the parsing phrase.
  *

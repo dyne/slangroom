@@ -8,6 +8,8 @@ import * as redisClient from "@redis/client";
 // read the version from the package.json
 import packageJson from '@slangroom/redis/package.json' with { type: 'json' };
 
+export const version = packageJson.version;
+
 export class RedisError extends Error {
 	constructor(message: string) {
 		super(message);

@@ -38,6 +38,8 @@ import type { JsonableArray, JsonableObject } from '@slangroom/shared';
 // read the version from the package.json
 import packageJson from '@slangroom/wallet/package.json' with { type: 'json' };
 
+export const version = packageJson.version;
+
 export class WalletError extends Error {
 	constructor(message: string) {
 		super(message);

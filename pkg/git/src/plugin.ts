@@ -11,6 +11,8 @@ import * as path from 'node:path';
 // read the version from the package.json
 import packageJson from '@slangroom/git/package.json' with { type: 'json' };
 
+export const version = packageJson.version;
+
 export class GitError extends Error {
     constructor(e: string) {
         super(e)

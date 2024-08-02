@@ -8,6 +8,8 @@ import axios, { type AxiosRequestConfig, type AxiosHeaders } from 'axios';
 // read the version from the package.json
 import packageJson from '@slangroom/http/package.json' with { type: 'json' };
 
+export const version = packageJson.version;
+
 export class HttpError extends Error {
 	constructor(message: string) {
 		super(message);

@@ -6,6 +6,8 @@ import { zencodeParse } from '@slangroom/shared';
 // read the version from the package.json
 import packageJson from '@slangroom/ignored/package.json' with { type: 'json' };
 
+export const version = packageJson.version;
+
 /**
  * Represent zencode invalid statement error
  */

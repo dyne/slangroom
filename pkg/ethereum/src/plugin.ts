@@ -9,6 +9,8 @@ import { isAddress } from 'web3-validator';
 // read the version from the package.json
 import packageJson from '@slangroom/ethereum/package.json' with { type: 'json' };
 
+export const version = packageJson.version;
+
 const p = new Plugin();
 
 export class EthereumError extends Error {

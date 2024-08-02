@@ -8,6 +8,8 @@ import { zencodeExec } from '@slangroom/shared';
 // read the version from the package.json
 import packageJson from '@slangroom/zencode/package.json' with { type: 'json' };
 
+export const version = packageJson.version;
+
 export class ZencodeError extends Error {
 	constructor(message: string) {
 		super(message);
