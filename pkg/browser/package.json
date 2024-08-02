@@ -2,6 +2,7 @@
 	"name": "@slangroom/browser",
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
+		"@slangroom/deps": "workspace:*",
 		"@slangroom/helpers": "workspace:*",
 		"@slangroom/http": "workspace:*",
 		"@slangroom/json-schema": "workspace:*",
