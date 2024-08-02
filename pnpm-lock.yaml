@@ -116,6 +116,9 @@ importers:
       '@slangroom/core':
         specifier: workspace:*
         version: link:../core
+      '@slangroom/deps':
+        specifier: workspace:*
+        version: link:../deps
       '@slangroom/helpers':
         specifier: workspace:*
         version: link:../helpers
