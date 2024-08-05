@@ -12,14 +12,14 @@ export default defineConfig({
 			{
 				async: '',
 				type: "module",
-				src: 'https://cdn.jsdelivr.net/npm/@dyne/components/dist/dyne-components/dyne-components.esm.js'
+				src: 'https://cdn.jsdelivr.net/npm/@dyne/components@latest/dist/dyne-components/dyne-components.esm.js'
 			}
 		],
 		[
 			'link',
 			{
 				rel: "stylesheet",
-				href: "https://cdn.jsdelivr.net/npm/@dyne/components/dist/dyne-components/dyne-components.css"
+				href: "https://cdn.jsdelivr.net/npm/@dyne/components@latest/dist/dyne-components/dyne-components.css"
 			}
 		]
 	],
@@ -48,5 +48,13 @@ export default defineConfig({
       { icon: 'npm', link: 'https://www.npmjs.com/search?q=%40slangroom' },
       { icon: 'mastodon', link: 'https://socials.dyne.org/mastodon' },
     ]
-  }
+  },
+
+	vue: {
+		template: {
+			compilerOptions: {
+				isCustomElement: (tag) => ["dyne-slangroom-preset-loader", "dyne-slangroom-editor", "dyne-slangroom-preset"].includes(tag)
+			}
+		}
+	}
 })
