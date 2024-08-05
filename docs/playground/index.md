@@ -4,7 +4,10 @@ layout: 'home'
 
 
 <div class="slangroom-editor-container">
-	<dyne-slangroom-editor></dyne-slangroom-editor>
+	<dyne-slangroom-editor id="slangroom-editor">
+		<dyne-slangroom-preset-loader slot="topbar-right" editor-id="slangroom-editor">
+		</dyne-slangroom-preset-loader>
+	</dyne-slangroom-editor>
 </div>
 
 <style>

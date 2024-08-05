@@ -300,7 +300,7 @@ sidebar: false
       </div>
 	  <h3 class="try-title">Try it out! ⬇️</h3>
 	  <div class="slangroom-editor-container">
-	  	<dyne-slangroom-editor id="slangroom-editor" keysMode='none'>
+	  	<dyne-slangroom-editor id="slangroom-editor">
             <dyne-slangroom-preset-loader slot="topbar-right" editor-id="slangroom-editor">
                 <dyne-slangroom-preset group="helpers" name="Preset Element Test" contract="Test" data="Test"></dyne-slangroom-preset>
             </dyne-slangroom-preset-loader>
