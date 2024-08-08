@@ -4,20 +4,19 @@
 
 import { Plugin } from '@slangroom/core';
 import gitpkg from 'isomorphic-git';
-// TODO: why does this require index.js?
-import http from 'isomorphic-git/http/node/index.js';
-import * as fs from 'node:fs/promises';
-import * as path from 'node:path';
+import http from 'isomorphic-git/http/web/index.js';
+import { promises as fs } from 'fs';
+import * as path from 'path';
 // read the version from the package.json
 import packageJson from '@slangroom/git/package.json' with { type: 'json' };
 
 export const version = packageJson.version;
 
 export class GitError extends Error {
-    constructor(e: string) {
-        super(e)
-        this.name = 'Slangroom @slangroom/git@' + packageJson.version + ' Error'
-    }
+	constructor(e: string) {
+		super(e)
+		this.name = 'Slangroom @slangroom/git@' + packageJson.version + ' Error'
+	}
 }
 
 /**
