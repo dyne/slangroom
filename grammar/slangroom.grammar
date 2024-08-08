@@ -1,0 +1,10 @@
+@top Program { expression }
+
+expression { Name | Number | BinaryExpression }
+
+BinaryExpression { "(" expression ("+" | "-") expression ")" }
+
+@tokens {
+  Name { @asciiLetter+ }
+  Number { @digit+ }
+}

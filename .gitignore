@@ -64,3 +64,8 @@ node_modules
 # pocketbase files
 !/pkg/**/*.pb.js
 !/pkg/pocketbase/test/pb_migrations/*.js
+
+
+# grammar lezer
+!/grammar/Makefile
+!/grammar/slangroom.grammar
