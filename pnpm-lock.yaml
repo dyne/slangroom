@@ -119,6 +119,9 @@ importers:
       '@slangroom/deps':
         specifier: workspace:*
         version: link:../deps
+      '@slangroom/git':
+        specifier: workspace:*
+        version: link:../git
       '@slangroom/helpers':
         specifier: workspace:*
         version: link:../helpers
