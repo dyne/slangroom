@@ -5,8 +5,8 @@
 import { Plugin } from '@slangroom/core';
 import gitpkg from 'isomorphic-git';
 import http from 'isomorphic-git/http/web/index.js';
-import { promises as fs } from 'fs';
-import * as path from 'path';
+import { promises as fs } from '@zenfs/core';
+import * as path from 'path-browserify';
 // read the version from the package.json
 import packageJson from '@slangroom/git/package.json' with { type: 'json' };
 

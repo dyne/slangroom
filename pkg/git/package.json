@@ -3,7 +3,9 @@
 	"version": "1.38.1",
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
-		"isomorphic-git": "^1.25.10"
+		"@zenfs/core": "^0.16.3",
+		"isomorphic-git": "^1.25.10",
+		"path-browserify": "^1.0.1"
 	},
 	"repository": "https://github.com/dyne/slangroom",
 	"license": "AGPL-3.0-only",
@@ -38,5 +40,8 @@
 	},
 	"engines": {
 		"node": "^18.20.0 || ^20.10.0 || >=22.0.0 <22.3.0 || ^22.4.0"
+	},
+	"devDependencies": {
+		"@types/path-browserify": "^1.0.2"
 	}
 }
