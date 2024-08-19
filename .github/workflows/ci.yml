@@ -20,6 +20,13 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  reuse:
+    name: 🚨 reuse
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: fsfe/reuse-action@v4
+
   build_and_test:
     runs-on: ubuntu-latest
     strategy:
@@ -27,7 +34,6 @@ jobs:
       max-parallel: 1
       matrix:
         node: [ lts/*, current ]
-
     steps:
       - name: 🛠️ Prepare pnpm workspace
         uses: dyne/pnpm@main
