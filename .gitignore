@@ -10,7 +10,7 @@
 !/LICENSE
 !/LICENSES/*
 !/**/*.license
-!/.reuse/dep5
+!/REUSE.toml
 
 # shithub
 !/.github/workflows/*.yml
