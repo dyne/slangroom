@@ -3,6 +3,7 @@
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
 		"@slangroom/deps": "workspace:*",
+		"@slangroom/git": "workspace:*",
 		"@slangroom/helpers": "workspace:*",
 		"@slangroom/http": "workspace:*",
 		"@slangroom/json-schema": "workspace:*",
@@ -43,7 +44,7 @@
 		"esbuild": "^0.21.4"
 	},
 	"scripts": {
-		"build": "pnpm exec esbuild --bundle src/index.ts --outfile=build/slangroom.js --target=es2016 --external:fs --external:path --external:crypto && cp build/slangroom.js public"
+		"build": "pnpm exec esbuild --bundle src/index.ts --outfile=build/slangroom.js --target=ESNext --external:fs --external:path --external:crypto && cp build/slangroom.js public"
 	},
 	"engines": {
 		"node": "^18.20.0 || ^20.10.0 || ^22"

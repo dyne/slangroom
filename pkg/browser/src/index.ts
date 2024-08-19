@@ -4,6 +4,7 @@
 
 import { Slangroom, version as coreVersion } from '@slangroom/core';
 import { qrcode, version as qrcodeVersion } from '@slangroom/qrcode';
+import { git, version as gitVersion } from '@slangroom/git';
 import { http, version as httpVersion } from '@slangroom/http';
 import { pocketbase, version as pocketbaseVersion } from '@slangroom/pocketbase';
 import { helpers, version as helpersVersion } from '@slangroom/helpers';
@@ -14,6 +15,10 @@ import packageJson from '@slangroom/browser/package.json' with { type: 'json' };
 export const version = packageJson.version;
 
 const plugins_dict = {
+	git: {
+		plugin: git,
+		version: gitVersion
+	},
 	http: {
 		plugin: http,
 		version: httpVersion
