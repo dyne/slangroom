@@ -309,7 +309,6 @@ kw<term> { @specialize[@name={term}]<Identifier, term> }
   newline { "\n" | "\r\n" }
   comment { "#" (![\n])* }
   StringLiteral { "'" (![\\\n'] | "\\" _)* "'" }
-  symbols { "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" | "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" | "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z" |
-          "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" | "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z" | "_" }
+  symbols { $[a-zA-Z_]+ | "_" }
   Identifier { symbols+ }
 }
