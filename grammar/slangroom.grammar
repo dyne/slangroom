@@ -1,6 +1,6 @@
 @top Statement { (RuleStatement? SlangroomStatement) }
 
-SlangroomStatement { (GivenStatement | ThenStatement | ThenPrint)* }
+SlangroomStatement { (GivenStatement | ThenStatement | ThenPrint | GivenHaveStatement)* }
 
 
 RuleStatement {
@@ -32,6 +32,9 @@ ThenStatement {
 
 ThenPrint {
   kw<"Then"> kw<"print"> (kw<"the">? StringLiteral | kw<"all">? kw<"data">)
+}
+GivenHaveStatement {
+	kw<"Given"> kw<"I"> kw<"have"> (kw<"a">? | kw<"my">?) StringLiteral kw<"inside">?  kw<"named">? StringLiteral?
 }
 
 // ===== Plugin-Specific Statements =====
