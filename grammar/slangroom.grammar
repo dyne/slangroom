@@ -1,4 +1,24 @@
-@top Statement { (GivenStatement | ThenStatement | ThenPrint)* }
+@top Statement { (RuleStatement? SlangroomStatement) }
+
+SlangroomStatement { (GivenStatement | ThenStatement | ThenPrint)* }
+
+
+RuleStatement {
+  kw<"Rule"> (VersionRule | UnknownIgnoreRule)
+}
+
+VersionRule {
+  kw<"version"> VersionNumber
+}
+
+UnknownIgnoreRule {
+  kw<"unknown"> kw<"ignore">
+}
+
+
+VersionNumber {
+  Number '.'? Number? '.'? Number?
+}
 
 @skip { space | newline | comment }
 
@@ -309,6 +329,7 @@ kw<term> { @specialize[@name={term}]<Identifier, term> }
   newline { "\n" | "\r\n" }
   comment { "#" (![\n])* }
   StringLiteral { "'" (![\\\n'] | "\\" _)* "'" }
-  symbols { $[a-zA-Z_]+ | "_" }
+  symbols { $[a-zA-Z_] | "_" }
   Identifier { symbols+ }
+  Number { $[0-9]+ }
 }
