@@ -37,14 +37,12 @@ ThenStatement {
 }
 
 ThenPrint {
-    kw<"Then"> kw<"print">
-    (kw<"the">? StringLiteral | kw<"all">? kw<"data">)
+    kw<"Then"> kw<"print"> (StringLiteral | Identifier | Keywords)+
 }
 
 GivenHaveStatement {
-    kw<"Given"> kw<"I"> kw<"have">
-    (kw<"a">? | kw<"my">?)
-    kw<"valid">? StringLiteral kw<"inside">? kw<"named">? StringLiteral?
+    kw<"Given"> kw<"that">? kw<"I"> kw<"have"> (kw<"a">? | kw<"my">?) kw<"valid">? StringLiteral kw<"inside">? kw<"named">? StringLiteral?
+    (kw <"and"> kw<"I"> kw<"have"> (kw<"a">? | kw<"my">?) kw<"valid">? StringLiteral kw<"inside">? kw<"named">? StringLiteral?)*
 }
 
 GivenIamStatement {
