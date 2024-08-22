@@ -3,7 +3,7 @@
 }
 
 SlangroomStatement {
-    (GivenStatement | ThenStatement | ThenPrint | GivenHaveStatement | GivenIamStatement | WhenStatement)*
+    (GivenStatement | ThenStatement | ThenPrint | GivenHaveStatement | GivenIamStatement | WhenStatement | IfEndifStatement)*
 }
 
 RuleStatement {
@@ -53,6 +53,14 @@ GivenIamStatement {
 WhenStatement {
   kw<"When"> kw<"I"> (Identifier | Keywords | StringLiteral)+
 }
+
+IfEndifStatement{
+    Condition+ (WhenStatement |  ThenStatement | ThenPrint)* kw<"Endif">
+}
+
+Condition {
+    kw<"If"> kw<"I"> kw<"verify"> (Identifier | Keywords | StringLiteral)+
+ }
 
 // ===== Plugin-Specific Statements =====
 
