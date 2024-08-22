@@ -357,9 +357,10 @@ SaveAction {
 kw<term> {
     @specialize[@name={term}]<Identifier, term>
 }
+
 Keywords {
     kw<"Rule"> | kw<"version"> | kw<"unknown"> | kw<"ignore"> |
-    kw<"have"> | kw<"a"> | kw<"my"> | kw<"valid"> | kw<"inside"> | kw<"named"> | kw<"am"> | kw<"known"> |
+    kw<"have"> | kw<"a"> | kw<"my"> | kw<"that"> | kw<"valid"> | kw<"inside"> | kw<"named"> | kw<"am"> | kw<"known"> |
     kw<"as"> | kw<"connect"> | kw<"to"> | kw<"and"> | kw<"send"> |
     kw<"statement"> | kw<"parameters"> | kw<"record"> | kw<"table"> |
     kw<"variable"> | kw<"name"> | kw<"address"> | kw<"transaction_id"> |
@@ -373,35 +374,29 @@ Keywords {
     kw<"update_parameters"> | kw<"delete_parameters"> | kw<"url"> |
     kw<"text"> | kw<"command"> | kw<"jwk"> | kw<"holder"> | kw<"fields"> |
     kw<"verifier_url"> | kw<"issued_vc"> | kw<"disclosed"> | kw<"nonce"> |
-    kw<"sk"> | kw<"token"> | kw<"script"> | kw<"data"> | kw<"keys"> |
-    kw<"extra"> | kw<"conf"> | kw<"execute"> | kw<"sql"> | kw<"with"> |
-    kw<"read"> | kw<"the"> | kw<"record"> | kw<"of"> | kw<"database"> |
-    kw<"table"> | kw<"save"> | kw<"ethereum"> | kw<"nonce"> | kw<"bytes"> |
+    kw<"sk"> | kw<"script"> | kw<"keys"> | kw<"extra"> | kw<"conf"> |
+    kw<"execute"> | kw<"sql"> | kw<"with"> | kw<"read"> | kw<"the"> |
+    kw<"of"> | kw<"database"> | kw<"save"> | kw<"ethereum"> | kw<"bytes"> |
     kw<"balance"> | kw<"suggested"> | kw<"gas"> | kw<"price"> |
     kw<"transaction"> | kw<"id"> | kw<"after"> | kw<"broadcast"> |
     kw<"erc20"> | kw<"decimals"> | kw<"name"> | kw<"symbol"> | kw<"total"> |
-    kw<"supply"> | kw<"erc721"> | kw<"id"> | kw<"in"> | kw<"owner"> |
-    kw<"asset"> | kw<"download"> | kw<"extract"> | kw<"read"> | kw<"verbatim"> |
-    kw<"store"> | kw<"list"> | kw<"directory"> | kw<"verify"> | kw<"exists"> |
+    kw<"supply"> | kw<"erc721"> | kw<"in"> | kw<"owner"> |
+    kw<"asset"> | kw<"download"> | kw<"extract"> | kw<"verbatim"> |
+    kw<"store"> | kw<"list"> | kw<"directory"> | kw<"exists"> |
     kw<"does"> | kw<"not"> | kw<"exist"> | kw<"verify"> | kw<"repository"> |
-    kw<"clone"> | kw<"create"> | kw<"new"> | kw<"commit"> | kw<"manipulate"> |
+    kw<"clone"> | kw<"create"> | kw<"new"> | kw<"manipulate"> |
     kw<"get"> | kw<"set"> | kw<"merge"> | kw<"omit"> | kw<"concat"> |
-    kw<"compact"> | kw<"pick"> | kw<"delete"> | kw<"do"> | kw<"sequential"> |
+    kw<"compact"> | kw<"pick"> | kw<"do"> | kw<"sequential"> |
     kw<"parallel"> | kw<"same"> | kw<"post"> | kw<"put"> | kw<"patch"> |
-    kw<"delete"> | kw<"validate"> | kw<"json"> | kw<"generate"> |
-    kw<"access"> | kw<"authorization"> | kw<"code"> | kw<"request_uri"> |
-    kw<"get"> | kw<"authorization"> | kw<"details"> | kw<"from"> |
-    kw<"token"> | kw<"add"> | kw<"data"> | kw<"to"> | kw<"start"> |
-    kw<"pb"> | kw<"client"> | kw<"capacitor"> | kw<"login"> | kw<"ask"> |
-    kw<"password"> | kw<"reset"> | kw<"get"> | kw<"some"> | kw<"records"> |
-    kw<"one"> | kw<"create"> | kw<"update"> | kw<"delete"> | kw<"send"> |
-    kw<"request"> | kw<"create"> | kw<"qr"> | kw<"code"> | kw<"write"> |
-    kw<"object"> | kw<"into"> | kw<"key"> | kw<"from"> | kw<"redis"> |
-    kw<"delete"> | kw<"key"> | kw<"in"> | kw<"shell"> | kw<"fetch"> |
+    kw<"validate"> | kw<"json"> | kw<"generate"> |
+    kw<"access"> | kw<"authorization"> | kw<"code"> | kw<"details"> | kw<"from"> |
+    kw<"add"> | kw<"to"> | kw<"start"> | kw<"pb"> | kw<"capacitor"> |
+    kw<"login"> | kw<"ask"> | kw<"password"> | kw<"reset"> | kw<"some"> |
+    kw<"records"> | kw<"one"> | kw<"qr"> | kw<"write"> | kw<"into"> |
+    kw<"redis"> | kw<"delete"> | kw<"shell"> | kw<"fetch"> |
     kw<"local"> | kw<"timestamp"> | kw<"milliseconds"> | kw<"seconds"> |
     kw<"vc"> | kw<"sd"> | kw<"jwt"> | kw<"p-256"> | kw<"public"> |
-    kw<"pretty"> | kw<"print"> | kw<"zencode"> | kw<"output"> |
-    kw<"into">
+    kw<"pretty"> | kw<"print"> | kw<"zencode"> | kw<"output">
 }
 
 @tokens {
