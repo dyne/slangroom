@@ -1,5 +1,5 @@
 @top Statement {
-    (RuleStatement? SlangroomStatement)
+    (RuleStatement? ScenarioStatement? SlangroomStatement)
 }
 
 SlangroomStatement {
