@@ -68,4 +68,13 @@ node_modules
 
 # grammar lezer
 !/grammar/Makefile
-!/grammar/slangroom.grammar
+!/grammar/src/syntax.grammar
+!/grammar/src/index.ts
+!/grammar/test/*
+!/grammar/.npmignore
+!/grammar/package.json
+!/grammar/rollup.config.js
+!/grammar/tsconfig.json
+
+
+
