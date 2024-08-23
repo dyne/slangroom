@@ -1,0 +1,420 @@
+@top Statement {
+    (RuleStatement? SlangroomStatement)
+}
+
+SlangroomStatement {
+    (GivenStatement | ThenStatement | ThenPrint | GivenHaveStatement | GivenIamStatement | WhenStatement | IfEndifStatement)*
+}
+
+RuleStatement {
+    kw<"Rule"> (VersionRule | UnknownIgnoreRule)
+}
+
+ScenarioStatement {
+    kw<"Scenario"> StringLiteral ":" (Identifier | Keywords)+
+}
+
+VersionRule {
+    kw<"version"> VersionNumber
+}
+
+UnknownIgnoreRule {
+    kw<"unknown"> kw<"ignore">
+}
+
+VersionNumber {
+    Number '.'? Number? '.'? Number?
+}
+
+@skip {
+    space | newline | comment
+}
+
+GivenStatement {
+    kw<"Given"> kw<"I">
+    (DbStatement | EthereumStatement | FsStatement | GitStatement | HelpersStatement | HttpStatement | JsonSchemaStatement | OAuthStatement | PocketbaseStatement | QrCodeStatement | RedisStatement | ShellStatement | TimestampStatement | WalletStatement | ZencodeStatement)
+}
+
+ThenStatement {
+    kw<"Then"> kw<"I">
+    (DbStatement | EthereumStatement | FsStatement | GitStatement | HelpersStatement | HttpStatement | JsonSchemaStatement | OAuthStatement | PocketbaseStatement | QrCodeStatement | RedisStatement | ShellStatement | TimestampStatement | WalletStatement | ZencodeStatement)
+}
+
+ThenPrint {
+    kw<"Then"> kw<"print"> (StringLiteral | Identifier | Keywords)+
+}
+
+GivenHaveStatement {
+    kw<"Given"> kw<"that">? kw<"I"> kw<"have"> (kw<"a">? | kw<"my">?) kw<"valid">? StringLiteral kw<"inside">? kw<"named">? StringLiteral?
+    (kw <"and"> kw<"I"> kw<"have"> (kw<"a">? | kw<"my">?) kw<"valid">? StringLiteral kw<"inside">? kw<"named">? StringLiteral?)*
+}
+
+GivenIamStatement {
+    kw<"Given"> kw<"I"> kw<"am">
+    (kw<"known"> kw<"as">)? StringLiteral
+}
+
+WhenStatement {
+  kw<"When"> kw<"I"> (Identifier | Keywords | StringLiteral)+
+}
+
+IfEndifStatement{
+    Condition+ (WhenStatement |  ThenStatement | ThenPrint)* kw<"Endif">
+}
+
+Condition {
+    kw<"If"> kw<"I"> kw<"verify"> (Identifier | Keywords | StringLiteral)+
+ }
+
+// ===== Plugin-Specific Statements =====
+
+DbStatement {
+    DbConnectAction (kw<"and">? SaveAction)*
+}
+
+EthereumStatement {
+    EthereumConnectAction (kw<"and">? SaveAction)*
+}
+
+FsStatement {
+    FsConnectAction (kw<"and">? SaveAction)*
+}
+
+GitStatement {
+    GitOpenOrConnectAction (kw<"and">? SaveAction)*
+}
+
+HelpersStatement {
+    HelpersSend (kw<"and">? SaveAction)*
+}
+
+HttpStatement {
+    HttpConnectAction (kw<"and">? SaveAction)*
+}
+
+JsonSchemaStatement {
+    JsonSchemaSend (kw<"and">? SaveAction)*
+}
+
+OAuthStatement {
+    OAuthSend (kw<"and">? SaveAction)*
+}
+
+PocketbaseStatement {
+    PocketbaseConnectAction (kw<"and">? SaveAction)*
+}
+
+QrCodeStatement {
+    QrCodeSend (kw<"and">? SaveAction)*
+}
+
+RedisStatement {
+    RedisConnectAction (kw<"and">? SaveAction)*
+}
+
+ShellStatement {
+    ShellSend (kw<"and">? SaveAction)*
+}
+
+TimestampStatement {
+    TimestampAction (kw<"and">? SaveAction)*
+}
+
+WalletStatement {
+    WalletSend (kw<"and">? SaveAction)*
+}
+
+ZencodeStatement {
+    ZencodeSend (kw<"and">? SaveAction)*
+}
+
+// ===== Connect Actions =====
+
+DbConnectAction {
+    ((kw<"connect"> kw<"to"> StringLiteral) kw<"and">)? DbSend
+}
+
+EthereumConnectAction {
+    ((kw<"connect"> kw<"to"> StringLiteral) kw<"and">)? EthereumSend
+}
+
+FsConnectAction {
+    ((kw<"connect"> kw<"to"> StringLiteral) kw<"and">)? FsSend
+}
+
+GitOpenOrConnectAction {
+    ((kw<"open"> kw<"the"> StringLiteral | kw<"connect"> kw<"to"> StringLiteral) kw<"and">)? GitSend
+}
+
+HttpConnectAction {
+    ((kw<"connect"> kw<"to"> StringLiteral) kw<"and">)? HttpSend
+}
+
+PocketbaseConnectAction {
+    ((kw<"connect"> kw<"to"> StringLiteral) kw<"and">)? PocketbaseSend
+}
+
+RedisConnectAction {
+    ((kw<"connect"> kw<"to"> StringLiteral) kw<"and">)? RedisSend
+}
+
+// ===== Send Actions =====
+
+DbSend {
+    ((kw<"send"> (kw<"statement"> | kw<"parameters"> | kw<"record"> | kw<"table"> | kw<"variable"> | kw<"name">) StringLiteral) kw<"and">)
+    (DbAction | DbSend)
+}
+
+EthereumSend {
+    ((kw<"send"> (kw<"address"> | kw<"transaction_id"> | kw<"addresses"> | kw<"transaction"> | kw<"sc">) StringLiteral) kw<"and">)
+    (EthereumAction | EthereumSend)
+}
+
+FsSend {
+    ((kw<"send"> (kw<"path"> | kw<"content">) StringLiteral) kw<"and">)
+    (FsAction | FsSend)
+}
+
+GitSend {
+    ((kw<"send"> (kw<"path"> | kw<"commit">) StringLiteral) kw<"and">) GitAction
+}
+
+HelpersSend {
+    ((kw<"send"> (kw<"paths"> | kw<"array"> | kw<"values"> | kw<"properties">) StringLiteral) kw<"and">)
+    (HelpersAction | HelpersSend)
+}
+
+HttpSend {
+    ((kw<"send"> (kw<"headers"> | kw<"object">) StringLiteral) kw<"and">)
+    (HttpAction | HttpSend)
+}
+
+JsonSchemaSend {
+    ((kw<"send"> (kw<"json_data"> | kw<"json_schema">) StringLiteral) kw<"and">)
+    (JsonSchemaAction | JsonSchemaSend)
+}
+
+OAuthSend {
+    ((kw<"send"> (kw<"request"> | kw<"server_data"> | kw<"client"> | kw<"expires_in"> | kw<"token"> | kw<"request_uri"> | kw<"data">) StringLiteral) kw<"and">)
+    (OAuthAction | OAuthSend)
+}
+
+PocketbaseSend {
+    ((kw<"send"> (kw<"my_credentials"> | kw<"email"> | kw<"list_parameters"> | kw<"show_parameters"> | kw<"create_parameters"> | kw<"record_parameters"> | kw<"update_parameters"> | kw<"delete_parameters"> | kw<"url"> | kw<"send_parameters">) StringLiteral) kw<"and">)
+    (PocketbaseAction | PocketbaseSend)
+}
+
+QrCodeSend {
+    ((kw<"send"> kw<"text"> StringLiteral) kw<"and">) QrCodeAction
+}
+
+RedisSend {
+    ((kw<"send"> (kw<"key"> | kw<"object">) StringLiteral) kw<"and">)
+    (RedisAction | RedisSend)
+}
+
+ShellSend {
+    ((kw<"send"> (kw<"command">) StringLiteral) kw<"and">) ShellAction
+}
+
+WalletSend {
+    ((kw<"send"> (kw<"jwk"> | kw<"object"> | kw<"holder"> | kw<"fields"> | kw<"verifier_url"> | kw<"issued_vc"> | kw<"disclosed"> | kw<"nonce"> | kw<"sk"> | kw<"token">) StringLiteral) kw<"and">)
+    (WalletAction | WalletSend)
+}
+
+ZencodeSend {
+    ((kw<"send"> (kw<"script"> | kw<"data"> | kw<"keys"> | kw<"extra"> | kw<"conf">) StringLiteral) kw<"and">)
+    (ZencodeAction | ZencodeSend)
+}
+
+// ===== Execute Actions =====
+
+DbAction {
+    kw<"execute"> kw<"sql"> kw<"statement"> |
+    kw<"execute"> kw<"sql"> kw<"statement"> kw<"with"> kw<"parameters"> |
+    kw<"read"> kw<"the"> kw<"record"> kw<"of"> kw<"the"> kw<"table"> |
+    kw<"save"> kw<"the"> kw<"variable"> kw<"in"> kw<"the"> kw<"database"> kw<"table">
+}
+
+EthereumAction {
+    kw<"read"> kw<"the"> kw<"ethereum"> kw<"nonce"> |
+    kw<"read"> kw<"the"> kw<"ethereum"> kw<"bytes"> |
+    kw<"read"> kw<"the"> kw<"ethereum"> kw<"balance"> |
+    kw<"read"> kw<"the"> kw<"ethereum"> kw<"suggested"> kw<"gas"> kw<"price"> |
+    kw<"read"> kw<"the"> kw<"ethereum"> kw<"transaction"> kw<"id"> kw<"after"> kw<"broadcast"> |
+    kw<"read"> kw<"the"> kw<"erc20"> kw<"decimals"> |
+    kw<"read"> kw<"the"> kw<"erc20"> kw<"name"> |
+    kw<"read"> kw<"the"> kw<"erc20"> kw<"symbol"> |
+    kw<"read"> kw<"the"> kw<"erc20"> kw<"balance"> |
+    kw<"read"> kw<"the"> kw<"erc20"> kw<"total"> kw<"supply"> |
+    kw<"read"> kw<"the"> kw<"erc721"> kw<"id"> kw<"in"> kw<"transaction"> |
+    kw<"read"> kw<"the"> kw<"erc721"> kw<"owner"> |
+    kw<"read"> kw<"the"> kw<"erc721"> kw<"asset">
+}
+
+FsAction {
+    kw<"download"> kw<"and"> kw<"extract"> |
+    kw<"read"> kw<"file"> kw<"content"> |
+    kw<"read"> kw<"verbatim"> kw<"file"> kw<"content"> |
+    kw<"store"> kw<"in"> kw<"file"> |
+    kw<"list"> kw<"directory"> kw<"content"> |
+    kw<"verify"> kw<"file"> kw<"exists"> |
+    kw<"verify"> kw<"file"> kw<"does"> kw<"not"> kw<"exist">
+}
+
+GitAction {
+    kw<"verify"> kw<"git"> kw<"repository"> |
+    kw<"clone"> kw<"repository"> |
+    kw<"create"> kw<"new"> kw<"git"> kw<"commit">
+}
+
+HelpersAction {
+    kw<"manipulate"> kw<"and"> kw<"get"> |
+    kw<"manipulate"> kw<"and"> kw<"set"> |
+    kw<"manipulate"> kw<"and"> kw<"merge"> |
+    kw<"manipulate"> kw<"and"> kw<"omit"> |
+    kw<"manipulate"> kw<"and"> kw<"concat"> |
+    kw<"manipulate"> kw<"and"> kw<"compact"> |
+    kw<"manipulate"> kw<"and"> kw<"pick"> |
+    kw<"manipulate"> kw<"and"> kw<"delete">
+}
+
+HttpAction {
+    kw<"do"> kw<"get"> |
+    kw<"do"> kw<"sequential"> kw<"get"> |
+    kw<"do"> kw<"parallel"> kw<"get"> |
+    kw<"do"> kw<"same"> kw<"get"> |
+    kw<"do"> kw<"post"> |
+    kw<"do"> kw<"sequential"> kw<"post"> |
+    kw<"do"> kw<"parallel"> kw<"post"> |
+    kw<"do"> kw<"same"> kw<"post"> |
+    kw<"do"> kw<"put"> |
+    kw<"do"> kw<"sequential"> kw<"put"> |
+    kw<"do"> kw<"parallel"> kw<"put"> |
+    kw<"do"> kw<"same"> kw<"put"> |
+    kw<"do"> kw<"patch"> |
+    kw<"do"> kw<"sequential"> kw<"patch"> |
+    kw<"do"> kw<"parallel"> kw<"patch"> |
+    kw<"do"> kw<"same"> kw<"patch"> |
+    kw<"do"> kw<"delete"> |
+    kw<"do"> kw<"sequential"> kw<"delete"> |
+    kw<"do"> kw<"parallel"> kw<"delete"> |
+    kw<"do"> kw<"same"> kw<"delete">
+}
+
+JsonSchemaAction {
+    kw<"validate"> kw<"json">
+}
+
+OAuthAction {
+    kw<"generate"> kw<"access"> kw<"token"> |
+    kw<"verify"> kw<"request"> kw<"parameters"> |
+    kw<"generate"> kw<"authorization"> kw<"code"> |
+    kw<"generate"> kw<"request"> kw<"uri"> |
+    kw<"get"> kw<"authorization"> kw<"details"> kw<"from"> kw<"token"> |
+    kw<"add"> kw<"data"> kw<"to"> kw<"authorization"> kw<"details">
+}
+
+PocketbaseAction {
+    kw<"start"> kw<"pb"> kw<"client"> |
+    kw<"start"> kw<"capacitor"> kw<"pb"> kw<"client"> |
+    kw<"login"> |
+    kw<"ask"> kw<"password"> kw<"reset"> |
+    kw<"get"> kw<"some"> kw<"records"> |
+    kw<"get"> kw<"one"> kw<"record"> |
+    kw<"create"> kw<"record"> |
+    kw<"update"> kw<"record"> |
+    kw<"delete"> kw<"record"> |
+    kw<"send"> kw<"request">
+}
+
+QrCodeAction {
+    kw<"create"> kw<"qr"> kw<"code">
+}
+
+RedisAction {
+    kw<"write"> kw<"object"> kw<"into"> kw<"key"> kw<"in"> kw<"redis"> |
+    kw<"read"> kw<"key"> kw<"from"> kw<"redis"> |
+    kw<"delete"> kw<"key"> kw<"from"> kw<"redis">
+}
+
+ShellAction {
+    kw<"execute"> kw<"in"> kw<"shell">
+}
+
+TimestampAction {
+    kw<"fetch"> kw<"the"> kw<"local"> kw<"timestamp"> kw<"in"> kw<"milliseconds"> |
+    kw<"fetch"> kw<"the"> kw<"local"> kw<"timestamp"> kw<"in"> kw<"seconds">
+}
+
+WalletAction {
+    kw<"create"> kw<"vc"> kw<"sd"> kw<"jwt"> |
+    kw<"present"> kw<"vc"> kw<"sd"> kw<"jwt"> |
+    kw<"verify"> kw<"vc"> kw<"sd"> kw<"jwt"> |
+    kw<"create"> kw<"p-256"> kw<"key"> |
+    kw<"create"> kw<"p-256"> kw<"public"> kw<"key"> |
+    kw<"pretty"> kw<"print"> kw<"sd"> kw<"jwt">
+}
+
+ZencodeAction {
+    kw<"execute"> kw<"zencode">
+}
+
+SaveAction {
+    kw<"output"> kw<"into"> StringLiteral
+}
+
+kw<term> {
+    @specialize[@name={term}]<Identifier, term>
+}
+
+Keywords {
+    kw<"Rule"> | kw<"version"> | kw<"unknown"> | kw<"ignore"> |
+    kw<"have"> | kw<"a"> | kw<"my"> | kw<"that"> | kw<"valid"> | kw<"inside"> | kw<"named"> | kw<"am"> | kw<"known"> |
+    kw<"as"> | kw<"connect"> | kw<"to"> | kw<"and"> | kw<"send"> |
+    kw<"statement"> | kw<"parameters"> | kw<"record"> | kw<"table"> |
+    kw<"variable"> | kw<"name"> | kw<"address"> | kw<"transaction_id"> |
+    kw<"addresses"> | kw<"transaction"> | kw<"sc"> | kw<"path"> |
+    kw<"content"> | kw<"commit"> | kw<"paths"> | kw<"array"> |
+    kw<"values"> | kw<"properties"> | kw<"headers"> | kw<"object"> |
+    kw<"json_data"> | kw<"json_schema"> | kw<"request"> | kw<"server_data"> |
+    kw<"client"> | kw<"expires_in"> | kw<"token"> | kw<"request_uri"> |
+    kw<"data"> | kw<"my_credentials"> | kw<"email"> | kw<"list_parameters"> |
+    kw<"show_parameters"> | kw<"create_parameters"> | kw<"record_parameters"> |
+    kw<"update_parameters"> | kw<"delete_parameters"> | kw<"url"> |
+    kw<"text"> | kw<"command"> | kw<"jwk"> | kw<"holder"> | kw<"fields"> |
+    kw<"verifier_url"> | kw<"issued_vc"> | kw<"disclosed"> | kw<"nonce"> |
+    kw<"sk"> | kw<"script"> | kw<"keys"> | kw<"extra"> | kw<"conf"> |
+    kw<"execute"> | kw<"sql"> | kw<"with"> | kw<"read"> | kw<"the"> |
+    kw<"of"> | kw<"database"> | kw<"save"> | kw<"ethereum"> | kw<"bytes"> |
+    kw<"balance"> | kw<"suggested"> | kw<"gas"> | kw<"price"> |
+    kw<"transaction"> | kw<"id"> | kw<"after"> | kw<"broadcast"> |
+    kw<"erc20"> | kw<"decimals"> | kw<"name"> | kw<"symbol"> | kw<"total"> |
+    kw<"supply"> | kw<"erc721"> | kw<"in"> | kw<"owner"> |
+    kw<"asset"> | kw<"download"> | kw<"extract"> | kw<"verbatim"> |
+    kw<"store"> | kw<"list"> | kw<"directory"> | kw<"exists"> |
+    kw<"does"> | kw<"not"> | kw<"exist"> | kw<"verify"> | kw<"repository"> |
+    kw<"clone"> | kw<"create"> | kw<"new"> | kw<"manipulate"> |
+    kw<"get"> | kw<"set"> | kw<"merge"> | kw<"omit"> | kw<"concat"> |
+    kw<"compact"> | kw<"pick"> | kw<"do"> | kw<"sequential"> |
+    kw<"parallel"> | kw<"same"> | kw<"post"> | kw<"put"> | kw<"patch"> |
+    kw<"validate"> | kw<"json"> | kw<"generate"> |
+    kw<"access"> | kw<"authorization"> | kw<"code"> | kw<"details"> | kw<"from"> |
+    kw<"add"> | kw<"to"> | kw<"start"> | kw<"pb"> | kw<"capacitor"> |
+    kw<"login"> | kw<"ask"> | kw<"password"> | kw<"reset"> | kw<"some"> |
+    kw<"records"> | kw<"one"> | kw<"qr"> | kw<"write"> | kw<"into"> |
+    kw<"redis"> | kw<"delete"> | kw<"shell"> | kw<"fetch"> |
+    kw<"local"> | kw<"timestamp"> | kw<"milliseconds"> | kw<"seconds"> |
+    kw<"vc"> | kw<"sd"> | kw<"jwt"> | kw<"p-256"> | kw<"public"> |
+    kw<"pretty"> | kw<"print"> | kw<"zencode"> | kw<"output">
+}
+
+@tokens {
+    space { " " | "\t" }
+    newline { "\n" | "\r\n" }
+    comment { "#" (![\n])* }
+    StringLiteral { "'" (![\\\n'] | "\\" _)* "'" }
+    symbols { $[a-zA-Z_] | "_" }
+    Identifier { symbols+ }
+    Number { $[0-9]+ }
+}
