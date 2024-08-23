@@ -1,41 +1,22 @@
-# Booleans
+# First basic test
 
-#t
-#f
-
-==>
-
-Program(Boolean, Boolean)
-
-# Identifiers
-
-one
-Two_Three
+Given I fetch the local timestamp in seconds
 
 ==>
 
-Program(Identifier, Identifier)
+Statement(SlangroomStatement(GivenStatement(Given,I,TimestampStatement(TimestampAction(fetch,the,local,timestamp,in,seconds)))))
 
-# Strings
+#Second basic test
 
-"hello"
-"one\"\\two"
+Rule unknown ignore
 
-==>
+Given I connect to 'database' and send record 'id' and send table 'table' and read the record of the table and output into 'result'
 
-Program(String, String)
-
-# Applications
-
-(begin
-  (when #t
-    (print (concat "hello" " " "world")))
-  (print "DONE"))
+Given I have a 'string dictionary' named 'result'
+Then print the 'result'
 
 ==>
 
-Program(Application(
-  Identifier,
-  Application(Identifier, Boolean, Application(
-    Identifier, Application(Identifier, String, String, String)))
-  Application(Identifier, String)))
+Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)), SlangroomStatement(GivenStatement(Given,I,DbStatement(DbConnectAction(connect,to, StringLiteral, and,
+	DbSend(send, record, StringLiteral, and, DbSend(send, table StringLiteral, and,DbAction(read,the,record,of,the,table)))), and, SaveAction(output,into, StringLiteral))),
+	GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),ThenPrint(Then,print,Keywords(the),StringLiteral)))
