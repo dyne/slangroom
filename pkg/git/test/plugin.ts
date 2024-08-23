@@ -3,22 +3,25 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import ava, { type TestFn } from 'ava';
-import * as fs from 'node:fs/promises';
-import { join } from 'node:path';
-import * as os from 'node:os';
+import { promises as fs } from '@zenfs/core';
+import path from 'path-browserify';
 import git from 'isomorphic-git';
 import { PluginContextTest } from '@slangroom/core';
 import { cloneRepository, createNewGitCommit, verifyGitRepository } from '@slangroom/git';
 
 const test = ava as TestFn<string>;
+const join = path.join;
 
 test.beforeEach(async (t) => {
-	const tmpdir = await fs.mkdtemp(join(os.tmpdir(), 'slangroom-test-'));
+	await fs.mkdir('/tmp');
+	const tmpdir = await fs.mkdtemp('slangroom-test-');
 	process.env['FILES_DIR'] = tmpdir;
 	t.context = tmpdir;
 });
 
-test.afterEach(async (t) => await fs.rm(t.context, { recursive: true }));
+test.afterEach(async (t) => {
+	await fs.rm(t.context, { recursive: true });
+});
 
 test.serial('verifyGitRepository works', async (t) => {
 	const path = join('foo', 'bar');
