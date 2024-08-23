@@ -10,6 +10,10 @@ RuleStatement {
     kw<"Rule"> (VersionRule | UnknownIgnoreRule)
 }
 
+ScenarioStatement {
+    kw<"Scenario"> StringLiteral ":" (Identifier | Keywords)+
+}
+
 VersionRule {
     kw<"version"> VersionNumber
 }
