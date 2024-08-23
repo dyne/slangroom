@@ -6,7 +6,7 @@ import { Plugin } from '@slangroom/core';
 import gitpkg from 'isomorphic-git';
 import http from 'isomorphic-git/http/web/index.js';
 import { promises as fs } from '@zenfs/core';
-import * as path from 'path-browserify';
+import path from 'path-browserify';
 // read the version from the package.json
 import packageJson from '@slangroom/git/package.json' with { type: 'json' };
 
@@ -14,11 +14,13 @@ export const version = packageJson.version;
 
 export class GitError extends Error {
 	constructor(e: string) {
-		super(e)
-		this.name = 'Slangroom @slangroom/git@' + packageJson.version + ' Error'
+		super(e);
+		this.name = 'Slangroom @slangroom/git@' + packageJson.version + ' Error';
 	}
 }
 
+type dirResponse = { ok: true; dirpath: string } | { ok: false; error: string };
+type fileResponse = { ok: true; filepath: string } | { ok: false; error: string };
 /**
  * @internal
  */
@@ -27,7 +29,7 @@ export const sandboxDir = () => {
 	return process.env['FILES_DIR'];
 };
 
-const sandboxizeDir = (unsafe: string): ({ok: true, dirpath: string} | {ok: false, error: string}) => {
+const sandboxizeDir = (unsafe: string): dirResponse => {
 	const normalized = path.normalize(unsafe);
 	// `/` and `..` prevent directory traversal
 	const doesDirectoryTraversal = normalized.startsWith('/') || normalized.startsWith('..');
@@ -38,7 +40,7 @@ const sandboxizeDir = (unsafe: string): ({ok: true, dirpath: string} | {ok: fals
 	return { ok: true, dirpath: path.join(sandboxdir, normalized) };
 };
 
-const sandboxizeFile = (sandboxdir: string, unsafe: string): ({ok: true, filepath: string} | {ok: false, error: string}) => {
+const sandboxizeFile = (sandboxdir: string, unsafe: string): fileResponse => {
 	const normalized = path.normalize(unsafe);
 	// `/` and `..` prevent directory traversal
 	const doesDirectoryTraversal = normalized.startsWith('/') || normalized.startsWith('..');
@@ -78,7 +80,7 @@ export const cloneRepository = p.new('connect', ['path'], 'clone repository', as
 
 	const res = sandboxizeDir(unsafe);
 	if (!res.ok) return ctx.fail(new GitError(res.error));
-	try  {
+	try {
 		await gitpkg.clone({ fs: fs, http: http, dir: res.dirpath, url: repoUrl });
 		return ctx.pass(null);
 	} catch (e) {
@@ -89,49 +91,54 @@ export const cloneRepository = p.new('connect', ['path'], 'clone repository', as
 /*
  * @internal
  */
-export const createNewGitCommit = p.new('open', ['commit'], 'create new git commit', async (ctx) => {
-	const unsafe = ctx.fetchOpen()[0];
-	const res = sandboxizeDir(unsafe);
-	if (!res.ok) return ctx.fail(new GitError(res.error));
+export const createNewGitCommit = p.new(
+	'open',
+	['commit'],
+	'create new git commit',
+	async (ctx) => {
+		const unsafe = ctx.fetchOpen()[0];
+		const res = sandboxizeDir(unsafe);
+		if (!res.ok) return ctx.fail(new GitError(res.error));
 
-	const commit = ctx.fetch('commit') as {
-		message: string;
-		author: string;
-		email: string;
-		files: string[];
-	};
+		const commit = ctx.fetch('commit') as {
+			message: string;
+			author: string;
+			email: string;
+			files: string[];
+		};
 
-	try {
-		commit.files.map((unsafe) => {
-			const r = sandboxizeFile(res.dirpath, unsafe);
-			if (!r.ok) throw new Error(r.error);
-			return r.filepath;
-		});
+		try {
+			commit.files.map((unsafe) => {
+				const r = sandboxizeFile(res.dirpath, unsafe);
+				if (!r.ok) throw new Error(r.error);
+				return r.filepath;
+			});
 
-		await Promise.all(
-			commit.files.map((safe) => {
-				return gitpkg.add({
-					fs: fs,
-					dir: res.dirpath,
-					filepath: safe,
-				});
-			}),
-		);
+			await Promise.all(
+				commit.files.map((safe) => {
+					return gitpkg.add({
+						fs: fs,
+						dir: res.dirpath,
+						filepath: safe,
+					});
+				}),
+			);
 
-		const hash = await gitpkg.commit({
-			fs: fs,
-			dir: res.dirpath,
-			message: commit.message,
-			author: {
-				name: commit.author,
-				email: commit.email,
-			},
-		});
+			const hash = await gitpkg.commit({
+				fs: fs,
+				dir: res.dirpath,
+				message: commit.message,
+				author: {
+					name: commit.author,
+					email: commit.email,
+				},
+			});
 
-		return ctx.pass(hash);
-	} catch (e) {
-		return ctx.fail(new GitError(e.message));
-	}
-});
+			return ctx.pass(hash);
+		} catch (e) {
+			return ctx.fail(new GitError(e.message));
+		}
+	},
+);
 
 export const git = p;
