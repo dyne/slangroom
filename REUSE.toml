@@ -1,0 +1,21 @@
+# SPDX-FileCopyrightText: 2024 Dyne.org foundation
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+version = 1
+SPDX-PackageName = "slangroom"
+SPDX-PackageSupplier = "Matteo Cristino <matteo@dyne.org>"
+SPDX-PackageDownloadLocation = "https://github.com/ForkbombEu/slangroom"
+
+[[annotations]]
+path = ["examples/**/*"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2024 Dyne.org foundation"
+SPDX-License-Identifier = "AGPL-3.0-or-later"
+
+[[annotations]]
+path = ["pkg/pocketbase/test/pb_migrations/*"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2024 Dyne.org foundation"
+SPDX-License-Identifier = "AGPL-3.0-or-later"
+

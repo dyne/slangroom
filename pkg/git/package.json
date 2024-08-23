@@ -1,6 +1,6 @@
 {
 	"name": "@slangroom/git",
-	"version": "1.38.1",
+	"version": "1.39.0",
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
 		"@zenfs/core": "^0.16.3",

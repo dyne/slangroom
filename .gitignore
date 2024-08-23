@@ -10,7 +10,7 @@
 !/LICENSE
 !/LICENSES/*
 !/**/*.license
-!/.reuse/dep5
+!/REUSE.toml
 
 # shithub
 !/.github/workflows/*.yml
@@ -64,3 +64,8 @@ node_modules
 # pocketbase files
 !/pkg/**/*.pb.js
 !/pkg/pocketbase/test/pb_migrations/*.js
+
+
+# grammar lezer
+!/grammar/Makefile
+!/grammar/slangroom.grammar
