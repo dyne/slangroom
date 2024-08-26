@@ -184,7 +184,7 @@ GitSend {
 }
 
 HelpersSend {
-    ((kw<"send"> (kw<"paths"> | kw<"array"> | kw<"values"> | kw<"properties">) StringLiteral) kw<"and">)
+    ((kw<"send"> (kw<"path"> | kw<"paths"> |  kw<"object"> | kw<"value"> | kw<"sources"> | kw<"array"> | kw<"values"> | kw<"properties">) StringLiteral) kw<"and">)
     (HelpersAction | HelpersSend)
 }
 
