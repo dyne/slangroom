@@ -49,8 +49,8 @@ ThenPrint {
 }
 
 GivenHaveStatement {
-    kw<"Given"> kw<"that">? kw<"I"> kw<"have"> (kw<"a">? | kw<"my">? | kw<"the">?) kw<"valid">? StringLiteral kw<"inside">? kw<"named">? StringLiteral?
-    (kw <"and"> kw<"I"> kw<"have"> (kw<"a">? | kw<"my">?) kw<"valid">? StringLiteral kw<"inside">? kw<"named">? StringLiteral?)*
+    kw<"Given"> kw<"that">? kw<"I"> kw<"have"> (kw<"a">? | kw<"my">? | kw<"the">?) kw<"valid">? StringLiteral (kw<"inside"> | kw<"in">)?  kw<"named">? StringLiteral?
+    (kw <"and"> kw<"I"> kw<"have"> (kw<"a">? | kw<"my">?) kw<"valid">? StringLiteral (kw<"inside"> | kw<"in">)? kw<"named">? StringLiteral?)*
 }
 
 GivenIamStatement {
@@ -380,7 +380,7 @@ Keywords {
     kw<"variable"> | kw<"name"> | kw<"address"> | kw<"transaction_id"> |
     kw<"addresses"> | kw<"transaction"> | kw<"sc"> | kw<"path"> |
     kw<"content"> | kw<"commit"> | kw<"paths"> | kw<"array"> |
-    kw<"values"> | kw<"properties"> | kw<"headers"> | kw<"object"> |
+    kw<"values"> | kw<"value"> | kw<"sources"> | kw<"properties"> | kw<"headers"> | kw<"object"> |
     kw<"json_data"> | kw<"json_schema"> | kw<"request"> | kw<"server_data"> |
     kw<"client"> | kw<"expires_in"> | kw<"token"> | kw<"request_uri"> |
     kw<"data"> | kw<"my_credentials"> | kw<"email"> | kw<"list_parameters"> |
@@ -388,7 +388,7 @@ Keywords {
     kw<"update_parameters"> | kw<"delete_parameters"> | kw<"url"> |
     kw<"text"> | kw<"command"> | kw<"jwk"> | kw<"holder"> | kw<"fields"> |
     kw<"verifier_url"> | kw<"issued_vc"> | kw<"disclosed"> | kw<"nonce"> |
-    kw<"sk"> | kw<"script"> | kw<"keys"> | kw<"extra"> | kw<"conf"> |
+    kw<"sk"> | kw<"script"> | kw<"key"> | kw<"keys"> | kw<"extra"> | kw<"conf"> |
     kw<"execute"> | kw<"sql"> | kw<"with"> | kw<"read"> | kw<"the"> |
     kw<"of"> | kw<"database"> | kw<"save"> | kw<"ethereum"> | kw<"bytes"> |
     kw<"balance"> | kw<"suggested"> | kw<"gas"> | kw<"price"> |
@@ -419,6 +419,6 @@ Keywords {
     comment { "#" (![\n])* }
     StringLiteral { "'" (![\\\n'] | "\\" _)* "'" }
     symbols { $[a-zA-Z_] | "_" }
-    Identifier { symbols+ }
+    Identifier { symbols+ Number* }
     Number { $[0-9]+ }
 }
