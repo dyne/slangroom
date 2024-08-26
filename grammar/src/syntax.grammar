@@ -241,11 +241,11 @@ DbAction {
 }
 
 EthereumAction {
-    kw<"read"> kw<"the"> kw<"ethereum"> kw<"nonce"> |
-    kw<"read"> kw<"the"> kw<"ethereum"> kw<"bytes"> |
-    kw<"read"> kw<"the"> kw<"ethereum"> kw<"balance"> |
-    kw<"read"> kw<"the"> kw<"ethereum"> kw<"suggested"> kw<"gas"> kw<"price"> |
-    kw<"read"> kw<"the"> kw<"ethereum"> kw<"transaction"> kw<"id"> kw<"after"> kw<"broadcast"> |
+    kw<"read"> kw<"the"> kw<"ethereum">? kw<"nonce"> |
+    kw<"read"> kw<"the"> kw<"ethereum">? kw<"bytes"> |
+    kw<"read"> kw<"the"> kw<"ethereum">? kw<"balance"> |
+    kw<"read"> kw<"the"> kw<"ethereum">? kw<"suggested"> kw<"gas"> kw<"price"> |
+    kw<"read"> kw<"the"> kw<"ethereum">? kw<"transaction"> kw<"id"> kw<"after"> kw<"broadcast"> |
     kw<"read"> kw<"the"> kw<"erc20"> kw<"decimals"> |
     kw<"read"> kw<"the"> kw<"erc20"> kw<"name"> |
     kw<"read"> kw<"the"> kw<"erc20"> kw<"symbol"> |
