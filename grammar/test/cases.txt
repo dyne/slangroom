@@ -1,4 +1,4 @@
-# First basic test
+# Single statement
 
 Given I fetch the local timestamp in seconds
 
@@ -6,7 +6,7 @@ Given I fetch the local timestamp in seconds
 
 Statement(SlangroomStatement(GivenStatement(Given,I,TimestampStatement(TimestampAction(fetch,the,local,timestamp,in,seconds)))))
 
-#Second basic test
+#Db example
 
 Rule unknown ignore
 
@@ -20,3 +20,311 @@ Then print the 'result'
 Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)), SlangroomStatement(GivenStatement(Given,I,DbStatement(DbConnectAction(connect,to, StringLiteral, and,
 	DbSend(send, record, StringLiteral, and, DbSend(send, table StringLiteral, and,DbAction(read,the,record,of,the,table)))), and, SaveAction(output,into, StringLiteral))),
 	GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),ThenPrint(Then,print,Keywords(the),StringLiteral)))
+
+#Ethereum complex example
+
+Rule unknown ignore
+Scenario 'ethereum': Store an object on eth
+
+Given I connect to 'ethereum' and send address 'address' and read the ethereum nonce and output into 'ethereum_nonce'
+Given I connect to 'ethereum' and read the suggested gas price and output into 'gas_price'
+
+# from slangroom
+Given I have a 'ethereum nonce'
+Given I have a 'gas price'
+
+# from keys
+Given I have the 'keyring'
+
+# from data
+Given I have a 'ethereum address' named 'storage contract'
+Given I have a 'string' named 'to be stored'
+Given I have a 'gas limit'
+
+# create the signed transaction to store the data
+When I create the ethereum transaction to 'storage contract'
+When I use the ethereum transaction to store 'to be stored'
+When I create the signed ethereum transaction for chain 'fabt'
+
+Then print the 'signed ethereum transaction'
+
+Then I connect to 'ethereum' and send transaction 'signed_ethereum_transaction' and read the ethereum transaction id after broadcast and output into 'transaction_id'
+
+==>
+
+Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),ScenarioStatement(Scenario,StringLiteral,Identifier,Identifier,Keywords(object),Identifier,Identifier),
+	SlangroomStatement(GivenStatement(Given,I,EthereumStatement(EthereumConnectAction(connect,to,StringLiteral,and,EthereumSend(send,address,StringLiteral,and,
+	EthereumAction(read,the,ethereum,nonce))),and,SaveAction(output,into,StringLiteral))),GivenStatement(Given,I,
+	EthereumStatement(EthereumConnectAction(connect,to,StringLiteral,and,EthereumAction(read,the,suggested,gas,price)),and,SaveAction(output,into,StringLiteral))),
+	GivenHaveStatement(Given,I,have,a,StringLiteral),GivenHaveStatement(Given,I,have,a,StringLiteral),GivenHaveStatement(Given,I,have,the,StringLiteral),
+	GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),GivenHaveStatement(Given,I,have,a,StringLiteral),
+	WhenStatement(When,I,Keywords(create),Keywords(the),Keywords(ethereum),Keywords(transaction),Keywords(to),StringLiteral),
+	WhenStatement(When,I,Identifier,Keywords(the),Keywords(ethereum),Keywords(transaction),Keywords(to),Keywords(store),StringLiteral),
+	WhenStatement(When,I,Keywords(create),Keywords(the),Identifier,Keywords(ethereum),Keywords(transaction),Identifier,Identifier,StringLiteral),
+	ThenPrint(Then,print,Keywords(the),StringLiteral),ThenStatement(Then,I,EthereumStatement(EthereumConnectAction(connect,to,StringLiteral,and,
+	EthereumSend(send,transaction,StringLiteral,and,EthereumAction(read,the,ethereum,transaction,id,after,broadcast))),and,SaveAction(output,into,StringLiteral)))))
+
+#Fs example
+
+Rule unknown ignore
+Given I send path 'file_path_1' and verify file exists
+Given I send path 'file_path_2' and verify file does not exist
+Given I have a 'string' named 'file_path_1'
+Then print the 'file_path_1'
+
+==>
+
+Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),SlangroomStatement(GivenStatement(Given,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,
+	FsAction(verify,file,exists))))),GivenStatement(Given,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,FsAction(verify,file,does,not,exist))))),
+	GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),ThenPrint(Then,print,Keywords(the),StringLiteral)))
+
+#Git example
+
+Rule unknown ignore
+
+Given I connect to 'url' and send path 'path' and clone repository
+
+Given I have a 'string' named 'cloned_repository'
+Then print the data
+
+==>
+
+Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),SlangroomStatement(GivenStatement(Given,I,GitStatement(GitOpenOrConnectAction
+	(connect,to,StringLiteral,and,GitSend(send,path,StringLiteral,and,GitAction(clone,repository))))),GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),
+	ThenPrint(Then,print,Keywords(the),Keywords(data))))
+
+#Helpers example
+
+Rule unknown ignore
+
+Given I send array 'array' and send values 'values' and manipulate and concat and output into 'result'
+
+Given I have a 'string array' named 'result'
+Then print the data
+
+==>
+
+Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),SlangroomStatement(GivenStatement(Given,I,HelpersStatement(HelpersSend(send,array,StringLiteral,and,
+	HelpersSend(send,values,StringLiteral,and,HelpersAction(manipulate,and,concat))),and,SaveAction(output,into,StringLiteral))),
+	GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),ThenPrint(Then,print,Keywords(the),Keywords(data))))
+
+#Http example
+
+Rule unknown ignore
+
+Given I connect to 'address' and do get and output into 'result'
+Given I have a 'string dictionary' named 'result'
+Then print the 'result'
+
+==>
+
+Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),SlangroomStatement(GivenStatement(Given,I,HttpStatement(HttpConnectAction(connect,to,StringLiteral,and,
+	HttpAction(do,get)),and,SaveAction(output,into,StringLiteral))),GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),ThenPrint(Then,print,Keywords(the),StringLiteral)))
+
+#Json-schema example
+
+Rule unknown ignore
+
+Given I send json_data 'json_data' and send json_schema 'json_schema' and validate json and output into 'result'
+
+Given I have a 'string dictionary' named 'result'
+Then print the 'result'
+
+==>
+
+Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),SlangroomStatement(GivenStatement(Given,I,JsonSchemaStatement(JsonSchemaSend(send,json_data,StringLiteral,and,
+	JsonSchemaSend(send,json_schema,StringLiteral,and,JsonSchemaAction(validate,json))),and,SaveAction(output,into,StringLiteral))),
+	GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),ThenPrint(Then,print,Keywords(the),StringLiteral)))
+
+#Oauth example
+
+Rule unknown ignore
+Scenario 'http': url encode
+
+Given I have a 'string dictionary' named 'json_body'
+Given I have a 'string dictionary' named 'request'
+
+When I create the http get parameters from 'json_body' using percent encoding
+When I move 'json_body' to 'body' in 'request'
+
+Then print the 'request'
+
+Then I send request 'request' and send server_data 'server_data' and generate access token and output into 'result'
+
+==>
+
+Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),ScenarioStatement(Scenario,StringLiteral,Keywords(url),Identifier),SlangroomStatement(
+	GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),
+	WhenStatement(When,I,Keywords(create),Keywords(the),Identifier,Keywords(get),Keywords(parameters),Keywords(from),StringLiteral,Identifier,Identifier,Identifier),
+	WhenStatement(When,I,Identifier,StringLiteral,Keywords(to),StringLiteral,Keywords(in),StringLiteral),ThenPrint(Then,print,Keywords(the),StringLiteral),
+	ThenStatement(Then,I,OAuthStatement(OAuthSend(send,request,StringLiteral,and,OAuthSend(send,server_data,StringLiteral,and,OAuthAction(generate,access,token))),and,
+	SaveAction(output,into,StringLiteral)))))
+
+#Pocketbase example
+
+Rule unknown ignore
+
+Given I connect to 'pb_address' and start pb client
+Given I send my_credentials 'my_credentials' and login
+
+Given I send create_parameters 'create_parameters' and send record_parameters 'record_parameters' and create record and output into 'result'
+
+Given I have a 'string dictionary' named 'result'
+Then print the 'result'
+
+==>
+
+Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),SlangroomStatement(GivenStatement(Given,I,PocketbaseStatement(PocketbaseConnectAction(connect,to,StringLiteral,and,
+	PocketbaseAction(start,pb,client)))),GivenStatement(Given,I,PocketbaseStatement(PocketbaseConnectAction(PocketbaseSend(send,my_credentials,StringLiteral,and,
+	PocketbaseAction(login))))),GivenStatement(Given,I,PocketbaseStatement(PocketbaseConnectAction(PocketbaseSend(send,create_parameters,StringLiteral,and,
+	PocketbaseSend(send,record_parameters,StringLiteral,and,PocketbaseAction(create,record)))),and,SaveAction(output,into,StringLiteral))),
+	GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),ThenPrint(Then,print,Keywords(the),StringLiteral)))
+
+#Qrcode example
+
+Rule unknown ignore
+
+Given I send text 'text' and create qr code and output into 'result'
+
+Given I have a 'string' named 'result'
+Then print the 'result'
+
+==>
+
+Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),SlangroomStatement(GivenStatement(Given,I,QrCodeStatement(QrCodeSend(send,text,StringLiteral,and,
+	QrCodeAction(create,qr,code)),and,SaveAction(output,into,StringLiteral))),GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),
+	ThenPrint(Then,print,Keywords(the),StringLiteral)))
+
+#Redis example
+
+Rule unknown ignore
+
+Given I connect to 'redis' and send key 'key' and delete key from redis and output into 'result'
+
+Given I have a 'number' named 'result'
+Then print the 'result'
+
+==>
+
+Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),SlangroomStatement(GivenStatement(Given,I,RedisStatement(RedisConnectAction(connect,to,StringLiteral,and,
+	RedisSend(send,key,StringLiteral,and,RedisAction(delete,key,from,redis))),and,SaveAction(output,into,StringLiteral))),
+	GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),ThenPrint(Then,print,Keywords(the),StringLiteral)))
+
+#Shell example
+
+Rule unknown ignore
+
+Given I send command 'command' and execute in shell and output into 'result'
+
+Given I have a 'string' named 'result'
+Then print the 'result'
+
+==>
+
+Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),SlangroomStatement(GivenStatement(Given,I,ShellStatement(ShellSend(send,command,StringLiteral,and,
+	ShellAction(execute,in,shell)),and,SaveAction(output,into,StringLiteral))),GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),
+	ThenPrint(Then,print,Keywords(the),StringLiteral)))
+
+#Timestamp example
+
+Rule unknown ignore
+
+Given I fetch the local timestamp in seconds and output into 'result_in_seconds'
+Given I fetch the local timestamp in milliseconds and output into 'result_in_milliseconds'
+
+Given I have a 'string' named 'result_in_seconds'
+Given I have a 'string' named 'result_in_milliseconds'
+Then print the 'result_in_seconds'
+Then print the 'result_in_milliseconds'
+
+==>
+
+Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),SlangroomStatement(GivenStatement(Given,I,TimestampStatement(TimestampAction(fetch,the,local,timestamp,in,seconds),and,
+	SaveAction(output,into,StringLiteral))),GivenStatement(Given,I,TimestampStatement(TimestampAction(fetch,the,local,timestamp,in,milliseconds),and,SaveAction(output,into,StringLiteral))),
+	GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),
+	ThenPrint(Then,print,Keywords(the),StringLiteral),ThenPrint(Then,print,Keywords(the),StringLiteral)))
+
+
+
+#Zencode example
+
+Rule unknown ignore
+
+Given I send keys 'keys' and send data 'data' and send script 'script' and execute zencode and output into 'result'
+
+Given I have a 'string dictionary' named 'result'
+Then print the 'result'
+
+==>
+
+Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),SlangroomStatement(GivenStatement(Given,I,ZencodeStatement(ZencodeSend(send,keys,StringLiteral,and,
+	ZencodeSend(send,data,StringLiteral,and,ZencodeSend(send,script,StringLiteral,and,ZencodeAction(execute,zencode)))),and,SaveAction(output,into,StringLiteral))),
+	GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),ThenPrint(Then,print,Keywords(the),StringLiteral)))
+
+#Test from Didroom
+
+
+Scenario 'http'
+Scenario 'w3c': create jwk
+Rule unknown ignore
+
+Given I send path 'secrets_path' and read file content and output into 'secrets'
+Given I send object 'secrets' and send path 'controller_path' and manipulate and get and output into 'controller'
+Given I send object 'secrets' and send path 'controller' and manipulate and get and output into 'personal_keyring'
+
+Given I send path 'well-known_path' and read file content and output into 'well-known'
+Given I have a 'string dictionary' named 'well-known'
+
+# Loading the private keys
+Given my name is in a 'string' named 'controller'
+Given I have the 'keyring' in 'personal_keyring'
+
+Given I have a 'string dictionary' named 'server'
+Given I have a 'string dictionary' named 'request'
+Given I have a 'string' named 'request_uri'
+Given I have a 'string' named 'client_id'
+
+#-server data
+When I pickup from path 'well-known.issuer'
+When I move 'issuer' to 'url' in 'server'
+When I create jwk of es256 public key with private key
+When I move 'jwk' in 'server'
+
+# - request.body
+When I set 'base-url' to 'http://' as 'string'
+When I create the url from 'base-url'
+When I append 'client_id' as http request to 'url'
+When I append the percent encoding of 'request_uri' as http request to 'url'
+When I split the leftmost '8' bytes of 'url'
+When I rename the 'url' to 'body'
+When I move 'body' in 'request'
+
+Then print the 'server'
+Then print the 'request'
+
+Then I send request 'request' and send server_data 'server' and verify request parameters
+
+
+
+==>
+
+Statement(ScenarioStatement(Scenario,StringLiteral),ScenarioStatement(Scenario,StringLiteral,Keywords(create),Keywords(jwk)),RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),
+	SlangroomStatement(GivenStatement(Given,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,FsAction(read,file,content))),and,SaveAction(output,into,StringLiteral))),
+	GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersAction(manipulate,and,get))),and,
+	SaveAction(output,into,StringLiteral))),GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,
+	HelpersSend(send,path,StringLiteral,and,HelpersAction(manipulate,and,get))),and,SaveAction(output,into,StringLiteral))),
+	GivenStatement(Given,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,FsAction(read,file,content))),and,SaveAction(output,into,StringLiteral))),
+	GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),GivenName(Given,my,name,is,Keywords(in),Keywords(a),StringLiteral,Keywords(named),StringLiteral),
+	GivenHaveStatement(Given,I,have,the,StringLiteral,in,StringLiteral),GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),
+	GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),
+	GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),WhenStatement(When,I,Identifier,Keywords(from),Keywords(path),StringLiteral),
+	WhenStatement(When,I,Identifier,StringLiteral,Keywords(to),StringLiteral,Keywords(in),StringLiteral),
+	WhenStatement(When,I,Keywords(create),Keywords(jwk),Keywords(of),Identifier,Keywords(public),Keywords(key),Keywords(with),Identifier,Keywords(key)),
+	WhenStatement(When,I,Identifier,StringLiteral,Keywords(in),StringLiteral),WhenStatement(When,I,Keywords(set),StringLiteral,Keywords(to),StringLiteral,Keywords(as),StringLiteral),
+	WhenStatement(When,I,Keywords(create),Keywords(the),Keywords(url),Keywords(from),StringLiteral),
+	WhenStatement(When,I,Identifier,StringLiteral,Keywords(as),Identifier,Keywords(request),Keywords(to),StringLiteral),
+	WhenStatement(When,I,Identifier,Keywords(the),Identifier,Identifier,Keywords(of),StringLiteral,Keywords(as),Identifier,Keywords(request),Keywords(to),StringLiteral),
+	WhenStatement(When,I,Identifier,Keywords(the),Identifier,StringLiteral,Keywords(bytes),Keywords(of),StringLiteral),
+	WhenStatement(When,I,Identifier,Keywords(the),StringLiteral,Keywords(to),StringLiteral),WhenStatement(When,I,Identifier,StringLiteral,Keywords(in),StringLiteral),
+	ThenPrint(Then,print,Keywords(the),StringLiteral),ThenPrint(Then,print,Keywords(the),StringLiteral),
+	ThenStatement(Then,I,OAuthStatement(OAuthSend(send,request,StringLiteral,and,OAuthSend(send,server_data,StringLiteral,and,OAuthAction(verify,request,parameters)))))))
