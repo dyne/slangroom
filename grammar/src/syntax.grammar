@@ -49,7 +49,7 @@ ThenPrint {
 }
 
 GivenHaveStatement {
-    kw<"Given"> kw<"that">? kw<"I"> kw<"have"> (kw<"a">? | kw<"my">?) kw<"valid">? StringLiteral kw<"inside">? kw<"named">? StringLiteral?
+    kw<"Given"> kw<"that">? kw<"I"> kw<"have"> (kw<"a">? | kw<"my">? | kw<"the">?) kw<"valid">? StringLiteral kw<"inside">? kw<"named">? StringLiteral?
     (kw <"and"> kw<"I"> kw<"have"> (kw<"a">? | kw<"my">?) kw<"valid">? StringLiteral kw<"inside">? kw<"named">? StringLiteral?)*
 }
 
