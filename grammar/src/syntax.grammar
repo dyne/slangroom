@@ -7,7 +7,7 @@
 }
 
 SlangroomStatement {
-    (GivenStatement | ThenStatement | ThenPrint | GivenHaveStatement | GivenIamStatement | WhenStatement | IfEndifStatement)*
+    (GivenStatement | ThenStatement | ThenPrint | GivenHaveStatement | GivenName | WhenStatement | IfEndifStatement)*
 }
 
 RuleStatement {
@@ -53,9 +53,11 @@ GivenHaveStatement {
     (kw <"and"> kw<"I"> kw<"have"> (kw<"a">? | kw<"my">?) kw<"valid">? StringLiteral (kw<"inside"> | kw<"in">)? kw<"named">? StringLiteral?)*
 }
 
-GivenIamStatement {
-    kw<"Given"> kw<"I"> kw<"am">
-    (kw<"known"> kw<"as">)? StringLiteral
+GivenName {
+    (kw<"Given"> kw<"I"> kw<"am">
+    (kw<"known"> kw<"as">)? StringLiteral) |
+	(kw<"Given"> kw<"my"> kw<"name"> kw<"is"> (Identifier | Keywords | StringLiteral)+)
+
 }
 
 WhenStatement {
