@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 @top Statement {
-    (RuleStatement? ScenarioStatement? SlangroomStatement)
+    ( RuleStatement? ScenarioStatement* RuleStatement?  SlangroomStatement)
 }
 
 SlangroomStatement {
@@ -15,7 +15,7 @@ RuleStatement {
 }
 
 ScenarioStatement {
-    kw<"Scenario"> StringLiteral ":" (Identifier | Keywords)+
+    kw<"Scenario"> StringLiteral ":"? (Identifier | Keywords)*
 }
 
 VersionRule {
@@ -375,7 +375,7 @@ kw<term> {
 }
 
 Keywords {
-    kw<"Rule"> | kw<"version"> | kw<"unknown"> | kw<"ignore"> |
+    kw<"version"> | kw<"unknown"> | kw<"ignore"> |
     kw<"have"> | kw<"a"> | kw<"my"> | kw<"that"> | kw<"valid"> | kw<"inside"> | kw<"named"> | kw<"am"> | kw<"known"> |
     kw<"as"> | kw<"connect"> | kw<"to"> | kw<"and"> | kw<"send"> |
     kw<"statement"> | kw<"parameters"> | kw<"record"> | kw<"table"> |
