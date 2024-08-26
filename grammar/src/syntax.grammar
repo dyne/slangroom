@@ -89,7 +89,7 @@ GitStatement {
 }
 
 HelpersStatement {
-    HelpersSend (kw<"and">? SaveAction)*
+    (HelpersSend | HelpersAction) (kw<"and">? SaveAction)*
 }
 
 HttpStatement {
@@ -125,7 +125,7 @@ TimestampStatement {
 }
 
 WalletStatement {
-    WalletSend (kw<"and">? SaveAction)*
+    (WalletSend| WalletAction) (kw<"and">? SaveAction)*
 }
 
 ZencodeStatement {
@@ -139,7 +139,7 @@ DbConnectAction {
 }
 
 EthereumConnectAction {
-    ((kw<"connect"> kw<"to"> StringLiteral) kw<"and">)? EthereumSend
+    ((kw<"connect"> kw<"to"> StringLiteral) kw<"and">)? (EthereumSend | EthereumAction)
 }
 
 FsConnectAction {
@@ -147,15 +147,15 @@ FsConnectAction {
 }
 
 GitOpenOrConnectAction {
-    ((kw<"open"> kw<"the"> StringLiteral | kw<"connect"> kw<"to"> StringLiteral) kw<"and">)? GitSend
+    ((kw<"open"> kw<"the"> StringLiteral | kw<"connect"> kw<"to"> StringLiteral) kw<"and">)? (GitSend | GitAction)
 }
 
 HttpConnectAction {
-    ((kw<"connect"> kw<"to"> StringLiteral) kw<"and">)? HttpSend
+    ((kw<"connect"> kw<"to"> StringLiteral) kw<"and">)? (HttpSend | HttpAction)
 }
 
 PocketbaseConnectAction {
-    ((kw<"connect"> kw<"to"> StringLiteral) kw<"and">)? PocketbaseSend
+    ((kw<"connect"> kw<"to"> StringLiteral) kw<"and">)? (PocketbaseSend | PocketbaseAction)
 }
 
 RedisConnectAction {
