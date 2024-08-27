@@ -11,11 +11,11 @@ SlangroomStatement {
 }
 
 RuleStatement {
-    kw<"Rule"> (VersionRule | UnknownIgnoreRule)
+    kw<"Rule"> (VersionRule | UnknownIgnoreRule | GenericRule)
 }
 
 ScenarioStatement {
-    kw<"Scenario"> StringLiteral ":"? (Identifier | Keywords)*
+    kw<"Scenario"> (StringLiteral| Identifier | Keywords) ":"? (Identifier | Keywords)*
 }
 
 VersionRule {
@@ -24,6 +24,10 @@ VersionRule {
 
 UnknownIgnoreRule {
     kw<"unknown"> kw<"ignore">
+}
+
+GenericRule {
+	(Identifier | StringLiteral | Keywords)*
 }
 
 VersionNumber {
@@ -45,27 +49,31 @@ ThenStatement {
 }
 
 ThenPrint {
-    kw<"Then"> kw<"print"> (StringLiteral | Identifier | Keywords)+
+    kw<"Then"> kw<"I">? kw<"print"> (StringLiteral | Identifier | Keywords)+ (kw<"I"> kw<"print"> (StringLiteral | Identifier | Keywords)+)*
 }
 
 GivenHaveStatement {
-    kw<"Given"> kw<"that">? kw<"I"> kw<"have"> (kw<"a">? | kw<"my">? | kw<"the">?) kw<"valid">? StringLiteral (kw<"inside"> | kw<"in">)?  kw<"named">? StringLiteral?
-    (kw <"and"> kw<"I"> kw<"have"> (kw<"a">? | kw<"my">?) kw<"valid">? StringLiteral (kw<"inside"> | kw<"in">)? kw<"named">? StringLiteral?)*
+    kw<"Given"> kw<"that">? kw<"I"> kw<"have"> (kw<"a">? | kw<"my">? | kw<"the">?) kw<"valid">? StringLiteral kw<"named">? StringLiteral? (kw<"inside"> | kw<"in">)?  kw<"named">? StringLiteral?
+    (kw <"and"> kw<"I"> kw<"have"> (kw<"a">? | kw<"my">?) kw<"valid">? StringLiteral kw<"named">? StringLiteral? (kw<"inside"> | kw<"in">)? kw<"named">? StringLiteral?)*
+}
+HaveStatement{
+	kw<"and"> kw<"I"> kw<"have"> (kw<"a">? | kw<"my">?) kw<"valid">? StringLiteral kw<"named">? StringLiteral? (kw<"inside"> | kw<"in">)? kw<"named">? StringLiteral?
 }
 
 GivenName {
     (kw<"Given"> kw<"I"> kw<"am">
     (kw<"known"> kw<"as">)? StringLiteral) |
-	(kw<"Given"> kw<"my"> kw<"name"> kw<"is"> (Identifier | Keywords | StringLiteral)+)
+	(kw<"Given">  kw<"I">? kw<"my"> kw<"name"> kw<"is">
+	 (Identifier | Keywords | StringLiteral)+) (HaveStatement)*
 
 }
 
 WhenStatement {
-  kw<"When"> kw<"I"> (Identifier | Keywords | StringLiteral)+
+  kw<"When"> kw<"I"> (Identifier | Keywords | StringLiteral)+ (kw<"I"> (Identifier | Keywords | StringLiteral)+)*
 }
 
 IfEndifStatement{
-    Condition+ (WhenStatement |  ThenStatement | ThenPrint)* kw<"Endif">
+    Condition+ (WhenStatement |  ThenStatement | ThenPrint)* kw<"EndIf">
 }
 
 Condition {
@@ -367,7 +375,7 @@ ZencodeAction {
 }
 
 SaveAction {
-    kw<"output"> kw<"into"> StringLiteral
+    kw<"output"> (Keywords | Identifier | StringLiteral)? kw<"into"> StringLiteral
 }
 
 kw<term> {
@@ -375,7 +383,7 @@ kw<term> {
 }
 
 Keywords {
-    kw<"version"> | kw<"unknown"> | kw<"ignore"> |
+    kw<"version"> | kw<"ignore"> |
     kw<"have"> | kw<"a"> | kw<"my"> | kw<"that"> | kw<"valid"> | kw<"inside"> | kw<"named"> | kw<"am"> | kw<"known"> |
     kw<"as"> | kw<"connect"> | kw<"to"> | kw<"and"> | kw<"send"> |
     kw<"statement"> | kw<"parameters"> | kw<"record"> | kw<"table"> |
@@ -412,7 +420,7 @@ Keywords {
     kw<"redis"> | kw<"delete"> | kw<"shell"> | kw<"fetch"> |
     kw<"local"> | kw<"timestamp"> | kw<"milliseconds"> | kw<"seconds"> |
     kw<"vc"> | kw<"sd"> | kw<"jwt"> | kw<"p-256"> | kw<"public"> |
-    kw<"pretty"> | kw<"print"> | kw<"zencode"> | kw<"output">
+    kw<"pretty"> | kw<"print"> | kw<"zencode"> | kw<"output"> | kw<"is">
 }
 
 @tokens {
