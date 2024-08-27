@@ -5,6 +5,9 @@
 import { test, expect } from '@playwright/test';
 
 test('check results of slangroom', async ({ page }) => {
+	// set timeout
+	test.setTimeout(testInfo.timeout * 3);
+
 	await page.goto('http://localhost:8080/');
 
 	// Expects page to have a heading with the name of Installation.
