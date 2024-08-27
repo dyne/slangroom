@@ -5,9 +5,9 @@
 import { Plugin } from '@slangroom/core';
 import gitpkg from 'isomorphic-git';
 // TODO: why does this require index.js?
-import http from 'isomorphic-git/http/node/index.js';
-import * as fs from 'node:fs/promises';
-import * as path from 'node:path';
+import http from 'isomorphic-git/http/web/index.js';
+import { promises as fs } from 'fs';
+import path from 'path';
 // read the version from the package.json
 import packageJson from '@slangroom/git/package.json' with { type: 'json' };
 
@@ -24,6 +24,7 @@ export class GitError extends Error {
  * @internal
  */
 export const sandboxDir = () => {
+	if (typeof process === 'undefined') return '.';
 	// TODO: sanitize sandboxDir
 	return process.env['FILES_DIR'];
 };
