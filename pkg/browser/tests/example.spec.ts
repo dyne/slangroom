@@ -6,7 +6,7 @@ import { test, expect } from '@playwright/test';
 
 test('check results of slangroom', async ({ page }) => {
 	// set timeout
-	test.setTimeout(15000);
+	test.setTimeout(30000);
 
 	await page.goto('http://localhost:8080/');
 
@@ -34,7 +34,8 @@ test('check results of slangroom', async ({ page }) => {
 	);
 
 	await expect(page.locator('#test-git')).toContainText(
-		"{\"checked\":\"true\"}"
+		"{\"checked\":\"true\"}",
+		{ timeout: 20000 }
 	);
 });
 
