@@ -22,4 +22,8 @@ test('check results of slangroom', async ({ page }) => {
 	await expect(page.locator('#test-pocketbase-2')).toContainText(
 		"{\"output\":{\"name\":\"test organization\"}}"
 	);
+
+	await expect(page.locator('#test-git')).toContainText(
+		"{\"checked\":\"true\"}"
+	);
 });
