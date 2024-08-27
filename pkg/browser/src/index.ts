@@ -4,6 +4,7 @@
 
 import { Slangroom, version as coreVersion } from '@slangroom/core';
 import { qrcode, version as qrcodeVersion } from '@slangroom/qrcode';
+import { git, version as gitVersion } from '@slangroom/git';
 import { http, version as httpVersion } from '@slangroom/http';
 import { pocketbase, version as pocketbaseVersion } from '@slangroom/pocketbase';
 import { helpers, version as helpersVersion } from '@slangroom/helpers';
@@ -13,9 +14,16 @@ import { timestamp, version as timestampVersion } from '@slangroom/timestamp';
 import { zenroomVersion } from '@slangroom/deps/zenroom';
 import packageJson from '@slangroom/browser/package.json' with { type: 'json' };
 
+// web dependencies
+import { Buffer } from 'buffer';
+
 export const version = packageJson.version;
 
 const plugins_dict = {
+	git: {
+		plugin: git,
+		version: gitVersion
+	},
 	http: {
 		plugin: http,
 		version: httpVersion
@@ -60,5 +68,7 @@ const slangroom = new Slangroom(plugins);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 (window as any).slangroom = slangroom; // instead of casting window to any, you can extend the Window interface: https://stackoverflow.com/a/43513740/5433572
+
+window.Buffer = Buffer;
 
 console.log(welcome_message);

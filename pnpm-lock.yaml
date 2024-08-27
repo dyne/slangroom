@@ -243,6 +243,9 @@ importers:
       '@slangroom/deps':
         specifier: workspace:*
         version: link:../deps
+      '@slangroom/git':
+        specifier: workspace:*
+        version: link:../git
       '@slangroom/helpers':
         specifier: workspace:*
         version: link:../helpers
@@ -264,6 +267,9 @@ importers:
       '@slangroom/timestamp':
         specifier: workspace:*
         version: link:../timestamp
+      buffer:
+        specifier: ^6.0.3
+        version: 6.0.3
     devDependencies:
       '@playwright/test':
         specifier: ^1.50.1
@@ -271,9 +277,18 @@ importers:
       '@types/node':
         specifier: ^20.10.4
         version: 20.10.4
+      '@types/path-browserify':
+        specifier: ^1.0.3
+        version: 1.0.3
+      '@zenfs/core':
+        specifier: ^0.16.4
+        version: 0.16.4
       esbuild:
         specifier: ^0.21.4
         version: 0.21.4
+      path-browserify:
+        specifier: ^1.0.1
+        version: 1.0.1
 
   pkg/core:
     dependencies:
@@ -1834,14 +1849,23 @@ packages:
   '@types/node@20.10.4':
     resolution: {integrity: sha512-D08YG6rr8X90YB56tSIuBaddy/UXAA9RKJoFvrsnogAum/0pmjkgi4+2nx96A330FmioegBWmEYQ+syqCFaveg==}
 
+  '@types/node@20.17.32':
+    resolution: {integrity: sha512-zeMXFn8zQ+UkjK4ws0RiOC9EWByyW1CcVmLe+2rQocXRsGEDxUCwPEIVgpsGcLHS/P8JkT0oa3839BRABS0oPw==}
+
   '@types/node@22.7.6':
     resolution: {integrity: sha512-/d7Rnj0/ExXDMcioS78/kf1lMzYk4BZV8MZGTBKzTGZ6/406ukkbYlIsZmMPhcR5KlkunDHQLrtAVmSq7r+mSw==}
 
   '@types/normalize-package-data@2.4.4':
     resolution: {integrity: sha512-37i+OaWTh9qeK4LSHPsyRC7NahnGotNuZvjLSgcPzblpHB3rrCJxAOgI5gCdKm7coonsaX1Of0ILiTcnZjbfxA==}
 
+  '@types/path-browserify@1.0.3':
+    resolution: {integrity: sha512-ZmHivEbNCBtAfcrFeBCiTjdIc2dey0l7oCGNGpSuRTy8jP6UVND7oUowlvDujBy8r2Hoa8bfFUOCiPWfmtkfxw==}
+
   '@types/qrcode@1.5.5':
     resolution: {integrity: sha512-CdfBi/e3Qk+3Z/fXYShipBT13OJ2fDO2Q2w5CIP5anLTLIndQG9z6P1cnm+8zCWSpm5dnxMFd/uREtb0EXuQzg==}
+
+  '@types/readable-stream@4.0.18':
+    resolution: {integrity: sha512-21jK/1j+Wg+7jVw1xnSwy/2Q1VgVjWuFssbYGTREPUBeZ+rqVFl2udq0IkxzPC0ZhOzVceUbyIACFZKLqKEBlA==}
 
   '@types/semver@7.5.8':
     resolution: {integrity: sha512-I8EUhyrgfLrcTkzV3TSsGyl1tSuPrEDzr0yd5m90UgNxQkyDXULk3b6MlQqTCpZpNtWe1K0hzclnZkTcLBe2UQ==}
@@ -2023,6 +2047,12 @@ packages:
 
   '@vueuse/shared@11.1.0':
     resolution: {integrity: sha512-YUtIpY122q7osj+zsNMFAfMTubGz0sn5QzE5gPzAIiCmtt2ha3uQUY1+JPyL4gRCTsLPX82Y9brNbo/aqlA91w==}
+
+  '@zenfs/core@0.16.4':
+    resolution: {integrity: sha512-QYT0tB3iHWo6q4KlSTl1zr2LWLgayNOHGPw5x+s926weH3Nrnw2Npe2gfLK05UFvXhhTynee8DgYGjFhgqBUmg==}
+    engines: {node: '>= 16'}
+    deprecated: Version no longer supported. Please update.
+    hasBin: true
 
   JSONStream@1.3.5:
     resolution: {integrity: sha512-E+iruNOY8VV9s4JEbe1aNEm6MiszPRr/UfcHMz0TQh1BXSxHK+ASV1R6W4HpjBhSeS+54PIsAMCBmwD06LLsqQ==}
@@ -4368,6 +4398,9 @@ packages:
   parse5@6.0.1:
     resolution: {integrity: sha512-Ofn/CTFzRGTTxwpNEs9PP93gXShHcTq255nzRYSKe8AkVpZY7e1fpmTfOyoIvjP5HG7Z2ZM7VS9PPhQGW2pOpw==}
 
+  path-browserify@1.0.1:
+    resolution: {integrity: sha512-b7uo2UCUOYZcnF/3ID0lulOJi/bafxa1xPe7ZPsammBSpjSWQkjNxlt635YGS2MiR9GjvuXCtz2emr3jbsz98g==}
+
   path-exists@3.0.0:
     resolution: {integrity: sha512-bpC7GYwiDYQ4wYLe+FA8lhRjhQCMcQGuSgGGqDkg/QerRWw9CmGRT0iSOVRSZJ29NMLZgIzqaljJ63oaL4NIJQ==}
     engines: {node: '>=4'}
@@ -5294,6 +5327,9 @@ packages:
 
   util@0.12.5:
     resolution: {integrity: sha512-kZf/K6hEIrWHI6XqOFUiiMa+79wE/D8Q+NCNAWclkyg3b4d2k7s0QGepNjiABc+aR3N1PAyHL7p6UcLY6LmrnA==}
+
+  utilium@0.4.4:
+    resolution: {integrity: sha512-TjhvLLoSi3WmzAR1QMFwGykW31cEOzbVoPqqopY6UYcm+5MfsF0ep3+DuJmAnOlU/zglGDwR96j0hjiHfwP4og==}
 
   uuid@10.0.0:
     resolution: {integrity: sha512-8XkAphELsDnEGrDxUOHB3RGvXz6TeuYSGEZBOjtTtPm2lwhGBjLgOzLHB63IUWfBpNucQjND6d3AOudO+H3RWQ==}
@@ -7021,15 +7057,26 @@ snapshots:
     dependencies:
       undici-types: 5.26.5
 
+  '@types/node@20.17.32':
+    dependencies:
+      undici-types: 6.19.8
+
   '@types/node@22.7.6':
     dependencies:
       undici-types: 6.19.8
 
   '@types/normalize-package-data@2.4.4': {}
 
+  '@types/path-browserify@1.0.3': {}
+
   '@types/qrcode@1.5.5':
     dependencies:
       '@types/node': 22.7.6
+
+  '@types/readable-stream@4.0.18':
+    dependencies:
+      '@types/node': 22.7.6
+      safe-buffer: 5.1.2
 
   '@types/semver@7.5.8': {}
 
@@ -7259,6 +7306,16 @@ snapshots:
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
+
+  '@zenfs/core@0.16.4':
+    dependencies:
+      '@types/node': 20.17.32
+      '@types/readable-stream': 4.0.18
+      buffer: 6.0.3
+      eventemitter3: 5.0.1
+      minimatch: 9.0.5
+      readable-stream: 4.7.0
+      utilium: 0.4.4
 
   JSONStream@1.3.5:
     dependencies:
@@ -9735,6 +9792,8 @@ snapshots:
 
   parse5@6.0.1: {}
 
+  path-browserify@1.0.1: {}
+
   path-exists@3.0.0: {}
 
   path-exists@4.0.0: {}
@@ -10668,6 +10727,10 @@ snapshots:
       is-generator-function: 1.0.10
       is-typed-array: 1.1.12
       which-typed-array: 1.1.13
+
+  utilium@0.4.4:
+    dependencies:
+      eventemitter3: 5.0.1
 
   uuid@10.0.0: {}
 

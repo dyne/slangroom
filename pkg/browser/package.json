@@ -3,13 +3,15 @@
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
 		"@slangroom/deps": "workspace:*",
+		"@slangroom/git": "workspace:*",
 		"@slangroom/helpers": "workspace:*",
 		"@slangroom/http": "workspace:*",
 		"@slangroom/json-schema": "workspace:*",
 		"@slangroom/location": "workspace:*",
 		"@slangroom/pocketbase": "workspace:*",
 		"@slangroom/qrcode": "workspace:*",
-		"@slangroom/timestamp": "workspace:*"
+		"@slangroom/timestamp": "workspace:*",
+		"buffer": "^6.0.3"
 	},
 	"version": "1.46.0",
 	"repository": "https://github.com/dyne/slangroom",
@@ -42,10 +44,13 @@
 	"devDependencies": {
 		"@playwright/test": "^1.50.1",
 		"@types/node": "^20.10.4",
-		"esbuild": "^0.21.4"
+		"@types/path-browserify": "^1.0.3",
+		"@zenfs/core": "^0.16.4",
+		"esbuild": "^0.21.4",
+		"path-browserify": "^1.0.1"
 	},
 	"scripts": {
-		"build": "pnpm exec esbuild --bundle src/index.ts --outfile=build/slangroom.js --target=es2016 --external:fs --external:path --external:crypto && cp build/slangroom.js public"
+		"build": "pnpm exec esbuild --bundle src/index.ts --outfile=build/slangroom.js --target=ESNext --external:crypto --alias:fs=@zenfs/core --alias:path=path-browserify && cp build/slangroom.js public"
 	},
 	"engines": {
 		"node": "^18.20.0 || ^20.10.0 || ^22 || ^23"

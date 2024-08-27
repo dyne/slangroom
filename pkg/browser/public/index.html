@@ -16,6 +16,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 		<div id="test-pocketbase-2"></div>
 		<div id="test-pocketbase-3"></div>
 		<div id="test-timestamp"></div>
+		<div id="test-git"></div>
 		<script>
 			const script = `
 Rule unknown ignore
@@ -166,6 +167,29 @@ Then print the 'timestamp'
 			})
 			.then((r) => {
 				TimestampResDiv.innerText = JSON.stringify(r.result);
+			});
+
+			//
+			const scriptGit = `
+Rule unknown ignore
+Given I connect to 'url' and send path 'path' and clone repository
+Given I open 'path' and verify git repository
+
+Given I have a 'string' named 'checked'
+Then print the data
+			`
+
+			const GitResDiv = document.getElementById('test-git');
+
+			slangroom.execute(scriptGit, {
+				data:{
+					url: "https://cors.isomorphic-git.org/github.com/srfsh/dumb",
+					path: "slangroom",
+					checked: "true"
+				}
+			})
+			.then((r) => {
+				GitResDiv.innerText = JSON.stringify(r.result);
 			});
 		</script>
 	</body>

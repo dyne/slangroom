@@ -22,13 +22,16 @@ test('check results of slangroom', async ({ page }) => {
 	await expect(page.locator('#test-pocketbase-2')).toContainText(
 		"{\"output\":{\"name\":\"test organization\"}}"
 	);
-
 	await expect(page.locator('#test-pocketbase-3')).toContainText(
 		"{\"output\":[\"token_refreshed\"]}"
 	);
 
 	await expect(page.locator('#test-timestamp')).toContainText(
 		/{"timestamp":\d{10}}/
+	);
+
+	await expect(page.locator('#test-git')).toContainText(
+		"{\"checked\":\"true\"}"
 	);
 });
 
