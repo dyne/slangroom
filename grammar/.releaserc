@@ -3,7 +3,7 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 {
-  "extends": ["semantic-release-commit-filter"]
+  "extends": ["semantic-release-commit-filter"],
   "repositoryUrl": "git@github.com:dyne/slangroom.git",
   "dryRun": false,
   "plugins": [
