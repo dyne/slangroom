@@ -2,7 +2,8 @@
 #
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-packages:
-  - pkg/*
-  - docs/statements
-  - grammar
+/src
+/test
+/node_modules
+rollup.config.js
+tsconfig.json

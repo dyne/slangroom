@@ -4,14 +4,21 @@
   "description": "Enhance zencode smart contracts with your slang dialect",
   "repository": "https://github.com/dyne/slangroom",
   "author": {
-    "name": "Puria Nafisi Azizi",
-    "email": "puria@dyne.org"
+    "name": "Deniz Engin"
   },
+  "contributors": [
+    { "name": "Puria Nafisi Azizi", "email": "puria@dyne.org" },
+    { "name": "Matteo Cristino" },
+    { "name": "Alberto Lerda" },
+    { "name": "Ennio Donato" },
+	{ "name": "Giovanni Abbatepaolo" }
+  ],
   "license": "AGPL-3.0-only",
   "scripts": {
     "lint": "eslint --ext .ts pkg/*/src pkg/*/test",
     "format": "prettier --ignore-path .gitignore --write '**/*.+(js|ts|json|html)'",
     "test": "pnpm build && pnpm -F @slangroom/* exec ava --verbose build/esm/test",
+    "test:grammar": "pnpm -F codemirror-lang-slangroom test",
     "coverage": "c8 -r text -r lcov -o .coverage --exclude '**/test/' pnpm test",
     "clean": "rm -rf .coverage && pnpm -F @slangroom/* exec -- rm -rf build",
     "build": "pnpm -F @slangroom/* exec tsc --outdir build/esm",
@@ -43,6 +50,6 @@
     "vitepress": "^1.0.1"
   },
   "engines": {
-	"node": "^18.20.0 || ^20.10.0 || ^22"
+  "node": "^18.20.0 || ^20.10.0 || ^22"
   }
 }

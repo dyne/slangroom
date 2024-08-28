@@ -1,0 +1,35 @@
+# SPDX-FileCopyrightText: 2024 Dyne.org foundation
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+name: 🪶 Grammar publish
+
+on:
+  push:
+    branches:
+      - main
+    paths: [ "grammar/**" ]
+
+permissions:
+  contents: write
+  issues: write
+  id-token: write
+  pull-requests: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+    - name: 🛠️ Prepare pnpm workspace
+      uses: dyne/pnpm@main
+    - name: 📦 Releases
+      working-directory: ./grammar
+      run: npx semantic-release
+      env:
+        NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

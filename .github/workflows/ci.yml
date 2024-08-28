@@ -51,6 +51,8 @@ jobs:
           while ! nc -z 0.0.0.0 8090; do echo "pocketbase not ready" && sleep 1; done
       - name: 🧪 Run the tests
         run: pnpm coverage
+      - name: 🧪 Test grammar package
+        run: pnpm test:grammar
       - name: 📨 Setup playwright
         run: |
           npx playwright install
