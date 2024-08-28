@@ -6,6 +6,12 @@
     "test": "mocha test/test.js",
     "prepare": "rollup -c"
   },
+  "author": {
+	  "name": "Filippo Trotter"
+  },
+  "contributors": [
+	  { "name": "Matteo Cristino" }
+  ],
   "type": "module",
   "main": "dist/index.cjs",
   "module": "dist/index.js",

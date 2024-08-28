@@ -4,6 +4,16 @@
   "description": "Enhance zencode smart contracts with your slang dialect",
   "repository": "https://github.com/dyne/slangroom",
   "author": {
+    "name": "Deniz Engin"
+  },
+  "contributors": [
+    { "name": "Puria Nafisi Azizi", "email": "puria@dyne.org" },
+    { "name": "Matteo Cristino" },
+    { "name": "Alberto Lerda" },
+    { "name": "Ennio Donato" },
+	{ "name": "Giovanni Abbatepaolo" }
+  ],
+  "author": {
     "name": "Puria Nafisi Azizi",
     "email": "puria@dyne.org"
   },
@@ -44,6 +54,6 @@
     "vitepress": "^1.0.1"
   },
   "engines": {
-	"node": "^18.20.0 || ^20.10.0 || ^22"
+  "node": "^18.20.0 || ^20.10.0 || ^22"
   }
 }
