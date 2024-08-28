@@ -69,6 +69,7 @@ node_modules
 # grammar lezer
 !/grammar/Makefile
 !/grammar/src/syntax.grammar
+!/grammar/src/syntax.grammar.d.ts
 !/grammar/src/index.ts
 !/grammar/test/*
 !/grammar/.npmignore
