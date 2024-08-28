@@ -66,7 +66,9 @@ To write new plugins and other technical documentation  head your browser to
 
 <img alt="software by Dyne.org" src="https://files.dyne.org/software_by_dyne.png" width="150" />
 
-Copyleft 🄯 2023—2024 by [Dyne.org](https://www.dyne.org) foundation, Amsterdam
+Copyleft 🄯 2023—2024 by [Dyne.org](https://www.dyne.org) foundation, Amsterdam.
+
+The grammar package has been created starting from [CodeMirror 6 language package template](https://github.com/codemirror/lang-example).
 
 **[🔝 back to top](#toc)**
 
