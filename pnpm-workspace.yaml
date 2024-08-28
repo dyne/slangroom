@@ -5,3 +5,4 @@
 packages:
   - pkg/*
   - docs/statements
+  - grammar
