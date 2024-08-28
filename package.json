@@ -13,10 +13,6 @@
     { "name": "Ennio Donato" },
 	{ "name": "Giovanni Abbatepaolo" }
   ],
-  "author": {
-    "name": "Puria Nafisi Azizi",
-    "email": "puria@dyne.org"
-  },
   "license": "AGPL-3.0-only",
   "scripts": {
     "lint": "eslint --ext .ts pkg/*/src pkg/*/test",

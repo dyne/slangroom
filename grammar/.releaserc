@@ -1,0 +1,43 @@
+# Copyright 2017-2018 Dyne.org foundation
+# SPDX-FileCopyrightText: 2017-2021 Dyne.org foundation
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+{
+  "extends": ["semantic-release-commit-filter"]
+  "repositoryUrl": "git@github.com:dyne/slangroom.git",
+  "dryRun": false,
+  "plugins": [
+    "@semantic-release/release-notes-generator",
+    "@semantic-release/changelog",
+    [
+      "@semantic-release/commit-analyzer",
+      {
+        "preset": "angular",
+        "releaseRules": [
+          { "type": "build", "scope": "deps", "release": "patch" },
+          { "type": "build", "scope": "deps-dev", "release": "patch" }
+        ]
+      }
+    ],
+    [
+      "@semantic-release/npm",
+      {
+        "npmPublish": true
+      }
+    ],
+    [
+      "@semantic-release/git",
+      {
+        "assets": [
+          "grammar/CHANGELOG.md",
+          "grammar/pnpm-lock.yaml",
+          "grammar/package.json"
+        ],
+        "message": "chore(grammar release): 🚀 ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+      }
+    ],
+  ],
+  "branches": [
+    "main"
+  ]
+}

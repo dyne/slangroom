@@ -76,6 +76,7 @@ node_modules
 !/grammar/package.json
 !/grammar/rollup.config.js
 !/grammar/tsconfig.json
+!/grammar/.releaserc
 
 
 
