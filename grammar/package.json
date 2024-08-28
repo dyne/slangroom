@@ -1,7 +1,7 @@
 {
   "name": "codemirror-lang-slangroom",
   "version": "0.1.0",
-  "description": "Slangroom language support for CodeMirror",
+  "description": "Slangroom lezer grammar",
   "scripts": {
     "test": "mocha test/test.js",
     "prepare": "rollup -c"
