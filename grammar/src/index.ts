@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: 2024 Dyne.org foundation
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
+
 import {parser} from "./syntax.grammar"
 import {LRLanguage, LanguageSupport, indentNodeProp, foldNodeProp, foldInside, delimitedIndent} from "@codemirror/language"
 import {styleTags, tags as t} from "@lezer/highlight"

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2024 Dyne.org foundation
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import {SlangroomLanguage} from "../dist/index.js"
 import {fileTests} from "@lezer/generator/dist/test"
 
