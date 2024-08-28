@@ -52,11 +52,7 @@ jobs:
       - name: 🧪 Run the tests
         run: pnpm coverage
       - name: 🧪 Test grammar package
-        run: |
-          make
-          pnpm run prepare
-          pnpm test
-        working-directory: ./pkg/grammar
+        run: pnpm test:grammar
       - name: 📨 Setup playwright
         run: |
           npx playwright install
