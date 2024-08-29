@@ -60,8 +60,8 @@ jobs:
         run: |
           git clone https://github.com/wmhilton/cors-buster
           cd cors-buster
-          pnpm install
-          PORT=8000 pnpm start &
+          npm install
+          PORT=8000 npm start &
       - name: 📨 Setup playwright
         run: |
           npx playwright install
