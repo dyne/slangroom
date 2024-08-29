@@ -56,6 +56,12 @@ jobs:
         run: pnpm coverage
       - name: 🧪 Test grammar package
         run: pnpm test:grammar
+      - name: ↕️ Setup cors free proxy for cloning
+        run: |
+          git clone https://github.com/wmhilton/cors-buster
+          cd cors-buster
+          pnpm install
+          PORT=8000 pnpm start &
       - name: 📨 Setup playwright
         run: |
           npx playwright install
