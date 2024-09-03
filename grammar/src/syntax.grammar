@@ -3,11 +3,11 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 @top Statement {
-    ( RuleStatement? ScenarioStatement* RuleStatement?  SlangroomStatement)
+    ( RuleStatement | ScenarioStatement | RuleStatement |  SlangroomStatement | Comment)*
 }
 
 SlangroomStatement {
-    (GivenStatement | ThenStatement | ThenPrint | GivenHaveStatement | GivenName | WhenStatement | IfEndifStatement)*
+    (GivenStatement | ThenStatement | ThenPrint | GivenHaveStatement | GivenName | WhenStatement | IfEndifStatement)
 }
 
 RuleStatement {
@@ -35,7 +35,7 @@ VersionNumber {
 }
 
 @skip {
-    space | newline | Comment
+    space | newline
 }
 
 GivenStatement {

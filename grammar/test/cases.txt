@@ -17,9 +17,9 @@ Then print the 'result'
 
 ==>
 
-Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)), SlangroomStatement(GivenStatement(Given,I,DbStatement(DbConnectAction(connect,to, StringLiteral, and,
-	DbSend(send, record, StringLiteral, and, DbSend(send, table StringLiteral, and,DbAction(read,the,record,of,the,table)))), and, SaveAction(output,into, StringLiteral))),
-	GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),ThenPrint(Then,print,Keywords(the),StringLiteral)))
+Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),SlangroomStatement(GivenStatement(Given,I,DbStatement(DbConnectAction(connect,to,StringLiteral,and,
+DbSend(send,record,StringLiteral,and,DbSend(send,table,StringLiteral,and,DbAction(read,the,record,of,the,table)))),and,SaveAction(output,into,StringLiteral)))),
+SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),SlangroomStatement(ThenPrint(Then,print,Keywords(the),StringLiteral)))
 
 #Ethereum complex example
 
@@ -52,17 +52,26 @@ Then I connect to 'ethereum' and send transaction 'signed_ethereum_transaction' 
 
 ==>
 
-Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),ScenarioStatement(Scenario,StringLiteral,Identifier,Identifier,Keywords(object),Identifier,Identifier),
-	SlangroomStatement(GivenStatement(Given,I,EthereumStatement(EthereumConnectAction(connect,to,StringLiteral,and,EthereumSend(send,address,StringLiteral,and,
-	EthereumAction(read,the,ethereum,nonce))),and,SaveAction(output,into,StringLiteral))),GivenStatement(Given,I,
-	EthereumStatement(EthereumConnectAction(connect,to,StringLiteral,and,EthereumAction(read,the,suggested,gas,price)),and,SaveAction(output,into,StringLiteral))),
-	GivenHaveStatement(Given,I,have,a,StringLiteral),GivenHaveStatement(Given,I,have,a,StringLiteral),GivenHaveStatement(Given,I,have,the,StringLiteral),
-	GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),GivenHaveStatement(Given,I,have,a,StringLiteral),
-	WhenStatement(When,I,Keywords(create),Keywords(the),Keywords(ethereum),Keywords(transaction),Keywords(to),StringLiteral),
-	WhenStatement(When,I,Identifier,Keywords(the),Keywords(ethereum),Keywords(transaction),Keywords(to),Keywords(store),StringLiteral),
-	WhenStatement(When,I,Keywords(create),Keywords(the),Identifier,Keywords(ethereum),Keywords(transaction),Identifier,Identifier,StringLiteral),
-	ThenPrint(Then,print,Keywords(the),StringLiteral),ThenStatement(Then,I,EthereumStatement(EthereumConnectAction(connect,to,StringLiteral,and,
-	EthereumSend(send,transaction,StringLiteral,and,EthereumAction(read,the,ethereum,transaction,id,after,broadcast))),and,SaveAction(output,into,StringLiteral)))))
+Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),
+	ScenarioStatement(Scenario,StringLiteral,Identifier,Identifier,Keywords(object),Identifier,Identifier),
+	SlangroomStatement(GivenStatement(Given,I,EthereumStatement(EthereumConnectAction(connect,to,StringLiteral,and,EthereumSend(send,address,StringLiteral,and,EthereumAction(read,the,ethereum,nonce))),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GivenStatement(Given,I,EthereumStatement(EthereumConnectAction(connect,to,StringLiteral,and,EthereumAction(read,the,suggested,gas,price)),and,SaveAction(output,into,StringLiteral)))),
+	Comment,
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral)),
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral)),
+	Comment,
+	SlangroomStatement(GivenHaveStatement(Given,I,have,the,StringLiteral)),
+	Comment,
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral)),
+	Comment,
+	SlangroomStatement(WhenStatement(When,I,Keywords(create),Keywords(the),Keywords(ethereum),Keywords(transaction),Keywords(to),StringLiteral)),
+	SlangroomStatement(WhenStatement(When,I,Identifier,Keywords(the),Keywords(ethereum),Keywords(transaction),Keywords(to),Keywords(store),StringLiteral)),
+	SlangroomStatement(WhenStatement(When,I,Keywords(create),Keywords(the),Identifier,Keywords(ethereum),Keywords(transaction),Identifier,Identifier,StringLiteral)),
+	SlangroomStatement(ThenPrint(Then,print,Keywords(the),StringLiteral)),
+	SlangroomStatement(ThenStatement(Then,I,EthereumStatement(EthereumConnectAction(connect,to,StringLiteral,and,EthereumSend(send,transaction,StringLiteral,and,EthereumAction(read,the,ethereum,transaction,id,after,broadcast))),and,SaveAction(output,into,StringLiteral)))))
+
 
 #Fs example
 
@@ -74,9 +83,11 @@ Then print the 'file_path_1'
 
 ==>
 
-Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),SlangroomStatement(GivenStatement(Given,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,
-	FsAction(verify,file,exists))))),GivenStatement(Given,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,FsAction(verify,file,does,not,exist))))),
-	GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),ThenPrint(Then,print,Keywords(the),StringLiteral)))
+Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),
+	SlangroomStatement(GivenStatement(Given,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,FsAction(verify,file,exists)))))),
+	SlangroomStatement(GivenStatement(Given,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,FsAction(verify,file,does,not,exist)))))),
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),
+	SlangroomStatement(ThenPrint(Then,print,Keywords(the),StringLiteral)))
 
 #Git example
 
@@ -89,9 +100,11 @@ Then print the data
 
 ==>
 
-Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),SlangroomStatement(GivenStatement(Given,I,GitStatement(GitOpenOrConnectAction
-	(connect,to,StringLiteral,and,GitSend(send,path,StringLiteral,and,GitAction(clone,repository))))),GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),
-	ThenPrint(Then,print,Keywords(the),Keywords(data))))
+Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),
+	SlangroomStatement(GivenStatement(Given,I,GitStatement(GitOpenOrConnectAction(connect,to,StringLiteral,and,GitSend(send,path,StringLiteral,and,GitAction(clone,repository)))))),
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),
+	SlangroomStatement(ThenPrint(Then,print,Keywords(the),Keywords(data))))
+
 
 #Helpers example
 
@@ -104,9 +117,11 @@ Then print the data
 
 ==>
 
-Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),SlangroomStatement(GivenStatement(Given,I,HelpersStatement(HelpersSend(send,array,StringLiteral,and,
-	HelpersSend(send,values,StringLiteral,and,HelpersAction(manipulate,and,concat))),and,SaveAction(output,into,StringLiteral))),
-	GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),ThenPrint(Then,print,Keywords(the),Keywords(data))))
+Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),
+	SlangroomStatement(GivenStatement(Given,I,HelpersStatement(HelpersSend(send,array,StringLiteral,and,HelpersSend(send,values,StringLiteral,and,HelpersAction(manipulate,and,concat))),
+	and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),
+	SlangroomStatement(ThenPrint(Then,print,Keywords(the),Keywords(data))))
 
 #Http example
 
@@ -118,8 +133,11 @@ Then print the 'result'
 
 ==>
 
-Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),SlangroomStatement(GivenStatement(Given,I,HttpStatement(HttpConnectAction(connect,to,StringLiteral,and,
-	HttpAction(do,get)),and,SaveAction(output,into,StringLiteral))),GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),ThenPrint(Then,print,Keywords(the),StringLiteral)))
+Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),
+	SlangroomStatement(GivenStatement(Given,I,HttpStatement(HttpConnectAction(connect,to,StringLiteral,and,HttpAction(do,get)),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),
+	SlangroomStatement(ThenPrint(Then,print,Keywords(the),StringLiteral)))
+
 
 #Json-schema example
 
@@ -132,9 +150,8 @@ Then print the 'result'
 
 ==>
 
-Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),SlangroomStatement(GivenStatement(Given,I,JsonSchemaStatement(JsonSchemaSend(send,json_data,StringLiteral,and,
-	JsonSchemaSend(send,json_schema,StringLiteral,and,JsonSchemaAction(validate,json))),and,SaveAction(output,into,StringLiteral))),
-	GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),ThenPrint(Then,print,Keywords(the),StringLiteral)))
+Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),SlangroomStatement(GivenStatement(Given,I,JsonSchemaStatement(JsonSchemaSend(send,json_data,StringLiteral,and,JsonSchemaSend(send,json_schema,StringLiteral,and,JsonSchemaAction(validate,json))),and,SaveAction(output,into,StringLiteral)))),SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),SlangroomStatement(ThenPrint(Then,print,Keywords(the),StringLiteral)))
+
 
 #Oauth example
 
@@ -153,12 +170,11 @@ Then I send request 'request' and send server_data 'server_data' and generate ac
 
 ==>
 
-Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),ScenarioStatement(Scenario,StringLiteral,Keywords(url),Identifier),SlangroomStatement(
-	GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),
-	WhenStatement(When,I,Keywords(create),Keywords(the),Identifier,Keywords(get),Keywords(parameters),Keywords(from),StringLiteral,Identifier,Identifier,Identifier),
-	WhenStatement(When,I,Identifier,StringLiteral,Keywords(to),StringLiteral,Keywords(in),StringLiteral),ThenPrint(Then,print,Keywords(the),StringLiteral),
-	ThenStatement(Then,I,OAuthStatement(OAuthSend(send,request,StringLiteral,and,OAuthSend(send,server_data,StringLiteral,and,OAuthAction(generate,access,token))),and,
-	SaveAction(output,into,StringLiteral)))))
+Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),ScenarioStatement(Scenario,StringLiteral,Keywords(url),Identifier),
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),
+	SlangroomStatement(WhenStatement(When,I,Keywords(create),Keywords(the),Identifier,Keywords(get),Keywords(parameters),Keywords(from),StringLiteral,Identifier,Identifier,Identifier)),
+	SlangroomStatement(WhenStatement(When,I,Identifier,StringLiteral,Keywords(to),StringLiteral,Keywords(in),StringLiteral)),SlangroomStatement(ThenPrint(Then,print,Keywords(the),StringLiteral)),
+	SlangroomStatement(ThenStatement(Then,I,OAuthStatement(OAuthSend(send,request,StringLiteral,and,OAuthSend(send,server_data,StringLiteral,and,OAuthAction(generate,access,token))),and,SaveAction(output,into,StringLiteral)))))
 
 #Pocketbase example
 
@@ -174,11 +190,11 @@ Then print the 'result'
 
 ==>
 
-Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),SlangroomStatement(GivenStatement(Given,I,PocketbaseStatement(PocketbaseConnectAction(connect,to,StringLiteral,and,
-	PocketbaseAction(start,pb,client)))),GivenStatement(Given,I,PocketbaseStatement(PocketbaseConnectAction(PocketbaseSend(send,my_credentials,StringLiteral,and,
-	PocketbaseAction(login))))),GivenStatement(Given,I,PocketbaseStatement(PocketbaseConnectAction(PocketbaseSend(send,create_parameters,StringLiteral,and,
-	PocketbaseSend(send,record_parameters,StringLiteral,and,PocketbaseAction(create,record)))),and,SaveAction(output,into,StringLiteral))),
-	GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),ThenPrint(Then,print,Keywords(the),StringLiteral)))
+Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),SlangroomStatement(GivenStatement(Given,I,PocketbaseStatement(PocketbaseConnectAction(connect,to,StringLiteral,and,PocketbaseAction(start,pb,client))))),
+	SlangroomStatement(GivenStatement(Given,I,PocketbaseStatement(PocketbaseConnectAction(PocketbaseSend(send,my_credentials,StringLiteral,and,PocketbaseAction(login)))))),
+	SlangroomStatement(GivenStatement(Given,I,PocketbaseStatement(PocketbaseConnectAction(PocketbaseSend(send,create_parameters,StringLiteral,and,PocketbaseSend(send,record_parameters,StringLiteral,and,PocketbaseAction(create,record)))),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),
+	SlangroomStatement(ThenPrint(Then,print,Keywords(the),StringLiteral)))
 
 #Qrcode example
 
@@ -191,9 +207,7 @@ Then print the 'result'
 
 ==>
 
-Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),SlangroomStatement(GivenStatement(Given,I,QrCodeStatement(QrCodeSend(send,text,StringLiteral,and,
-	QrCodeAction(create,qr,code)),and,SaveAction(output,into,StringLiteral))),GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),
-	ThenPrint(Then,print,Keywords(the),StringLiteral)))
+Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),SlangroomStatement(GivenStatement(Given,I,QrCodeStatement(QrCodeSend(send,text,StringLiteral,and,QrCodeAction(create,qr,code)),and,SaveAction(output,into,StringLiteral)))),SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),SlangroomStatement(ThenPrint(Then,print,Keywords(the),StringLiteral)))
 
 #Redis example
 
@@ -206,9 +220,8 @@ Then print the 'result'
 
 ==>
 
-Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),SlangroomStatement(GivenStatement(Given,I,RedisStatement(RedisConnectAction(connect,to,StringLiteral,and,
-	RedisSend(send,key,StringLiteral,and,RedisAction(delete,key,from,redis))),and,SaveAction(output,into,StringLiteral))),
-	GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),ThenPrint(Then,print,Keywords(the),StringLiteral)))
+Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),SlangroomStatement(GivenStatement(Given,I,RedisStatement(RedisConnectAction(connect,to,StringLiteral,and,RedisSend(send,key,StringLiteral,and,RedisAction(delete,key,from,redis))),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),SlangroomStatement(ThenPrint(Then,print,Keywords(the),StringLiteral)))
 
 #Shell example
 
@@ -221,9 +234,8 @@ Then print the 'result'
 
 ==>
 
-Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),SlangroomStatement(GivenStatement(Given,I,ShellStatement(ShellSend(send,command,StringLiteral,and,
-	ShellAction(execute,in,shell)),and,SaveAction(output,into,StringLiteral))),GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),
-	ThenPrint(Then,print,Keywords(the),StringLiteral)))
+Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),SlangroomStatement(GivenStatement(Given,I,ShellStatement(ShellSend(send,command,StringLiteral,and,ShellAction(execute,in,shell)),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),SlangroomStatement(ThenPrint(Then,print,Keywords(the),StringLiteral)))
 
 #Timestamp example
 
@@ -239,10 +251,10 @@ Then print the 'result_in_milliseconds'
 
 ==>
 
-Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),SlangroomStatement(GivenStatement(Given,I,TimestampStatement(TimestampAction(fetch,the,local,timestamp,in,seconds),and,
-	SaveAction(output,into,StringLiteral))),GivenStatement(Given,I,TimestampStatement(TimestampAction(fetch,the,local,timestamp,in,milliseconds),and,SaveAction(output,into,StringLiteral))),
-	GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),
-	ThenPrint(Then,print,Keywords(the),StringLiteral),ThenPrint(Then,print,Keywords(the),StringLiteral)))
+Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),SlangroomStatement(GivenStatement(Given,I,TimestampStatement(TimestampAction(fetch,the,local,timestamp,in,seconds),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GivenStatement(Given,I,TimestampStatement(TimestampAction(fetch,the,local,timestamp,in,milliseconds),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),
+	SlangroomStatement(ThenPrint(Then,print,Keywords(the),StringLiteral)),SlangroomStatement(ThenPrint(Then,print,Keywords(the),StringLiteral)))
 
 
 
@@ -257,9 +269,8 @@ Then print the 'result'
 
 ==>
 
-Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),SlangroomStatement(GivenStatement(Given,I,ZencodeStatement(ZencodeSend(send,keys,StringLiteral,and,
-	ZencodeSend(send,data,StringLiteral,and,ZencodeSend(send,script,StringLiteral,and,ZencodeAction(execute,zencode)))),and,SaveAction(output,into,StringLiteral))),
-	GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),ThenPrint(Then,print,Keywords(the),StringLiteral)))
+Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),SlangroomStatement(GivenStatement(Given,I,ZencodeStatement(ZencodeSend(send,keys,StringLiteral,and,ZencodeSend(send,data,StringLiteral,and,ZencodeSend(send,script,StringLiteral,and,ZencodeAction(execute,zencode)))),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),SlangroomStatement(ThenPrint(Then,print,Keywords(the),StringLiteral)))
 
 #Test from Didroom 1
 
@@ -309,25 +320,31 @@ Then I send request 'request' and send server_data 'server' and verify request p
 ==>
 
 Statement(ScenarioStatement(Scenario,StringLiteral),ScenarioStatement(Scenario,StringLiteral,Keywords(create),Keywords(jwk)),RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),
-	SlangroomStatement(GivenStatement(Given,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,FsAction(read,file,content))),and,SaveAction(output,into,StringLiteral))),
-	GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersAction(manipulate,and,get))),and,
-	SaveAction(output,into,StringLiteral))),GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,
-	HelpersSend(send,path,StringLiteral,and,HelpersAction(manipulate,and,get))),and,SaveAction(output,into,StringLiteral))),
-	GivenStatement(Given,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,FsAction(read,file,content))),and,SaveAction(output,into,StringLiteral))),
-	GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),GivenName(Given,my,name,is,Keywords(in),Keywords(a),StringLiteral,Keywords(named),StringLiteral),
-	GivenHaveStatement(Given,I,have,the,StringLiteral,in,StringLiteral),GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),
-	GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),
-	GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),WhenStatement(When,I,Identifier,Keywords(from),Keywords(path),StringLiteral),
-	WhenStatement(When,I,Identifier,StringLiteral,Keywords(to),StringLiteral,Keywords(in),StringLiteral),
-	WhenStatement(When,I,Keywords(create),Keywords(jwk),Keywords(of),Identifier,Keywords(public),Keywords(key),Keywords(with),Identifier,Keywords(key)),
-	WhenStatement(When,I,Identifier,StringLiteral,Keywords(in),StringLiteral),WhenStatement(When,I,Keywords(set),StringLiteral,Keywords(to),StringLiteral,Keywords(as),StringLiteral),
-	WhenStatement(When,I,Keywords(create),Keywords(the),Keywords(url),Keywords(from),StringLiteral),
-	WhenStatement(When,I,Identifier,StringLiteral,Keywords(as),Identifier,Keywords(request),Keywords(to),StringLiteral),
-	WhenStatement(When,I,Identifier,Keywords(the),Identifier,Identifier,Keywords(of),StringLiteral,Keywords(as),Identifier,Keywords(request),Keywords(to),StringLiteral),
-	WhenStatement(When,I,Identifier,Keywords(the),Identifier,StringLiteral,Keywords(bytes),Keywords(of),StringLiteral),
-	WhenStatement(When,I,Identifier,Keywords(the),StringLiteral,Keywords(to),StringLiteral),WhenStatement(When,I,Identifier,StringLiteral,Keywords(in),StringLiteral),
-	ThenPrint(Then,print,Keywords(the),StringLiteral),ThenPrint(Then,print,Keywords(the),StringLiteral),
-	ThenStatement(Then,I,OAuthStatement(OAuthSend(send,request,StringLiteral,and,OAuthSend(send,server_data,StringLiteral,and,OAuthAction(verify,request,parameters)))))))
+	SlangroomStatement(GivenStatement(Given,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,FsAction(read,file,content))),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersAction(manipulate,and,get))),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersAction(manipulate,and,get))),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GivenStatement(Given,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,FsAction(read,file,content))),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),Comment,
+	SlangroomStatement(GivenName(Given,my,name,is,Keywords(in),Keywords(a),StringLiteral,Keywords(named),StringLiteral)),
+	SlangroomStatement(GivenHaveStatement(Given,I,have,the,StringLiteral,in,StringLiteral)),
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),Comment,
+	SlangroomStatement(WhenStatement(When,I,Identifier,Keywords(from),Keywords(path),StringLiteral)),
+	SlangroomStatement(WhenStatement(When,I,Identifier,StringLiteral,Keywords(to),StringLiteral,Keywords(in),StringLiteral)),
+	SlangroomStatement(WhenStatement(When,I,Keywords(create),Keywords(jwk),Keywords(of),Identifier,Keywords(public),Keywords(key),Keywords(with),Identifier,Keywords(key))),
+	SlangroomStatement(WhenStatement(When,I,Identifier,StringLiteral,Keywords(in),StringLiteral)),Comment,
+	SlangroomStatement(WhenStatement(When,I,Keywords(set),StringLiteral,Keywords(to),StringLiteral,Keywords(as),StringLiteral)),
+	SlangroomStatement(WhenStatement(When,I,Keywords(create),Keywords(the),Keywords(url),Keywords(from),StringLiteral)),
+	SlangroomStatement(WhenStatement(When,I,Identifier,StringLiteral,Keywords(as),Identifier,Keywords(request),Keywords(to),StringLiteral)),
+	SlangroomStatement(WhenStatement(When,I,Identifier,Keywords(the),Identifier,Identifier,Keywords(of),StringLiteral,Keywords(as),Identifier,Keywords(request),Keywords(to),StringLiteral)),
+	SlangroomStatement(WhenStatement(When,I,Identifier,Keywords(the),Identifier,StringLiteral,Keywords(bytes),Keywords(of),StringLiteral)),
+	SlangroomStatement(WhenStatement(When,I,Identifier,Keywords(the),StringLiteral,Keywords(to),StringLiteral)),
+	SlangroomStatement(WhenStatement(When,I,Identifier,StringLiteral,Keywords(in),StringLiteral)),
+	SlangroomStatement(ThenPrint(Then,print,Keywords(the),StringLiteral)),
+	SlangroomStatement(ThenPrint(Then,print,Keywords(the),StringLiteral)),
+	SlangroomStatement(ThenStatement(Then,I,OAuthStatement(OAuthSend(send,request,StringLiteral,and,OAuthSend(send,server_data,StringLiteral,and,OAuthAction(verify,request,parameters)))))))
 
 #Test from Didroom 2
 
@@ -380,45 +397,41 @@ Given I have a 'string dictionary' named 'server_response'
 Then print the data
 
 ==>
-Statement(SlangroomStatement(GivenStatement(Given,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,FsAction(read,file,content))),and,
-	SaveAction(output,Identifier,into,StringLiteral))),GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,
-	HelpersAction(manipulate,and,get))),and,SaveAction(output,into,StringLiteral))),GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,
-	HelpersSend(send,path,StringLiteral,and,HelpersAction(manipulate,and,get))),and,SaveAction(output,Identifier,into,StringLiteral))),GivenStatement(Given,I,FsStatement(FsConnectAction(
-	FsSend(send,path,StringLiteral,and,FsAction(read,file,content))),and,SaveAction(output,into,StringLiteral))),GivenStatement(Given,I,HelpersStatement(
-	HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set)))))),
-	GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,
-	HelpersAction(manipulate,and,set)))))),GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,
-	HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set)))))),GivenStatement(Given,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,
-	FsAction(read,verbatim,file,content))),and,SaveAction(output,into,StringLiteral))),GivenStatement(Given,I,ZencodeStatement(ZencodeSend(send,keys,StringLiteral,and,
-	ZencodeSend(send,data,StringLiteral,and,ZencodeSend(send,script,StringLiteral,and,ZencodeAction(execute,zencode)))),and,SaveAction(output,into,StringLiteral))),
-	GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersAction(manipulate,and,get))),and,
-	SaveAction(output,into,StringLiteral))),GivenStatement(Given,I,HttpStatement(HttpConnectAction(connect,to,StringLiteral,and,HttpAction(do,get)),and,
-	SaveAction(output,into,StringLiteral))),GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,
-	HelpersAction(manipulate,and,get))),and,SaveAction(output,into,StringLiteral))),GivenStatement(Given,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,
-	FsAction(read,verbatim,file,content))),and,SaveAction(output,into,StringLiteral))),GivenStatement(Given,I,ZencodeStatement(ZencodeSend(send,keys,StringLiteral,and,
-	ZencodeSend(send,data,StringLiteral,and,ZencodeSend(send,script,StringLiteral,and,ZencodeAction(execute,zencode)))),and,SaveAction(output,into,StringLiteral))),
-	GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersAction(manipulate,and,get))),and,
-	SaveAction(output,into,StringLiteral))),GivenStatement(Given,I,HttpStatement(HttpConnectAction(connect,to,StringLiteral,and,HttpAction(do,get)),and,
-	SaveAction(output,into,StringLiteral))),GivenStatement(Given,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,FsAction(read,verbatim,file,content))),and,
-	SaveAction(output,into,StringLiteral))),GivenStatement(Given,I,ZencodeStatement(ZencodeSend(send,keys,StringLiteral,and,ZencodeSend(send,data,StringLiteral,and,
-	ZencodeSend(send,script,StringLiteral,and,ZencodeAction(execute,zencode)))),and,SaveAction(output,into,StringLiteral))),GivenStatement(Given,I,
-	HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersAction(manipulate,and,get))),and,
-	SaveAction(output,into,StringLiteral))),GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,
-	HelpersAction(manipulate,and,get))),and,SaveAction(output,into,StringLiteral))),GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,
-	HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set)))))),GivenStatement(Given,I,
-	HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set)))))),
-	GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,
-	HelpersAction(manipulate,and,set)))))),GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,
-	HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set)))))),GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,
-	HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set)))))),GivenStatement(Given,I,HelpersStatement(
-	HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set)))))),
-	GivenStatement(Given,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,FsAction(read,verbatim,file,content))),and,SaveAction(output,into,StringLiteral))),
-	GivenStatement(Given,I,ZencodeStatement(ZencodeSend(send,keys,StringLiteral,and,ZencodeSend(send,data,StringLiteral,and,ZencodeSend(send,script,StringLiteral,and,
-	ZencodeAction(execute,zencode)))),and,SaveAction(output,into,StringLiteral))),GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,
-	HelpersSend(send,path,StringLiteral,and,HelpersAction(manipulate,and,get))),and,SaveAction(output,into,StringLiteral))),GivenStatement(Given,I,HelpersStatement(
-	HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersAction(manipulate,and,get))),and,SaveAction(output,into,StringLiteral))),
-	GivenStatement(Given,I,HttpStatement(HttpConnectAction(connect,to,StringLiteral,and,HttpSend(send,object,StringLiteral,and,HttpAction(do,post))),and,
-	SaveAction(output,into,StringLiteral))),GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),ThenPrint(Then,print,Keywords(the),Keywords(data))))
+
+Statement(Comment,SlangroomStatement(GivenStatement(Given,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,FsAction(read,file,content))),and,SaveAction(output,Identifier,into,StringLiteral)))),
+	SlangroomStatement(GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersAction(manipulate,and,get))),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersAction(manipulate,and,get))),and,SaveAction(output,Identifier,into,StringLiteral)))),Comment,
+	SlangroomStatement(GivenStatement(Given,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,FsAction(read,file,content))),and,SaveAction(output,into,StringLiteral)))),Comment,
+	SlangroomStatement(GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set))))))),
+	SlangroomStatement(GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set))))))),
+	SlangroomStatement(GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set))))))),
+	SlangroomStatement(GivenStatement(Given,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,FsAction(read,verbatim,file,content))),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GivenStatement(Given,I,ZencodeStatement(ZencodeSend(send,keys,StringLiteral,and,ZencodeSend(send,data,StringLiteral,and,ZencodeSend(send,script,StringLiteral,and,ZencodeAction(execute,zencode)))),and,SaveAction(output,into,StringLiteral)))),Comment,
+	SlangroomStatement(GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersAction(manipulate,and,get))),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GivenStatement(Given,I,HttpStatement(HttpConnectAction(connect,to,StringLiteral,and,HttpAction(do,get)),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersAction(manipulate,and,get))),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GivenStatement(Given,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,FsAction(read,verbatim,file,content))),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GivenStatement(Given,I,ZencodeStatement(ZencodeSend(send,keys,StringLiteral,and,ZencodeSend(send,data,StringLiteral,and,ZencodeSend(send,script,StringLiteral,and,ZencodeAction(execute,zencode)))),and,SaveAction(output,into,StringLiteral)))),Comment,
+	SlangroomStatement(GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersAction(manipulate,and,get))),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GivenStatement(Given,I,HttpStatement(HttpConnectAction(connect,to,StringLiteral,and,HttpAction(do,get)),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GivenStatement(Given,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,FsAction(read,verbatim,file,content))),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GivenStatement(Given,I,ZencodeStatement(ZencodeSend(send,keys,StringLiteral,and,ZencodeSend(send,data,StringLiteral,and,ZencodeSend(send,script,StringLiteral,and,ZencodeAction(execute,zencode)))),and,SaveAction(output,into,StringLiteral)))),Comment,
+	SlangroomStatement(GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersAction(manipulate,and,get))),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersAction(manipulate,and,get))),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set))))))),
+	SlangroomStatement(GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set))))))),
+	SlangroomStatement(GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set))))))),
+	SlangroomStatement(GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set))))))),
+	SlangroomStatement(GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set))))))),
+	SlangroomStatement(GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set))))))),
+	SlangroomStatement(GivenStatement(Given,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,FsAction(read,verbatim,file,content))),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GivenStatement(Given,I,ZencodeStatement(ZencodeSend(send,keys,StringLiteral,and,ZencodeSend(send,data,StringLiteral,and,ZencodeSend(send,script,StringLiteral,and,ZencodeAction(execute,zencode)))),and,SaveAction(output,into,StringLiteral)))),Comment,
+	SlangroomStatement(GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersAction(manipulate,and,get))),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersAction(manipulate,and,get))),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GivenStatement(Given,I,HttpStatement(HttpConnectAction(connect,to,StringLiteral,and,HttpSend(send,object,StringLiteral,and,HttpAction(do,post))),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),
+	SlangroomStatement(ThenPrint(Then,print,Keywords(the),Keywords(data))))
+
 
 #Test from Didroom 3
 
@@ -495,42 +508,60 @@ Then I manipulate and delete and output into 'parresult'
 
 ==>
 
-Statement(SlangroomStatement(GivenStatement(Given,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,FsAction(read,file,content))),and,SaveAction(output,into,StringLiteral))),
-	GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),GivenName(Given,my,name,is,Keywords(in),Keywords(a),StringLiteral,Keywords(named),StringLiteral),
-	GivenHaveStatement(Given,I,have,the,StringLiteral,in,StringLiteral),GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),
-	GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),
-	GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),
-	GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),
-	GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),
-	GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),
-	GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral,inside,StringLiteral),
-	WhenStatement(When,I,Identifier,StringLiteral,Keywords(to),StringLiteral),WhenStatement(When,I,Keywords(set),StringLiteral,Keywords(to),StringLiteral,Keywords(as),StringLiteral),
-	WhenStatement(When,I,Keywords(create),Keywords(the),Keywords(url),Keywords(from),StringLiteral),WhenStatement(When,I,Identifier,StringLiteral,Keywords(as),Identifier,Keywords(request),
-	Keywords(to),StringLiteral),WhenStatement(When,I,Identifier,StringLiteral,Keywords(as),Identifier,Keywords(request),Keywords(to),StringLiteral),
-	WhenStatement(When,I,Identifier,StringLiteral,Keywords(as),Identifier,Keywords(request),Keywords(to),StringLiteral),
-	WhenStatement(When,I,Identifier,StringLiteral,Keywords(as),Identifier,Keywords(request),Keywords(to),StringLiteral),
-	WhenStatement(When,I,Identifier,StringLiteral,Keywords(as),Identifier,Keywords(request),Keywords(to),StringLiteral),
-	WhenStatement(When,I,Identifier,Keywords(the),Identifier,Identifier,Keywords(of),StringLiteral,Keywords(as),Identifier,Keywords(request),Keywords(to),StringLiteral),
-	WhenStatement(When,I,Keywords(create),Keywords(the),Keywords(json),Identifier,Identifier,Keywords(of),StringLiteral),
-	WhenStatement(When,I,Identifier,Keywords(the),StringLiteral,Keywords(to),StringLiteral),WhenStatement(When,I,Identifier,Keywords(the),StringLiteral,Keywords(to),StringLiteral),
-	WhenStatement(When,I,Identifier,Keywords(the),Identifier,Identifier,Keywords(of),StringLiteral,Keywords(as),Identifier,Keywords(request),Keywords(to),StringLiteral),
-	WhenStatement(When,I,Identifier,Keywords(the),Identifier,StringLiteral,Keywords(bytes),Keywords(of),StringLiteral),
-	WhenStatement(When,I,Identifier,Keywords(the),StringLiteral,Keywords(to),StringLiteral),WhenStatement(When,I,Identifier,StringLiteral,Keywords(in),StringLiteral),
-	WhenStatement(When,I,Identifier,Keywords(the),StringLiteral,Keywords(to),StringLiteral,Keywords(in),StringLiteral),
-	WhenStatement(When,I,Identifier,StringLiteral,Keywords(in),StringLiteral),WhenStatement(When,I,Identifier,Keywords(the),StringLiteral,Keywords(to),StringLiteral,Keywords(in),StringLiteral),
-	WhenStatement(When,I,Keywords(create),Identifier,Keywords(of),Identifier,StringLiteral,Keywords(from),Keywords(array),StringLiteral),
-	WhenStatement(When,I,Identifier,Keywords(the),StringLiteral,Keywords(to),StringLiteral),WhenStatement(When,I,Identifier,StringLiteral,Keywords(in),StringLiteral),
-	WhenStatement(When,I,Identifier,Keywords(from),Keywords(path),StringLiteral),WhenStatement(When,I,Identifier,StringLiteral,Keywords(to),StringLiteral,Keywords(in),StringLiteral),
-	WhenStatement(When,I,Keywords(create),Keywords(jwk),Keywords(of),Identifier,Keywords(public),Keywords(key),Keywords(with),Identifier,Keywords(key)),
-	WhenStatement(When,I,Identifier,StringLiteral,Keywords(in),StringLiteral),ThenPrint(Then,print,Keywords(the),StringLiteral),ThenPrint(Then,print,Keywords(the),StringLiteral),
-	ThenPrint(Then,print,Keywords(the),StringLiteral),ThenStatement(Then,I,OAuthStatement(OAuthSend(send,request,StringLiteral,and,
-	OAuthSend(send,client,StringLiteral,and,OAuthSend(send,server_data,StringLiteral,and,OAuthSend(send,expires_in,StringLiteral,and,OAuthAction(generate,request,uri))))),and,
-	SaveAction(output,into,StringLiteral))),ThenStatement(Then,I,HelpersStatement(HelpersAction(manipulate,and,delete),and,SaveAction(output,into,StringLiteral))),
-	ThenStatement(Then,I,HelpersStatement(HelpersAction(manipulate,and,delete),and,SaveAction(output,into,StringLiteral))),ThenStatement(Then,I,
-	HelpersStatement(HelpersAction(manipulate,and,delete),and,SaveAction(output,into,StringLiteral))),ThenStatement(Then,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,
-	HelpersSend(send,path,StringLiteral,and,HelpersAction(manipulate,and,get))),and,SaveAction(output,into,StringLiteral))),ThenStatement(Then,I,HelpersStatement(
-	HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersAction(manipulate,and,get))),and,SaveAction(output,into,StringLiteral))),
-	ThenStatement(Then,I,HelpersStatement(HelpersAction(manipulate,and,delete),and,SaveAction(output,into,StringLiteral)))))
+Statement(SlangroomStatement(GivenStatement(Given,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,FsAction(read,file,content))),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),Comment,
+	SlangroomStatement(GivenName(Given,my,name,is,Keywords(in),Keywords(a),StringLiteral,Keywords(named),StringLiteral)),
+	SlangroomStatement(GivenHaveStatement(Given,I,have,the,StringLiteral,in,StringLiteral)),
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),Comment,
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral,inside,StringLiteral)),
+	SlangroomStatement(WhenStatement(When,I,Identifier,StringLiteral,Keywords(to),StringLiteral)),Comment,
+	SlangroomStatement(WhenStatement(When,I,Keywords(set),StringLiteral,Keywords(to),StringLiteral,Keywords(as),StringLiteral)),
+	SlangroomStatement(WhenStatement(When,I,Keywords(create),Keywords(the),Keywords(url),Keywords(from),StringLiteral)),
+	SlangroomStatement(WhenStatement(When,I,Identifier,StringLiteral,Keywords(as),Identifier,Keywords(request),Keywords(to),StringLiteral)),
+	SlangroomStatement(WhenStatement(When,I,Identifier,StringLiteral,Keywords(as),Identifier,Keywords(request),Keywords(to),StringLiteral)),
+	SlangroomStatement(WhenStatement(When,I,Identifier,StringLiteral,Keywords(as),Identifier,Keywords(request),Keywords(to),StringLiteral)),
+	SlangroomStatement(WhenStatement(When,I,Identifier,StringLiteral,Keywords(as),Identifier,Keywords(request),Keywords(to),StringLiteral)),
+	SlangroomStatement(WhenStatement(When,I,Identifier,StringLiteral,Keywords(as),Identifier,Keywords(request),Keywords(to),StringLiteral)),
+	SlangroomStatement(WhenStatement(When,I,Identifier,Keywords(the),Identifier,Identifier,Keywords(of),StringLiteral,Keywords(as),Identifier,Keywords(request),Keywords(to),StringLiteral)),
+	SlangroomStatement(WhenStatement(When,I,Keywords(create),Keywords(the),Keywords(json),Identifier,Identifier,Keywords(of),StringLiteral)),
+	SlangroomStatement(WhenStatement(When,I,Identifier,Keywords(the),StringLiteral,Keywords(to),StringLiteral)),
+	SlangroomStatement(WhenStatement(When,I,Identifier,Keywords(the),StringLiteral,Keywords(to),StringLiteral)),
+	SlangroomStatement(WhenStatement(When,I,Identifier,Keywords(the),Identifier,Identifier,Keywords(of),StringLiteral,Keywords(as),Identifier,Keywords(request),Keywords(to),StringLiteral)),
+	SlangroomStatement(WhenStatement(When,I,Identifier,Keywords(the),Identifier,StringLiteral,Keywords(bytes),Keywords(of),StringLiteral)),
+	SlangroomStatement(WhenStatement(When,I,Identifier,Keywords(the),StringLiteral,Keywords(to),StringLiteral)),
+	SlangroomStatement(WhenStatement(When,I,Identifier,StringLiteral,Keywords(in),StringLiteral)),Comment,
+	SlangroomStatement(WhenStatement(When,I,Identifier,Keywords(the),StringLiteral,Keywords(to),StringLiteral,Keywords(in),StringLiteral)),
+	SlangroomStatement(WhenStatement(When,I,Identifier,StringLiteral,Keywords(in),StringLiteral)),
+	SlangroomStatement(WhenStatement(When,I,Identifier,Keywords(the),StringLiteral,Keywords(to),StringLiteral,Keywords(in),StringLiteral)),
+	SlangroomStatement(WhenStatement(When,I,Keywords(create),Identifier,Keywords(of),Identifier,StringLiteral,Keywords(from),Keywords(array),StringLiteral)),
+	SlangroomStatement(WhenStatement(When,I,Identifier,Keywords(the),StringLiteral,Keywords(to),StringLiteral)),
+	SlangroomStatement(WhenStatement(When,I,Identifier,StringLiteral,Keywords(in),StringLiteral)),Comment,
+	SlangroomStatement(WhenStatement(When,I,Identifier,Keywords(from),Keywords(path),StringLiteral)),
+	SlangroomStatement(WhenStatement(When,I,Identifier,StringLiteral,Keywords(to),StringLiteral,Keywords(in),StringLiteral)),
+	SlangroomStatement(WhenStatement(When,I,Keywords(create),Keywords(jwk),Keywords(of),Identifier,Keywords(public),Keywords(key),Keywords(with),Identifier,Keywords(key))),
+	SlangroomStatement(WhenStatement(When,I,Identifier,StringLiteral,Keywords(in),StringLiteral)),
+	SlangroomStatement(ThenPrint(Then,print,Keywords(the),StringLiteral)),
+	SlangroomStatement(ThenPrint(Then,print,Keywords(the),StringLiteral)),
+	SlangroomStatement(ThenPrint(Then,print,Keywords(the),StringLiteral)),
+	SlangroomStatement(ThenStatement(Then,I,OAuthStatement(OAuthSend(send,request,StringLiteral,and,OAuthSend(send,client,StringLiteral,and,OAuthSend(send,server_data,StringLiteral,and,OAuthSend(send,expires_in,StringLiteral,and,OAuthAction(generate,request,uri))))),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(ThenStatement(Then,I,HelpersStatement(HelpersAction(manipulate,and,delete),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(ThenStatement(Then,I,HelpersStatement(HelpersAction(manipulate,and,delete),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(ThenStatement(Then,I,HelpersStatement(HelpersAction(manipulate,and,delete),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(ThenStatement(Then,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersAction(manipulate,and,get))),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(ThenStatement(Then,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersAction(manipulate,and,get))),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(ThenStatement(Then,I,HelpersStatement(HelpersAction(manipulate,and,delete),and,SaveAction(output,into,StringLiteral)))))
+
 
 #Test from Didroom 4
 
@@ -647,65 +678,63 @@ Then I manipulate and delete and output into 'secrets'
 
 ==>
 
-Statement(RuleStatement(Rule,GenericRule(Keywords(output),Identifier,Identifier)),ScenarioStatement(Scenario,Identifier),ScenarioStatement(Scenario,Identifier),
-	ScenarioStatement(Scenario,Keywords(ethereum)),ScenarioStatement(Scenario,Identifier),ScenarioStatement(Scenario,Identifier),
-	ScenarioStatement(Scenario,Identifier),ScenarioStatement(Scenario,Identifier),ScenarioStatement(Scenario,Identifier),SlangroomStatement(GivenStatement(Given,I,ShellStatement(
-	ShellSend(send,command,StringLiteral,and,ShellAction(execute,in,shell)),and,SaveAction(output,into,StringLiteral))),GivenStatement(Given,I,FsStatement(FsConnectAction(
-	FsSend(send,path,StringLiteral,and,FsAction(verify,file,does,not,exist))))),GivenStatement(Given,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,
-	FsAction(read,verbatim,file,content))),and,SaveAction(output,into,StringLiteral))),GivenStatement(Given,I,ZencodeStatement(ZencodeSend(send,keys,StringLiteral,and,
-	ZencodeSend(send,data,StringLiteral,and,ZencodeSend(send,script,StringLiteral,and,ZencodeAction(execute,zencode)))),and,SaveAction(output,Identifier,into,StringLiteral))),
-	GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersAction(manipulate,and,get))),and,
-	SaveAction(output,into,StringLiteral))),GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,
-	HelpersAction(manipulate,and,get))),and,SaveAction(output,Identifier,into,StringLiteral))),GivenStatement(Given,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,
-	FsAction(read,file,content))),and,SaveAction(output,into,StringLiteral))),GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral),
-	GivenName(Given,I,my,name,is,Keywords(in),Keywords(a),StringLiteral,Keywords(named),StringLiteral,HaveStatement(and,I,have,a,StringLiteral,named,StringLiteral),
-	HaveStatement(and,I,have,a,StringLiteral,in,StringLiteral),HaveStatement(and,I,have,a,StringLiteral,named,StringLiteral)),IfEndifStatement(Condition(If,I,verify,StringLiteral,
-	Keywords(is),Identifier,Keywords(in),StringLiteral),WhenStatement(When,I,Identifier,Keywords(from),Keywords(path),StringLiteral,Keywords(and),I,Identifier,StringLiteral,Keywords(to),
-	StringLiteral),EndIf),IfEndifStatement(Condition(If,I,verify,StringLiteral,Keywords(is),Keywords(not),Identifier,Keywords(in),StringLiteral),WhenStatement(When,I,Identifier,
-	StringLiteral,Keywords(to),StringLiteral),EndIf),WhenStatement(When,I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key),Keywords(and),I,Keywords(create),
-	Keywords(the),Identifier,Keywords(public),Keywords(key),Keywords(and),I,Keywords(create),Keywords(the),Keywords(ethereum),Keywords(address),Keywords(and),I,Keywords(create),
-	Keywords(the),Identifier,Keywords(public),Keywords(key),Keywords(and),I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key),Keywords(and),I,Keywords(create),
-	Keywords(the),Identifier,Keywords(public),Keywords(key),Keywords(and),I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key),Keywords(and),I,Keywords(create),
-	Keywords(the),Identifier,Keywords(public),Keywords(key),Keywords(and),I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key)),ThenPrint(Then,I,print,Keywords(the),
-	StringLiteral,Keywords(and),I,print,Keywords(the),StringLiteral,Keywords(and),I,print,Keywords(the),StringLiteral,Keywords(and),I,print,Keywords(the),StringLiteral,Keywords(and),
-	I,print,Keywords(the),StringLiteral,Keywords(and),I,print,Keywords(the),StringLiteral,Keywords(and),I,print,Keywords(the),StringLiteral,Keywords(as),StringLiteral,Keywords(and),
-	I,print,Keywords(the),StringLiteral,Keywords(and),I,print,Keywords(the),StringLiteral,Keywords(and),I,print,Keywords(my),Keywords(name),Keywords(in),StringLiteral,Keywords(and),
-	I,print,Keywords(the),StringLiteral,Keywords(and),I,print,Keywords(the),StringLiteral),ThenStatement(Then,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,
-	HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set)))))),ThenStatement(Then,I,HelpersStatement(
-	HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set)))))),
-	ThenStatement(Then,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,
-	HelpersAction(manipulate,and,set)))))),ThenStatement(Then,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,
-	HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set)))))),ThenStatement(Then,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,
-	HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set)))))),ThenStatement(Then,I,HelpersStatement(
-	HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set)))))),
-	ThenStatement(Then,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,
-	HelpersAction(manipulate,and,set)))))),ThenStatement(Then,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,
-	HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set)))))),ThenStatement(Then,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,
-	HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set)))))),ThenStatement(Then,I,HelpersStatement(
-	HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set)))))),
-	ThenStatement(Then,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,
-	HelpersAction(manipulate,and,set)))))),ThenStatement(Then,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,FsAction(read,verbatim,file,content))),
-	and,SaveAction(output,into,StringLiteral))),ThenStatement(Then,I,ZencodeStatement(ZencodeSend(send,keys,StringLiteral,and,ZencodeSend(send,data,StringLiteral,and,
-	ZencodeSend(send,script,StringLiteral,and,ZencodeAction(execute,zencode)))),and,SaveAction(output,into,StringLiteral))),ThenStatement(Then,I,HelpersStatement(
-	HelpersAction(manipulate,and,delete),and,SaveAction(output,into,StringLiteral))),ThenStatement(Then,I,HelpersStatement(HelpersAction(manipulate,and,delete),and,
-	SaveAction(output,into,StringLiteral))),ThenStatement(Then,I,HttpStatement(HttpConnectAction(connect,to,StringLiteral,and,HttpSend(send,object,StringLiteral,and,HttpAction(do,post))),
-	and,SaveAction(output,into,StringLiteral))),ThenStatement(Then,I,HelpersStatement(HelpersAction(manipulate,and,delete),and,SaveAction(output,into,StringLiteral))),
-	ThenStatement(Then,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersAction(manipulate,and,get))),and,
-	SaveAction(output,into,StringLiteral))),ThenStatement(Then,I,HttpStatement(HttpConnectAction(connect,to,StringLiteral,and,HttpSend(send,object,StringLiteral,and,HttpAction(do,post))),
-	and,SaveAction(output,into,StringLiteral))),ThenStatement(Then,I,HelpersStatement(HelpersAction(manipulate,and,delete),and,SaveAction(output,into,StringLiteral))),
-	ThenStatement(Then,I,HelpersStatement(HelpersAction(manipulate,and,delete),and,SaveAction(output,into,StringLiteral))),ThenStatement(Then,I,FsStatement(FsConnectAction(
-	FsSend(send,path,StringLiteral,and,FsAction(read,file,content))),and,SaveAction(output,into,StringLiteral))),ThenStatement(Then,I,FsStatement(FsConnectAction(
-	FsSend(send,path,StringLiteral,and,FsAction(read,verbatim,file,content))),and,SaveAction(output,into,StringLiteral))),ThenStatement(Then,I,ZencodeStatement(
-	ZencodeSend(send,keys,StringLiteral,and,ZencodeSend(send,data,StringLiteral,and,ZencodeSend(send,script,StringLiteral,and,ZencodeAction(execute,zencode)))),and,
-	SaveAction(output,into,StringLiteral))),ThenStatement(Then,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,
-	HelpersAction(manipulate,and,get))),and,SaveAction(output,into,StringLiteral))),ThenStatement(Then,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,
-	HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set)))))),ThenStatement(Then,I,
-	HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set)))))),
-	ThenStatement(Then,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,FsSend(send,content,StringLiteral,and,FsAction(store,in,file)))))),
-	ThenStatement(Then,I,ShellStatement(ShellSend(send,command,StringLiteral,and,ShellAction(execute,in,shell)))),ThenStatement(Then,I,FsStatement(FsConnectAction(
-	FsSend(send,path,StringLiteral,and,FsSend(send,content,StringLiteral,and,FsAction(store,in,file)))))),ThenStatement(Then,I,HelpersStatement(HelpersAction(manipulate,and,delete),and,
-	SaveAction(output,into,StringLiteral))),ThenStatement(Then,I,HelpersStatement(HelpersAction(manipulate,and,delete),and,SaveAction(output,into,StringLiteral))),
-	ThenStatement(Then,I,HelpersStatement(HelpersAction(manipulate,and,delete),and,SaveAction(output,into,StringLiteral))),ThenStatement(Then,I,HelpersStatement(
-	HelpersAction(manipulate,and,delete),and,SaveAction(output,into,StringLiteral))),ThenStatement(Then,I,HelpersStatement(HelpersAction(manipulate,and,delete),and,
-	SaveAction(output,into,StringLiteral))),ThenStatement(Then,I,HelpersStatement(HelpersAction(manipulate,and,delete),and,SaveAction(output,into,StringLiteral)))))
+Statement(RuleStatement(Rule,GenericRule(Keywords(output),Identifier,Identifier)),ScenarioStatement(Scenario,Identifier),ScenarioStatement(Scenario,Identifier),ScenarioStatement(Scenario,Keywords(ethereum)),
+	ScenarioStatement(Scenario,Identifier),ScenarioStatement(Scenario,Identifier),ScenarioStatement(Scenario,Identifier),ScenarioStatement(Scenario,Identifier),ScenarioStatement(Scenario,Identifier),Comment,
+	SlangroomStatement(GivenStatement(Given,I,ShellStatement(ShellSend(send,command,StringLiteral,and,ShellAction(execute,in,shell)),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GivenStatement(Given,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,FsAction(verify,file,does,not,exist)))))),Comment,
+	SlangroomStatement(GivenStatement(Given,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,FsAction(read,verbatim,file,content))),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GivenStatement(Given,I,ZencodeStatement(ZencodeSend(send,keys,StringLiteral,and,ZencodeSend(send,data,StringLiteral,and,ZencodeSend(send,script,StringLiteral,and,ZencodeAction(execute,zencode)))),and,SaveAction(output,Identifier,into,StringLiteral)))),Comment,
+	SlangroomStatement(GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersAction(manipulate,and,get))),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersAction(manipulate,and,get))),and,SaveAction(output,Identifier,into,StringLiteral)))),Comment,
+	SlangroomStatement(GivenStatement(Given,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,FsAction(read,file,content))),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),
+	SlangroomStatement(GivenName(Given,I,my,name,is,Keywords(in),Keywords(a),StringLiteral,Keywords(named),StringLiteral,HaveStatement(and,I,have,a,StringLiteral,named,StringLiteral),HaveStatement(and,I,have,a,StringLiteral,in,StringLiteral),HaveStatement(and,I,have,a,StringLiteral,named,StringLiteral))),
+	SlangroomStatement(IfEndifStatement(Condition(If,I,verify,StringLiteral,Keywords(is),Identifier,Keywords(in),StringLiteral),WhenStatement(When,I,Identifier,Keywords(from),Keywords(path),StringLiteral,Keywords(and),I,Identifier,StringLiteral,Keywords(to),StringLiteral),EndIf)),
+	SlangroomStatement(IfEndifStatement(Condition(If,I,verify,StringLiteral,Keywords(is),Keywords(not),Identifier,Keywords(in),StringLiteral),WhenStatement(When,I,Identifier,StringLiteral,Keywords(to),StringLiteral),EndIf)),
+	SlangroomStatement(WhenStatement(When,I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key),Keywords(and),I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key),Keywords(and),I,Keywords(create),Keywords(the),Keywords(ethereum),Keywords(address),Keywords(and),I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key),Keywords(and),I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key),Keywords(and),I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key),Keywords(and),I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key),Keywords(and),I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key),Keywords(and),I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key))),
+	SlangroomStatement(ThenPrint(Then,I,print,Keywords(the),StringLiteral,Keywords(and),I,print,Keywords(the),StringLiteral,Keywords(and),I,print,Keywords(the),StringLiteral,Keywords(and),I,print,Keywords(the),StringLiteral,Keywords(and),I,print,Keywords(the),StringLiteral,Keywords(and),I,print,Keywords(the),StringLiteral,Keywords(and),I,print,Keywords(the),StringLiteral,Keywords(as),StringLiteral,Keywords(and),I,print,Keywords(the),StringLiteral,Keywords(and),I,print,Keywords(the),StringLiteral,Keywords(and),I,print,Keywords(my),Keywords(name),Keywords(in),StringLiteral,Keywords(and),I,print,Keywords(the),StringLiteral,Keywords(and),I,print,Keywords(the),StringLiteral)),Comment,Comment,
+	SlangroomStatement(ThenStatement(Then,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set))))))),
+	SlangroomStatement(ThenStatement(Then,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set))))))),
+	SlangroomStatement(ThenStatement(Then,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set))))))),
+	SlangroomStatement(ThenStatement(Then,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set))))))),
+	SlangroomStatement(ThenStatement(Then,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set))))))),
+	SlangroomStatement(ThenStatement(Then,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set))))))),
+	SlangroomStatement(ThenStatement(Then,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set))))))),
+	SlangroomStatement(ThenStatement(Then,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set))))))),
+	SlangroomStatement(ThenStatement(Then,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set))))))),
+	SlangroomStatement(ThenStatement(Then,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set))))))),
+	SlangroomStatement(ThenStatement(Then,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set))))))),Comment,
+	SlangroomStatement(ThenStatement(Then,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,FsAction(read,verbatim,file,content))),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(ThenStatement(Then,I,ZencodeStatement(ZencodeSend(send,keys,StringLiteral,and,ZencodeSend(send,data,StringLiteral,and,ZencodeSend(send,script,StringLiteral,and,ZencodeAction(execute,zencode)))),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(ThenStatement(Then,I,HelpersStatement(HelpersAction(manipulate,and,delete),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(ThenStatement(Then,I,HelpersStatement(HelpersAction(manipulate,and,delete),and,SaveAction(output,into,StringLiteral)))),Comment,
+	SlangroomStatement(ThenStatement(Then,I,HttpStatement(HttpConnectAction(connect,to,StringLiteral,and,HttpSend(send,object,StringLiteral,and,HttpAction(do,post))),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(ThenStatement(Then,I,HelpersStatement(HelpersAction(manipulate,and,delete),and,SaveAction(output,into,StringLiteral)))),Comment,
+	SlangroomStatement(ThenStatement(Then,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersAction(manipulate,and,get))),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(ThenStatement(Then,I,HttpStatement(HttpConnectAction(connect,to,StringLiteral,and,HttpSend(send,object,StringLiteral,and,HttpAction(do,post))),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(ThenStatement(Then,I,HelpersStatement(HelpersAction(manipulate,and,delete),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(ThenStatement(Then,I,HelpersStatement(HelpersAction(manipulate,and,delete),and,SaveAction(output,into,StringLiteral)))),Comment,
+	SlangroomStatement(ThenStatement(Then,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,FsAction(read,file,content))),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(ThenStatement(Then,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,FsAction(read,verbatim,file,content))),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(ThenStatement(Then,I,ZencodeStatement(ZencodeSend(send,keys,StringLiteral,and,ZencodeSend(send,data,StringLiteral,and,ZencodeSend(send,script,StringLiteral,and,ZencodeAction(execute,zencode)))),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(ThenStatement(Then,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersAction(manipulate,and,get))),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(ThenStatement(Then,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set))))))),
+	SlangroomStatement(ThenStatement(Then,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set))))))),
+	SlangroomStatement(ThenStatement(Then,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,FsSend(send,content,StringLiteral,and,FsAction(store,in,file))))))),
+	SlangroomStatement(ThenStatement(Then,I,ShellStatement(ShellSend(send,command,StringLiteral,and,ShellAction(execute,in,shell))))),
+	SlangroomStatement(ThenStatement(Then,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,FsSend(send,content,StringLiteral,and,FsAction(store,in,file))))))),
+	SlangroomStatement(ThenStatement(Then,I,HelpersStatement(HelpersAction(manipulate,and,delete),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(ThenStatement(Then,I,HelpersStatement(HelpersAction(manipulate,and,delete),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(ThenStatement(Then,I,HelpersStatement(HelpersAction(manipulate,and,delete),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(ThenStatement(Then,I,HelpersStatement(HelpersAction(manipulate,and,delete),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(ThenStatement(Then,I,HelpersStatement(HelpersAction(manipulate,and,delete),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(ThenStatement(Then,I,HelpersStatement(HelpersAction(manipulate,and,delete),and,SaveAction(output,into,StringLiteral)))))
 
+#Comment after Scenario
+
+Scenario eddsa: verify presentation
+# this should not  break comments
+
+
+==>
+Statement(ScenarioStatement(Scenario,Identifier,Keywords(verify),Identifier),Comment)
