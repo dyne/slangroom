@@ -27,7 +27,7 @@ export const SlangroomLanguage = LRLanguage.define({
 				"Given Then When and If EndIf" : t.variableName,
 				"have send open connect print output" : t.keyword,
 				"RuleStatement!": t.heading,
-				"ScenarioStatement!": t.heading1,
+				"ScenarioStatement/...": t.heading1,
 				StringLiteral: t.string,
 				Comment: t.lineComment,
 			})
