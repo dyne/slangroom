@@ -35,7 +35,7 @@ VersionNumber {
 }
 
 @skip {
-    space | newline | comment
+    space | newline | Comment
 }
 
 GivenStatement {
@@ -426,7 +426,7 @@ Keywords {
 @tokens {
     space { " " | "\t" }
     newline { "\n" | "\r\n" }
-    comment { "#" (![\n])* }
+    Comment { "#" (![\n])* }
     StringLiteral { "'" (![\\\n'] | "\\" _)* "'" }
     symbols { $[a-zA-Z_] | "_" }
     Identifier { symbols+ Number* }
