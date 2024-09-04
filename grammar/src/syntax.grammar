@@ -7,7 +7,7 @@
 }
 
 SlangroomStatement {
-    (GivenStatement | ThenStatement | ThenPrint | GivenHaveStatement | GivenName | WhenStatement | IfEndifStatement)
+    (GivenStatement | ThenStatement | ThenPrint | GivenHaveStatement | GivenName | WhenStatement | IfEndifStatement |ForEachStatement)
 }
 
 RuleStatement {
@@ -73,12 +73,17 @@ WhenStatement {
 }
 
 IfEndifStatement{
-    Condition+ (WhenStatement |  ThenStatement | ThenPrint)* kw<"EndIf">
+    Condition+ ( GivenStatement | WhenStatement |  ThenStatement | ThenPrint)* kw<"EndIf">
 }
 
 Condition {
     kw<"If"> kw<"I"> kw<"verify"> (Identifier | Keywords | StringLiteral)+
- }
+}
+
+ForEachStatement {
+	kw<"Foreach"> (StringLiteral | Identifier | Keywords) (kw<"in"> | kw<"inside">) (StringLiteral | Identifier | Keywords)+ (GivenStatement | WhenStatement |  ThenStatement | ThenPrint)*
+	kw<"EndForeach">
+}
 
 // ===== Plugin-Specific Statements =====
 

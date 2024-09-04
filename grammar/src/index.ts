@@ -25,7 +25,7 @@ export const SlangroomLanguage = LRLanguage.define({
 	parser: parser.configure({
 		props: [
 			styleTags({
-				"Given Then When and If EndIf" : t.variableName,
+				"Given Then When and in inside If EndIf Foreach EndForeach" : t.variableName,
 				"have send open connect print output" : t.keyword,
 				"RuleStatement!": t.heading,
 				"ScenarioStatement/...": t.heading1,

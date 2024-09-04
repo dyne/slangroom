@@ -738,3 +738,32 @@ Scenario eddsa: verify presentation
 
 ==>
 Statement(ScenarioStatement(Scenario,Identifier,Keywords(verify),Identifier),Comment)
+
+#Foreach script
+
+Given I have a 'string array' named 'to_be_hashed'
+Given I have a 'float' named 'begin' inside 'loop_parameters'
+Given I have a 'float' named 'end' inside 'loop_parameters'
+Given I have a 'float' named 'step' inside 'loop_parameters'
+When I create the 'base64 array' named 'array of hashes'
+Foreach 'element_to_be_hashed' inside 'to_be_hashed'
+When I create the hash of 'element_to_be_hashed'
+When I move 'hash' in 'array of hashes'
+EndForeach
+When I create the 'number array' named 'numbers'
+Foreach 'number_in_array' in sequence from 'begin' to 'end' with step 'step'
+When I move 'number_in_array' in 'numbers'
+EndForeach
+Then print 'array of hashes'
+Then print 'to_be_hashed'
+Then print 'numbers'
+
+==>
+
+Statement(SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral,inside,StringLiteral)),
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral,inside,StringLiteral)),SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral,inside,StringLiteral)),
+	SlangroomStatement(WhenStatement(When,I,Keywords(create),Keywords(the),StringLiteral,Keywords(named),StringLiteral)),SlangroomStatement(ForEachStatement(Foreach,StringLiteral,inside,StringLiteral,
+	WhenStatement(When,I,Keywords(create),Keywords(the),Identifier,Keywords(of),StringLiteral),WhenStatement(When,I,Identifier,StringLiteral,Keywords(in),StringLiteral),EndForeach)),
+	SlangroomStatement(WhenStatement(When,I,Keywords(create),Keywords(the),StringLiteral,Keywords(named),StringLiteral)),SlangroomStatement(ForEachStatement(Foreach,StringLiteral,in,Identifier,Keywords(from),StringLiteral,Keywords(to),StringLiteral,Keywords(with),Identifier,StringLiteral,
+	WhenStatement(When,I,Identifier,StringLiteral,Keywords(in),StringLiteral),EndForeach)),SlangroomStatement(ThenPrint(Then,print,StringLiteral)),SlangroomStatement(ThenPrint(Then,print,StringLiteral)),
+	SlangroomStatement(ThenPrint(Then,print,StringLiteral)))
