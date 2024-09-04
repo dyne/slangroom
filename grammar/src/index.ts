@@ -15,7 +15,8 @@ const syntax_colors = syntaxHighlighting(
 		{tag: t.variableName, color: "red"},
 		{ tag: t.keyword, color: "green" },
 		{tag: t.string, color: "blue"},
-		{tag: t.lineComment, color: "gray"}
+		{tag: t.lineComment, color: "gray"},
+		{tag: t.heading2, color: "black"}
 	  ],
 	  { all: { color: "black" } }
 	)
@@ -28,6 +29,7 @@ export const SlangroomLanguage = LRLanguage.define({
 				"have send open connect print output" : t.keyword,
 				"RuleStatement!": t.heading,
 				"ScenarioStatement/...": t.heading1,
+				"DbAction! EthereumAction! FsAction! GitAction! HelpersAction! HttpAction! JsonSchemaAction! OAuthAction! PocketbaseAction! QrCodeAction! RedisAction! ShellAction! TimestampAction! WalletAction! ZencodeAction!": t.heading2,
 				StringLiteral: t.string,
 				Comment: t.lineComment,
 			})
