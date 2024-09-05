@@ -19,7 +19,10 @@ RuleStatement {
 }
 
 ScenarioStatement {
-    kw<"Scenario"> (StringLiteral| Identifier | Keywords) ScenarioComment? ( newline+ | eof )
+    kw<"Scenario"> ScenarioType ScenarioComment? ( newline+ | eof )
+}
+ScenarioType {
+  (StringLiteral| Identifier | Keywords)
 }
 ScenarioComment {
 	":" (Identifier | Keywords | StringLiteral)*

@@ -27,9 +27,8 @@ export const SlangroomLanguage = LRLanguage.define({
 			styleTags({
 				"Given Then When and in inside If EndIf Foreach EndForeach" : t.variableName,
 				"have send open connect print output" : t.keyword,
-				"RuleStatement!": t.heading,
-				"ScenarioStatement/...": t.heading1,
-				"ScenarioComment!": t.heading1,
+				"Rule VersionRule! UnknownIgnoreRule! GenericRule!": t.heading,
+				" Scenario ScenarioType/... ScenarioComment!": t.heading1,
 				"DbAction! EthereumAction! FsAction! GitAction! HelpersAction! HttpAction! JsonSchemaAction! OAuthAction! PocketbaseAction! QrCodeAction! RedisAction! ShellAction! TimestampAction! WalletAction! ZencodeAction!": t.heading2,
 				StringLiteral: t.string,
 				Comment: t.lineComment,
