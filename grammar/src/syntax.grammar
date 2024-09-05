@@ -3,7 +3,11 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 @top Statement {
-    ( RuleStatement | ScenarioStatement | RuleStatement |  SlangroomStatement | Comment)*
+    ( RuleStatement | ScenarioStatement | RuleStatement |  SlangroomStatement | Comment )*
+}
+
+Comment {
+  comment (newline+ |eof)
 }
 
 SlangroomStatement {
@@ -11,13 +15,15 @@ SlangroomStatement {
 }
 
 RuleStatement {
-    kw<"Rule"> (VersionRule | UnknownIgnoreRule | GenericRule)
+    kw<"Rule"> (VersionRule | UnknownIgnoreRule | GenericRule) ( newline+ | eof )
 }
 
 ScenarioStatement {
-    kw<"Scenario"> (StringLiteral| Identifier | Keywords) ":"? (Identifier | Keywords)*
+    kw<"Scenario"> (StringLiteral| Identifier | Keywords) ScenarioComment? ( newline+ | eof )
 }
-
+ScenarioComment {
+	":" (Identifier | Keywords | StringLiteral)*
+}
 VersionRule {
     kw<"version"> VersionNumber
 }
@@ -35,54 +41,56 @@ VersionNumber {
 }
 
 @skip {
-    space | newline
+    space
 }
 
 GivenStatement {
     kw<"Given"> kw<"I">
     (DbStatement | EthereumStatement | FsStatement | GitStatement | HelpersStatement | HttpStatement | JsonSchemaStatement | OAuthStatement | PocketbaseStatement | QrCodeStatement | RedisStatement | ShellStatement | TimestampStatement | WalletStatement | ZencodeStatement)
+	( newline+ | eof )
 }
 
 ThenStatement {
     kw<"Then"> kw<"I">
     (DbStatement | EthereumStatement | FsStatement | GitStatement | HelpersStatement | HttpStatement | JsonSchemaStatement | OAuthStatement | PocketbaseStatement | QrCodeStatement | RedisStatement | ShellStatement | TimestampStatement | WalletStatement | ZencodeStatement)
+	( newline+ | eof )
 }
 
 ThenPrint {
-    kw<"Then"> kw<"I">? kw<"print"> (StringLiteral | Identifier | Keywords)+ (kw<"I"> kw<"print"> (StringLiteral | Identifier | Keywords)+)*
+    kw<"Then"> kw<"I">? kw<"print"> (StringLiteral | Identifier | Keywords)+ (newline kw<"and"> +kw<"I"> kw<"print"> (StringLiteral | Identifier | Keywords)+)* ( newline+ | eof )
 }
 
 GivenHaveStatement {
     kw<"Given"> kw<"that">? kw<"I"> kw<"have"> (kw<"a">? | kw<"my">? | kw<"the">?) kw<"valid">? StringLiteral kw<"named">? StringLiteral? (kw<"inside"> | kw<"in">)?  kw<"named">? StringLiteral?
-    (kw <"and"> kw<"I"> kw<"have"> (kw<"a">? | kw<"my">?) kw<"valid">? StringLiteral kw<"named">? StringLiteral? (kw<"inside"> | kw<"in">)? kw<"named">? StringLiteral?)*
+    (newline* kw <"and"> kw<"I"> kw<"have"> (kw<"a">? | kw<"my">?) kw<"valid">? StringLiteral kw<"named">? StringLiteral? (kw<"inside"> | kw<"in">)? kw<"named">? StringLiteral?)* ( newline+ | eof )
 }
 HaveStatement{
-	kw<"and"> kw<"I"> kw<"have"> (kw<"a">? | kw<"my">?) kw<"valid">? StringLiteral kw<"named">? StringLiteral? (kw<"inside"> | kw<"in">)? kw<"named">? StringLiteral?
+	 newline+ kw<"and"> kw<"I"> kw<"have"> (kw<"a">? | kw<"my">?) kw<"valid">? StringLiteral kw<"named">? StringLiteral? (kw<"inside"> | kw<"in">)? kw<"named">? StringLiteral?
 }
 
 GivenName {
-    (kw<"Given"> kw<"I"> kw<"am">
+    ((kw<"Given"> kw<"I"> kw<"am">
     (kw<"known"> kw<"as">)? StringLiteral) |
 	(kw<"Given">  kw<"I">? kw<"my"> kw<"name"> kw<"is">
-	 (Identifier | Keywords | StringLiteral)+) (HaveStatement)*
+	 (Identifier | Keywords | StringLiteral)+)) HaveStatement* ( newline+ | eof )
 
 }
 
 WhenStatement {
-  kw<"When"> kw<"I"> (Identifier | Keywords | StringLiteral)+ (kw<"I"> (Identifier | Keywords | StringLiteral)+)*
+  kw<"When"> kw<"I"> (Identifier | Keywords | StringLiteral)+ (newline kw<"and"> kw<"I"> (Identifier | Keywords | StringLiteral)+)* (newline+ | eof)
 }
 
 IfEndifStatement{
-    Condition+ ( GivenStatement | WhenStatement |  ThenStatement | ThenPrint)* kw<"EndIf">
+    Condition+ ( GivenStatement | WhenStatement |  ThenStatement | ThenPrint)* kw<"EndIf"> ( newline+ | eof )
 }
 
 Condition {
-    kw<"If"> kw<"I"> kw<"verify"> (Identifier | Keywords | StringLiteral)+
+    kw<"If"> kw<"I"> kw<"verify"> (Identifier | Keywords | StringLiteral)+ ( newline+ | eof )
 }
 
 ForEachStatement {
-	kw<"Foreach"> (StringLiteral | Identifier | Keywords) (kw<"in"> | kw<"inside">) (StringLiteral | Identifier | Keywords)+ (GivenStatement | WhenStatement |  ThenStatement | ThenPrint)*
-	kw<"EndForeach">
+	kw<"Foreach"> (StringLiteral | Identifier | Keywords) (kw<"in"> | kw<"inside">) (StringLiteral | Identifier | Keywords)+  newline+ (GivenStatement | WhenStatement |  ThenStatement | ThenPrint)*
+	kw<"EndForeach"> ( newline+ | eof )
 }
 
 // ===== Plugin-Specific Statements =====
@@ -425,15 +433,18 @@ Keywords {
     kw<"redis"> | kw<"delete"> | kw<"shell"> | kw<"fetch"> |
     kw<"local"> | kw<"timestamp"> | kw<"milliseconds"> | kw<"seconds"> |
     kw<"vc"> | kw<"sd"> | kw<"jwt"> | kw<"p-256"> | kw<"public"> |
-    kw<"pretty"> | kw<"print"> | kw<"zencode"> | kw<"output"> | kw<"is">
+    kw<"pretty"> | kw<"print"> | kw<"zencode"> | kw<"output"> | kw<"is"> |
+	kw<"Given"> | kw<"Then"> | kw<"When"> | kw<"Rule"> | kw<"Scenario"> | kw<"If"> | kw<"EndIf"> | kw<"Foreach"> | kw<"EndForeach"> | kw<"I">
 }
 
 @tokens {
     space { " " | "\t" }
     newline { "\n" | "\r\n" }
-    Comment { "#" (![\n])* }
+    comment { "#" (![\n])*}
     StringLiteral { "'" (![\\\n'] | "\\" _)* "'" }
     symbols { $[a-zA-Z_] | "_" }
     Identifier { symbols+ Number* }
     Number { $[0-9]+ }
 }
+
+@external tokens token from "./tokens.js" { eof }

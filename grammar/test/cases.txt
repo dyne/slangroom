@@ -52,26 +52,20 @@ Then I connect to 'ethereum' and send transaction 'signed_ethereum_transaction' 
 
 ==>
 
-Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),
-	ScenarioStatement(Scenario,StringLiteral,Identifier,Identifier,Keywords(object),Identifier,Identifier),
+Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),ScenarioStatement(Scenario,StringLiteral,ScenarioComment(Identifier,Identifier,Keywords(object),Identifier,Identifier)),
 	SlangroomStatement(GivenStatement(Given,I,EthereumStatement(EthereumConnectAction(connect,to,StringLiteral,and,EthereumSend(send,address,StringLiteral,and,EthereumAction(read,the,ethereum,nonce))),and,SaveAction(output,into,StringLiteral)))),
-	SlangroomStatement(GivenStatement(Given,I,EthereumStatement(EthereumConnectAction(connect,to,StringLiteral,and,EthereumAction(read,the,suggested,gas,price)),and,SaveAction(output,into,StringLiteral)))),
-	Comment,
+	SlangroomStatement(GivenStatement(Given,I,EthereumStatement(EthereumConnectAction(connect,to,StringLiteral,and,EthereumAction(read,the,suggested,gas,price)),and,SaveAction(output,into,StringLiteral)))),Comment,
 	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral)),
-	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral)),
-	Comment,
-	SlangroomStatement(GivenHaveStatement(Given,I,have,the,StringLiteral)),
-	Comment,
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral)),Comment,
+	SlangroomStatement(GivenHaveStatement(Given,I,have,the,StringLiteral)),Comment,
 	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),
 	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),
-	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral)),
-	Comment,
+	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral)),Comment,
 	SlangroomStatement(WhenStatement(When,I,Keywords(create),Keywords(the),Keywords(ethereum),Keywords(transaction),Keywords(to),StringLiteral)),
 	SlangroomStatement(WhenStatement(When,I,Identifier,Keywords(the),Keywords(ethereum),Keywords(transaction),Keywords(to),Keywords(store),StringLiteral)),
 	SlangroomStatement(WhenStatement(When,I,Keywords(create),Keywords(the),Identifier,Keywords(ethereum),Keywords(transaction),Identifier,Identifier,StringLiteral)),
 	SlangroomStatement(ThenPrint(Then,print,Keywords(the),StringLiteral)),
 	SlangroomStatement(ThenStatement(Then,I,EthereumStatement(EthereumConnectAction(connect,to,StringLiteral,and,EthereumSend(send,transaction,StringLiteral,and,EthereumAction(read,the,ethereum,transaction,id,after,broadcast))),and,SaveAction(output,into,StringLiteral)))))
-
 
 #Fs example
 
@@ -170,7 +164,7 @@ Then I send request 'request' and send server_data 'server_data' and generate ac
 
 ==>
 
-Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),ScenarioStatement(Scenario,StringLiteral,Keywords(url),Identifier),
+Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),ScenarioStatement(Scenario,StringLiteral,ScenarioComment(Keywords(url),Identifier)),
 	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),
 	SlangroomStatement(WhenStatement(When,I,Keywords(create),Keywords(the),Identifier,Keywords(get),Keywords(parameters),Keywords(from),StringLiteral,Identifier,Identifier,Identifier)),
 	SlangroomStatement(WhenStatement(When,I,Identifier,StringLiteral,Keywords(to),StringLiteral,Keywords(in),StringLiteral)),SlangroomStatement(ThenPrint(Then,print,Keywords(the),StringLiteral)),
@@ -319,7 +313,7 @@ Then I send request 'request' and send server_data 'server' and verify request p
 
 ==>
 
-Statement(ScenarioStatement(Scenario,StringLiteral),ScenarioStatement(Scenario,StringLiteral,Keywords(create),Keywords(jwk)),RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),
+Statement(ScenarioStatement(Scenario,StringLiteral),ScenarioStatement(Scenario,StringLiteral,ScenarioComment(Keywords(create),Keywords(jwk))),RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),
 	SlangroomStatement(GivenStatement(Given,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,FsAction(read,file,content))),and,SaveAction(output,into,StringLiteral)))),
 	SlangroomStatement(GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersAction(manipulate,and,get))),and,SaveAction(output,into,StringLiteral)))),
 	SlangroomStatement(GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersAction(manipulate,and,get))),and,SaveAction(output,into,StringLiteral)))),
@@ -689,10 +683,10 @@ Statement(RuleStatement(Rule,GenericRule(Keywords(output),Identifier,Identifier)
 	SlangroomStatement(GivenStatement(Given,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,FsAction(read,file,content))),and,SaveAction(output,into,StringLiteral)))),
 	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),
 	SlangroomStatement(GivenName(Given,I,my,name,is,Keywords(in),Keywords(a),StringLiteral,Keywords(named),StringLiteral,HaveStatement(and,I,have,a,StringLiteral,named,StringLiteral),HaveStatement(and,I,have,a,StringLiteral,in,StringLiteral),HaveStatement(and,I,have,a,StringLiteral,named,StringLiteral))),
-	SlangroomStatement(IfEndifStatement(Condition(If,I,verify,StringLiteral,Keywords(is),Identifier,Keywords(in),StringLiteral),WhenStatement(When,I,Identifier,Keywords(from),Keywords(path),StringLiteral,Keywords(and),I,Identifier,StringLiteral,Keywords(to),StringLiteral),EndIf)),
+	SlangroomStatement(IfEndifStatement(Condition(If,I,verify,StringLiteral,Keywords(is),Identifier,Keywords(in),StringLiteral),WhenStatement(When,I,Identifier,Keywords(from),Keywords(path),StringLiteral,and,I,Identifier,StringLiteral,Keywords(to),StringLiteral),EndIf)),
 	SlangroomStatement(IfEndifStatement(Condition(If,I,verify,StringLiteral,Keywords(is),Keywords(not),Identifier,Keywords(in),StringLiteral),WhenStatement(When,I,Identifier,StringLiteral,Keywords(to),StringLiteral),EndIf)),
-	SlangroomStatement(WhenStatement(When,I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key),Keywords(and),I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key),Keywords(and),I,Keywords(create),Keywords(the),Keywords(ethereum),Keywords(address),Keywords(and),I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key),Keywords(and),I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key),Keywords(and),I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key),Keywords(and),I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key),Keywords(and),I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key),Keywords(and),I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key))),
-	SlangroomStatement(ThenPrint(Then,I,print,Keywords(the),StringLiteral,Keywords(and),I,print,Keywords(the),StringLiteral,Keywords(and),I,print,Keywords(the),StringLiteral,Keywords(and),I,print,Keywords(the),StringLiteral,Keywords(and),I,print,Keywords(the),StringLiteral,Keywords(and),I,print,Keywords(the),StringLiteral,Keywords(and),I,print,Keywords(the),StringLiteral,Keywords(as),StringLiteral,Keywords(and),I,print,Keywords(the),StringLiteral,Keywords(and),I,print,Keywords(the),StringLiteral,Keywords(and),I,print,Keywords(my),Keywords(name),Keywords(in),StringLiteral,Keywords(and),I,print,Keywords(the),StringLiteral,Keywords(and),I,print,Keywords(the),StringLiteral)),Comment,Comment,
+	SlangroomStatement(WhenStatement(When,I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key),and,I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key),and,I,Keywords(create),Keywords(the),Keywords(ethereum),Keywords(address),and,I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key),and,I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key),and,I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key),and,I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key),and,I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key),and,I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key))),
+	SlangroomStatement(ThenPrint(Then,I,print,Keywords(the),StringLiteral,and,I,print,Keywords(the),StringLiteral,and,I,print,Keywords(the),StringLiteral,and,I,print,Keywords(the),StringLiteral,and,I,print,Keywords(the),StringLiteral,and,I,print,Keywords(the),StringLiteral,and,I,print,Keywords(the),StringLiteral,Keywords(as),StringLiteral,and,I,print,Keywords(the),StringLiteral,and,I,print,Keywords(the),StringLiteral,and,I,print,Keywords(my),Keywords(name),Keywords(in),StringLiteral,and,I,print,Keywords(the),StringLiteral,and,I,print,Keywords(the),StringLiteral)),Comment,Comment,
 	SlangroomStatement(ThenStatement(Then,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set))))))),
 	SlangroomStatement(ThenStatement(Then,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set))))))),
 	SlangroomStatement(ThenStatement(Then,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersSend(send,value,StringLiteral,and,HelpersAction(manipulate,and,set))))))),
@@ -737,7 +731,7 @@ Scenario eddsa: verify presentation
 
 
 ==>
-Statement(ScenarioStatement(Scenario,Identifier,Keywords(verify),Identifier),Comment)
+Statement(ScenarioStatement(Scenario,Identifier,ScenarioComment(Keywords(verify),Identifier)),Comment)
 
 #Foreach script
 

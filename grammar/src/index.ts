@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import { parser } from "./syntax.grammar"
-import { LRLanguage, LanguageSupport, indentNodeProp, foldNodeProp, foldInside, delimitedIndent, HighlightStyle, syntaxHighlighting } from "@codemirror/language"
+import { LRLanguage, LanguageSupport, HighlightStyle, syntaxHighlighting } from "@codemirror/language"
 import { styleTags, tags as t } from "@lezer/highlight"
 import { completeFromList } from "@codemirror/autocomplete"
 
@@ -29,6 +29,7 @@ export const SlangroomLanguage = LRLanguage.define({
 				"have send open connect print output" : t.keyword,
 				"RuleStatement!": t.heading,
 				"ScenarioStatement/...": t.heading1,
+				"ScenarioComment!": t.heading1,
 				"DbAction! EthereumAction! FsAction! GitAction! HelpersAction! HttpAction! JsonSchemaAction! OAuthAction! PocketbaseAction! QrCodeAction! RedisAction! ShellAction! TimestampAction! WalletAction! ZencodeAction!": t.heading2,
 				StringLiteral: t.string,
 				Comment: t.lineComment,
