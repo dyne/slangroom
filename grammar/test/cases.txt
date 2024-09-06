@@ -52,7 +52,7 @@ Then I connect to 'ethereum' and send transaction 'signed_ethereum_transaction' 
 
 ==>
 
-Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),ScenarioStatement(Scenario,StringLiteral,ScenarioComment(Identifier,Identifier,Keywords(object),Identifier,Identifier)),
+Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),ScenarioStatement(Scenario,ScenarioType(StringLiteral),ScenarioComment(Identifier,Identifier,Keywords(object),Identifier,Identifier)),
 	SlangroomStatement(GivenStatement(Given,I,EthereumStatement(EthereumConnectAction(connect,to,StringLiteral,and,EthereumSend(send,address,StringLiteral,and,EthereumAction(read,the,ethereum,nonce))),and,SaveAction(output,into,StringLiteral)))),
 	SlangroomStatement(GivenStatement(Given,I,EthereumStatement(EthereumConnectAction(connect,to,StringLiteral,and,EthereumAction(read,the,suggested,gas,price)),and,SaveAction(output,into,StringLiteral)))),Comment,
 	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral)),
@@ -164,7 +164,7 @@ Then I send request 'request' and send server_data 'server_data' and generate ac
 
 ==>
 
-Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),ScenarioStatement(Scenario,StringLiteral,ScenarioComment(Keywords(url),Identifier)),
+Statement(RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),ScenarioStatement(Scenario,ScenarioType(StringLiteral),ScenarioComment(Keywords(url),Identifier))
 	SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),SlangroomStatement(GivenHaveStatement(Given,I,have,a,StringLiteral,named,StringLiteral)),
 	SlangroomStatement(WhenStatement(When,I,Keywords(create),Keywords(the),Identifier,Keywords(get),Keywords(parameters),Keywords(from),StringLiteral,Identifier,Identifier,Identifier)),
 	SlangroomStatement(WhenStatement(When,I,Identifier,StringLiteral,Keywords(to),StringLiteral,Keywords(in),StringLiteral)),SlangroomStatement(ThenPrint(Then,print,Keywords(the),StringLiteral)),
@@ -313,7 +313,7 @@ Then I send request 'request' and send server_data 'server' and verify request p
 
 ==>
 
-Statement(ScenarioStatement(Scenario,StringLiteral),ScenarioStatement(Scenario,StringLiteral,ScenarioComment(Keywords(create),Keywords(jwk))),RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),
+Statement(ScenarioStatement(Scenario,ScenarioType(StringLiteral)),ScenarioStatement(Scenario,ScenarioType(StringLiteral),ScenarioComment(Keywords(create),Keywords(jwk))),RuleStatement(Rule,UnknownIgnoreRule(unknown,ignore)),
 	SlangroomStatement(GivenStatement(Given,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,FsAction(read,file,content))),and,SaveAction(output,into,StringLiteral)))),
 	SlangroomStatement(GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersAction(manipulate,and,get))),and,SaveAction(output,into,StringLiteral)))),
 	SlangroomStatement(GivenStatement(Given,I,HelpersStatement(HelpersSend(send,object,StringLiteral,and,HelpersSend(send,path,StringLiteral,and,HelpersAction(manipulate,and,get))),and,SaveAction(output,into,StringLiteral)))),
@@ -672,8 +672,9 @@ Then I manipulate and delete and output into 'secrets'
 
 ==>
 
-Statement(RuleStatement(Rule,GenericRule(Keywords(output),Identifier,Identifier)),ScenarioStatement(Scenario,Identifier),ScenarioStatement(Scenario,Identifier),ScenarioStatement(Scenario,Keywords(ethereum)),
-	ScenarioStatement(Scenario,Identifier),ScenarioStatement(Scenario,Identifier),ScenarioStatement(Scenario,Identifier),ScenarioStatement(Scenario,Identifier),ScenarioStatement(Scenario,Identifier),Comment,
+Statement(RuleStatement(Rule,GenericRule(Keywords(output),Identifier,Identifier)),ScenarioStatement(Scenario,ScenarioType(Identifier)),ScenarioStatement(Scenario,ScenarioType(Identifier)),
+	ScenarioStatement(Scenario,ScenarioType(Keywords(ethereum))),ScenarioStatement(Scenario,ScenarioType(Identifier)),ScenarioStatement(Scenario,ScenarioType(Identifier)),ScenarioStatement(Scenario,ScenarioType(Identifier)),
+	ScenarioStatement(Scenario,ScenarioType(Identifier)),ScenarioStatement(Scenario,ScenarioType(Identifier)),Comment,
 	SlangroomStatement(GivenStatement(Given,I,ShellStatement(ShellSend(send,command,StringLiteral,and,ShellAction(execute,in,shell)),and,SaveAction(output,into,StringLiteral)))),
 	SlangroomStatement(GivenStatement(Given,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,FsAction(verify,file,does,not,exist)))))),Comment,
 	SlangroomStatement(GivenStatement(Given,I,FsStatement(FsConnectAction(FsSend(send,path,StringLiteral,and,FsAction(read,verbatim,file,content))),and,SaveAction(output,into,StringLiteral)))),
@@ -731,7 +732,7 @@ Scenario eddsa: verify presentation
 
 
 ==>
-Statement(ScenarioStatement(Scenario,Identifier,ScenarioComment(Keywords(verify),Identifier)),Comment)
+Statement(ScenarioStatement(Scenario,ScenarioType(Identifier),ScenarioComment(Keywords(verify),Identifier)),Comment)
 
 #Foreach script
 
