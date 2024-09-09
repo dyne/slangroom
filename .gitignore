@@ -79,5 +79,5 @@ node_modules
 !/grammar/.releaserc
 !/grammar/src/syntax.grammar.terms.d.ts
 !/grammar/src/tokens.js
-
+!/grammar/src/complete.ts
 

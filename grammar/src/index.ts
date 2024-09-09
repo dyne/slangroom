@@ -3,9 +3,9 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import { parser } from "./syntax.grammar"
-import { LRLanguage, LanguageSupport, HighlightStyle, syntaxHighlighting } from "@codemirror/language"
+import { LRLanguage, LanguageSupport, HighlightStyle, syntaxHighlighting,} from "@codemirror/language"
 import { styleTags, tags as t } from "@lezer/highlight"
-import { completeFromList } from "@codemirror/autocomplete"
+import { completeGivenStatement } from "./complete"
 
 const syntax_colors = syntaxHighlighting(
 	HighlightStyle.define(
@@ -41,11 +41,8 @@ export const SlangroomLanguage = LRLanguage.define({
 })
 
 const ac = SlangroomLanguage.data.of({
-	autocomplete: completeFromList([
-		{ label: "given", type: "keyword" },
-		{ label: "then", type: "keyword" },
-		{ label: "when", type: "keyword" }
-	])
+	autocomplete: completeGivenStatement
+
 })
 
 export function Slangroom() {
