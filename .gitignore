@@ -81,4 +81,4 @@ node_modules
 !/grammar/src/tokens.js
 !/grammar/src/complete.ts
 !/grammar/utils/package.json
-!/grammar/utils/parse_complete.ts
+!/grammar/utils/prepare_complete.mjs
