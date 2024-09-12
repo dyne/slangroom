@@ -3,51 +3,46 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import { CompletionContext, snippetCompletion } from "@codemirror/autocomplete";
+import { fullStatementTemplates } from "./complete_statement";
 
 // Helper function to strip quotes from matched strings
 function stripQuotes(s: string) {
   return s.replace(/^'|'$/g, "");
 }
 
-const fullStatementTemplates = [
-  snippetCompletion("Given I connect to '${1:}' and send object '${2:}' and send headers '${3:}' and do post and output into '${4:}'", { label: "Given I connect to ' ' and send object ' ' and send headers ' ' and do post and output into ' '", type: "keyword" }),
-  snippetCompletion("Given I connect to '${1:}' and send record '${2:}' and send table '${3:}' and read the record of the table and output into '${4:}'", { label: "Given I connect to ' ' and send record ' ' and send table ' ' and read the record of the table and output into ' '", type: "keyword" })
-];
+const fullStatementSnippets = fullStatementTemplates.map((x) => {
+	let n = 1;
+	return snippetCompletion(x.label.replace(/''/g, () => `'\${${n++}:}'`), x);
+});
 
 export function completeGivenStatement(context: CompletionContext) {
-  let line = context.state.doc.lineAt(context.pos);
-  let textBefore = context.state.sliceDoc(line.from, context.pos);
-  let triggerMatch = /G.*$/.exec(textBefore);
+  const line = context.state.doc.lineAt(context.pos);
+  const textBefore = context.state.sliceDoc(line.from, context.pos);
+  const triggerMatch = /G.*$/.exec(textBefore);
 
   if (triggerMatch) {
-    let strings = textBefore.match(/'([^']*)'/g);
+    const strings = textBefore.match(/'([^']*)'/g);
 
     if (!strings) {
       return {
         from: context.pos - triggerMatch[0].length,
-        options: fullStatementTemplates,
+        options: fullStatementSnippets,
         validFor: /^.*$/,
       };
     }
 
-    let strippedStrings = strings.map(stripQuotes);
+    const strippedStrings = strings.map(stripQuotes);
 
-    let templateOption = [
-      snippetCompletion(
-        `Given I connect to '\${1:${strippedStrings[0] || ""}}' and send object '\${2:${strippedStrings[1] || ""}}' and send headers '\${3:${strippedStrings[2] || ""}}' and do post and output into '\${4:${strippedStrings[3] || ""}}'`,
-        {
-          label: `Given I connect to ${strings[0] || "''"} and send object ${strings[1] || "''"} and send headers ${strings[2] || "''"} and do post and output into ${strings[3] || "''"}`,
-          type: "keyword"
-        }
-      ),
-      snippetCompletion(
-        `Given I connect to '\${1:${strippedStrings[0] || ""}}' and send record '\${2:${strippedStrings[1] || ""}}' and send table '\${3:${strippedStrings[2] || ""}}' and read the record of the table and output into '\${4:${strippedStrings[3] || ""}}'`,
-        {
-          label: `Given I connect to ${strings[0] || "''"} and send record ${strings[1] || "''"} and send table ${strings[2] || "''"} and read the record of the table and output into ${strings[3] || "''"}`,
-          type: "keyword"
-        }
-      )
-    ];
+	const templateOption = fullStatementTemplates.map((x) => {
+		let n = 1;
+		let m = 0;
+		return snippetCompletion(
+			x.label.replace(/''/g, () => `\${${n}:${strippedStrings[n++-1] || ""}}`),
+			{
+				label: x.label.replace(/''/g, () => `${strings[m++] || "''"}`),
+				type: x.type
+			});
+	})
 
     return {
       from: context.pos - textBefore.length,

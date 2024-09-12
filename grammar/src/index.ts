@@ -42,7 +42,6 @@ export const SlangroomLanguage = LRLanguage.define({
 
 const ac = SlangroomLanguage.data.of({
 	autocomplete: completeGivenStatement
-
 })
 
 export function Slangroom() {

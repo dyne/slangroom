@@ -6,3 +6,4 @@ packages:
   - pkg/*
   - docs/statements
   - grammar
+  - grammar/utils
