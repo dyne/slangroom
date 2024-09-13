@@ -15,10 +15,10 @@ const fullStatementSnippets = fullStatementTemplates.map((x) => {
 	return snippetCompletion(x.label.replace(/''/g, () => `'\${${n++}:}'`), x);
 });
 
-export function completeGivenStatement(context: CompletionContext) {
+export function completeStatement(context: CompletionContext) {
   const line = context.state.doc.lineAt(context.pos);
   let textBefore = context.state.sliceDoc(line.from, context.pos);
-  const triggerMatch = /G.*$/i.exec(textBefore);
+  const triggerMatch = /T.*$/i.exec(textBefore);
 
   if (triggerMatch) {
     const strings = textBefore.match(/'([^']*)'/g);

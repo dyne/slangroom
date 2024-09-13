@@ -5,7 +5,7 @@
 import { parser } from "./syntax.grammar"
 import { LRLanguage, LanguageSupport, HighlightStyle, syntaxHighlighting,} from "@codemirror/language"
 import { styleTags, tags as t } from "@lezer/highlight"
-import { completeGivenStatement } from "./complete"
+import { completeStatement } from "./complete"
 
 const syntax_colors = syntaxHighlighting(
 	HighlightStyle.define(
@@ -41,7 +41,7 @@ const syntax_colors = syntaxHighlighting(
 })
 
 const ac = SlangroomLanguage.data.of({
-	autocomplete: completeGivenStatement
+	autocomplete: completeStatement
 })
 
 export function Slangroom() {
