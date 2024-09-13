@@ -37,7 +37,7 @@ export function completeStatement(context: CompletionContext) {
 		let n = 1;
 		let m = 0;
 		return snippetCompletion(
-			x.label.replace(/''/g, () => `\${${n}:${strippedStrings[n++-1] || ""}}`),
+			x.label.replace(/''/g, () => `'\${${n}:${strippedStrings[n++-1] || ""}}'`),
 			{
 				label: x.label.replace(/''/g, () => `${strings[m++] || "''"}`),
 				type: x.type
