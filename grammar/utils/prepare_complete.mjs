@@ -43,7 +43,7 @@ const generateStatements = (plugin) => {
 		const lowerCaseStatement = `I ${openConnect}${params.toLowerCase()}${k.phrase.toLowerCase()}`;
 		fullStatementTemplates.push(
 			{ label: `given ${lowerCaseStatement}`, displayLabel:`Given ${statement}`, apply: `Given ${statement}`,  type: "keyword" },
-			{ label: `then ${lowerCaseStatement}`, displayLabel: `Given ${statement}`, apply: `Then ${statement}`, type: "keyword" },
+			{ label: `then ${lowerCaseStatement}`, displayLabel: `Then ${statement}`, apply: `Then ${statement}`, type: "keyword" },
 			{ label: `given ${lowerCaseStatement} and output into ''`, displayLabel: `Given ${statement} and output into ''`, apply: `Given ${statement} and output into ''`, type: "keyword" },
 			{ label: `then ${lowerCaseStatement} and output into ''`, displayLabel: `Then ${statement} and output into ''`, apply: `Then ${statement} and output into ''`, type: "keyword" }
 		);
