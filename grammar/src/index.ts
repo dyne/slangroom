@@ -21,14 +21,14 @@ const syntax_colors = syntaxHighlighting(
 	  { all: { color: "black" } }
 	)
   );
-export const SlangroomLanguage = LRLanguage.define({
+  export const SlangroomLanguage = LRLanguage.define({
 	parser: parser.configure({
 		props: [
 			styleTags({
-				"Given Then When and in inside If EndIf Foreach EndForeach" : t.variableName,
+				"given then when and in inside if endif foreach endforeach" : t.variableName,
 				"have send open connect print output" : t.keyword,
-				"Rule VersionRule! UnknownIgnoreRule! GenericRule!": t.heading,
-				" Scenario ScenarioType/... ScenarioComment!": t.heading1,
+				"rule VersionRule! GenericRule!": t.heading,
+				"scenario ScenarioType/... ScenarioComment!": t.heading1,
 				"DbAction! EthereumAction! FsAction! GitAction! HelpersAction! HttpAction! JsonSchemaAction! OAuthAction! PocketbaseAction! QrCodeAction! RedisAction! ShellAction! TimestampAction! WalletAction! ZencodeAction!": t.heading2,
 				StringLiteral: t.string,
 				Comment: t.lineComment,
