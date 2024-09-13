@@ -2,20 +2,20 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-import typescript from "@rollup/plugin-typescript"
-import {lezer} from "@lezer/generator/rollup"
+import typescript from '@rollup/plugin-typescript';
+import { lezer } from '@lezer/generator/rollup';
 
 export default {
-  input: "src/index.ts",
-  external: id => id != "tslib" && !/^(\.?\/|\w:)/.test(id),
-  output: [
-    {file: "dist/index.cjs", format: "cjs"},
-    {dir: "./dist", format: "es"}
-  ],
-  plugins: [
-	typescript({
-		exclude: ["./utils/*"]
-	}),
-	lezer(),
-  ]
-}
+	input: 'src/index.ts',
+	external: (id) => id != 'tslib' && !/^(\.?\/|\w:)/.test(id),
+	output: [
+		{ file: 'dist/index.cjs', format: 'cjs' },
+		{ dir: './dist', format: 'es' },
+	],
+	plugins: [
+		typescript({
+			exclude: ['./utils/*'],
+		}),
+		lezer(),
+	],
+};

@@ -2,6 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-import {LRParser} from "@lezer/lr"
+import { LRParser } from '@lezer/lr';
 
-export declare const parser: LRParser
+export declare const parser: LRParser;
