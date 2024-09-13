@@ -18,7 +18,7 @@ const fullStatementSnippets = fullStatementTemplates.map((x) => {
 export function completeStatement(context: CompletionContext) {
   const line = context.state.doc.lineAt(context.pos);
   let textBefore = context.state.sliceDoc(line.from, context.pos);
-  const triggerMatch = /T.*$/i.exec(textBefore);
+  const triggerMatch = /^[GT].*$/i.exec(textBefore);
 
   if (triggerMatch) {
     const strings = textBefore.match(/'([^']*)'/g);
