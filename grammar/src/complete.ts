@@ -17,12 +17,12 @@ const fullStatementSnippets = fullStatementTemplates.map((x) => {
 
 export function completeGivenStatement(context: CompletionContext) {
   const line = context.state.doc.lineAt(context.pos);
-  const textBefore = context.state.sliceDoc(line.from, context.pos);
-  const triggerMatch = /G.*$/.exec(textBefore);
+  let textBefore = context.state.sliceDoc(line.from, context.pos);
+  const triggerMatch = /G.*$/i.exec(textBefore);
 
   if (triggerMatch) {
     const strings = textBefore.match(/'([^']*)'/g);
-
+	textBefore = textBefore.toLowerCase()
     if (!strings) {
       return {
         from: context.pos - triggerMatch[0].length,
