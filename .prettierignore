@@ -28,3 +28,7 @@ pkg/*/node_modules/
 !/pkg/**/*.test.ts
 
 !docs/.vitepress/config.mts
+
+# grammar
+!/grammar/src/index.ts
+!/grammar/utils/prepare_complete.mjs

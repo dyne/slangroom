@@ -26,6 +26,8 @@ jobs:
     steps:
     - name: 🛠️ Prepare pnpm workspace
       uses: dyne/pnpm@main
+      with:
+        build: pnpm build:grammar
     - name: 📦 Releases
       working-directory: ./grammar
       run: npx semantic-release
