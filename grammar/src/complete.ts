@@ -13,7 +13,7 @@ function stripQuotes(s: string) {
 const fullStatementSnippets = fullStatementTemplates.map((x) => {
 	let n = 1;
 	return snippetCompletion(
-		x.label.replace(/''/g, () => `'\${${n++}:}'`),
+		x.displayLabel.replace(/''/g, () => `'\${${n++}:}'`),
 		x,
 	);
 });
@@ -29,6 +29,7 @@ export function completeStatement(context: CompletionContext) {
 		if (!strings) {
 			return {
 				from: context.pos - triggerMatch[0].length,
+				to : line.to,
 				options: fullStatementSnippets,
 				validFor: /^.*$/,
 			};
@@ -40,9 +41,10 @@ export function completeStatement(context: CompletionContext) {
 			let n = 1;
 			let m = 0;
 			return snippetCompletion(
-				x.label.replace(/''/g, () => `'\${${n}:${strippedStrings[n++ - 1] || ''}}'`),
+				x.displayLabel.replace(/''/g, () => `'\${${n}:${strippedStrings[n++ - 1] || ''}}'`),
 				{
-					label: x.label.replace(/''/g, () => `${strings[m++] || "''"}`),
+					label: x.label.replace(/''/g, () => `${strings[m] || "''"}`),
+					displayLabel: x.displayLabel.replace(/''/g, () => `${strings[m++] || "''"}`),
 					type: x.type,
 				},
 			);
@@ -50,6 +52,7 @@ export function completeStatement(context: CompletionContext) {
 
 		return {
 			from: context.pos - textBefore.length,
+			to : line.to,
 			options: templateOption,
 			validFor: /^.*$/,
 		};
