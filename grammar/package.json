@@ -29,22 +29,18 @@
   "dependencies": {
     "@codemirror/autocomplete": "^6.18.0",
     "@codemirror/language": "^6.0.0",
-    "@codemirror/lint": "6.8.1",
-    "@codemirror/view": "^6.18.0",
     "@lezer/highlight": "^1.0.0",
-    "@lezer/lr": "^1.0.0",
-    "@rollup/plugin-node-resolve": "^15.2.3"
+    "@lezer/lr": "^1.0.0"
   },
   "devDependencies": {
     "@lezer/generator": "^1.0.0",
-    "@rollup/plugin-json": "^6.1.0",
+	"@rollup/plugin-json": "^6.0.0",
     "@rollup/plugin-typescript": "^11.1.6",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/commit-analyzer": "^13.0.0",
     "@semantic-release/git": "^10.0.1",
     "@semantic-release/npm": "^12.0.1",
     "@semantic-release/release-notes-generator": "^14.0.1",
-    "@slangroom/core": "workspace:*",
     "mocha": "^9.0.1",
     "rollup": "^2.60.2",
     "rollup-plugin-dts": "^4.0.1",
