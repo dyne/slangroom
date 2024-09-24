@@ -1,20 +1,36 @@
+// SPDX-FileCopyrightText: 2024 Dyne.org foundation
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import { linter, Diagnostic } from "@codemirror/lint";
 import { fullStatementTemplates } from "./complete_statement";
+import { distance } from "fastest-levenshtein"
 
-const defaultStatements = [
-	"given I connect to '' and send statement '' and execute sql statement",
-	"then I connect to '' and send variable '' and send name '' and send table '' and save the variable in the database table",
-	'Error',
-];
+// Helper function to extract the content inside quotes
+function extractContent(line: string): string[] {
+	return [...line.matchAll(/'([^']*)'/g)].map(match => match[1]);
+}
 
-// Helper function to remove words inside quotes (but keep the quotes)
-function removeWordsInsideQuotes(s: string) {
-	return s.replace(/'[^']*'/g, "''");
+// Helper function to insert the content into the template
+function insertContent(template: string, content: string[]): string {
+	let contentIndex = 0;
+	return template.replace(/''/g, () => `'${content[contentIndex++] || ""}'`);
 }
 
 // Normalize a line (case-insensitive, remove extra spaces)
 function normalizeLine(line: string): string {
-	return removeWordsInsideQuotes(line).toLowerCase().replace(/\s+/g, ' ').trim();
+
+    const regex = /'[^']*'|[^'\s]+/g;
+
+    return line.match(regex)?.map((word) => {
+        if (word.startsWith("'") && word.endsWith("'")) {
+            return word;
+        }
+        if (word === 'I' || word === 'i') {
+            return word;
+        }
+        return word.toLowerCase();
+    }).join(' ').trim() || '';
 }
 
 // Helper function to generate permutations of "send" phrases
@@ -22,7 +38,6 @@ function generateSendPermutations(statement: string): string[] {
 	const sendParts = statement.match(/send [^']+ ''/g) || [];
 	if (sendParts.length <= 1) return [statement];
 
-	// Generate permutations for multiple send statements
 	const permute = (arr: string[], result: string[] = []) => {
 		if (arr.length === 0) return [result.join(' and ')];
 		let permutations: string[] = [];
@@ -40,7 +55,34 @@ function generateSendPermutations(statement: string): string[] {
 	);
 }
 
-// The linter function
+
+function capitalize(statement: string): string {
+	return statement.charAt(0).toUpperCase() + statement.slice(1);
+}
+
+// Helper function to find the most similar correct statements
+function findMostSimilarStatements(wrongStatement: string, correctStatements: string[]): string[] {
+	const scores = correctStatements.map(template => {
+		const normalizedTemplate = normalizeLine(template);
+		return {
+			statement: template,
+			distance: distance(normalizedTemplate, wrongStatement)
+		};
+	});
+
+	// Sort by similarity (smallest Levenshtein distance)
+	scores.sort((a, b) => a.distance - b.distance);
+
+	// Return the top 3 most similar statements
+	return scores.slice(0, 3).map(score => capitalize(score.statement));
+}
+
+const correctStatements = fullStatementTemplates.flatMap(template => {
+	const normalizedTemplate = normalizeLine(template.label);
+	return generateSendPermutations(normalizedTemplate);
+});
+
+
 export const customLinter = linter((view) => {
 	let diagnostics: Diagnostic[] = [];
 	const doc = view.state.doc;
@@ -58,30 +100,30 @@ export const customLinter = linter((view) => {
 		const lineText = line.text.trim();
 
 		// Ignore empty lines and comment lines
-		if (lineText === '' || lineText.startsWith('#')) {
+		if (lineText === '' || lineText.startsWith('//')) {
 			continue;
 		}
 
+		const content = extractContent(lineText);
+
 		const normalizedLine = normalizeLine(lineText);
-
-		// Check if the normalized line matches any of the allowed statements or their permutations
-		const matchesStatement = fullStatementTemplates.some((template) => {
-			const normalizedTemplate = normalizeLine(template.label);
-			const permutedTemplates = generateSendPermutations(normalizedTemplate);
-
-			// Check against all possible permutations of the template
-			return permutedTemplates.some((permTemplate) => normalizedLine === permTemplate);
+		const modifiedStatements = correctStatements.map(template => {
+			const updatedTemplate = insertContent(template, content);
+			return updatedTemplate;
 		});
 
-		// If no match, offer replacement suggestions
+		const matchesStatement = modifiedStatements.includes(normalizedLine);
+
 		if (!matchesStatement) {
+			const mostSimilarStatements = findMostSimilarStatements(normalizedLine, modifiedStatements);
+
 			diagnostics.push({
 				from: line.from,
 				to: line.to,
 				severity: 'error',
 				message: 'Invalid statement, do you mean:',
-				actions: defaultStatements.map((statement) => ({
-					name: statement, // Each action is labeled with the default statement
+				actions: mostSimilarStatements.map((statement) => ({
+					name: statement,
 					apply(view, from, to) {
 						view.dispatch({
 							changes: { from, to, insert: statement },
@@ -94,3 +136,4 @@ export const customLinter = linter((view) => {
 
 	return diagnostics;
 });
+
