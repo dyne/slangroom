@@ -100,7 +100,7 @@ export const customLinter = linter((view) => {
 		const lineText = line.text.trim();
 
 		// Ignore empty lines and comment lines
-		if (lineText === '' || lineText.startsWith('//')) {
+		if (lineText === '' || lineText.startsWith('#')) {
 			continue;
 		}
 
