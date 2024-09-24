@@ -1,0 +1,28 @@
+{
+	"name": "grammar-utils",
+	"version": "0.0.0",
+	"main": "prepare_complete.mjs",
+	"module": "prepare_complete.mjs",
+	"scripts": {
+		"grammar-prepare": "node ./prepare_complete.mjs"
+	},
+	"dependencies": {},
+	"devDependencies": {
+		"@slangroom/core": "workspace:*",
+		"@slangroom/db": "workspace:*",
+		"@slangroom/ethereum": "workspace:*",
+		"@slangroom/fs": "workspace:*",
+		"@slangroom/git": "workspace:*",
+		"@slangroom/helpers": "workspace:*",
+		"@slangroom/http": "workspace:*",
+		"@slangroom/json-schema": "workspace:*",
+		"@slangroom/oauth": "workspace:*",
+		"@slangroom/pocketbase": "workspace:*",
+		"@slangroom/qrcode": "workspace:*",
+		"@slangroom/redis": "workspace:*",
+		"@slangroom/shell": "workspace:*",
+		"@slangroom/timestamp": "workspace:*",
+		"@slangroom/wallet": "workspace:*",
+		"@slangroom/zencode": "workspace:*"
+	}
+}
