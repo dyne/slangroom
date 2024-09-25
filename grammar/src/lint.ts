@@ -78,7 +78,7 @@ function findMostSimilarStatements(wrongStatement: string, correctStatements: st
 }
 
 const correctStatements = fullStatementTemplates.flatMap(template => {
-	const normalizedTemplate = normalizeLine(template.label);
+	const normalizedTemplate = normalizeLine(template.displayLabel);
 	return generateSendPermutations(normalizedTemplate);
 });
 
