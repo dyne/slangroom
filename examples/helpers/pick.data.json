@@ -3,7 +3,7 @@
 		"name": "Jhon",
 		"personal_information": {
 			"email": {
-				"frist": "example@example.org",
+				"first": "example@example.org",
 				"second": "email@example.org"
 			},
 			"phone": "3338957823"
