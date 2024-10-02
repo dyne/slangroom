@@ -13,7 +13,7 @@ function stripQuotes(s: string) {
 const fullStatementSnippets = fullStatementTemplates.map((x) => {
 	let n = 1;
 	return snippetCompletion(
-		x.label.replace(/''/g, () => `'\${${n++}:}'`),
+		x.displayLabel.replace(/''/g, () => `'\${${n++}:}'`),
 		x,
 	);
 });
@@ -21,39 +21,38 @@ const fullStatementSnippets = fullStatementTemplates.map((x) => {
 export function completeStatement(context: CompletionContext) {
 	const line = context.state.doc.lineAt(context.pos);
 	let textBefore = context.state.sliceDoc(line.from, context.pos);
-	const triggerMatch = /^[GT].*$/i.exec(textBefore);
 
-	if (triggerMatch) {
-		const strings = textBefore.match(/'([^']*)'/g);
-		textBefore = textBefore.toLowerCase();
-		if (!strings) {
-			return {
-				from: context.pos - triggerMatch[0].length,
-				options: fullStatementSnippets,
-				validFor: /^.*$/,
-			};
-		}
-
-		const strippedStrings = strings.map(stripQuotes);
-
-		const templateOption = fullStatementTemplates.map((x) => {
-			let n = 1;
-			let m = 0;
-			return snippetCompletion(
-				x.label.replace(/''/g, () => `'\${${n}:${strippedStrings[n++ - 1] || ''}}'`),
-				{
-					label: x.label.replace(/''/g, () => `${strings[m++] || "''"}`),
-					type: x.type,
-				},
-			);
-		});
-
+	const strings = textBefore.match(/'([^']*)'/g);
+	textBefore = textBefore.toLowerCase();
+	if (!strings) {
 		return {
 			from: context.pos - textBefore.length,
-			options: templateOption,
+			to : line.to,
+			options: fullStatementSnippets,
 			validFor: /^.*$/,
 		};
 	}
 
-	return null;
+	const strippedStrings = strings.map(stripQuotes);
+
+	const templateOption = fullStatementTemplates.map((x) => {
+		let n = 1;
+		let m = 0;
+		return snippetCompletion(
+			x.displayLabel.replace(/''/g, () => `'\${${n}:${strippedStrings[n++ - 1] || ''}}'`),
+			{
+				label: x.label.replace(/''/g, () => `${strings[m] || "''"}`),
+				displayLabel: x.displayLabel.replace(/''/g, () => `${strings[m++] || "''"}`),
+				type: x.type,
+			},
+		);
+	});
+
+	return {
+		from: context.pos - textBefore.length,
+		to : line.to,
+		options: templateOption,
+		validFor: /^.*$/,
+	};
+
 }
