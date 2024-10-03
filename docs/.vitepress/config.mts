@@ -44,7 +44,7 @@ export default defineConfig({
     ],
 
     socialLinks: [
-      { icon: 'github', link: 'https://socials.dyne.org/github' },
+      { icon: 'github', link: 'https://github.com/dyne/slangroom' },
       { icon: 'npm', link: 'https://www.npmjs.com/search?q=%40slangroom' },
       { icon: 'mastodon', link: 'https://socials.dyne.org/mastodon' },
     ]
