@@ -12,6 +12,8 @@ import {
 import { styleTags, tags as t } from '@lezer/highlight';
 import { completeStatement } from './complete';
 
+export { customLinter } from './lint';
+
 const syntax_colors = syntaxHighlighting(
 	HighlightStyle.define(
 		[
@@ -53,4 +55,4 @@ const ac = SlangroomLanguage.data.of({
 
 export function Slangroom() {
 	return new LanguageSupport(SlangroomLanguage, [syntax_colors, ac]);
-}
+};

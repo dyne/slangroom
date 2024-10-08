@@ -26,7 +26,8 @@ import { zencode } from "@slangroom/zencode";
 
 const fullStatementTemplates = [];
 
-const generateStatements = (plugin) => {
+const generateStatements = (nameAndPlugin) => {
+	const [name, plugin] = nameAndPlugin;
 	const p = new Slangroom(plugin).getPlugin()
 	p.forEach(([k]) => {
 		let openConnect = '';
@@ -42,30 +43,30 @@ const generateStatements = (plugin) => {
 		const statement = `I ${openConnect}${params}${k.phrase}`;
 		const lowerCaseStatement = `I ${openConnect}${params.toLowerCase()}${k.phrase.toLowerCase()}`;
 		fullStatementTemplates.push(
-			{ label: `given ${lowerCaseStatement}`, displayLabel:`Given ${statement}`, apply: `Given ${statement}`,  type: "keyword" },
-			{ label: `then ${lowerCaseStatement}`, displayLabel: `Then ${statement}`, apply: `Then ${statement}`, type: "keyword" },
-			{ label: `given ${lowerCaseStatement} and output into ''`, displayLabel: `Given ${statement} and output into ''`, apply: `Given ${statement} and output into ''`, type: "keyword" },
-			{ label: `then ${lowerCaseStatement} and output into ''`, displayLabel: `Then ${statement} and output into ''`, apply: `Then ${statement} and output into ''`, type: "keyword" }
+			{ label: `${name} given ${lowerCaseStatement}`, displayLabel:`Given ${statement}`, type: "keyword", info: `[${name}]` },
+			{ label: `${name} then ${lowerCaseStatement}`, displayLabel: `Then ${statement}`, type: "keyword", info: `[${name}]` },
+			{ label: `${name} given ${lowerCaseStatement} and output into ''`, displayLabel: `Given ${statement} and output into ''`, type: "keyword", info: `[${name}]` },
+			{ label: `${name} then ${lowerCaseStatement} and output into ''`, displayLabel: `Then ${statement} and output into ''`, type: "keyword", info: `[${name}]` }
 		);
 	});
 }
 
 [
-	db,
-	ethereum,
-	fs,
-	git,
-	helpers,
-	http,
-	JSONSchema,
-	oauth,
-	pocketbase,
-	qrcode,
-	redis,
-	shell,
-	timestamp,
-	wallet,
-	zencode
-].map(x => generateStatements(x))
+	['db', db],
+	['ethereum', ethereum],
+	['fs', fs],
+	['git', git],
+	['helpers', helpers],
+	['http', http],
+	['JSONSchema', JSONSchema],
+	['oauth', oauth],
+	['pocketbase', pocketbase],
+	['qrcode', qrcode],
+	['redis', redis],
+	['shell', shell],
+	['timestamp', timestamp],
+	['wallet', wallet],
+	['zencode', zencode]
+].map((x) => generateStatements(x))
 
 await pfs.writeFile('../src/complete_statement.ts', `export const fullStatementTemplates = ${JSON.stringify(fullStatementTemplates, null, 4)}`, 'utf-8')
