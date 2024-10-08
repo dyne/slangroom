@@ -1,0 +1,73 @@
+<html>
+	<head>
+		<script src="./slangroom.js"></script>
+		<script>
+			function buttonClick(contract, data, eleId) {
+				slangroom.execute(contract, {data: data}).then((r) => {
+					document.getElementById(eleId).innerText = JSON.stringify(r.result);
+				});
+			}
+		</script>
+	</head>
+	<body>
+		<h1>Test location</h1>
+		<div id="getLocation"></div>
+		<div id="replace"></div>
+		<div id="assign"></div>
+		<div id="redirect"></div>
+		<div id="goBackAndForward"></div>
+		<div id="newWindow"></div>
+		<script>
+			const emptyData = {};
+			const urlData = { url: "https://example.com" };
+			const getLocation = `
+				Rule unknown ignore
+				Given I get the current location and output into 'location'
+				Given I have a 'string dictionary' named 'location'
+				Then print data
+				`;
+			const replace = `
+				Rule unknown ignore
+				Given I send url 'url' and replace the current location
+				Given I get the current location and output into 'location'
+				Given I have a 'string dictionary' named 'location'
+				Then print data
+				`;
+			const assign = `
+				Rule unknown ignore
+				Given I send url 'url' and assign the current location
+				Given I get the current location and output into 'location'
+				Given I have a 'string dictionary' named 'location'
+				Then print data
+				`;
+			const redirect = `
+				Rule unknown ignore
+				Given I send url 'url' and redirect to the url
+				Given I get the current location and output into 'location'
+				Given I have a 'string dictionary' named 'location'
+				Then print data
+				`;
+			const goBackAndForward = `
+				Rule unknown ignore
+				Given I go back in history
+				Given I go forward in history
+				Given I get the current location and output into 'location'
+				Given I have a 'string dictionary' named 'location'
+				Then print data
+				`;
+			const newWindow = `
+				Rule unknown ignore
+				Given I send url 'url' and open the url in a new window
+				Given I get the current location and output into 'location'
+				Given I have a 'string dictionary' named 'location'
+				Then print data
+				`;
+		</script>
+		<button id="getLocationButton" onclick="buttonClick(getLocation, emptyData, 'getLocation')">getLocation</button>
+		<button id="replaceButton" onclick="buttonClick(replace, urlData, 'replace')">replace</button>
+		<button id="assignButton" onclick="buttonClick(assign, urlData, 'assign')">assign</button>
+		<button id="redirectButton" onclick="buttonClick(redirect, urlData, 'redirect')">redirect</button>
+		<button id="goBackAndForwardButton" onclick="buttonClick(goBackAndForward, emptyData, 'goBackAndForward')">goBackAndForward</button>
+		<button id="newWindowButton" onclick="buttonClick(newWindow, urlData, 'newWindow')">newWindow</button>
+	</body>
+</html>
