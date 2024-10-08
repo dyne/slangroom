@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2024 Dyne.org foundation
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 // read the version from the package.json
 import packageJson from '@slangroom/location/package.json' with { type: 'json' };
 import { Plugin, PluginContext } from '@slangroom/core';
