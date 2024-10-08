@@ -5,6 +5,9 @@
 import { test, expect } from '@playwright/test';
 
 test('check results of slangroom', async ({ page }) => {
+	// set timeout
+	test.setTimeout(30000);
+
 	await page.goto('http://localhost:8080/');
 
 	// Expects page to have a heading with the name of Installation.
@@ -21,5 +24,10 @@ test('check results of slangroom', async ({ page }) => {
 	);
 	await expect(page.locator('#test-pocketbase-2')).toContainText(
 		"{\"output\":{\"name\":\"test organization\"}}"
+	);
+
+	await expect(page.locator('#test-git')).toContainText(
+		"{\"checked\":\"true\"}",
+		{ timeout: 20000 }
 	);
 });
