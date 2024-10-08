@@ -4,7 +4,7 @@
 
 // read the version from the package.json
 import packageJson from '@slangroom/location/package.json' with { type: 'json' };
-import { Plugin, PluginContext } from '@slangroom/core';
+import { Plugin } from '@slangroom/core';
 
 export const version = packageJson.version;
 
@@ -17,27 +17,15 @@ export class LocationBaseError extends Error {
 
 const p = new Plugin();
 
-const isBrowser = (ctx: PluginContext) => {
+/**
+ * @internal
+ */
+export const getLocation = p.new('get the current location', (ctx) => {
 	if (window === undefined) {
 		return ctx.fail(
 			new LocationBaseError('You must be in a browser environment to use this plugin'),
 		);
 	}
-	return undefined;
-};
-
-const isUrlAString = (ctx: PluginContext, url: unknown) => {
-	if (typeof url !== 'string') {
-		return ctx.fail(new LocationBaseError('url must be a string'));
-	}
-	return undefined;
-};
-
-/**
- * @internal
- */
-export const getLocation = p.new('connect', 'get the current location', (ctx) => {
-	isBrowser(ctx);
 	const location = window.location;
 	return ctx.pass({
 		href: location.href,
@@ -54,72 +42,108 @@ export const getLocation = p.new('connect', 'get the current location', (ctx) =>
 /**
  * @internal
  */
-export const getHref = p.new('connect', 'get the current location href', (ctx) => {
-	isBrowser(ctx);
+export const getHref = p.new('get the current location href', (ctx) => {
+	if (window === undefined) {
+		return ctx.fail(
+			new LocationBaseError('You must be in a browser environment to use this plugin'),
+		);
+	}
 	return ctx.pass(window.location.href);
 });
 
 /**
  * @internal
  */
-export const getProtocol = p.new('connect', 'get the current location protocol', (ctx) => {
-	isBrowser(ctx);
+export const getProtocol = p.new('get the current location protocol', (ctx) => {
+	if (window === undefined) {
+		return ctx.fail(
+			new LocationBaseError('You must be in a browser environment to use this plugin'),
+		);
+	}
 	return ctx.pass(window.location.protocol);
 });
 
 /**
  * @internal
  */
-export const getHost = p.new('connect', 'get the current location host', (ctx) => {
-	isBrowser(ctx);
+export const getHost = p.new('get the current location host', (ctx) => {
+	if (window === undefined) {
+		return ctx.fail(
+			new LocationBaseError('You must be in a browser environment to use this plugin'),
+		);
+	}
 	return ctx.pass(window.location.host);
 });
 
 /**
  * @internal
  */
-export const getHostname = p.new('connect', 'get the current location hostname', (ctx) => {
-	isBrowser(ctx);
+export const getHostname = p.new('get the current location hostname', (ctx) => {
+	if (window === undefined) {
+		return ctx.fail(
+			new LocationBaseError('You must be in a browser environment to use this plugin'),
+		);
+	}
 	return ctx.pass(window.location.hostname);
 });
 
 /**
  * @internal
  */
-export const getPort = p.new('connect', 'get the current location port', (ctx) => {
-	isBrowser(ctx);
+export const getPort = p.new('get the current location port', (ctx) => {
+	if (window === undefined) {
+		return ctx.fail(
+			new LocationBaseError('You must be in a browser environment to use this plugin'),
+		);
+	}
 	return ctx.pass(window.location.port);
 });
 
 /**
  * @internal
  */
-export const getPathname = p.new('connect', 'get the current location pathname', (ctx) => {
-	isBrowser(ctx);
+export const getPathname = p.new('get the current location pathname', (ctx) => {
+	if (window === undefined) {
+		return ctx.fail(
+			new LocationBaseError('You must be in a browser environment to use this plugin'),
+		);
+	}
 	return ctx.pass(window.location.pathname);
 });
 
 /**
  * @internal
  */
-export const getSearch = p.new('connect', 'get the current location search params', (ctx) => {
-	isBrowser(ctx);
+export const getSearch = p.new('get the current location search params', (ctx) => {
+	if (window === undefined) {
+		return ctx.fail(
+			new LocationBaseError('You must be in a browser environment to use this plugin'),
+		);
+	}
 	return ctx.pass(window.location.search);
 });
 
 /**
  * @internal
  */
-export const getHash = p.new('connect', 'get the current location hash', (ctx) => {
-	isBrowser(ctx);
+export const getHash = p.new('get the current location hash', (ctx) => {
+	if (window === undefined) {
+		return ctx.fail(
+			new LocationBaseError('You must be in a browser environment to use this plugin'),
+		);
+	}
 	return ctx.pass(window.location.hash);
 });
 
 /**
  * @internal
  */
-export const reload = p.new('connect', 'reload the current page', (ctx) => {
-	isBrowser(ctx);
+export const reload = p.new('reload the current page', (ctx) => {
+	if (window === undefined) {
+		return ctx.fail(
+			new LocationBaseError('You must be in a browser environment to use this plugin'),
+		);
+	}
 	window.location.reload();
 	return ctx.pass('reload');
 });
@@ -128,9 +152,15 @@ export const reload = p.new('connect', 'reload the current page', (ctx) => {
  * @internal
  */
 export const replace = p.new(['url'], 'replace the current location', (ctx) => {
-	isBrowser(ctx);
+	if (window === undefined) {
+		return ctx.fail(
+			new LocationBaseError('You must be in a browser environment to use this plugin'),
+		);
+	}
 	const url = ctx.get('url') as string;
-	isUrlAString(ctx, url);
+	if (typeof url !== 'string') {
+		return ctx.fail(new LocationBaseError('url must be a string'));
+	}
 	window.location.replace(url);
 	return ctx.pass('replace');
 });
@@ -139,9 +169,15 @@ export const replace = p.new(['url'], 'replace the current location', (ctx) => {
  * @internal
  */
 export const assign = p.new(['url'], 'assign the current location', (ctx) => {
-	isBrowser(ctx);
+	if (window === undefined) {
+		return ctx.fail(
+			new LocationBaseError('You must be in a browser environment to use this plugin'),
+		);
+	}
 	const url = ctx.get('url') as string;
-	isUrlAString(ctx, url);
+	if (typeof url !== 'string') {
+		return ctx.fail(new LocationBaseError('url must be a string'));
+	}
 	window.location.assign(url);
 	return ctx.pass('assign');
 });
@@ -150,9 +186,15 @@ export const assign = p.new(['url'], 'assign the current location', (ctx) => {
  * @internal
  */
 export const redirectToUrl = p.new(['url'], 'redirect to the url', (ctx) => {
-	isBrowser(ctx);
+	if (window === undefined) {
+		return ctx.fail(
+			new LocationBaseError('You must be in a browser environment to use this plugin'),
+		);
+	}
 	const url = ctx.get('url') as string;
-	isUrlAString(ctx, url);
+	if (typeof url !== 'string') {
+		return ctx.fail(new LocationBaseError('url must be a string'));
+	}
 	window.location.href = url;
 	return ctx.pass('redirect');
 });
@@ -160,8 +202,12 @@ export const redirectToUrl = p.new(['url'], 'redirect to the url', (ctx) => {
 /**
  * @internal
  */
-export const goBack = p.new(['url'], 'go back in history', (ctx) => {
-	isBrowser(ctx);
+export const goBack = p.new('go back in history', (ctx) => {
+	if (window === undefined) {
+		return ctx.fail(
+			new LocationBaseError('You must be in a browser environment to use this plugin'),
+		);
+	}
 	window.history.back();
 	return ctx.pass('back');
 });
@@ -169,8 +215,12 @@ export const goBack = p.new(['url'], 'go back in history', (ctx) => {
 /**
  * @internal
  */
-export const goForward = p.new(['url'], 'go forward in history', (ctx) => {
-	isBrowser(ctx);
+export const goForward = p.new('go forward in history', (ctx) => {
+	if (window === undefined) {
+		return ctx.fail(
+			new LocationBaseError('You must be in a browser environment to use this plugin'),
+		);
+	}
 	window.history.forward();
 	return ctx.pass('forward');
 });
@@ -179,7 +229,11 @@ export const goForward = p.new(['url'], 'go forward in history', (ctx) => {
  * @internal
  */
 export const go = p.new(['index'], 'go to a specific page in history', (ctx) => {
-	isBrowser(ctx);
+	if (window === undefined) {
+		return ctx.fail(
+			new LocationBaseError('You must be in a browser environment to use this plugin'),
+		);
+	}
 	const index = ctx.get('index');
 	if (typeof index !== 'number') {
 		return ctx.fail(new LocationBaseError('index must be a number'));
@@ -191,8 +245,12 @@ export const go = p.new(['index'], 'go to a specific page in history', (ctx) => 
 /**
  * @internal
  */
-export const length = p.new('connect', 'get the history length', (ctx) => {
-	isBrowser(ctx);
+export const length = p.new('get the history length', (ctx) => {
+	if (window === undefined) {
+		return ctx.fail(
+			new LocationBaseError('You must be in a browser environment to use this plugin'),
+		);
+	}
 	return ctx.pass(window.history.length);
 });
 
@@ -200,9 +258,15 @@ export const length = p.new('connect', 'get the history length', (ctx) => {
  * @internal
  */
 export const openWindow = p.new(['url'], 'open the url in a new window', (ctx) => {
-	isBrowser(ctx);
+	if (window === undefined) {
+		return ctx.fail(
+			new LocationBaseError('You must be in a browser environment to use this plugin'),
+		);
+	}
 	const url = ctx.get('url') as string;
-	isUrlAString(ctx, url);
+	if (typeof url !== 'string') {
+		return ctx.fail(new LocationBaseError('url must be a string'));
+	}
 	window.open(url, '_blank');
 	return ctx.pass('open');
 });
