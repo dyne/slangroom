@@ -23,3 +23,58 @@ test('check results of slangroom', async ({ page }) => {
 		"{\"output\":{\"name\":\"test organization\"}}"
 	);
 });
+
+test('check @slangroom/location', async ({ browser, page }) => {
+	await page.goto('http://localhost:8080/location');
+
+	await page.click('button#getLocationButton');
+	await expect(page.locator('#getLocation')).toContainText(
+		'{"location":{"hash":"","host":"localhost:8080","hostname":"localhost","href":"http://localhost:8080/location","pathname":"/location","port":"8080","protocol":"http:","search":""}}',
+	);
+
+	// replace the current location
+	await page.click('button#replaceButton');
+	await expect(page).toHaveURL('https://example.com');
+
+	// assign the current location
+	await page.goto('http://localhost:8080/location');
+	await page.click('button#assignButton');
+	await expect(page).toHaveURL('https://example.com');
+
+	// redirect to the url
+	await page.goto('http://localhost:8080/location');
+	await page.click('button#redirectButton');
+	await expect(page).toHaveURL('https://example.com');
+
+	// go back
+	await page.goto('http://localhost:8080/location');
+	await page.click('button#goBackButton');
+	await expect(page).toHaveURL('https://example.com');
+
+	// go forward
+	await page.goto('http://localhost:8080/location');
+	await page.goBack();
+	await page.goBack();
+	await page.click('button#goForwardButton');
+	await expect(page).toHaveURL('https://example.com');
+
+	// new window
+	await page.goto('http://localhost:8080/location');
+	const context = page.context();
+	const [newPage] = await Promise.all([
+		context.waitForEvent('page'),
+		page.click('button#newWindowButton')
+	]);
+	await newPage.waitForLoadState();
+	await expect(newPage).toHaveURL('https://example.com');
+	await newPage.close();
+
+	// history lenght
+	await page.goto('http://localhost:8080/location');
+	await page.click('button#getHistoryLengthButton');
+	await expect(page.locator('#getHistoryLength')).toContainText(/{"history_length":(6|7)}/);
+
+	// go to history index
+	await page.click('button#goToHistoryButton');
+	await expect(page).toHaveURL('https://example.com');
+});
