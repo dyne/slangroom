@@ -243,6 +243,9 @@ importers:
       '@slangroom/json-schema':
         specifier: workspace:*
         version: link:../json-schema
+      '@slangroom/location':
+        specifier: workspace:*
+        version: link:../location
       '@slangroom/pocketbase':
         specifier: workspace:*
         version: link:../pocketbase
@@ -388,6 +391,12 @@ importers:
       ajv:
         specifier: ^8.13.0
         version: 8.13.0
+
+  pkg/location:
+    dependencies:
+      '@slangroom/core':
+        specifier: workspace:*
+        version: link:../core
 
   pkg/oauth:
     dependencies:

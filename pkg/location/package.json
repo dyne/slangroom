@@ -1,0 +1,33 @@
+{
+	"name": "@slangroom/location",
+	"version": "1.41.1",
+	"dependencies": {
+		"@slangroom/core": "workspace:*"
+	},
+	"repository": "https://github.com/dyne/slangroom",
+	"license": "AGPL-3.0-only",
+	"type": "module",
+	"main": "./build/esm/src/index.js",
+	"types": "./build/esm/src/index.d.ts",
+	"exports": {
+		".": {
+			"import": {
+				"types": "./build/esm/src/index.d.ts",
+				"default": "./build/esm/src/index.js"
+			}
+		},
+		"./*": {
+			"import": {
+				"types": "./build/esm/src/*.d.ts",
+				"default": "./build/esm/src/*.js"
+			}
+		},
+		"./package.json": "./package.json"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"engines": {
+		"node": "^18.20.0 || ^20.10.0 || ^22"
+	}
+}

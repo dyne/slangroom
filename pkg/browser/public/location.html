@@ -1,0 +1,104 @@
+<!--
+SPDX-FileCopyrightText: 2024 Dyne.org foundation
+
+SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+
+<html>
+	<head>
+		<script src="./slangroom.js"></script>
+		<script>
+			function buttonClick(contract, data, eleId) {
+				slangroom.execute(contract, {data: data}).then((r) => {
+					document.getElementById(eleId).innerText = JSON.stringify(r.result);
+				});
+			}
+		</script>
+	</head>
+	<body>
+		<h1>Test location</h1>
+		<div id="getLocation"></div>
+		<div id="replace"></div>
+		<div id="assign"></div>
+		<div id="redirect"></div>
+		<div id="goBack"></div>
+		<div id="goForward"></div>
+		<div id="newWindow"></div>
+		<div id="getHistoryLength"></div>
+		<div id="goToHistory"></div>
+		<script>
+			const emptyData = {};
+			const urlData = { url: "https://example.com" };
+			const getLocation = `
+				Rule unknown ignore
+				Given I get the current location and output into 'location'
+				Given I have a 'string dictionary' named 'location'
+				Then print data
+				`;
+			const replace = `
+				Rule unknown ignore
+				Given I send url 'url' and replace the current location
+				Given I get the current location and output into 'location'
+				Given I have a 'string dictionary' named 'location'
+				Then print data
+				`;
+			const assign = `
+				Rule unknown ignore
+				Given I send url 'url' and assign the current location
+				Given I get the current location and output into 'location'
+				Given I have a 'string dictionary' named 'location'
+				Then print data
+				`;
+			const redirect = `
+				Rule unknown ignore
+				Given I send url 'url' and redirect to the url
+				Given I get the current location and output into 'location'
+				Given I have a 'string dictionary' named 'location'
+				Then print data
+				`;
+			const goBack = `
+				Rule unknown ignore
+				Given I go back in history
+				Given I get the current location and output into 'location'
+				Given I have a 'string dictionary' named 'location'
+				Then print data
+				`;
+			const goForward = `
+				Rule unknown ignore
+				Given I go forward in history
+				Given I get the current location and output into 'location'
+				Given I have a 'string dictionary' named 'location'
+				Then print data
+				`;
+			const newWindow = `
+				Rule unknown ignore
+				Given I send url 'url' and open the url in a new window
+				Given I get the current location and output into 'location'
+				Given I have a 'string dictionary' named 'location'
+				Then print data
+				`;
+			const getHistoryLength = `
+				Rule unknown ignore
+				Given I get the history length and output into 'history_length'
+				Given I have a 'number' named 'history_length'
+				Then print data
+				`;
+			const goToHistory = `
+				Rule unknown ignore
+				Given I send index 'index' and go to a specific page in history
+				Given I get the current location and output into 'location'
+				Given I have a 'string dictionary' named 'location'
+				Then print data
+				`;
+		</script>
+		<button id="getLocationButton" onclick="buttonClick(getLocation, emptyData, 'getLocation')">getLocation</button>
+		<button id="replaceButton" onclick="buttonClick(replace, urlData, 'replace')">replace</button>
+		<button id="assignButton" onclick="buttonClick(assign, urlData, 'assign')">assign</button>
+		<button id="redirectButton" onclick="buttonClick(redirect, urlData, 'redirect')">redirect</button>
+		<button id="goBackButton" onclick="buttonClick(goBack, emptyData, 'goBack')">goBack</button>
+		<button id="goForwardButton" onclick="buttonClick(goForward, emptyData, 'goForward')">goForward</button>
+		<button id="newWindowButton" onclick="buttonClick(newWindow, urlData, 'newWindow')">newWindow</button>
+		<button id="getHistoryLengthButton" onclick="buttonClick(getHistoryLength, emptyData, 'getHistoryLength')">history</button>
+		<button id="goToHistoryButton" onclick="buttonClick(goToHistory, { index: -3 }, 'goToHistory')">goToHistory</button>
+	</body>
+</html>
