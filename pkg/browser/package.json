@@ -6,11 +6,11 @@
 		"@slangroom/helpers": "workspace:*",
 		"@slangroom/http": "workspace:*",
 		"@slangroom/json-schema": "workspace:*",
+		"@slangroom/location": "workspace:*",
 		"@slangroom/pocketbase": "workspace:*",
-		"@slangroom/qrcode": "workspace:*",
-		"@slangroom/location": "workspace:*"
+		"@slangroom/qrcode": "workspace:*"
 	},
-	"version": "1.41.1",
+	"version": "1.42.0",
 	"repository": "https://github.com/dyne/slangroom",
 	"license": "AGPL-3.0-only",
 	"type": "module",
