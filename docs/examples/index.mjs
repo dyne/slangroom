@@ -17,6 +17,7 @@ let examplesDoc = `\n# Slangroom examples\n\n`;
 	'helpers',
 	'http',
 	'json-schema',
+	'location',
 	'oauth',
 	'pocketbase',
 	'qrcode',

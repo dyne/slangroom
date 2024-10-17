@@ -16,6 +16,7 @@ import {git} from "@slangroom/git";
 import {helpers} from "@slangroom/helpers";
 import {http} from "@slangroom/http";
 import {JSONSchema} from "@slangroom/json-schema";
+import {location} from "@slangroom/location";
 import {oauth} from "@slangroom/oauth";
 import {pocketbase} from "@slangroom/pocketbase";
 import {qrcode} from "@slangroom/qrcode";
@@ -61,6 +62,7 @@ const generateTable = (plugin, name) => {
 	[helpers, 'helpers'],
 	[http, 'http'],
 	[JSONSchema, 'json-schema'],
+	[location, 'location'],
 	[oauth, 'oauth'],
 	[pocketbase, 'pocketbase'],
 	[qrcode, 'qrcode'],

@@ -21,7 +21,7 @@ sidebar: false
     font-weight: 800;
     margin: 0;
     padding: 0;
-    line-height: 1.16;
+    line-height: 1.15;
     text-align: center;
   }
 
