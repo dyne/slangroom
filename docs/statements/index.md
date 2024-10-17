@@ -166,6 +166,28 @@ neither the open/connect part nor the parameters part are present.
 | ------------ | --------------------- | ------------- |
 |              | json_data,json_schema | validate json |
 
+## location plugin
+| open/connect | params | phrase                                 |
+| ------------ | ------ | -------------------------------------- |
+|              |        | get the current location               |
+|              |        | get the current location href          |
+|              |        | get the current location protocol      |
+|              |        | get the current location host          |
+|              |        | get the current location hostname      |
+|              |        | get the current location port          |
+|              |        | get the current location pathname      |
+|              |        | get the current location search params |
+|              |        | get the current location hash          |
+|              |        | reload the current page                |
+|              | url    | replace the current location           |
+|              | url    | assign the current location            |
+|              | url    | redirect to the url                    |
+|              |        | go back in history                     |
+|              |        | go forward in history                  |
+|              | index  | go to a specific page in history       |
+|              |        | get the history length                 |
+|              | url    | open the url in a new window           |
+
 ## oauth plugin
 | open/connect | params                                | phrase                               |
 | ------------ | ------------------------------------- | ------------------------------------ |
