@@ -424,4 +424,49 @@ export const changeAuthDetails = p.new(
 );
 
 
+/**
+ * @internal
+ */
+// Sentence that given a request_uri return the redirect_uri
+/**
+Given I send request_uri 'request_uri' and send server_data 'server' and get redirect_uri from request_uri and output into 'redirect_uri'
+Input:
+	server_data: MUST be a string dictionary with keys
+			jwk: JWK containing the public key of the authorization_server
+			url: url of the authorization_server
+			authentication_url: did resolver for client pk
+	request_uri: MUST be a string (output of a /par request)
+Output:
+	redirect_uri: string
+*/
+export const getRedirectUri = p.new(
+	['request_uri', 'server_data'],
+	'get redirect_uri from request_uri',
+	async (ctx) => {
+		const serverData = ctx.fetch('server_data') as { jwk: JWK, url: string, authenticationUrl: string };
+		const uri = ctx.fetch('request_uri') as string;
+
+		const options = {
+			accessTokenLifetime: 60 * 60, // 1 hour.
+			refreshTokenLifetime: 60 * 60 * 24 * 14, // 2 weeks.
+			allowExtendedTokenAttributes: true,
+			requireClientAuthentication: {}, // defaults to true for all grant types
+		};
+
+		const model = getInMemoryCache(serverData, options);
+		const rand_uri = uri.split(':').pop();
+		if (!rand_uri) {
+			return ctx.fail(new OauthError('Invalid request_uri'));
+		}
+		try {
+			const authData = await model.getAuthCodeFromUri(rand_uri);
+			return ctx.pass(authData['redirectUri']);
+		} catch(e) {
+			return ctx.fail(new OauthError(e.message));
+		}
+
+	}
+);
+
+
 export const oauth = p;

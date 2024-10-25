@@ -14,9 +14,9 @@ type resParType = {
 	result: {
 		request_uri_out: {
 			request_uri: string;
-			expires_in: number
-		}
-	}
+			expires_in: number;
+		};
+	};
 };
 type resAuthType = {
 	result: {
@@ -139,6 +139,28 @@ Then print data
 		),
 	);
 	t.is(resPar.result['request_uri_out']['expires_in'], 500);
+});
+
+test.serial('get redirect_uri from request_uri (utility for authorize endpoint)', async (t) => {
+	const scriptGetRedirectUri = `
+Rule unknown ignore
+Given I send request_uri 'request_uri' and send server_data 'server' and get redirect_uri from request_uri and output into 'redirect_uri_res'
+Given I have a 'string' named 'redirect_uri_res'
+Then print data
+`;
+	const resRedirectUri = (await slangroom.execute(scriptGetRedirectUri, {
+		keys: {
+			server: {
+				url: 'https://valid.issuer.url',
+			},
+			request_uri: resPar.result.request_uri_out.request_uri,
+		},
+	})) as unknown as {
+		result: {
+			redirect_uri_res: string;
+		};
+	};
+	t.is(resRedirectUri.result.redirect_uri_res, 'https://Wallet.example.org/cb');
 });
 
 test.serial('create authorization code (simulate authorize endpoint)', async (t) => {
