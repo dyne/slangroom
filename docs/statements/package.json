@@ -18,6 +18,7 @@
 		"@slangroom/helpers": "workspace:^",
 		"@slangroom/http": "workspace:^",
 		"@slangroom/json-schema": "workspace:^",
+		"@slangroom/location": "workspace:^",
 		"@slangroom/oauth": "workspace:^",
 		"@slangroom/pocketbase": "workspace:^",
 		"@slangroom/qrcode": "workspace:^",

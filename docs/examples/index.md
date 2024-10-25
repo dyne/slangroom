@@ -225,6 +225,78 @@
 <<< @/../examples/json-schema/validate.keys.json{json}
 :::
 
+## location plugin examples
+
+### assign the current location
+::: code-group
+<<< @/../examples/location/assign.slang{3 gherkin:line-numbers}
+<<< @/../examples/location/assign.data.json{json}
+<<< @/../examples/location/assign.keys.json{json}
+:::
+
+### go back in history
+::: code-group
+<<< @/../examples/location/go_back.slang{3 gherkin:line-numbers}
+<<< @/../examples/location/go_back.data.json{json}
+<<< @/../examples/location/go_back.keys.json{json}
+:::
+
+### go forward in history
+::: code-group
+<<< @/../examples/location/go_forward.slang{3 gherkin:line-numbers}
+<<< @/../examples/location/go_forward.data.json{json}
+<<< @/../examples/location/go_forward.keys.json{json}
+:::
+
+### go to a specific page in history
+::: code-group
+<<< @/../examples/location/go_to_index.slang{3 gherkin:line-numbers}
+<<< @/../examples/location/go_to_index.data.json{json}
+<<< @/../examples/location/go_to_index.keys.json{json}
+:::
+
+### get the history length
+::: code-group
+<<< @/../examples/location/history_length.slang{3 gherkin:line-numbers}
+<<< @/../examples/location/history_length.data.json{json}
+<<< @/../examples/location/history_length.keys.json{json}
+:::
+
+### get the current location
+::: code-group
+<<< @/../examples/location/location.slang{9 gherkin:line-numbers}
+<<< @/../examples/location/location.data.json{json}
+<<< @/../examples/location/location.keys.json{json}
+:::
+
+### open the url in a new window
+::: code-group
+<<< @/../examples/location/new_window.slang{3 gherkin:line-numbers}
+<<< @/../examples/location/new_window.data.json{json}
+<<< @/../examples/location/new_window.keys.json{json}
+:::
+
+### redirect to the url
+::: code-group
+<<< @/../examples/location/redirect.slang{3 gherkin:line-numbers}
+<<< @/../examples/location/redirect.data.json{json}
+<<< @/../examples/location/redirect.keys.json{json}
+:::
+
+### reload the page
+::: code-group
+<<< @/../examples/location/reload.slang{3 gherkin:line-numbers}
+<<< @/../examples/location/reload.data.json{json}
+<<< @/../examples/location/reload.keys.json{json}
+:::
+
+### replace the current location
+::: code-group
+<<< @/../examples/location/replace.slang{3 gherkin:line-numbers}
+<<< @/../examples/location/replace.data.json{json}
+<<< @/../examples/location/replace.keys.json{json}
+:::
+
 ## oauth plugin examples
 
 ### add data to authorization details
