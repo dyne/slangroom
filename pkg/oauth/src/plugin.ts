@@ -59,16 +59,13 @@ function parseQueryStringToDictionary(queryString: string) {
 let inMemoryCache: InMemoryCache | null = null;
 const getInMemoryCache = (serverData: { jwk: JWK, url: string }, options?: JsonableObject): InMemoryCache => {
 	if (!inMemoryCache) {
-		let opt = options;
-		if (!opt) {
-			opt = {
+		options = Object.assign({
 				accessTokenLifetime: 60 * 60, // 1 hour.
 				refreshTokenLifetime: 60 * 60 * 24 * 14, // 2 weeks.
 				allowExtendedTokenAttributes: true,
 				requireClientAuthentication: {}, // defaults to true for all grant types
-			};
-		}
-		inMemoryCache = new InMemoryCache(serverData, opt);
+			}, options);
+		inMemoryCache = new InMemoryCache(serverData, options);
 	}
 	return inMemoryCache;
 };
@@ -147,13 +144,9 @@ export const createToken = p.new(
 		const response = new Response();
 
 		const model = getInMemoryCache(validatedServerData.serverData);
+		const server = new OAuth2Server({ model });
 		let res_token
 		try {
-			const handler = getAuthenticateHandler(model, validatedServerData.serverData.authenticationUrl);
-			const server = new OAuth2Server({
-				model: model,
-				authenticateHandler: handler,
-			});
 			await model.verifyDpopHeader(validatedRequest.request);
 			const token_options = {
 				accessTokenLifetime: 60 * 60, // 1 hour.
