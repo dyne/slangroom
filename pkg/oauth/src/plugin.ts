@@ -77,7 +77,7 @@ const getInMemoryCache = (
 };
 
 let authenticateHandler: any;
-const getAuthenticateHandler = (model: InMemoryCache, authenticationUrl: string): any => {
+const getAuthenticateHandler = (model: InMemoryCache, authenticationUrl?: string): any => {
 	if (!authenticateHandler) {
 		authenticateHandler = new AuthenticateHandler({ model: model }, authenticationUrl);
 	}
@@ -111,31 +111,36 @@ const validRequest = (
 const validServerData = (
 	serverData: Jsonable,
 ):
-	| { ok: true; serverData: { jwk: JWK; url: string; authenticationUrl: string } }
+	| { ok: true; model: InMemoryCache; authenticationUrl: string | undefined }
 	| { ok: false; error: OauthError } => {
+	if (inMemoryCache) {
+		return {
+			ok: true,
+			model: inMemoryCache,
+			authenticationUrl: (serverData as { authenticationUrl?: string })?.authenticationUrl,
+		};
+	}
 	if (
 		!serverData ||
 		typeof serverData !== 'object' ||
 		!('jwk' in serverData) ||
-		!('url' in serverData) ||
-		!('authentication_url' in serverData)
+		!('url' in serverData)
 	) {
 		return { ok: false, error: new OauthError('Server data is not valid') };
 	}
+	if (typeof serverData['jwk'] !== 'object' || typeof serverData['url'] !== 'string') {
+		return { ok: false, error: new OauthError('Server data parameters types are not valid') };
+	}
 	if (
-		typeof serverData['jwk'] !== 'object' ||
-		typeof serverData['url'] !== 'string' ||
+		'authentication_url' in serverData &&
 		typeof serverData['authentication_url'] !== 'string'
 	) {
 		return { ok: false, error: new OauthError('Server data parameters types are not valid') };
 	}
 	return {
 		ok: true,
-		serverData: {
-			jwk: serverData['jwk'] as JWK,
-			url: serverData['url'],
-			authenticationUrl: serverData['authentication_url'],
-		},
+		model: getInMemoryCache(serverData as { jwk: JWK; url: string }),
+		authenticationUrl: serverData['authentication_url'],
 	};
 };
 
@@ -166,11 +171,10 @@ export const createToken = p.new(
 
 		const response = new Response();
 
-		const model = getInMemoryCache(validatedServerData.serverData);
-		const server = new OAuth2Server({ model });
+		const server = new OAuth2Server({ model: validatedServerData.model });
 		let res_token;
 		try {
-			await model.verifyDpopHeader(validatedRequest.request);
+			await validatedServerData.model.verifyDpopHeader(validatedRequest.request);
 			const token_options = {
 				accessTokenLifetime: 60 * 60, // 1 hour.
 				refreshTokenLifetime: 60 * 60 * 24 * 14, // 2 weeks.
@@ -182,10 +186,10 @@ export const createToken = p.new(
 			return ctx.fail(new OauthError(e.message));
 		}
 
-		const removed = model.revokeClient(res_token.client);
+		const removed = validatedServerData.model.revokeClient(res_token.client);
 		if (!removed) return ctx.fail(new OauthError('Failed to revoke Client'));
 
-		model.revokeAuthorizationDetails(res_token['authorizationCode']);
+		validatedServerData.model.revokeAuthorizationDetails(res_token['authorizationCode']);
 
 		//we remove the client and user object from the token
 		const token: JsonableObject = {
@@ -228,14 +232,13 @@ export const verifyRequestUri = p.new(
 		const validatedServerData = validServerData(ctx.fetch('server_data'));
 		if (!validatedServerData.ok) return ctx.fail(validatedServerData.error);
 
-		const model = getInMemoryCache(validatedServerData.serverData);
 		try {
 			const handler = getAuthenticateHandler(
-				model,
-				validatedServerData.serverData.authenticationUrl,
+				validatedServerData.model,
+				validatedServerData.authenticationUrl,
 			);
 			const authorize_options = {
-				model: model,
+				model: validatedServerData.model,
 				authenticateHandler: handler,
 				allowEmptyState: false,
 				authorizationCodeLifetime: 5 * 60, // 5 minutes.
@@ -276,27 +279,25 @@ export const createAuthorizationCode = p.new(
 
 		const response = new Response();
 
-		const model = getInMemoryCache(validatedServerData.serverData);
-		let res_authCode;
 		try {
 			const handler = getAuthenticateHandler(
-				model,
-				validatedServerData.serverData.authenticationUrl,
+				validatedServerData.model,
+				validatedServerData.authenticationUrl,
 			);
 			const authorize_options = {
-				model: model,
+				model: validatedServerData.model,
 				authenticateHandler: handler,
 				allowEmptyState: false,
 				authorizationCodeLifetime: 5 * 60, // 5 minutes.
 			};
-			res_authCode = await new AuthorizeHandler(authorize_options).handle(
+			const res_authCode = await new AuthorizeHandler(authorize_options).handle(
 				validatedRequest.request,
 				response,
 			);
+			return ctx.pass({ code: res_authCode.authorizationCode });
 		} catch (e) {
 			return ctx.fail(new OauthError(e.message));
 		}
-		return ctx.pass({ code: res_authCode.authorizationCode });
 	},
 );
 
@@ -333,29 +334,27 @@ export const createRequestUri = p.new(
 
 		const response = new Response();
 
-		const model = getInMemoryCache(validatedServerData.serverData);
-		let res;
 		try {
 			const handler = getAuthenticateHandler(
-				model,
-				validatedServerData.serverData.authenticationUrl,
+				validatedServerData.model,
+				validatedServerData.authenticationUrl,
 			);
-			await model.setClient(client);
+			await validatedServerData.model.setClient(client);
 			const authorize_options = {
-				model: model,
+				model: validatedServerData.model,
 				authenticateHandler: handler,
 				allowEmptyState: false,
 				authorizationCodeLifetime: 5 * 60, // 5 minutes.
 			};
-			res = await new AuthorizeHandler(authorize_options).handle_par(
+			const res = await new AuthorizeHandler(authorize_options).handle_par(
 				validatedRequest.request,
 				response,
 				expires_in,
 			);
+			return ctx.pass(res);
 		} catch (e) {
 			return ctx.fail(new OauthError(e.message));
 		}
-		return ctx.pass(res);
 	},
 );
 
@@ -378,22 +377,16 @@ export const getClaims = p.new(
 	['token', 'server_data'],
 	'get authorization details from token',
 	async (ctx) => {
-		const serverData = ctx.fetch('server_data') as {
-			jwk: JWK;
-			url: string;
-			authenticationUrl: string;
-		};
+		const validatedServerData = validServerData(ctx.fetch('server_data'));
+		if (!validatedServerData.ok) return ctx.fail(validatedServerData.error);
 		const accessToken = ctx.fetch('token') as string;
 
-		const model = getInMemoryCache(serverData);
-
-		let res;
 		try {
-			res = await model.getAuthDetailsFromToken(accessToken);
+			const res = await validatedServerData.model.getAuthDetailsFromToken(accessToken);
+			return ctx.pass(res);
 		} catch (e) {
 			return ctx.fail(new OauthError(e.message));
 		}
-		return ctx.pass(res);
 	},
 );
 
@@ -418,22 +411,15 @@ export const changeAuthDetails = p.new(
 	async (ctx) => {
 		const params = ctx.fetch('data') as JsonableObject;
 		const uri = ctx.fetch('request_uri') as string;
-		const serverData = ctx.fetch('server_data') as {
-			jwk: JWK;
-			url: string;
-			authenticationUrl: string;
-		};
-		if (!serverData['jwk'] || !serverData['url'])
-			return ctx.fail(new OauthError('Server data is missing some parameters'));
+		const validatedServerData = validServerData(ctx.fetch('server_data'));
+		if (!validatedServerData.ok) return ctx.fail(validatedServerData.error);
 
-		const model = getInMemoryCache(serverData);
-		let res;
 		try {
-			res = await model.updateAuthorizationDetails(uri, params);
+			const res = await validatedServerData.model.updateAuthorizationDetails(uri, params);
+			return ctx.pass(res);
 		} catch (e) {
 			return ctx.fail(new OauthError(e.message));
 		}
-		return ctx.pass(res);
 	},
 );
 
@@ -456,20 +442,16 @@ export const getRedirectUri = p.new(
 	['request_uri', 'server_data'],
 	'get redirect_uri from request_uri',
 	async (ctx) => {
-		const serverData = ctx.fetch('server_data') as {
-			jwk: JWK;
-			url: string;
-			authenticationUrl: string;
-		};
 		const uri = ctx.fetch('request_uri') as string;
+		const validatedServerData = validServerData(ctx.fetch('server_data'));
+		if (!validatedServerData.ok) return ctx.fail(validatedServerData.error);
 
-		const model = getInMemoryCache(serverData);
 		const rand_uri = uri.split(':').pop();
 		if (!rand_uri) {
 			return ctx.fail(new OauthError('Invalid request_uri'));
 		}
 		try {
-			const authData = await model.getAuthCodeFromUri(rand_uri);
+			const authData = await validatedServerData.model.getAuthCodeFromUri(rand_uri);
 			return ctx.pass(authData['redirectUri']);
 		} catch (e) {
 			return ctx.fail(new OauthError(e.message));

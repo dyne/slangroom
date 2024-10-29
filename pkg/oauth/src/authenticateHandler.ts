@@ -32,7 +32,7 @@ export class AuthenticateHandler {
 	scope: string[] | undefined;
 	authenticationUrl: string;
 
-	constructor(options: ServerOptions, authentication_url: string) {
+	constructor(options: ServerOptions, authentication_url?: string) {
 
 		this.authenticationUrl = authentication_url || 'https://did.dyne.org/dids/';
 
