@@ -115,7 +115,7 @@ Then print data
 			server,
 			request: {
 				//&scope=Auth1&resource=http%3A%2F%2Fissuer1.zenswarm.forkbomb.eu%3A3100%2Fcredential_issuer%2F
-				body: 'response_type=code&client_id=did:dyne:sandbox.genericissuer:6Cp8mPUvJmQaMxQPSnNyhb74f9Ga4WqfXCkBneFgikm5&state=xyz&code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM&code_challenge_method=S256&redirect_uri=https%3A%2F%2FWallet.example.org%2Fcb&authorization_details=%5B%7B%22type%22%3A+%22openid_credential%22%2C+%22credential_configuration_id%22%3A+%22discount_from_voucher%22%2C%22locations%22%3A+%5B%22https%3A%2F%2Fissuer1.zenswarm.forkbomb.eu%2Fcredential_issuer%2F%22%5D%7D%5D',
+				body: 'response_type=code&client_id=did:dyne:sandbox.genericissuer:6Cp8mPUvJmQaMxQPSnNyhb74f9Ga4WqfXCkBneFgikm5&state=xyz&code_challenge=E9Melhoa2OwvFrEMTJguCHaoeK1t8URWbuGJSstw-cM&code_challenge_method=S256&redirect_uri=https%3A%2F%2FWallet.example.org%2Fcb&authorization_details=%5B%7B%22type%22%3A+%22openid_credential%22%2C+%22credential_configuration_id%22%3A+%22test_credential%22%2C%22locations%22%3A+%5B%22http%3A%2F%2Flocalhost%3A3001%2Fcredential_issuer%2F%22%5D%7D%5D',
 				headers: {
 					Authorization: '',
 				},
@@ -127,8 +127,8 @@ Then print data
 					'eyJhbGciOiJFUzI1NiJ9.eyJzdWIiOiJwaXBwbyJ9.hiVPL2JTdmcZY7Vcso95KUBEzcTGvmvQ7wlwkCo0G74Unpzny2drvLsu-HzHWyckKbRjwWox-V5gqqKeka8kEQ',
 				grants: ['authorization_code'],
 				redirectUris: ['https://Wallet.example.org/cb'],
-				scope: ['discount_from_voucher'],
-				resource: 'https://issuer1.zenswarm.forkbomb.eu/credential_issuer/',
+				scope: ['test_credential'],
+				resource: 'http://localhost:3001/credential_issuer/',
 			},
 		},
 	})) as unknown as resParType;
@@ -211,10 +211,10 @@ Then I send request 'request' and send server_data 'server' and generate authori
 	);
 	t.is(resAuth.result.auth_details[0]?.claims['email_address'], 'pippo@pippo.com');
 	t.is(resAuth.result.auth_details[0]?.type, 'openid_credential');
-	t.is(resAuth.result.auth_details[0]?.credential_configuration_id, 'discount_from_voucher');
+	t.is(resAuth.result.auth_details[0]?.credential_configuration_id, 'test_credential');
 	t.is(
 		resAuth.result.auth_details[0]?.locations[0],
-		'https://issuer1.zenswarm.forkbomb.eu/credential_issuer/',
+		'http://localhost:3001/credential_issuer/',
 	);
 });
 
@@ -273,7 +273,7 @@ Then I send request 'request' and send server_data 'server' and generate access 
 	t.true(Array.isArray(resToken.result.accessToken_jwt.scope));
 	t.is(
 		resToken.result.accessToken_jwt.resource,
-		'https://issuer1.zenswarm.forkbomb.eu/credential_issuer/',
+		'http://localhost:3001/credential_issuer/',
 	);
 	t.true(Array.isArray(resToken.result.accessToken_jwt.authorization_details));
 });
@@ -306,9 +306,9 @@ Then print data
 	};
 	t.is(resClaims.result.claims[0]?.claims['email_address'], 'pippo@pippo.com');
 	t.is(resClaims.result.claims[0]?.type, 'openid_credential');
-	t.is(resClaims.result.claims[0]?.credential_configuration_id, 'discount_from_voucher');
+	t.is(resClaims.result.claims[0]?.credential_configuration_id, 'test_credential');
 	t.is(
 		resClaims.result.claims[0]?.locations[0],
-		'https://issuer1.zenswarm.forkbomb.eu/credential_issuer/',
+		'http://localhost:3001/credential_issuer/',
 	);
 });
