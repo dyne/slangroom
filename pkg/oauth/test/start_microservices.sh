@@ -1,4 +1,7 @@
-#!/bin/env bash
+#!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2024 Dyne.org foundation
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
 
 temp_dir="pkg/oauth/test/didroom_microservices"
 
