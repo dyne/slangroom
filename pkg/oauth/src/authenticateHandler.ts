@@ -32,7 +32,7 @@ export class AuthenticateHandler {
 	scope: string[] | undefined;
 	authenticationUrl: string;
 
-	constructor(options: ServerOptions, authentication_url: string) {
+	constructor(options: ServerOptions, authentication_url?: string) {
 
 		this.authenticationUrl = authentication_url || 'https://did.dyne.org/dids/';
 
@@ -182,21 +182,8 @@ export class AuthenticateHandler {
 		}
 		const result = await response.json();
 		const credentials_supported = result.credential_configurations_supported;
-		var valid_credentials = [];
-		for (var key in credentials_supported) {
-			const type_arr = credentials_supported[key].credential_definition.type;
-			if (
-				type_arr.find((id: any) => {
-					return id === scope;
-				}) != undefined
-			) {
-				valid_credentials.push(scope);
-				break;
-			}
-		}
-
-		if (valid_credentials.length > 0) return true;
-		else return false;
+		var valid_credentials = Object.values(credentials_supported).some((value: any) => value.vct === scope);
+		return valid_credentials;
 	}
 
 	/**

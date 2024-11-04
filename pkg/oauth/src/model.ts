@@ -472,22 +472,19 @@ export class InMemoryCache implements AuthorizationCodeModel {
 			throw new OAuthError(`Fetch to url ${url} failed with error status: ${response.status}`);
 		}
 		const result = await response.json();
-		const credentials_supported = result.credential_configurations_supported;
+		const credentials_supported: { [key: string]: { vct: string, claims?: { [key: string]: { mandatory?: boolean }}}} = result.credential_configurations_supported;
 		var valid_credentials = [];
 		var credential_claims = new Map<string, string[]>();
 
-		for (var key in credentials_supported) {
-			const type_arr = credentials_supported[key].credential_definition.type;
-			if (
-				type_arr.find((id: any) => {
-					return id === scope;
-				}) != undefined
-			) {
+		for (const value of Object.values(credentials_supported)) {
+			if (value.vct === scope) {
 				valid_credentials.push(scope);
-				const credentialSubject = credentials_supported[key].credential_definition.credentialSubject;
-				var claims = [];
-				for (var claim in credentialSubject) {
-					if (credentialSubject[claim].mandatory) claims.push(claim);
+				const issuerClaims = value.claims;
+				const claims = [];
+				for (const key in issuerClaims) {
+					if (issuerClaims[key]?.mandatory) {
+						claims.push(key);
+					}
 				}
 				credential_claims.set(scope, claims);
 				break;

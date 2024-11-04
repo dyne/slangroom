@@ -49,6 +49,9 @@ jobs:
         run: |
           ./pkg/pocketbase/test/pocketbase serve &
           while ! nc -z 0.0.0.0 8090; do echo "pocketbase not ready" && sleep 1; done
+      - name: 🤖 Start microservices
+        run: |
+          ./pkg/oauth/test/start_microservices.sh setup
       - name: 🧪 Run the tests
         run: pnpm coverage
       - name: 🧪 Test grammar package
@@ -60,6 +63,9 @@ jobs:
           pnpm build
           pnpm exec playwright test
         working-directory: ./pkg/browser
+      - name: 🪦 kill local microservices
+        run: |
+          ./pkg/oauth/test/start_microservices.sh cleanup
 
   build_docs:
     runs-on: ubuntu-latest

@@ -6,7 +6,7 @@ import { Plugin } from '@slangroom/core';
 import OAuth2Server from '@node-oauth/oauth2-server';
 import { Request, Response } from '@node-oauth/oauth2-server';
 import { AuthenticateHandler, InMemoryCache, AuthorizeHandler } from '@slangroom/oauth';
-import { JsonableObject } from '@slangroom/shared';
+import { Jsonable, JsonableObject } from '@slangroom/shared';
 import { JWK } from 'jose';
 // read the version from the package.json
 import packageJson from '@slangroom/oauth/package.json' with { type: 'json' };
@@ -57,19 +57,91 @@ function parseQueryStringToDictionary(queryString: string) {
 }
 
 let inMemoryCache: InMemoryCache | null = null;
-const getInMemoryCache = (serverData: { jwk: JWK, url: string }, options?: JsonableObject): InMemoryCache => {
+const getInMemoryCache = (
+	serverData: { jwk: JWK; url: string },
+	options?: JsonableObject,
+): InMemoryCache => {
 	if (!inMemoryCache) {
+		options = Object.assign(
+			{
+				accessTokenLifetime: 60 * 60, // 1 hour.
+				refreshTokenLifetime: 60 * 60 * 24 * 14, // 2 weeks.
+				allowExtendedTokenAttributes: true,
+				requireClientAuthentication: {}, // defaults to true for all grant types
+			},
+			options,
+		);
 		inMemoryCache = new InMemoryCache(serverData, options);
 	}
 	return inMemoryCache;
 };
 
 let authenticateHandler: any;
-const getAuthenticateHandler = (model: InMemoryCache, authenticationUrl: string): any => {
+const getAuthenticateHandler = (model: InMemoryCache, authenticationUrl?: string): any => {
 	if (!authenticateHandler) {
 		authenticateHandler = new AuthenticateHandler({ model: model }, authenticationUrl);
 	}
 	return authenticateHandler;
+};
+
+const validRequest = (
+	params: Jsonable,
+	method: 'GET' | 'POST',
+): { ok: true; request: Request } | { ok: false; error: OauthError } => {
+	if (!params || typeof params !== 'object' || !('body' in params) || !('headers' in params)) {
+		return { ok: false, error: new OauthError('Input request is not valid') };
+	}
+	const bodyString = params['body'];
+	const headers = params['headers'];
+	if (typeof bodyString !== 'string') {
+		return { ok: false, error: new OauthError('Request body must be a string') };
+	}
+	const request = new Request({
+		body: parseQueryStringToDictionary(bodyString),
+		headers,
+		method,
+		query: {},
+	});
+	return {
+		ok: true,
+		request,
+	};
+};
+
+const validServerData = (
+	serverData: Jsonable,
+):
+	| { ok: true; model: InMemoryCache; authenticationUrl: string | undefined }
+	| { ok: false; error: OauthError } => {
+	if (inMemoryCache) {
+		return {
+			ok: true,
+			model: inMemoryCache,
+			authenticationUrl: (serverData as { authenticationUrl?: string })?.authenticationUrl,
+		};
+	}
+	if (
+		!serverData ||
+		typeof serverData !== 'object' ||
+		!('jwk' in serverData) ||
+		!('url' in serverData)
+	) {
+		return { ok: false, error: new OauthError('Server data is not valid') };
+	}
+	if (typeof serverData['jwk'] !== 'object' || typeof serverData['url'] !== 'string') {
+		return { ok: false, error: new OauthError('Server data parameters types are not valid') };
+	}
+	if (
+		'authentication_url' in serverData &&
+		typeof serverData['authentication_url'] !== 'string'
+	) {
+		return { ok: false, error: new OauthError('Server data parameters types are not valid') };
+	}
+	return {
+		ok: true,
+		model: getInMemoryCache(serverData as { jwk: JWK; url: string }),
+		authenticationUrl: serverData['authentication_url'],
+	};
 };
 
 /**
@@ -92,48 +164,32 @@ export const createToken = p.new(
 	['request', 'server_data'],
 	'generate access token',
 	async (ctx) => {
-		const params = ctx.fetch('request') as JsonableObject;
-		const body = params['body'];
-		const headers = params['headers'];
-		if (!body || !headers) return ctx.fail(new OauthError("Input request is not valid"));
-		if (typeof body !== 'string') return ctx.fail(new OauthError("Request body must be a string"));
-		const serverData = ctx.fetch('server_data') as { jwk: JWK, url: string, authenticationUrl: string };
-		if (!serverData['jwk'] || !serverData['url']) return ctx.fail(new OauthError("Server data is missing some parameters"));
-		const bodyDict = parseQueryStringToDictionary(body);
-		const request = new Request({
-			body: bodyDict,
-			headers: headers,
-			method: 'POST',
-			query: {},
-		});
+		const validatedRequest = validRequest(ctx.fetch('request'), 'POST');
+		if (!validatedRequest.ok) return ctx.fail(validatedRequest.error);
+		const validatedServerData = validServerData(ctx.fetch('server_data'));
+		if (!validatedServerData.ok) return ctx.fail(validatedServerData.error);
 
 		const response = new Response();
 
-		const options = {
-			accessTokenLifetime: 60 * 60, // 1 hour.
-			refreshTokenLifetime: 60 * 60 * 24 * 14, // 2 weeks.
-			allowExtendedTokenAttributes: true,
-			requireClientAuthentication: {}, // defaults to true for all grant types
-		};
-
-		const model = getInMemoryCache(serverData, options);
-		let res_token
+		const server = new OAuth2Server({ model: validatedServerData.model });
+		let res_token;
 		try {
-			const handler = getAuthenticateHandler(model, serverData.authenticationUrl);
-			const server = new OAuth2Server({
-				model: model,
-				authenticateHandler: handler,
-			});
-			await model.verifyDpopHeader(request);
-			res_token = await server.token(request, response, options);
-		} catch(e) {
+			await validatedServerData.model.verifyDpopHeader(validatedRequest.request);
+			const token_options = {
+				accessTokenLifetime: 60 * 60, // 1 hour.
+				refreshTokenLifetime: 60 * 60 * 24 * 14, // 2 weeks.
+				allowExtendedTokenAttributes: true,
+				requireClientAuthentication: {}, // defaults to true for all grant types
+			};
+			res_token = await server.token(validatedRequest.request, response, token_options);
+		} catch (e) {
 			return ctx.fail(new OauthError(e.message));
 		}
 
-		const removed = model.revokeClient(res_token.client);
-		if (!removed) return ctx.fail(new OauthError("Failed to revoke Client"));
+		const removed = validatedServerData.model.revokeClient(res_token.client);
+		if (!removed) return ctx.fail(new OauthError('Failed to revoke Client'));
 
-		model.revokeAuthorizationDetails(res_token['authorizationCode']);
+		validatedServerData.model.revokeAuthorizationDetails(res_token['authorizationCode']);
 
 		//we remove the client and user object from the token
 		const token: JsonableObject = {
@@ -147,7 +203,7 @@ export const createToken = p.new(
 			refreshTokenExpiresAt: Math.round(res_token.refreshTokenExpiresAt!.getTime() / 1000),
 			scope: res_token.scope!,
 			resource: res_token['resource'],
-			authorization_details: res_token['authorization_details']
+			authorization_details: res_token['authorization_details'],
 		};
 
 		return ctx.pass(token);
@@ -171,42 +227,29 @@ export const verifyRequestUri = p.new(
 	['request', 'server_data'],
 	'verify request parameters',
 	async (ctx) => {
-		const params = ctx.fetch('request') as JsonableObject;
-		const body = params['body'];
-		const headers = params['headers'];
-		if (!body || !headers) return ctx.fail(new OauthError("Input request is not valid"));
-		if (typeof body !== 'string') return ctx.fail(new OauthError("Request body must be a string"));
-		const serverData = ctx.fetch('server_data') as { jwk: JWK, url: string, authenticationUrl: string };
-		if (!serverData['jwk'] || !serverData['url']) return ctx.fail(new OauthError("Server data is missing some parameters"));
+		const validatedRequest = validRequest(ctx.fetch('request'), 'GET');
+		if (!validatedRequest.ok) return ctx.fail(validatedRequest.error);
+		const validatedServerData = validServerData(ctx.fetch('server_data'));
+		if (!validatedServerData.ok) return ctx.fail(validatedServerData.error);
 
-		const request = new Request({
-			body: parseQueryStringToDictionary(body),
-			headers: headers,
-			method: 'GET',
-			query: {},
-		});
-
-		const options = {
-			accessTokenLifetime: 60 * 60, // 1 hour.
-			refreshTokenLifetime: 60 * 60 * 24 * 14, // 2 weeks.
-			allowExtendedTokenAttributes: true,
-			requireClientAuthentication: {}, // defaults to true for all grant types
-		};
-
-		const model = getInMemoryCache(serverData, options);
 		try {
-			const handler = getAuthenticateHandler(model, serverData.authenticationUrl);
+			const handler = getAuthenticateHandler(
+				validatedServerData.model,
+				validatedServerData.authenticationUrl,
+			);
 			const authorize_options = {
-				model: model,
+				model: validatedServerData.model,
 				authenticateHandler: handler,
 				allowEmptyState: false,
-				authorizationCodeLifetime: 5 * 60   // 5 minutes.
-			}
-			await new AuthorizeHandler(authorize_options).verifyAuthorizeParams(request);
-		} catch(e) {
+				authorizationCodeLifetime: 5 * 60, // 5 minutes.
+			};
+			await new AuthorizeHandler(authorize_options).verifyAuthorizeParams(
+				validatedRequest.request,
+			);
+		} catch (e) {
 			return ctx.fail(new OauthError(e.message));
 		}
-		return ctx.pass("Given request_uri and client_id are valid");
+		return ctx.pass('Given request_uri and client_id are valid');
 	},
 );
 
@@ -229,45 +272,32 @@ export const createAuthorizationCode = p.new(
 	['request', 'server_data'],
 	'generate authorization code',
 	async (ctx) => {
-		const params = ctx.fetch('request') as JsonableObject;
-		const body = params['body'];
-		const headers = params['headers'];
-		if (!body || !headers) return ctx.fail(new OauthError("Input request is not valid"));
-		if (typeof body !== 'string') return ctx.fail(new OauthError("Request body must be a string"));
-		const serverData = ctx.fetch('server_data') as { jwk: JWK, url: string, authenticationUrl: string };
-		if (!serverData['jwk'] || !serverData['url']) return ctx.fail(new OauthError("Server data is missing some parameters"));
-
-		const request = new Request({
-			body: parseQueryStringToDictionary(body),
-			headers: headers,
-			method: 'GET',
-			query: {},
-		});
+		const validatedRequest = validRequest(ctx.fetch('request'), 'GET');
+		if (!validatedRequest.ok) return ctx.fail(validatedRequest.error);
+		const validatedServerData = validServerData(ctx.fetch('server_data'));
+		if (!validatedServerData.ok) return ctx.fail(validatedServerData.error);
 
 		const response = new Response();
 
-		const options = {
-			accessTokenLifetime: 60 * 60, // 1 hour.
-			refreshTokenLifetime: 60 * 60 * 24 * 14, // 2 weeks.
-			allowExtendedTokenAttributes: true,
-			requireClientAuthentication: {}, // defaults to true for all grant types
-		};
-
-		const model = getInMemoryCache(serverData, options);
-		let res_authCode
 		try {
-			const handler = getAuthenticateHandler(model, serverData.authenticationUrl);
+			const handler = getAuthenticateHandler(
+				validatedServerData.model,
+				validatedServerData.authenticationUrl,
+			);
 			const authorize_options = {
-				model: model,
+				model: validatedServerData.model,
 				authenticateHandler: handler,
 				allowEmptyState: false,
-				authorizationCodeLifetime: 5 * 60   // 5 minutes.
-			}
-			res_authCode = await new AuthorizeHandler(authorize_options).handle(request, response);
-		} catch(e) {
+				authorizationCodeLifetime: 5 * 60, // 5 minutes.
+			};
+			const res_authCode = await new AuthorizeHandler(authorize_options).handle(
+				validatedRequest.request,
+				response,
+			);
+			return ctx.pass({ code: res_authCode.authorizationCode });
+		} catch (e) {
 			return ctx.fail(new OauthError(e.message));
 		}
-		return ctx.pass({ code: res_authCode.authorizationCode });
 	},
 );
 
@@ -294,51 +324,39 @@ export const createRequestUri = p.new(
 	['request', 'client', 'server_data', 'expires_in'],
 	'generate request uri',
 	async (ctx) => {
-		const params = ctx.fetch('request') as JsonableObject;
-		const body = params['body'];
-		const headers = params['headers'];
-		if (!body || !headers) return ctx.fail(new OauthError("Input request is not valid"));
-		if (typeof body !== 'string') return ctx.fail(new OauthError("Request body must be a string"));
-		const client = ctx.fetch('client') as JsonableObject;
-		const serverData = ctx.fetch('server_data') as { jwk: JWK, url: string, authenticationUrl: string };
-		if (!serverData['jwk'] || !serverData['url']) return ctx.fail(new OauthError("Server data is missing some parameters"));
-		const expires_in = ctx.fetch('expires_in') as number;
+		const validatedRequest = validRequest(ctx.fetch('request'), 'GET');
+		if (!validatedRequest.ok) return ctx.fail(validatedRequest.error);
+		const validatedServerData = validServerData(ctx.fetch('server_data'));
+		if (!validatedServerData.ok) return ctx.fail(validatedServerData.error);
 
-		const request = new Request({
-			body: parseQueryStringToDictionary(body),
-			headers: headers,
-			method: 'GET',
-			query: {},
-		});
+		const client = ctx.fetch('client') as JsonableObject;
+		const expires_in = ctx.fetch('expires_in') as number;
 
 		const response = new Response();
 
-		const options = {
-			accessTokenLifetime: 60 * 60, // 1 hour.
-			refreshTokenLifetime: 60 * 60 * 24 * 14, // 2 weeks.
-			allowExtendedTokenAttributes: true,
-			requireClientAuthentication: {}, // defaults to true for all grant types
-		};
-
-		const model = getInMemoryCache(serverData, options);
-		let res
 		try {
-			const handler = getAuthenticateHandler(model, serverData.authenticationUrl);
-			await model.setClient(client);
+			const handler = getAuthenticateHandler(
+				validatedServerData.model,
+				validatedServerData.authenticationUrl,
+			);
+			await validatedServerData.model.setClient(client);
 			const authorize_options = {
-				model: model,
+				model: validatedServerData.model,
 				authenticateHandler: handler,
 				allowEmptyState: false,
-				authorizationCodeLifetime: 5 * 60   // 5 minutes.
-			}
-			res = await new AuthorizeHandler(authorize_options).handle_par(request, response, expires_in);
-		} catch(e) {
+				authorizationCodeLifetime: 5 * 60, // 5 minutes.
+			};
+			const res = await new AuthorizeHandler(authorize_options).handle_par(
+				validatedRequest.request,
+				response,
+				expires_in,
+			);
+			return ctx.pass(res);
+		} catch (e) {
 			return ctx.fail(new OauthError(e.message));
 		}
-		return ctx.pass(res);
 	},
 );
-
 
 /**
  * @internal
@@ -359,25 +377,16 @@ export const getClaims = p.new(
 	['token', 'server_data'],
 	'get authorization details from token',
 	async (ctx) => {
-		const serverData = ctx.fetch('server_data') as { jwk: JWK, url: string, authenticationUrl: string };
+		const validatedServerData = validServerData(ctx.fetch('server_data'));
+		if (!validatedServerData.ok) return ctx.fail(validatedServerData.error);
 		const accessToken = ctx.fetch('token') as string;
 
-		const options = {
-			accessTokenLifetime: 60 * 60, // 1 hour.
-			refreshTokenLifetime: 60 * 60 * 24 * 14, // 2 weeks.
-			allowExtendedTokenAttributes: true,
-			requireClientAuthentication: {}, // defaults to true for all grant types
-		};
-
-		const model = getInMemoryCache(serverData, options);
-
-		let res
 		try {
-			res = await model.getAuthDetailsFromToken(accessToken);
-		} catch(e) {
+			const res = await validatedServerData.model.getAuthDetailsFromToken(accessToken);
+			return ctx.pass(res);
+		} catch (e) {
 			return ctx.fail(new OauthError(e.message));
 		}
-		return ctx.pass(res);
 	},
 );
 
@@ -402,27 +411,17 @@ export const changeAuthDetails = p.new(
 	async (ctx) => {
 		const params = ctx.fetch('data') as JsonableObject;
 		const uri = ctx.fetch('request_uri') as string;
-		const serverData = ctx.fetch('server_data') as { jwk: JWK, url: string, authenticationUrl: string };
-		if (!serverData['jwk'] || !serverData['url']) return ctx.fail(new OauthError("Server data is missing some parameters"));
+		const validatedServerData = validServerData(ctx.fetch('server_data'));
+		if (!validatedServerData.ok) return ctx.fail(validatedServerData.error);
 
-		const options = {
-			accessTokenLifetime: 60 * 60, // 1 hour.
-			refreshTokenLifetime: 60 * 60 * 24 * 14, // 2 weeks.
-			allowExtendedTokenAttributes: true,
-			requireClientAuthentication: {}, // defaults to true for all grant types
-		};
-
-		const model = getInMemoryCache(serverData, options);
-		let res
 		try {
-			res = await model.updateAuthorizationDetails(uri, params);
-		} catch(e) {
+			const res = await validatedServerData.model.updateAuthorizationDetails(uri, params);
+			return ctx.pass(res);
+		} catch (e) {
 			return ctx.fail(new OauthError(e.message));
 		}
-		return ctx.pass(res);
 	},
 );
-
 
 /**
  * @internal
@@ -443,30 +442,21 @@ export const getRedirectUri = p.new(
 	['request_uri', 'server_data'],
 	'get redirect_uri from request_uri',
 	async (ctx) => {
-		const serverData = ctx.fetch('server_data') as { jwk: JWK, url: string, authenticationUrl: string };
 		const uri = ctx.fetch('request_uri') as string;
+		const validatedServerData = validServerData(ctx.fetch('server_data'));
+		if (!validatedServerData.ok) return ctx.fail(validatedServerData.error);
 
-		const options = {
-			accessTokenLifetime: 60 * 60, // 1 hour.
-			refreshTokenLifetime: 60 * 60 * 24 * 14, // 2 weeks.
-			allowExtendedTokenAttributes: true,
-			requireClientAuthentication: {}, // defaults to true for all grant types
-		};
-
-		const model = getInMemoryCache(serverData, options);
 		const rand_uri = uri.split(':').pop();
 		if (!rand_uri) {
 			return ctx.fail(new OauthError('Invalid request_uri'));
 		}
 		try {
-			const authData = await model.getAuthCodeFromUri(rand_uri);
+			const authData = await validatedServerData.model.getAuthCodeFromUri(rand_uri);
 			return ctx.pass(authData['redirectUri']);
-		} catch(e) {
+		} catch (e) {
 			return ctx.fail(new OauthError(e.message));
 		}
-
-	}
+	},
 );
-
 
 export const oauth = p;
