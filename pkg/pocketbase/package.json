@@ -5,8 +5,7 @@
 		"@capacitor/preferences": "^6.0.0",
 		"@slangroom/core": "workspace:*",
 		"@slangroom/shared": "workspace:*",
-		"dotenv": "^16.3.1",
-		"pocketbase": "^0.19.0",
+		"pocketbase": "^0.21.5",
 		"zod": "^3.22.4"
 	},
 	"repository": "https://github.com/dyne/slangroom",
