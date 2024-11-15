@@ -430,12 +430,9 @@ importers:
       '@slangroom/shared':
         specifier: workspace:*
         version: link:../shared
-      dotenv:
-        specifier: ^16.3.1
-        version: 16.3.1
       pocketbase:
-        specifier: ^0.19.0
-        version: 0.19.0
+        specifier: ^0.21.5
+        version: 0.21.5
       zod:
         specifier: ^3.22.4
         version: 3.22.4
@@ -2664,10 +2661,6 @@ packages:
     resolution: {integrity: sha512-QM8q3zDe58hqUqjraQOmzZ1LIH9SWQJTlEKCH4kJ2oQvLZk7RbQXvtDM2XEq3fwkV9CCvvH4LA0AV+ogFsBM2Q==}
     engines: {node: '>=8'}
 
-  dotenv@16.3.1:
-    resolution: {integrity: sha512-IPzF4w4/Rd94bA9imS68tZBaYyBWSCE47V1RGuMrB94iyTOIEwRmVL2x/4An+6mETpLrKJ5hQkB8W4kFAadeIQ==}
-    engines: {node: '>=12'}
-
   dotenv@16.4.5:
     resolution: {integrity: sha512-ZmdL2rui+eB2YwhsWzjInR8LldtZHGDoQ1ugH85ppHKwpUHL7j7rN0Ti9NCnGiQbhaZ11FpR+7ao1dNsmduNUg==}
     engines: {node: '>=12'}
@@ -4380,8 +4373,8 @@ packages:
     resolution: {integrity: sha512-40QW5YalBNfQo5yRYmiw7Yz6TKKVr3h6970B2YE+3fQpsWcrbj1PzJgxeJ19DRQjhMbKPIuMY8rFaXc8moolVw==}
     engines: {node: '>=10.13.0'}
 
-  pocketbase@0.19.0:
-    resolution: {integrity: sha512-bUVZfVdD17K8GnwbeDMZPEdREVg2YE0F8uHPDC0zer4VtwXUqoPCCeudTy3fhUE7pfuKnfpuPxeBSYsBY3AGIQ==}
+  pocketbase@0.21.5:
+    resolution: {integrity: sha512-bnI/uinnQps+ElSlzxkc4yvwuSFfKcoszDtXH/4QT2FhGq2mJVUvDlxn+rjRXVntUjPfmMG5LEPZ1eGqV6ssog==}
 
   postcss-selector-parser@6.1.2:
     resolution: {integrity: sha512-Q8qQfPiZ+THO/3ZrOrO0cJJKfpYCagtMUkXbnEfmgUjwXg6z/WBeOyS9APBBPCTSiDV+s4SwQGu8yFsiMRIudg==}
@@ -7855,8 +7848,6 @@ snapshots:
     dependencies:
       is-obj: 2.0.0
 
-  dotenv@16.3.1: {}
-
   dotenv@16.4.5: {}
 
   dottie@2.0.6: {}
@@ -9618,7 +9609,7 @@ snapshots:
 
   pngjs@5.0.0: {}
 
-  pocketbase@0.19.0: {}
+  pocketbase@0.21.5: {}
 
   postcss-selector-parser@6.1.2:
     dependencies:

@@ -8,11 +8,10 @@ temp_dir="pkg/oauth/test/didroom_microservices"
 setup() {
 	if [ ! -d ${temp_dir} ]; then
 		git clone https://github.com/ForkbombEu/DIDroom_microservices.git ${temp_dir} --quiet
-		cd ${temp_dir} && git checkout fix/claims --quiet && cd -
 	fi
 
 	if [ ! -x ${temp_dir}/ncr ]; then
-		wget -q --show-progress https://github.com/ForkbombEu/ncr/releases/download/v1.39.6/ncr -O ${temp_dir}/ncr
+		wget -q --show-progress https://github.com/ForkbombEu/ncr/releases/download/v1.40.0/ncr -O ${temp_dir}/ncr
 		chmod +x ${temp_dir}/ncr
 	fi
 
