@@ -18,26 +18,19 @@ test('parser works', (t) => {
 
 	Object.entries<ReturnType<typeof parse>>({
 		'': {
-			errors: [{message: ParseError.missing(1, 'Given I', 'Then I'), lineNo: 1}],
-			matches: [
-				{
-					key: { phrase: 'love asche' },
-					bindings: new Map(),
-					err: [{message: ParseError.missing(1, 'love'), lineNo: 1}, {message: ParseError.missing(1, 'asche'), lineNo: 1}],
-					lineNo: 1
-				},
-			],
+			errors: [{message: ParseError.missing(1, 'Given I', 'Then I', 'Prepare', '...'), lineNo: 1}],
+			matches: [],
 		},
 		G: {
 			errors: [
 				{message: ParseError.wrong(new Token('G', 1, 0, 0), 'given', 'then'), lineNo: 1, start: 0, end: 0},
-				{message: ParseError.missing(new Token('G', 1, 0, 0), 'I'), lineNo: 1, start: 0, end: 0},
 			],
 			matches: [
 				{
 					key: { phrase: 'love asche' },
 					bindings: new Map(),
 					err: [
+						{message: ParseError.missing(1, 'I'), lineNo: 1},
 						{message: ParseError.missing(1, 'love'), lineNo: 1},
 						{message: ParseError.missing(1, 'asche'), lineNo: 1}
 					],
@@ -48,13 +41,13 @@ test('parser works', (t) => {
 		t: {
 			errors: [
 				{message: ParseError.wrong(new Token('t', 1, 0, 0), 'given', 'then'), lineNo: 1, start: 0, end: 0},
-				{message: ParseError.missing(new Token('t', 1, 0, 0), 'I'), lineNo: 1, start: 0, end: 0},
 			],
 			matches: [
 				{
 					key: { phrase: 'love asche' },
 					bindings: new Map(),
 					err: [
+						{message: ParseError.missing(1, 'I'), lineNo: 1},
 						{message: ParseError.missing(1, 'love'), lineNo: 1},
 						{message: ParseError.missing(1, 'asche'), lineNo: 1}
 					],
@@ -65,12 +58,13 @@ test('parser works', (t) => {
 
 		'given Me': {
 			givenThen: 'given',
-			errors: [{message: ParseError.wrong(new Token('Me', 1, 6, 7), 'I'), lineNo: 1, start: 6, end: 7}],
+			errors: [],
 			matches: [
 				{
 					key: { phrase: 'love asche' },
 					bindings: new Map(),
 					err: [
+						{message: ParseError.wrong(new Token('Me', 1, 6, 7), 'I'), lineNo: 1, start: 6, end: 7},
 						{message: ParseError.missing(1, 'love'), lineNo: 1},
 						{message: ParseError.missing(1, 'asche'), lineNo: 1}
 					],
@@ -80,12 +74,13 @@ test('parser works', (t) => {
 		},
 		'Then myself': {
 			givenThen: 'then',
-			errors: [{message: ParseError.wrong(new Token('myself', 1, 5, 10), 'I'), lineNo: 1, start: 5, end: 10}],
+			errors: [],
 			matches: [
 				{
 					key: { phrase: 'love asche' },
 					bindings: new Map(),
 					err: [
+						{message: ParseError.wrong(new Token('myself', 1, 5, 10), 'I'), lineNo: 1, start: 5, end: 10},
 						{message: ParseError.missing(1, 'love'), lineNo: 1},
 						{message: ParseError.missing(1, 'asche'), lineNo: 1}
 					],
@@ -203,12 +198,13 @@ test('parser works', (t) => {
 
 		'given i love Asche and so': {
 			givenThen: 'given',
-			errors: [{message: ParseError.wrong(new Token('i', 1, 6, 6), 'I'), lineNo: 1, start: 6, end: 6}],
+			errors: [],
 			matches: [
 				{
 					key: { phrase: 'love asche' },
 					bindings: new Map(),
 					err: [
+						{message: ParseError.wrong(new Token('i', 1, 6, 6), 'I'), lineNo: 1, start: 6, end: 6},
 						{message: ParseError.extra(new Token('and', 1, 19, 21)), lineNo: 1, start: 19, end: 21},
 						{message: ParseError.extra(new Token('so', 1, 23, 24)), lineNo: 1, start: 23, end: 24}
 					],
@@ -218,12 +214,13 @@ test('parser works', (t) => {
 		},
 		'Then i a b c and d': {
 			givenThen: 'then',
-			errors: [{message: ParseError.wrong(new Token('i', 1, 5, 5), 'I'), lineNo: 1, start: 5, end: 5}],
+			errors: [],
 			matches: [
 				{
 					key: { phrase: 'a b c' },
 					bindings: new Map(),
 					err: [
+						{message: ParseError.wrong(new Token('i', 1, 5, 5), 'I'), lineNo: 1, start: 5, end: 5},
 						{message: ParseError.extra(new Token('and', 1, 13, 15)), lineNo: 1, start: 13, end: 15},
 						{message: ParseError.extra(new Token('d', 1, 17, 17)), lineNo: 1, start: 17, end: 17}
 					],
@@ -265,12 +262,13 @@ test('parser works', (t) => {
 
 		"given i love Asche and so and output into 'foo'": {
 			givenThen: 'given',
-			errors: [{message: ParseError.wrong(new Token('i', 1, 6, 6), 'I'), lineNo: 1, start: 6, end: 6}],
+			errors: [],
 			matches: [
 				{
 					key: { phrase: 'love asche' },
 					bindings: new Map(),
 					err: [
+						{message: ParseError.wrong(new Token('i', 1, 6, 6), 'I'), lineNo: 1, start: 6, end: 6},
 						{message: ParseError.extra(new Token('and', 1, 19, 21)), lineNo: 1, start: 19, end: 21},
 						{message: ParseError.extra(new Token('so', 1, 23, 24)), lineNo: 1, start: 23, end: 24}
 					],
@@ -280,12 +278,13 @@ test('parser works', (t) => {
 		},
 		"Then i a b c and d and output into 'bar'": {
 			givenThen: 'then',
-			errors: [{message: ParseError.wrong(new Token('i', 1, 5, 5), 'I'), lineNo: 1, start: 5, end: 5}],
+			errors: [],
 			matches: [
 				{
 					key: { phrase: 'a b c' },
 					bindings: new Map(),
 					err: [
+						{message: ParseError.wrong(new Token('i', 1, 5, 5), 'I'), lineNo: 1, start: 5, end: 5},
 						{message: ParseError.extra(new Token('and', 1, 13, 15)), lineNo: 1, start: 13, end: 15},
 						{message: ParseError.extra(new Token('d', 1, 17, 17)), lineNo: 1, start: 17, end: 17}
 					],
@@ -330,12 +329,13 @@ test('parser works', (t) => {
 
 		"given i love Asche and so output into 'foo'": {
 			givenThen: 'given',
-			errors: [{message: ParseError.wrong(new Token('i', 1, 6, 6), 'I'), lineNo: 1, start: 6, end: 6}],
+			errors: [],
 			matches: [
 				{
 					key: { phrase: 'love asche' },
 					bindings: new Map(),
 					err: [
+						{message: ParseError.wrong(new Token('i', 1, 6, 6), 'I'), lineNo: 1, start: 6, end: 6},
 						{message: ParseError.wrong(new Token('so', 1, 23, 24), 'output'), lineNo: 1, start: 23, end: 24},
 						{message: ParseError.wrong(new Token('output', 1, 26, 31), 'secret'), lineNo: 1, start: 26, end: 31}
 					],
@@ -345,12 +345,15 @@ test('parser works', (t) => {
 		},
 		"Then i a b c and d into 'bar'": {
 			givenThen: 'then',
-			errors: [{message: ParseError.wrong(new Token('i', 1, 5, 5), 'I'), lineNo: 1, start: 5, end: 5}],
+			errors: [],
 			matches: [
 				{
 					key: { phrase: 'a b c' },
 					bindings: new Map(),
-					err: [{message: ParseError.wrong(new Token('d', 1, 17, 17), 'output'), lineNo: 1, start: 17, end: 17}],
+					err: [
+						{message: ParseError.wrong(new Token('i', 1, 5, 5), 'I'), lineNo: 1, start: 5, end: 5},
+						{message: ParseError.wrong(new Token('d', 1, 17, 17), 'output'), lineNo: 1, start: 17, end: 17}
+					],
 					lineNo: 1
 				},
 			],
@@ -393,12 +396,15 @@ test('parser works', (t) => {
 
 		"given i love Asche save output into 'foo'": {
 			givenThen: 'given',
-			errors: [{message: ParseError.wrong(new Token('i', 1, 6, 6), 'I'), lineNo: 1, start: 6, end: 6}],
+			errors: [],
 			matches: [
 				{
 					key: { phrase: 'love asche' },
 					bindings: new Map(),
-					err: [{message: ParseError.wrong(new Token('save', 1, 19, 22), 'and'), lineNo: 1, start: 19, end: 22}],
+					err: [
+						{message: ParseError.wrong(new Token('i', 1, 6, 6), 'I'), lineNo: 1, start: 6, end: 6},
+						{message: ParseError.wrong(new Token('save', 1, 19, 22), 'and'), lineNo: 1, start: 19, end: 22}
+					],
 					lineNo: 1
 				},
 			],
@@ -654,7 +660,45 @@ test('parser works', (t) => {
 					lineNo: 1,
 				}
 			]
-		}
+		},
+		"Prepare secret 'result': a b c and output wrong 'foo'" : {
+			givenThen: 'given',
+			errors: [],
+			matches: [
+				{
+					key: {
+						phrase: 'a b c'
+					},
+					bindings: new Map(),
+					err: [
+						{message: ParseError.extra(new Token('and', 1, 31, 33)), lineNo: 1, start: 31, end: 33},
+						{message: ParseError.extra(new Token('output', 1, 35, 40)), lineNo: 1, start: 35, end: 40},
+						{message: ParseError.extra(new Token('wrong', 1, 42, 46)), lineNo: 1, start: 42, end: 46},
+						{message: ParseError.extra(new Token('\'foo\'', 1, 48, 52)), lineNo: 1, start: 48, end: 52}
+					],
+					lineNo: 1,
+					intoSecret: 'result'
+				}
+			]
+		},
+		"Prepare 'result': connect to 'url' and send http request where object is 'myObj'" : {
+			givenThen: 'given',
+			errors: [],
+			matches: [
+				{
+					key: {
+						openconnect: 'connect',
+						phrase: 'send http request',
+						params: ['object'],
+					},
+					bindings: new Map([['object', 'myObj']]),
+					connect: 'url',
+					err: [],
+					lineNo: 1,
+					into: 'result'
+				}
+			]
+		},
 	}).forEach(([give, want], index) => {
 		const lexed = lex(give, 1);
 		if (!lexed.ok) throw new Error(lexed.error.message.message);

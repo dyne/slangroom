@@ -2,10 +2,13 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
+import { closest } from 'fastest-levenshtein';
 import { PluginMap, Token, type PluginMapKey } from '@slangroom/core';
 import { errorColor, suggestedColor, missingColor, extraColor } from '@slangroom/shared';
 // read the version from the package.json
 import packageJson from '@slangroom/core/package.json' with { type: 'json' };
+
+// TODO: remove all the repeated strings!
 
 export const version = packageJson.version;
 /**
@@ -215,6 +218,193 @@ export type Match = {
 		}
 	);
 
+const lemmeout = {};
+const newErrFun = (m: Match, t: Token[], curErrLen?: number) => {
+	return function(i: number, wantsFirst: string, ...wantsRest: string[]) {
+		const have = t[i];
+		if (have) m.err.push({message: ParseError.wrong(have, wantsFirst, ...wantsRest), lineNo: m.lineNo, start: have.start, end: have.end});
+		else
+			m.err.push(
+				{message: ParseError.missing((i > 2 && t[i - 1]) || m.lineNo, wantsFirst, ...wantsRest), lineNo: m.lineNo},
+			);
+		if (curErrLen !== undefined && m.err.length > curErrLen) throw lemmeout;
+	}
+};
+
+const openConnectParser = (m: Match, t: Token[], i: number, newErr: Function): number => {
+	const k = m.key;
+	// open '' and | connect to '' and
+	if (k.openconnect === 'open') {
+		if (t[++i]?.name !== 'open') newErr(i, 'open');
+		const ident = t[++i];
+		if (ident?.isIdent) m.open = ident.raw.slice(1, -1);
+		else newErr(i, '\'<identifier>\'');
+		if (t[++i]?.name !== 'and') newErr(i, 'and');
+	} else if (k.openconnect === 'connect') {
+		if (t[++i]?.name !== 'connect') newErr(i, 'connect');
+		if (t[++i]?.name !== 'to') newErr(i, 'to');
+		const ident = t[++i];
+		if (ident?.isIdent) m.connect = ident.raw.slice(1, -1);
+		else newErr(i, '\'<identifier>\'');
+		if (t[++i]?.name !== 'and') newErr(i, 'and');
+	}
+	return i;
+}
+const outputParser = (m: Match, t: Token[], i: number, newErr: Function): void => {
+	const lineNo = m.lineNo;
+	const ident = t[t.length - 1];
+	if (!m.into && !m.intoSecret && t.length - i >= 5 && ident?.isIdent) {
+		for (++i; i < t.length - 5; ++i) m.err.push({message: ParseError.extra(t[i] as Token), lineNo, start: (t[i] as Token).start, end: (t[i] as Token).end});
+		if (t.length - i == 4) {
+			if (t[t.length - 4]?.name !== 'and') newErr(t.length - 4, 'and');
+			if (t[t.length - 3]?.name !== 'output') newErr(t.length - 3, 'output');
+			if (t[t.length - 2]?.name !== 'into') newErr(t.length - 2, 'into');
+			if (
+				t[t.length - 4]?.name === 'and' &&
+				t[t.length - 3]?.name === 'output' &&
+				t[t.length - 2]?.name === 'into'
+			)
+				m.into = ident.raw.slice(1, -1);
+		} else {
+			if (
+				t[t.length - 4]?.name === 'and' &&
+				t[t.length - 3]?.name === 'output' &&
+				t[t.length - 2]?.name === 'into'
+			) {
+				m.err.push({message: ParseError.extra(t[t.length-5] as Token), lineNo, start: (t[t.length-5] as Token).start, end: (t[t.length-5] as Token).end});
+			} else {
+				if (t[t.length - 5]?.name !== 'and') newErr(t.length - 5, 'and');
+				if (t[t.length - 4]?.name !== 'output') newErr(t.length - 4, 'output');
+				if (t[t.length - 3]?.name !== 'secret') newErr(t.length - 3, 'secret');
+				if (t[t.length - 2]?.name !== 'into') newErr(t.length - 2, 'into');
+				if (
+					t[t.length - 5]?.name === 'and' &&
+					t[t.length - 4]?.name === 'output' &&
+					t[t.length - 3]?.name === 'secret' &&
+					t[t.length - 2]?.name === 'into'
+				)
+					m.intoSecret = ident.raw.slice(1, -1);
+			}
+		}
+	} else {
+		for (++i; i < t.length; ++i) m.err.push({message: ParseError.extra(t[i] as Token), lineNo, start: (t[i] as Token).start, end: (t[i] as Token).end});
+	}
+}
+
+const givenThenParser = (m: Match, t: Token[], curErrLen?: number): boolean => {
+	const newErr = newErrFun(m, t, curErrLen);
+	const k = m.key;
+	let i = 0;
+	// I
+	if (t[i+1]?.raw == 'I') {
+		++i;
+	} else {
+		// understand if I is missing or written wrong
+		if (
+			t[i+1]?.name == 'connect'
+			|| t[i+1]?.name == 'open'
+			|| t[i+1]?.name == 'send'
+			|| t[i+1]?.name == k.phrase.split(' ')[0]
+		) {
+			m.err.push(
+				{message: ParseError.missing(t[i]!, 'I'), lineNo: m.lineNo},
+			);
+		} else {
+			++i;
+			newErr(i, 'I');
+		}
+	}
+
+	// open '' and | connect to '' and
+	i = openConnectParser(m, t, i, newErr);
+	// Send $buzzword 'ident' And
+	// TODO: allow spaces in between params
+	const params = new Set(k.params);
+	k.params?.forEach(() => {
+		if (t[++i]?.name !== 'send') newErr(i, 'send');
+		const tokName = t[++i];
+		if (tokName && params.has(tokName.name)) {
+			params.delete(tokName.name);
+		} else {
+			const [first, ...rest] = [...params.values()] as [string, ...string[]];
+			newErr(i, first, ...rest);
+		}
+
+		const ident = t[++i];
+		if (ident?.isIdent) {
+			if (tokName) m.bindings.set(tokName.name, ident.raw.slice(1, -1));
+		} else {
+			newErr(i, '\'<identifier>\'');
+		}
+		if (t[++i]?.name !== 'and') newErr(i, 'and');
+	});
+	// $buzzwords
+	k.phrase.split(' ').forEach((name) => t[++i]?.name !== name && newErr(i, name));
+	// Output Into 'ident' || Output Secret Into 'ident'
+	outputParser(m, t, i, newErr);
+
+	if (curErrLen !== undefined && m.err.length > curErrLen) throw lemmeout;
+	return (curErrLen !== undefined && m.err.length < curErrLen);
+}
+
+const prepareComputeParser = (m: Match, t: Token[], curErrLen?: number): boolean => {
+	const newErr = newErrFun(m, t, curErrLen);
+	const k = m.key;
+	let i = 0;
+	// 'ident'|secret 'ident'|undefined
+	const secondToken = t[i+1];
+	if(secondToken?.isIdent) {
+		++i;
+		m.into = secondToken.raw.slice(1, -1);
+		if(t[++i]?.name !== ':') newErr(i, ':');
+	} else if (secondToken?.name === 'secret') {
+		++i;
+		const thirdToken = t[++i];
+		if (thirdToken?.isIdent) {
+			m.intoSecret = thirdToken.raw.slice(1, -1);
+		} else {
+			newErr(i, '\'<identifier>\'');
+		}
+		if(t[++i]?.name !== ':') newErr(i, ':')
+	}
+	// open '' and | connect to '' and
+	i = openConnectParser(m, t, i, newErr);
+	// $buzzwords
+	k.phrase.split(' ').forEach((name) => t[++i]?.name !== name && newErr(i, name));
+	// With $buzzword 'ident', | Where $buzzword is 'ident',
+	// TODO: allow spaces in between params
+	const params = new Set(k.params);
+	if (k.params) {
+		const whereWith = t[++i]?.name;
+		if (whereWith !== 'where' && whereWith !== 'with')
+			newErr(i, 'with', 'where')
+		k.params.forEach((_, index) => {
+			const tokName = t[++i];
+			if (tokName && params.has(tokName.name)) {
+				params.delete(tokName.name);
+			} else {
+				const [first, ...rest] = [...params.values()] as [string, ...string[]];
+				newErr(i, first, ...rest);
+			}
+			if (whereWith == 'where' && t[++i]?.name !== 'is') {
+				newErr(i, 'is');
+			}
+			const ident = t[++i];
+			if (ident?.isIdent) {
+				if (tokName) m.bindings.set(tokName.name, ident.raw.slice(1, -1));
+			} else {
+				newErr(i, '\'<identifier>\'');
+			}
+			if (index+1 !== k.params?.length && t[++i]?.name !== ',') newErr(i, ',')
+		})
+	}
+	// Output Into 'ident' || Output Secret Into 'ident'
+	outputParser(m, t, i, newErr);
+
+	if (curErrLen !== undefined && m.err.length > curErrLen) throw lemmeout;
+	return (curErrLen !== undefined && m.err.length < curErrLen);
+}
+
 /**
  * Parses the given tokens of a lexed line and plugins, and generates a CST with possible
  * matches of those plugins.
@@ -224,130 +414,78 @@ export const parse = (p: PluginMap, t: Token[], lineNo: number): Cst => {
 		matches: [],
 		errors: [],
 	};
-	let givenThen: 'given' | 'then' | undefined;
+	let isGivenThen: boolean = false;
+	let isPrepareCompute: boolean = false;
 	let openConnect: 'open' | 'connect' | undefined;
 	if (t[0]) {
-		if (t[0].name != 'given' && t[0].name != 'then')
-			cst.errors.push({ message: ParseError.wrong(t[0], 'given', 'then'), lineNo, start: t[0].start, end: t[0].end });
-		else givenThen = t[0].name;
-		if (t[1]) {
-			if (t[1].raw !== 'I') cst.errors.push({message: ParseError.wrong(t[1], 'I'), lineNo, start: t[1].start, end: t[1].end});
-			if (t[2]) {
-				if (t[2].raw == 'open') openConnect = 'open';
-				else if (t[2].raw == 'connect') openConnect = 'connect';
+		let name = t[0].name;
+		if(name == 'given' || name == 'then') {
+			isGivenThen = true;
+			cst.givenThen = name;
+			if (t[2]?.raw == 'open') openConnect = 'open';
+			else if (t[2]?.raw == 'connect') openConnect = 'connect';
+		} else {
+			if (name.endsWith(':')) name = name.slice(0, -1)
+			if (name == 'prepare' || name == 'before' || name == 'compute' || name == 'after') {
+				isPrepareCompute = true;
+				cst.givenThen = name == 'prepare' || name == 'before' ? 'given' : 'then';
+				// Prepare: connect/open
+				// Prepare 'ident' : connect/open
+				// Prepare secret 'ident': connect/open
+				if (
+					t[1]?.raw == 'connect'
+					|| t[3]?.raw == 'connect'
+					|| t[4]?.raw == 'connect'
+				) {
+					openConnect = 'connect';
+				} else if (
+					t[1]?.raw == 'open'
+					|| t[3]?.raw == 'open'
+					|| t[4]?.raw == 'open'
+				) {
+					openConnect = 'open';
+				}
+			} else {
+				const cl = closest(name, ['given', 'then', 'prepare', 'before', 'compute', 'after'])
+				if (cl === 'given' || cl === 'then') {
+					isGivenThen = true;
+					cst.errors.push({ message: ParseError.wrong(t[0], 'given', 'then'), lineNo, start: t[0].start, end: t[0].end });
+				} else {
+					isPrepareCompute = true;
+					cst.errors.push({ message: ParseError.wrong(t[0], 'prepare', 'before', 'compute', 'after'), lineNo, start: t[0].start, end: t[0].end });
+				}
 			}
-		} else cst.errors.push({ message: ParseError.missing(t[0], 'I'), lineNo, start: t[0].start, end: t[0].end});
+		}
 	} else {
-		cst.errors.push({ message: ParseError.missing(lineNo, 'Given I', 'Then I'), lineNo});
+		cst.errors.push({ message: ParseError.missing(lineNo, 'Given I', 'Then I', 'Prepare', '...'), lineNo});
+		return cst;
 	}
 
 	p.forEach(([k]) => {
-		let i = 1;
-		const m: Match = { key: k, bindings: new Map(), err: [], lineNo: lineNo };
-		const curErrLen = cst.matches[0]?.err.length;
-		const lemmeout = {};
-		const newErr = (i: number, wantsFirst: string, ...wantsRest: string[]) => {
-			const have = t[i];
-			if (have) m.err.push({message: ParseError.wrong(have, wantsFirst, ...wantsRest), lineNo, start: have.start, end: have.end});
-			else
-				m.err.push(
-					{message: ParseError.missing((i > 2 && t[i - 1]) || lineNo, wantsFirst, ...wantsRest), lineNo},
-				);
-			if (curErrLen !== undefined && m.err.length > curErrLen) throw lemmeout;
-		};
-		try {
-			// check open and connect statement only against the correct statements
-			if(openConnect && (openConnect !== k.openconnect)) throw lemmeout;
+		// check open and connect statement only against the correct statements
+		if(openConnect && (openConnect !== k.openconnect)) return;
 
-			// Open 'ident' and|Connect to 'ident' and
-			if (k.openconnect === 'open') {
-				if (t[++i]?.name !== 'open') newErr(i, 'open');
-				const ident = t[++i];
-				if (ident?.isIdent) m.open = ident.raw.slice(1, -1);
-				else newErr(i, '\'<identifier>\'');
-				if (t[++i]?.name !== 'and') newErr(i, 'and');
-			} else if (k.openconnect === 'connect') {
-				if (t[++i]?.name !== 'connect') newErr(i, 'connect');
-				if (t[++i]?.name !== 'to') newErr(i, 'to');
-				const ident = t[++i];
-				if (ident?.isIdent) m.connect = ident.raw.slice(1, -1);
-				else newErr(i, '\'<identifier>\'');
-				if (t[++i]?.name !== 'and') newErr(i, 'and');
+		// given/then parsing
+		if (isGivenThen) {
+			try {
+				const m: Match = { key: k, bindings: new Map(), err: [], lineNo: lineNo };
+				if (givenThenParser(m, t, cst.matches[0]?.err.length)) cst.matches.length = 0;
+				cst.matches.push(m);
+			} catch(e) {
+				if (e !== lemmeout) throw(e)
 			}
+		}
 
-			// Send $buzzword 'ident' And
-			// TODO: allow spaces in between params
-			const params = new Set(k.params);
-			k.params?.forEach(() => {
-				if (t[++i]?.name !== 'send') newErr(i, 'send');
-
-				const tokName = t[++i];
-				if (tokName && params.has(tokName.name)) {
-					params.delete(tokName.name);
-				} else {
-					const [first, ...rest] = [...params.values()] as [string, ...string[]];
-					newErr(i, first, ...rest);
-				}
-
-				const ident = t[++i];
-				if (ident?.isIdent) {
-					if (tokName) m.bindings.set(tokName.name, ident.raw.slice(1, -1));
-				} else {
-					newErr(i, '\'<identifier>\'');
-				}
-				if (t[++i]?.name !== 'and') newErr(i, 'and');
-			});
-
-			// $buzzwords
-			k.phrase.split(' ').forEach((name) => t[++i]?.name !== name && newErr(i, name));
-
-			// Save Output Into 'ident' || Save Output Secret Into 'ident'
-			const ident = t[t.length - 1];
-			if (t.length - i >= 5 && ident?.isIdent) {
-				for (++i; i < t.length - 5; ++i) m.err.push({message: ParseError.extra(t[i] as Token), lineNo, start: (t[i] as Token).start, end: (t[i] as Token).end});
-				if (t.length - i == 4) {
-					if (t[t.length - 4]?.name !== 'and') newErr(t.length - 4, 'and');
-					if (t[t.length - 3]?.name !== 'output') newErr(t.length - 3, 'output');
-					if (t[t.length - 2]?.name !== 'into') newErr(t.length - 2, 'into');
-					if (
-						t[t.length - 4]?.name === 'and' &&
-						t[t.length - 3]?.name === 'output' &&
-						t[t.length - 2]?.name === 'into'
-					)
-						m.into = ident.raw.slice(1, -1);
-				} else {
-					if (
-						t[t.length - 4]?.name === 'and' &&
-						t[t.length - 3]?.name === 'output' &&
-						t[t.length - 2]?.name === 'into'
-					) {
-						m.err.push({message: ParseError.extra(t[t.length-5] as Token), lineNo, start: (t[t.length-5] as Token).start, end: (t[t.length-5] as Token).end});
-					} else {
-						if (t[t.length - 5]?.name !== 'and') newErr(t.length - 5, 'and');
-						if (t[t.length - 4]?.name !== 'output') newErr(t.length - 4, 'output');
-						if (t[t.length - 3]?.name !== 'secret') newErr(t.length - 3, 'secret');
-						if (t[t.length - 2]?.name !== 'into') newErr(t.length - 2, 'into');
-						if (
-							t[t.length - 5]?.name === 'and' &&
-							t[t.length - 4]?.name === 'output' &&
-							t[t.length - 3]?.name === 'secret' &&
-							t[t.length - 2]?.name === 'into'
-						)
-							m.intoSecret = ident.raw.slice(1, -1);
-					}
-				}
-			} else {
-				for (++i; i < t.length; ++i) m.err.push({message: ParseError.extra(t[i] as Token), lineNo, start: (t[i] as Token).start, end: (t[i] as Token).end});
+		// prepare/compute parsing
+		if (isPrepareCompute) {
+			try {
+				const mm: Match = { key: k, bindings: new Map(), err: [], lineNo: lineNo };
+				if (prepareComputeParser(mm, t, cst.matches[0]?.err.length)) cst.matches.length = 0;
+				cst.matches.push(mm);
+			} catch(e) {
+				if (e !== lemmeout) throw(e)
 			}
-
-			if (curErrLen !== undefined && m.err.length > curErrLen) throw lemmeout;
-			if (curErrLen !== undefined && m.err.length < curErrLen) cst.matches.length = 0;
-			cst.matches.push(m);
-		} catch (e) {
-			if (e !== lemmeout) throw e;
 		}
 	});
-
-	if (givenThen) cst.givenThen = givenThen;
 	return cst;
 };
