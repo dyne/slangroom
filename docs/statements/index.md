@@ -197,6 +197,7 @@ neither the open/connect part nor the parameters part are present.
 |              | request,client,server_data,expires_in | generate request uri                 |
 |              | token,server_data                     | get authorization details from token |
 |              | request_uri,data,server_data          | add data to authorization details    |
+|              | request_uri,server_data               | get redirect_uri from request_uri    |
 
 ## pocketbase plugin
 | open/connect | params                              | phrase                    |
@@ -204,6 +205,7 @@ neither the open/connect part nor the parameters part are present.
 | connect      |                                     | start pb client           |
 | connect      |                                     | start capacitor pb client |
 |              | my_credentials                      | login                     |
+|              |                                     | refresh token             |
 |              | email                               | ask password reset        |
 |              | list_parameters                     | get some records          |
 |              | show_parameters                     | get one record            |
