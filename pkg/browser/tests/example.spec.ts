@@ -17,10 +17,14 @@ test('check results of slangroom', async ({ page }) => {
 	);
 
 	await expect(page.locator('#test-pocketbase')).toContainText(
-		"{\"output\":{\"description\":\"<p>test description of org</p>\"}}"
+		"\"output\":{\"description\":\"<p>test description of org</p>\"}}"
 	);
 	await expect(page.locator('#test-pocketbase-2')).toContainText(
 		"{\"output\":{\"name\":\"test organization\"}}"
+	);
+
+	await expect(page.locator('#test-pocketbase-3')).toContainText(
+		"{\"output\":[\"token_refreshed\"]}"
 	);
 });
 
