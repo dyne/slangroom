@@ -143,7 +143,7 @@ importers:
         version: 6.1.0(rollup@2.79.1)
       '@rollup/plugin-typescript':
         specifier: ^11.1.6
-        version: 11.1.6(rollup@2.79.1)(tslib@2.8.0)(typescript@4.9.5)
+        version: 11.1.6(rollup@2.79.1)(tslib@2.8.1)(typescript@4.9.5)
       '@semantic-release/changelog':
         specifier: ^6.0.3
         version: 6.0.3(semantic-release@24.1.0(typescript@4.9.5))
@@ -318,7 +318,7 @@ importers:
         version: 1.6.2
       web3:
         specifier: ^4.3.0
-        version: 4.3.0(encoding@0.1.13)(typescript@5.6.3)(zod@3.22.4)
+        version: 4.3.0(encoding@0.1.13)(typescript@5.6.3)(zod@3.24.1)
       web3-validator:
         specifier: ^2.0.3
         version: 2.0.3
@@ -422,8 +422,8 @@ importers:
   pkg/pocketbase:
     dependencies:
       '@capacitor/preferences':
-        specifier: ^6.0.0
-        version: 6.0.0(@capacitor/core@6.0.0)
+        specifier: ^6.0.3
+        version: 6.0.3(@capacitor/core@6.0.0)
       '@slangroom/core':
         specifier: workspace:*
         version: link:../core
@@ -431,11 +431,11 @@ importers:
         specifier: workspace:*
         version: link:../shared
       pocketbase:
-        specifier: ^0.21.5
-        version: 0.21.5
+        specifier: ^0.25.1
+        version: 0.25.1
       zod:
-        specifier: ^3.22.4
-        version: 3.22.4
+        specifier: ^3.24.1
+        version: 3.24.1
 
   pkg/qrcode:
     dependencies:
@@ -629,8 +629,8 @@ packages:
   '@capacitor/core@6.0.0':
     resolution: {integrity: sha512-NvxIQsJcMiIV+Le1DilR2GGyQQbDInfXK1UywGROQ5mycdFlW5XoAPZ+MKnFGB123RoEgE3uhDGgwTXUmSlX9A==}
 
-  '@capacitor/preferences@6.0.0':
-    resolution: {integrity: sha512-4A49UKEc/sgf28TFNwRX4Kx6G0oMeRC9btA2voaEuL2LZd2l8IMfAEFDIrfQWi5rYE6RWenEUexUTyiEZnYFvQ==}
+  '@capacitor/preferences@6.0.3':
+    resolution: {integrity: sha512-3I1BbhhCBTMBziVvr0fU7RCRXqGvhUW/apHLRJSaJAWonASya5rp6AWsHv1lW1tkF0avUOMwp6e7iNA4UUGu8g==}
     peerDependencies:
       '@capacitor/core': ^6.0.0
 
@@ -4373,8 +4373,8 @@ packages:
     resolution: {integrity: sha512-40QW5YalBNfQo5yRYmiw7Yz6TKKVr3h6970B2YE+3fQpsWcrbj1PzJgxeJ19DRQjhMbKPIuMY8rFaXc8moolVw==}
     engines: {node: '>=10.13.0'}
 
-  pocketbase@0.21.5:
-    resolution: {integrity: sha512-bnI/uinnQps+ElSlzxkc4yvwuSFfKcoszDtXH/4QT2FhGq2mJVUvDlxn+rjRXVntUjPfmMG5LEPZ1eGqV6ssog==}
+  pocketbase@0.25.1:
+    resolution: {integrity: sha512-2IH0KLI/qMNR/E17C7BGWX2FxW7Tead+igLHOWZ45P56v/NyVT18Jnmddeft+3qWWGL1Hog2F8bc4orWV/+Fcg==}
 
   postcss-selector-parser@6.1.2:
     resolution: {integrity: sha512-Q8qQfPiZ+THO/3ZrOrO0cJJKfpYCagtMUkXbnEfmgUjwXg6z/WBeOyS9APBBPCTSiDV+s4SwQGu8yFsiMRIudg==}
@@ -5031,6 +5031,9 @@ packages:
   tslib@2.8.0:
     resolution: {integrity: sha512-jWVzBLplnCmoaTr13V9dYbiQ99wvZRd0vNWaDRg+aVYRcjDF3nDksxFDE/+fkXnKhpnUUkmx5pK/v8mCtLVqZA==}
 
+  tslib@2.8.1:
+    resolution: {integrity: sha512-oJFu94HQb+KVduSUQL7wnpmqnfmLsOA/nAh6b6EH0wCEoK0/mPeXU6c3wKDV83MkOuHPRHtSXKKU99IBazS/2w==}
+
   tuf-js@2.2.1:
     resolution: {integrity: sha512-GwIJau9XaA8nLVbUXsN3IlFi7WmQ48gBUrl3FTkkL/XLu/POhBzfmX9hd33FNMX1qAsfl6ozO1iMmW9NC8YniA==}
     engines: {node: ^16.14.0 || >=18.0.0}
@@ -5500,8 +5503,8 @@ packages:
   zenroom@4.45.1:
     resolution: {integrity: sha512-azOJSAhC6U8xVgzbRt/EFhotYRUAAeTVTu3IoZkHLTtRr2/6AzTdP28bTCvKTtMB8mvF+HlaGdbdx8gHiw8H4Q==}
 
-  zod@3.22.4:
-    resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}
+  zod@3.24.1:
+    resolution: {integrity: sha512-muH7gBL9sI1nciMZV67X5fTKKBLtwpZ5VBp1vsOQzj1MhrBZ4wlVCm3gedKZWLp0Oyel8sIGfeiz54Su+OVT+A==}
 
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
@@ -5658,9 +5661,9 @@ snapshots:
 
   '@capacitor/core@6.0.0':
     dependencies:
-      tslib: 2.8.0
+      tslib: 2.8.1
 
-  '@capacitor/preferences@6.0.0(@capacitor/core@6.0.0)':
+  '@capacitor/preferences@6.0.3(@capacitor/core@6.0.0)':
     dependencies:
       '@capacitor/core': 6.0.0
 
@@ -6567,14 +6570,14 @@ snapshots:
     optionalDependencies:
       rollup: 2.79.1
 
-  '@rollup/plugin-typescript@11.1.6(rollup@2.79.1)(tslib@2.8.0)(typescript@4.9.5)':
+  '@rollup/plugin-typescript@11.1.6(rollup@2.79.1)(tslib@2.8.1)(typescript@4.9.5)':
     dependencies:
       '@rollup/pluginutils': 5.1.0(rollup@2.79.1)
       resolve: 1.22.8
       typescript: 4.9.5
     optionalDependencies:
       rollup: 2.79.1
-      tslib: 2.8.0
+      tslib: 2.8.1
 
   '@rollup/pluginutils@4.2.1':
     dependencies:
@@ -7119,11 +7122,11 @@ snapshots:
 
   abbrev@2.0.0: {}
 
-  abitype@0.7.1(typescript@5.6.3)(zod@3.22.4):
+  abitype@0.7.1(typescript@5.6.3)(zod@3.24.1):
     dependencies:
       typescript: 5.6.3
     optionalDependencies:
-      zod: 3.22.4
+      zod: 3.24.1
 
   acorn-import-attributes@1.9.5(acorn@8.13.0):
     dependencies:
@@ -9609,7 +9612,7 @@ snapshots:
 
   pngjs@5.0.0: {}
 
-  pocketbase@0.21.5: {}
+  pocketbase@0.25.1: {}
 
   postcss-selector-parser@6.1.2:
     dependencies:
@@ -10314,6 +10317,8 @@ snapshots:
 
   tslib@2.8.0: {}
 
+  tslib@2.8.1: {}
+
   tuf-js@2.2.1:
     dependencies:
       '@tufjs/models': 2.0.1
@@ -10574,9 +10579,9 @@ snapshots:
     dependencies:
       web3-types: 1.3.1
 
-  web3-eth-abi@4.1.4(typescript@5.6.3)(zod@3.22.4):
+  web3-eth-abi@4.1.4(typescript@5.6.3)(zod@3.24.1):
     dependencies:
-      abitype: 0.7.1(typescript@5.6.3)(zod@3.22.4)
+      abitype: 0.7.1(typescript@5.6.3)(zod@3.24.1)
       web3-errors: 1.1.4
       web3-types: 1.3.1
       web3-utils: 4.1.0
@@ -10595,12 +10600,12 @@ snapshots:
       web3-utils: 4.1.0
       web3-validator: 2.0.3
 
-  web3-eth-contract@4.1.4(encoding@0.1.13)(typescript@5.6.3)(zod@3.22.4):
+  web3-eth-contract@4.1.4(encoding@0.1.13)(typescript@5.6.3)(zod@3.24.1):
     dependencies:
       web3-core: 4.3.2(encoding@0.1.13)
       web3-errors: 1.1.4
-      web3-eth: 4.3.1(encoding@0.1.13)(typescript@5.6.3)(zod@3.22.4)
-      web3-eth-abi: 4.1.4(typescript@5.6.3)(zod@3.22.4)
+      web3-eth: 4.3.1(encoding@0.1.13)(typescript@5.6.3)(zod@3.24.1)
+      web3-eth-abi: 4.1.4(typescript@5.6.3)(zod@3.24.1)
       web3-types: 1.3.1
       web3-utils: 4.1.0
       web3-validator: 2.0.3
@@ -10611,13 +10616,13 @@ snapshots:
       - utf-8-validate
       - zod
 
-  web3-eth-ens@4.0.8(encoding@0.1.13)(typescript@5.6.3)(zod@3.22.4):
+  web3-eth-ens@4.0.8(encoding@0.1.13)(typescript@5.6.3)(zod@3.24.1):
     dependencies:
       '@adraffy/ens-normalize': 1.10.0
       web3-core: 4.3.2(encoding@0.1.13)
       web3-errors: 1.1.4
-      web3-eth: 4.3.1(encoding@0.1.13)(typescript@5.6.3)(zod@3.22.4)
-      web3-eth-contract: 4.1.4(encoding@0.1.13)(typescript@5.6.3)(zod@3.22.4)
+      web3-eth: 4.3.1(encoding@0.1.13)(typescript@5.6.3)(zod@3.24.1)
+      web3-eth-contract: 4.1.4(encoding@0.1.13)(typescript@5.6.3)(zod@3.24.1)
       web3-net: 4.0.7(encoding@0.1.13)
       web3-types: 1.3.1
       web3-utils: 4.1.0
@@ -10636,10 +10641,10 @@ snapshots:
       web3-utils: 4.1.0
       web3-validator: 2.0.3
 
-  web3-eth-personal@4.0.8(encoding@0.1.13)(typescript@5.6.3)(zod@3.22.4):
+  web3-eth-personal@4.0.8(encoding@0.1.13)(typescript@5.6.3)(zod@3.24.1):
     dependencies:
       web3-core: 4.3.2(encoding@0.1.13)
-      web3-eth: 4.3.1(encoding@0.1.13)(typescript@5.6.3)(zod@3.22.4)
+      web3-eth: 4.3.1(encoding@0.1.13)(typescript@5.6.3)(zod@3.24.1)
       web3-rpc-methods: 1.1.4(encoding@0.1.13)
       web3-types: 1.3.1
       web3-utils: 4.1.0
@@ -10651,12 +10656,12 @@ snapshots:
       - utf-8-validate
       - zod
 
-  web3-eth@4.3.1(encoding@0.1.13)(typescript@5.6.3)(zod@3.22.4):
+  web3-eth@4.3.1(encoding@0.1.13)(typescript@5.6.3)(zod@3.24.1):
     dependencies:
       setimmediate: 1.0.5
       web3-core: 4.3.2(encoding@0.1.13)
       web3-errors: 1.1.4
-      web3-eth-abi: 4.1.4(typescript@5.6.3)(zod@3.22.4)
+      web3-eth-abi: 4.1.4(typescript@5.6.3)(zod@3.24.1)
       web3-eth-accounts: 4.1.0
       web3-net: 4.0.7(encoding@0.1.13)
       web3-providers-ws: 4.0.7
@@ -10735,19 +10740,19 @@ snapshots:
       util: 0.12.5
       web3-errors: 1.1.4
       web3-types: 1.3.1
-      zod: 3.22.4
+      zod: 3.24.1
 
-  web3@4.3.0(encoding@0.1.13)(typescript@5.6.3)(zod@3.22.4):
+  web3@4.3.0(encoding@0.1.13)(typescript@5.6.3)(zod@3.24.1):
     dependencies:
       web3-core: 4.3.2(encoding@0.1.13)
       web3-errors: 1.1.4
-      web3-eth: 4.3.1(encoding@0.1.13)(typescript@5.6.3)(zod@3.22.4)
-      web3-eth-abi: 4.1.4(typescript@5.6.3)(zod@3.22.4)
+      web3-eth: 4.3.1(encoding@0.1.13)(typescript@5.6.3)(zod@3.24.1)
+      web3-eth-abi: 4.1.4(typescript@5.6.3)(zod@3.24.1)
       web3-eth-accounts: 4.1.0
-      web3-eth-contract: 4.1.4(encoding@0.1.13)(typescript@5.6.3)(zod@3.22.4)
-      web3-eth-ens: 4.0.8(encoding@0.1.13)(typescript@5.6.3)(zod@3.22.4)
+      web3-eth-contract: 4.1.4(encoding@0.1.13)(typescript@5.6.3)(zod@3.24.1)
+      web3-eth-ens: 4.0.8(encoding@0.1.13)(typescript@5.6.3)(zod@3.24.1)
       web3-eth-iban: 4.0.7
-      web3-eth-personal: 4.0.8(encoding@0.1.13)(typescript@5.6.3)(zod@3.22.4)
+      web3-eth-personal: 4.0.8(encoding@0.1.13)(typescript@5.6.3)(zod@3.24.1)
       web3-net: 4.0.7(encoding@0.1.13)
       web3-providers-http: 4.1.0(encoding@0.1.13)
       web3-providers-ws: 4.0.7
@@ -10922,6 +10927,6 @@ snapshots:
 
   zenroom@4.45.1: {}
 
-  zod@3.22.4: {}
+  zod@3.24.1: {}
 
   zwitch@2.0.4: {}
