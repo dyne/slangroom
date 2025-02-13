@@ -272,6 +272,7 @@ test('parser works', (t) => {
 						{message: ParseError.extra(new Token('and', 1, 19, 21)), lineNo: 1, start: 19, end: 21},
 						{message: ParseError.extra(new Token('so', 1, 23, 24)), lineNo: 1, start: 23, end: 24}
 					],
+					into: 'foo',
 					lineNo: 1
 				},
 			],
@@ -288,6 +289,7 @@ test('parser works', (t) => {
 						{message: ParseError.extra(new Token('and', 1, 13, 15)), lineNo: 1, start: 13, end: 15},
 						{message: ParseError.extra(new Token('d', 1, 17, 17)), lineNo: 1, start: 17, end: 17}
 					],
+					into: 'bar',
 					lineNo: 1
 				},
 			],
@@ -300,6 +302,7 @@ test('parser works', (t) => {
 					key: { phrase: 'domates biber patlican' },
 					bindings: new Map(),
 					err: [{message: ParseError.extra(new Token('patates', 1, 30, 36)), lineNo: 1, start: 30, end: 36}],
+					into: 'baz',
 					lineNo: 1
 				},
 			],
@@ -322,6 +325,7 @@ test('parser works', (t) => {
 						{message: ParseError.extra(new Token('other', 1, 50, 54)), lineNo: 1, start: 50, end: 54},
 						{message: ParseError.extra(new Token('stuff', 1, 56, 60)), lineNo: 1, start: 56, end: 60},
 					],
+					into: 'quz',
 					lineNo: 1
 				},
 			],
