@@ -168,6 +168,23 @@ export const authWithPassword = p.new(['my_credentials'], 'login', async (ctx) =
 /**
  * @internal
  */
+export const authRefresh = p.new('refresh token', async (ctx) => {
+	if (!(await isPbRunning())) return ctx.fail(new PocketBaseError('Client is not running'));
+	if (!pb.authStore.isValid) return ctx.fail(new PocketBaseError('Invalid token'));
+
+	try {
+		const res = await pb
+			.collection('users')
+			.authRefresh();
+		return ctx.pass({ token: res.token, record: res.record });
+	} catch (err) {
+		return ctx.fail(new PocketBaseError(err.message));
+	}
+});
+
+/**
+ * @internal
+ */
 export const requestPasswordReset = p.new(['email'], 'ask password reset', async (ctx) => {
 	const email = ctx.fetch('email') as string;
 	if (!(await isPbRunning())) return ctx.fail(new PocketBaseError('Client is not running'));

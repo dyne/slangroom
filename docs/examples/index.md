@@ -385,6 +385,13 @@
 <<< @/../examples/pocketbase/pw_reset.keys.json{json}
 :::
 
+### refresh token
+::: code-group
+<<< @/../examples/pocketbase/refresh_token.slang{5 gherkin:line-numbers}
+<<< @/../examples/pocketbase/refresh_token.data.json{json}
+<<< @/../examples/pocketbase/refresh_token.keys.json{json}
+:::
+
 ### send request
 ::: code-group
 <<< @/../examples/pocketbase/send_request.slang{5 gherkin:line-numbers}
