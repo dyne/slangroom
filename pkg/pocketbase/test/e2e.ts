@@ -25,7 +25,6 @@ const password = "testtest";
 const pb_address = "http://127.0.0.1:8090/" as ServerUrl;
 
 
-
 const randomString = ()=>(Math.random() + 1).toString(36).substring(7);
 
 test.serial('should create a new slangroom client', async (t) => {
@@ -44,7 +43,7 @@ test.serial('should create a new slangroom client', async (t) => {
 	t.is(res.result['res'], 'pb client successfully created');
 });
 
-test.serial('should create a new slangroom capacitor client', async (t) => {
+test.serial('should not create a new slangroom capacitor client in node env', async (t) => {
 	const script = `
     Rule unknown ignore
     Given I connect to 'pb_address' and start capacitor pb client and output into 'res'
@@ -103,6 +102,35 @@ test.serial('should login with credentials', async (t) => {
 	t.is(output.record?.email, email);
 	t.truthy(output.token);
 });
+
+test.serial('should be able to refresh token', async (t) => {
+	const script = `
+    Rule unknown ignore
+    Given I connect to 'pb_address' and start pb client
+    Given I send my_credentials 'gino' and login and output into 'login_output'
+    Given I refresh token and output into 'refresh_output'
+    Given I have a 'string dictionary' named 'login_output'
+    Given I have a 'string dictionary' named 'refresh_output'
+    Then print data
+    `;
+	const slangroom = new Slangroom(pocketbase);
+	const res = await slangroom.execute(script, {
+		data: {
+			pb_address,
+			gino: {
+				email,
+				password,
+			},
+		},
+	});
+	const loginOutput = res.result['login_output'] as { record?: { email?: string }; token?: string };
+	const refreshOutput = res.result['refresh_output'] as { record?: { email?: string }; token?: string };
+	t.is(loginOutput.record?.email, email);
+	t.is(refreshOutput.record?.email, email);
+	t.truthy(loginOutput.token);
+	t.truthy(refreshOutput.token);
+});
+
 
 test.serial('should retrieve full list of records', async (t) => {
 	const script = `
