@@ -18,7 +18,7 @@ test('parser works', (t) => {
 
 	Object.entries<ReturnType<typeof parse>>({
 		'': {
-			errors: [{message: ParseError.missing(1, 'Given I', 'Then I', 'Prepare', '...'), lineNo: 1}],
+			errors: [{message: ParseError.missing(1, 'given I', 'then I', 'prepare', 'before', 'compute', 'after'), lineNo: 1}],
 			matches: [],
 		},
 		G: {
