@@ -277,6 +277,9 @@ importers:
       '@slangroom/shared':
         specifier: workspace:*
         version: link:../shared
+      fastest-levenshtein:
+        specifier: ^1.0.16
+        version: 1.0.16
 
   pkg/db:
     dependencies:
