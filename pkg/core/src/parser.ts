@@ -262,24 +262,24 @@ class ErrorHandler {
 
 	report(i: number, expected: string, ...alternates: string[]) {
 		const have = this.t[i];
+		let msg;
 		if (have) {
-			this.m.err.push({
-				message: ParseError.wrong(have, expected, ...alternates),
-				lineNo: this.m.lineNo,
+			msg = ParseError.wrong(have, expected, ...alternates);
+		} else {
+			msg = ParseError.missing(
+				(i > 2 && this.t[i - 1]) || this.m.lineNo,
+				expected,
+				...alternates,
+			);
+		}
+		this.m.err.push({
+			message: msg,
+			lineNo: this.m.lineNo,
+			...(have && {
 				start: have.start,
 				end: have.end,
-			});
-		} else {
-			this.m.err.push({
-				message: ParseError.missing(
-					(i > 2 && this.t[i - 1]) || this.m.lineNo,
-					expected,
-					...alternates,
-				),
-				lineNo: this.m.lineNo,
-			});
-		}
-
+			}),
+		});
 		if (this.curErrLen !== undefined && this.m.err.length > this.curErrLen) throw lemmeout;
 	}
 
@@ -297,16 +297,22 @@ class ErrorHandler {
 			return;
 		}
 		const id = this.t[i].raw.slice(1, -1);
-		if (dest === IdentType.BINDINGS && tokName) {
-			this.m.bindings.set(tokName.name, id);
-		} else if (dest === IdentType.INTO) {
-			this.m.into = id;
-		} else if (dest === IdentType.INTOSECRET) {
-			this.m.intoSecret = id;
-		} else if (dest === IdentType.OPEN) {
-			this.m.open = id;
-		} else if (dest === IdentType.CONNECT) {
-			this.m.connect = id;
+		switch (dest) {
+			case IdentType.BINDINGS:
+				if (tokName) this.m.bindings.set(tokName.name, id);
+				break;
+			case IdentType.INTO:
+				this.m.into = id;
+				break;
+			case IdentType.INTOSECRET:
+				this.m.intoSecret = id;
+				break;
+			case IdentType.OPEN:
+				this.m.open = id;
+				break;
+			case IdentType.CONNECT:
+				this.m.connect = id;
+				break;
 		}
 	}
 }
@@ -421,7 +427,7 @@ const givenThenParser = (m: Match, t: Token[], curErrLen?: number): boolean => {
 		errorHandler.expect(++i, TokenType.AND);
 	});
 	// $buzzwords
-	k.phrase.split(' ').forEach((name) => errorHandler.expect(++i, name));
+	k.phrase.split(' ').forEach((name: string) => errorHandler.expect(++i, name));
 	// Output Into 'ident' || Output Secret Into 'ident'
 	outputParser(m, t, i, errorHandler);
 
@@ -447,7 +453,7 @@ const prepareComputeParser = (m: Match, t: Token[], curErrLen?: number): boolean
 	// open '' and | connect to '' and
 	i = openConnectParser(m, i, errorHandler);
 	// $buzzwords
-	k.phrase.split(' ').forEach((name) => errorHandler.expect(++i, name));
+	k.phrase.split(' ').forEach((name: string) => errorHandler.expect(++i, name));
 	// With $buzzword 'ident', | Where $buzzword is 'ident',
 	// TODO: allow spaces in between params
 	const params = new Set(k.params);
