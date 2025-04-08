@@ -112,41 +112,11 @@ ${errorColorDef}
 ParseError @slangroom/core@${packageJson.version}: at 2:1-9
  ${errorColor('Gibberish')} may be ${suggestedColor('given')} or ${suggestedColor('then')}
 
-ParseError @slangroom/core@${packageJson.version}: at 2:11-17
- ${errorColor('connect')} may be ${suggestedColor('I')}
-
-ParseError @slangroom/core@${packageJson.version}: at 2:19-20
- ${errorColor('to')} may be ${suggestedColor('connect')}
-
-ParseError @slangroom/core@${packageJson.version}: at 2:22-26
- ${errorColor('\'url\'')} may be ${suggestedColor('to')}
-
-ParseError @slangroom/core@${packageJson.version}: at 2:28-30
- ${errorColor('and')} may be ${suggestedColor('\'<identifier>\'')}
-
-ParseError @slangroom/core@${packageJson.version}: at 2:32-35
- ${errorColor('send')} may be ${suggestedColor('and')}
-
-ParseError @slangroom/core@${packageJson.version}: at 2:37-41
- ${errorColor('param')} may be ${suggestedColor('send')}
-
-ParseError @slangroom/core@${packageJson.version}: at 2:43-49
- ${errorColor('\'param\'')} may be ${suggestedColor('param')}
-
-ParseError @slangroom/core@${packageJson.version}: at 2:51-53
- ${errorColor('and')} may be ${suggestedColor('\'<identifier>\'')}
-
-ParseError @slangroom/core@${packageJson.version}: at 2:55-56
- ${errorColor('do')} may be ${suggestedColor('and')}
-
-ParseError @slangroom/core@${packageJson.version}: at 2:58-61
- ${errorColor('some')} may be ${suggestedColor('do')}
-
-ParseError @slangroom/core@${packageJson.version}: at 2:63-68
- ${errorColor('action')} may be ${suggestedColor('some')}
+ParseError @slangroom/core@${packageJson.version}: at 2:1-9
+ must be followed by one of: ${missingColor('I')}
 
 ParseError @slangroom/core@${packageJson.version}: at 2:70-72
- ${errorColor('and')} may be ${suggestedColor('action')}
+ extra token ${extraColor('and')}
 
 ParseError @slangroom/core@${packageJson.version}: at 2:74-84
  extra token ${extraColor('aoibndwebnd')}
