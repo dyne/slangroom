@@ -13,10 +13,19 @@ import { rdf } from '@slangroom/rdf';
 test('canonicalization', async (t) => {
     const slangroom = new Slangroom(rdf);
 	const script: string = `Rule unknown ignore
-Given I send dataset 'dataset' and canonicalize it and output into 'res'
+Given I send dataset 'dataset' and do canonicalization and output into 'res'
 Given I have a 'string' named 'res'
 Then print the 'res'
 `;
+	const expected_res: string = `<did:example:ebfeb1f712ebc6f1c276e12ec21> <https://www.w3.org/ns/credentials/examples#degree> _:c14n0 .
+<http://university.example/credentials/3732> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://www.w3.org/2018/credentials#VerifiableCredential> .
+<http://university.example/credentials/3732> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://www.w3.org/ns/credentials/examples#ExampleDegreeCredential> .
+<http://university.example/credentials/3732> <https://www.w3.org/2018/credentials#credentialSubject> <did:example:ebfeb1f712ebc6f1c276e12ec21> .
+<http://university.example/credentials/3732> <https://www.w3.org/2018/credentials#issuer> <https://university.example/issuers/565049> .
+<http://university.example/credentials/3732> <https://www.w3.org/2018/credentials#validFrom> "2010-01-01T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+_:c14n0 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://www.w3.org/ns/credentials/examples#ExampleBachelorDegree> .
+_:c14n0 <https://schema.org/name> "Bachelor of Science and Arts" .
+`
     const fn = slangroom.execute(script, {
         data: {
             dataset: {
@@ -39,5 +48,5 @@ Then print the 'res'
         }
     });
 	const result = await fn;
-    t.is(result.result['res'], "substitute correct result", JSON.stringify(result.result));
+    t.is(result.result['res'], expected_res, JSON.stringify(result.result));
 });
