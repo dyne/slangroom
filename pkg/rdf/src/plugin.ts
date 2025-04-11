@@ -27,17 +27,17 @@ const rdfc10 = new RDFC10(n3.DataFactory);
  * @internal
  */
 export const canonicalization = p.new(
-	['dataset'],
-	'do canonicalization',
+	['dictionary'],
+	'generate serialized canonical rdf',
 	async (ctx) => {
-		const input = ctx.fetch('dataset');
+		const input = ctx.fetch('dictionary');
 		if(!input || typeof input !== "object") {
 			return ctx.fail(new RdfError('Invalid input, it must be an object'))
 		}
 		try {
 			const quads = await jsonld.toRDF(input as object, {format: "application/n-quads"}) as unknown as InputQuads;
 			const normalized: string = (await rdfc10.c14n(quads)).canonical_form
-			return ctx.pass(normalized);
+			return ctx.pass(btoa(normalized));
 		} catch(e) {
 			return ctx.fail(new RdfError((e as Error).message))
 		}

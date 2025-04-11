@@ -13,9 +13,11 @@ import { rdf } from '@slangroom/rdf';
 test('canonicalization', async (t) => {
     const slangroom = new Slangroom(rdf);
 	const script: string = `Rule unknown ignore
-Given I send dataset 'dataset' and do canonicalization and output into 'res'
+Given I send dictionary 'dataset' and generate serialized canonical rdf and output into 'res'
+Prepare 'res_2': generate serialized canonical rdf with dictionary 'dataset'
 Given I have a 'string' named 'res'
-Then print the 'res'
+Given I have a 'string' named 'res_2'
+Then print the data
 `;
 	const expected_res: string = `<did:example:ebfeb1f712ebc6f1c276e12ec21> <https://www.w3.org/ns/credentials/examples#degree> _:c14n0 .
 <http://university.example/credentials/3732> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://www.w3.org/2018/credentials#VerifiableCredential> .
@@ -48,5 +50,6 @@ _:c14n0 <https://schema.org/name> "Bachelor of Science and Arts" .
         }
     });
 	const result = await fn;
-    t.is(result.result['res'], expected_res, JSON.stringify(result.result));
+    t.is(result.result['res'], btoa(expected_res), JSON.stringify(result.result));
+    t.is(result.result['res_2'], btoa(expected_res), JSON.stringify(result.result));
 });
