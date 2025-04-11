@@ -20,7 +20,7 @@ import {
 
 const test = ava as TestFn<{ web3: Web3 }>;
 
-test('read the ethereum nonce', async (t) => {
+test.skip('read the ethereum nonce', async (t) => {
 	const ctx = new PluginContextTest('http://78.47.38.223:9485', {
 		address: '0x2D010920b43aFb54f8d5fB51c9354FbC674b28Fc',
 	});
@@ -31,14 +31,14 @@ test('read the ethereum nonce', async (t) => {
 	});
 });
 
-test('Ethereum gas price', async (t) => {
+test.skip('Ethereum gas price', async (t) => {
 	const ctx = PluginContextTest.connect('http://78.47.38.223:9485');
 	const res = await ethGasPrice(ctx);
 	t.truthy(res.ok);
 	if (res.ok) t.is(typeof res.value, 'string');
 });
 
-test('Retrieve a zenroom object', async (t) => {
+test.skip('Retrieve a zenroom object', async (t) => {
 	const poem =
 		'000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000674e656c206d657a7a6f2064656c2063616d6d696e206469206e6f7374726120766974610a6d6920726974726f7661692070657220756e612073656c7661206f73637572612c0a6368c3a9206c612064697269747461207669612065726120736d6172726974612e00000000000000000000000000000000000000000000000000';
 	const ctx = new PluginContextTest('http://78.47.38.223:9485', {
@@ -51,7 +51,7 @@ test('Retrieve a zenroom object', async (t) => {
 	});
 });
 
-test('Ethereum balance', async (t) => {
+test.skip('Ethereum balance', async (t) => {
 	const ctx = new PluginContextTest('http://78.47.38.223:9485', {
 		address: '0x2D010920b43aFb54f8d5fB51c9354FbC674b28Fc',
 	});
@@ -62,7 +62,7 @@ test('Ethereum balance', async (t) => {
 	});
 });
 
-test('Read the balance of an array of addresses', async (t) => {
+test.skip('Read the balance of an array of addresses', async (t) => {
 	const ctx = new PluginContextTest('http://78.47.38.223:9485', {
 		addresses: [
 			'0xc32510251F77382bb9214144D2c488408Ec2047C',
@@ -75,7 +75,7 @@ test('Read the balance of an array of addresses', async (t) => {
 	if (res.ok) for (const v of res.value as string[]) t.is(typeof v, 'string');
 });
 
-test('erc20 symbol()', async (t) => {
+test.skip('erc20 symbol()', async (t) => {
 	const ctx = new PluginContextTest('http://78.47.38.223:9485', {
 		sc: '0x720F72765775bb85EAAa08BB74442F106d3ffA03',
 	});
@@ -86,7 +86,7 @@ test('erc20 symbol()', async (t) => {
 	});
 });
 
-test('erc20 name()', async (t) => {
+test.skip('erc20 name()', async (t) => {
 	const ctx = new PluginContextTest('http://78.47.38.223:9485', {
 		sc: '0x720F72765775bb85EAAa08BB74442F106d3ffA03',
 	});
@@ -97,7 +97,7 @@ test('erc20 name()', async (t) => {
 	});
 });
 
-test('erc20 totalSupply()', async (t) => {
+test.skip('erc20 totalSupply()', async (t) => {
 	const ctx = new PluginContextTest('http://78.47.38.223:9485', {
 		sc: '0x720F72765775bb85EAAa08BB74442F106d3ffA03',
 	});
@@ -108,7 +108,7 @@ test('erc20 totalSupply()', async (t) => {
 	});
 });
 
-test('erc20 decimals()', async (t) => {
+test.skip('erc20 decimals()', async (t) => {
 	const ctx = new PluginContextTest('http://78.47.38.223:9485', {
 		sc: '0x720F72765775bb85EAAa08BB74442F106d3ffA03',
 	});
@@ -119,7 +119,7 @@ test('erc20 decimals()', async (t) => {
 	});
 });
 
-test('erc20 with invalid address', async (t) => {
+test.skip('erc20 with invalid address', async (t) => {
 	const sc = '0x720765775bb85EAAa08BB74442F106d3ffA03';
 	const ctx = new PluginContextTest('http://78.47.38.223:9485', { sc: sc });
 

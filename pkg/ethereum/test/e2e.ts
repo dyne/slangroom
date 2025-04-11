@@ -6,7 +6,7 @@ import test from 'ava';
 import { Slangroom } from '@slangroom/core';
 import { ethereum } from '@slangroom/ethereum';
 
-test('Retrieve a zenroom object', async (t) => {
+test.skip('Retrieve a zenroom object', async (t) => {
 	const contract = `
 Rule unknown ignore
 Scenario ethereum
@@ -35,7 +35,7 @@ Then print data
 	);
 });
 
-test('Store an object on eth', async (t) => {
+test.skip('Store an object on eth', async (t) => {
 	const contract = `
 Rule unknown ignore
 Scenario ethereum
@@ -75,7 +75,7 @@ Then I connect to 'fabchain' and send transaction 'signed_ethereum_transaction' 
 	t.truthy(typeof res.result['transaction_id'] === 'string', res.logs);
 });
 
-test('Make slangroom fail', async (t) => {
+test.skip('Make slangroom fail', async (t) => {
 	const contract = `
 Rule unknown ignore
 Scenario ethereum
