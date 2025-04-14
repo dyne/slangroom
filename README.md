@@ -67,7 +67,8 @@ pnpm add @slangroom/db @slangroom/ethereum @slangroom/fs @slangroom/git @slangro
 ***
 ## 🎮 Quick start
 
-After having install the core plugin along with the other plugins that you need (here wew continuer with all the plugins) you can create a
+After having installed the core plugin along with the other plugins that you need (here wew continuer with all the plugins) you can
+use it in your code in the following way:
 
 ```ts
 import { Slangroom } from '@slangroom/core';
@@ -121,6 +122,11 @@ const keys = {};
 
 const res = await slangroom.execute(script, { data, keys })
 ```
+
+If you do not wwant to integrate slangroom in your code but wwant to use it, you can simply use:
+* [ncr](https://github.com/forkbombEu/ncr): No code REST API server based on slangroom
+* [slangroom-exec](https://github.com/dyne/slangroom-exec): CLI tool to run slangroom contracts (offers also go bindings)
+* [twinroom](https://github.com/forkbombEu/twinroom): Create your own CLI tool that under the hoods run slangroom contracts.
 
 
 **[🔝 back to top](#toc)**
