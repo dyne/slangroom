@@ -128,6 +128,49 @@ If you do not wwant to integrate slangroom in your code but wwant to use it, you
 * [slangroom-exec](https://github.com/dyne/slangroom-exec): CLI tool to run slangroom contracts (offers also go bindings)
 * [twinroom](https://github.com/forkbombEu/twinroom): Create your own CLI tool that under the hoods run slangroom contracts.
 
+### 🌐 Usage in the browser
+
+Slangroom can also be directly used in the browser thorugh the plugin @slangroom/browser. This plugin at the moment contains only a subsets of plugin that are:
+* [@slangroom/helpers](https://dyne.org/slangroom/examples/#helpers-plugin-examples)
+* [@slangroom/http](https://dyne.org/slangroom/examples/#http-plugin-examples)
+* [@slangroom/json-schema](https://dyne.org/slangroom/examples/#json-schema-plugin-examples)
+* [@slangroom/location](https://dyne.org/slangroom/examples/#location-plugin-examples)
+* [@slangroom/pocketbase](https://dyne.org/slangroom/examples/#pocketbase-plugin-examples)
+* [@slangroom/qrcode](https://dyne.org/slangroom/examples/#qrcode-plugin-examples)
+* [@slangroom/timestamp](https://dyne.org/slangroom/examples/#timestamp-plugin-examples)
+
+A minimal example is:
+
+```html
+<html>
+	<head>
+		<script type="module" id="slangroom-loader" src="https://cdn.jsdelivr.net/npm/@slangroom/browser"></script>
+	</head>
+	<body>
+		<div id="res"></div>
+		<script>
+			document.getElementById('slangroom-loader').addEventListener('load', () => {
+				const script = `
+					Rule unknown ignore
+					Given I fetch the local timestamp in seconds and output into 'timestamp'
+					Given I have a 'time' named 'timestamp'
+					Then print the 'timestamp'
+					`;
+				const res = document.getElementById('res');
+				slangroom.execute(script, {
+					data: {
+						foo: 'bar',
+						did_url: 'https://did.dyne.org/dids/did:dyne:sandbox.test:pEn78CGNEKvMR7DJQ1yvUVUpAHKzsBz45mQw3zD2js9',
+					},
+				})
+				.then((r) => {
+					res.innerText = JSON.stringify(r.result);
+				});
+			});
+		</script>
+	</body>
+</html>
+```
 
 **[🔝 back to top](#toc)**
 
