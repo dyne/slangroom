@@ -95,6 +95,9 @@ importers:
       '@slangroom/qrcode':
         specifier: workspace:^
         version: link:../../pkg/qrcode
+      '@slangroom/rdf':
+        specifier: workspace:^
+        version: link:../../pkg/rdf
       '@slangroom/redis':
         specifier: workspace:^
         version: link:../../pkg/redis

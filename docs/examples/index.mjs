@@ -21,6 +21,7 @@ let examplesDoc = `\n# Slangroom examples\n\n`;
 	'oauth',
 	'pocketbase',
 	'qrcode',
+	'rdf',
 	'redis',
 	'shell',
 	'timestamp',

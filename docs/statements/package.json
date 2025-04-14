@@ -22,6 +22,7 @@
 		"@slangroom/oauth": "workspace:^",
 		"@slangroom/pocketbase": "workspace:^",
 		"@slangroom/qrcode": "workspace:^",
+		"@slangroom/rdf": "workspace:^",
 		"@slangroom/redis": "workspace:^",
 		"@slangroom/shell": "workspace:^",
 		"@slangroom/timestamp": "workspace:^",
