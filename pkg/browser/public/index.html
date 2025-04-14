@@ -15,6 +15,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 		<div id="test-pocketbase"></div>
 		<div id="test-pocketbase-2"></div>
 		<div id="test-pocketbase-3"></div>
+		<div id="test-timestamp"></div>
 		<script>
 			const script = `
 Rule unknown ignore
@@ -148,6 +149,24 @@ Then print string 'token refreshed'
 				.then((r) => {
 					Pocketbase3ResDiv.innerText = JSON.stringify(r.result);
 				})}, 2000);
+
+			//
+
+			const scriptTimestamp = `
+Rule unknown ignore
+Given I fetch the local timestamp in seconds and output into 'timestamp'
+Given I have a 'time' named 'timestamp'
+Then print the 'timestamp'
+			`
+
+			const TimestampResDiv = document.getElementById('test-timestamp');
+
+			slangroom.execute(scriptTimestamp, {
+				data: {}
+			})
+			.then((r) => {
+				TimestampResDiv.innerText = JSON.stringify(r.result);
+			});
 		</script>
 	</body>
 </html>
