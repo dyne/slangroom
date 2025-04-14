@@ -7,9 +7,9 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 <div align="center">
 
-# Slangroom
+# Slangroom <!-- omit in toc -->
 
-### Zencode plugins? Slangroom!</br>Enhance zencode smart–contracts with your slang
+### Zencode plugins? Slangroom!</br>Enhance zencode smart–contracts with your slang <!-- omit in toc -->
 
 </div>
 
@@ -23,7 +23,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 ---
 <br><br>
 
-## Slangroom features
+## ✨ Slangroom features <!-- omit in toc -->
 
 Slangroom is a plugin system to enhance the domain-specific [Zencode language](hhttps://dev.zenroom.org/#/), allowing to define custom operations to new sentences and making it easy to execute fast cryptographic operations on any data structure.
 
@@ -37,14 +37,15 @@ Start by reading the [full documentation](https://dyne.org/slangroom/).
 
 <div id="toc">
 
-### 🚩 Table of Contents
+### 🚩 Table of Contents  <!-- omit in toc -->
 
 - [💾 Install](#-install)
 - [🎮 Quick start](#-quick-start)
-- [🏗️ Build](#-build)
+	- [🌐 Usage in the browser](#-usage-in-the-browser)
+- [⚡ Build](#-build)
 - [📋 Testing](#-testing)
 - [🔧 Customize](#-customize)
-- [🐛 Troubleshooting & debugging](#-troubleshooting--debugging)
+- [🐛 Troubleshooting \& debugging](#-troubleshooting--debugging)
 - [😍 Acknowledgements](#-acknowledgements)
 - [👤 Contributing](#-contributing)
 - [💼 License](#-license)
@@ -175,7 +176,7 @@ A minimal example is:
 **[🔝 back to top](#toc)**
 
 ***
-## 🏗️ Build
+## ⚡ Build
 
 To build slangroom locally you need:
 * `pnpm@9`
