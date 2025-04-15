@@ -7,253 +7,265 @@
 }
 
 Comment {
-  comment (newline+ |eof)
+    comment (newline+ |eof)
 }
 
 SlangroomStatement {
     (GivenStatement | ThenStatement | ThenPrint | GivenHaveStatement | GivenName | WhenStatement | IfEndifStatement |ForEachStatement)
 }
 
+// ===== Rule =====
 RuleStatement {
     rule (VersionRule | GenericRule) ( newline+ | eof )
-}
-
-ScenarioStatement {
-    scenario ScenarioType ScenarioComment? ( newline+ | eof )
-}
-ScenarioType {
-  (StringLiteral| Identifier | Keywords)
-}
-ScenarioComment {
-	":" (Identifier | Keywords | StringLiteral)*
 }
 VersionRule {
     version VersionNumber
 }
-
 GenericRule {
-	(Identifier | StringLiteral | Keywords)*
+    (Identifier | StringLiteral | Keywords)*
 }
-
 VersionNumber {
     Number '.'? Number? '.'? Number?
+}
+
+// ===== Scenario =====
+ScenarioStatement {
+    scenario ScenarioType ScenarioComment? ( newline+ | eof )
+}
+ScenarioType {
+    (StringLiteral| Identifier | Keywords)
+}
+ScenarioComment {
+    ":" (Identifier | Keywords | StringLiteral)*
 }
 
 @skip {
     space
 }
 
-GivenStatement {
-    given I
-    (DbStatement | EthereumStatement | FsStatement | GitStatement | HelpersStatement | HttpStatement | JsonSchemaStatement | OAuthStatement | PocketbaseStatement | QrCodeStatement | RedisStatement | ShellStatement | TimestampStatement | WalletStatement | ZencodeStatement)
-	( newline+ | eof )
-}
-
-ThenStatement {
-    then I
-    (DbStatement | EthereumStatement | FsStatement | GitStatement | HelpersStatement | HttpStatement | JsonSchemaStatement | OAuthStatement | PocketbaseStatement | QrCodeStatement | RedisStatement | ShellStatement | TimestampStatement | WalletStatement | ZencodeStatement)
-	( newline+ | eof )
-}
-
-ThenPrint {
-    then I? print (StringLiteral | Identifier | Keywords)+ (newline and +I print (StringLiteral | Identifier | Keywords)+)* ( newline+ | eof )
-}
-
+// ===== Zencode Statements =====
 GivenHaveStatement {
     given that? I have (a? | my? | the?) valid? StringLiteral named? StringLiteral? (inside | in)?  named? StringLiteral?
     (newline* and I have (a? | my?) valid? StringLiteral named? StringLiteral? (inside | in)? named? StringLiteral?)* ( newline+ | eof )
 }
-HaveStatement{
-	 newline+ and I have (a? | my?) valid? StringLiteral named? StringLiteral? (inside | in)? named? StringLiteral?
-}
-
 GivenName {
     ((given I am
     (known as)? StringLiteral) |
-	(given  I? my name is
-	 (Identifier | Keywords | StringLiteral)+)) HaveStatement* ( newline+ | eof )
-
+    (given  I? my name is
+    (Identifier | Keywords | StringLiteral)+)) HaveStatement* ( newline+ | eof )
 }
-
+HaveStatement{
+    newline+ and I have (a? | my?) valid? StringLiteral named? StringLiteral? (inside | in)? named? StringLiteral?
+}
 WhenStatement {
-  when I (Identifier | Keywords | StringLiteral)+ (newline and I (Identifier | Keywords | StringLiteral)+)* (newline+ | eof)
+    when I (Identifier | Keywords | StringLiteral)+ (newline and I (Identifier | Keywords | StringLiteral)+)* (newline+ | eof)
 }
-
 IfEndifStatement{
     Condition+ ( GivenStatement | WhenStatement |  ThenStatement | ThenPrint)* endif ( newline+ | eof )
 }
-
 Condition {
     if I verify (Identifier | Keywords | StringLiteral)+ ( newline+ | eof )
 }
-
 ForEachStatement {
-	foreach (StringLiteral | Identifier | Keywords) (in | inside) (StringLiteral | Identifier | Keywords)+  newline+ (GivenStatement | WhenStatement |  ThenStatement | ThenPrint)*
-	endforeach ( newline+ | eof )
+    foreach (StringLiteral | Identifier | Keywords) (in | inside) (StringLiteral | Identifier | Keywords)+  newline+ (GivenStatement | WhenStatement |  ThenStatement | ThenPrint)*
+    endforeach ( newline+ | eof )
+}
+ThenPrint {
+    then I? print (StringLiteral | Identifier | Keywords)+ (newline and +I print (StringLiteral | Identifier | Keywords)+)* ( newline+ | eof )
+}
+
+// ===== Slangroom Statements =====
+GivenStatement {
+    given I
+    (DbStatement | EthereumStatement | FsStatement | GitStatement | HelpersStatement | HttpStatement | JsonSchemaStatement | OAuthStatement | PocketbaseStatement | QrCodeStatement | RdfStatement | RedisStatement | ShellStatement | TimestampStatement | WalletStatement | ZencodeStatement)
+    ( newline+ | eof )
+}
+
+ThenStatement {
+    then I
+    (DbStatement | EthereumStatement | FsStatement | GitStatement | HelpersStatement | HttpStatement | JsonSchemaStatement | OAuthStatement | PocketbaseStatement | QrCodeStatement | RdfStatement | RedisStatement | ShellStatement | TimestampStatement | WalletStatement | ZencodeStatement)
+    ( newline+ | eof )
 }
 
 // ===== Plugin-Specific Statements =====
 
 DbStatement {
-    DbConnectAction (and? SaveAction)*
+    connect to StringLiteral and send statement StringLiteral and execute sql statement (and? SaveAction)* |
+    connect to StringLiteral and ( send statement StringLiteral and send parameters StringLiteral and |send parameters StringLiteral and send statement StringLiteral and ) execute sql statement with parameters (and? SaveAction)* |
+    connect to StringLiteral and ( send record StringLiteral and send table StringLiteral and |send table StringLiteral and send record StringLiteral and ) read the record of the table (and? SaveAction)* |
+    connect to StringLiteral and ( send variable StringLiteral and send name StringLiteral and send table StringLiteral and |send variable StringLiteral and send table StringLiteral and send name StringLiteral and |send name StringLiteral and send variable StringLiteral and send table StringLiteral and |send name StringLiteral and send table StringLiteral and send variable StringLiteral and |send table StringLiteral and send variable StringLiteral and send name StringLiteral and |send table StringLiteral and send name StringLiteral and send variable StringLiteral and ) save the variable in the database table (and? SaveAction)*
 }
-
 EthereumStatement {
-    EthereumConnectAction (and? SaveAction)*
+    connect to StringLiteral and send address StringLiteral and read the ethereum nonce (and? SaveAction)* |
+    connect to StringLiteral and send transaction_id StringLiteral and read the ethereum bytes (and? SaveAction)* |
+    connect to StringLiteral and send address StringLiteral and read the ethereum balance (and? SaveAction)* |
+    connect to StringLiteral and send addresses StringLiteral and read the ethereum balance (and? SaveAction)* |
+    connect to StringLiteral and read the ethereum suggested gas price (and? SaveAction)* |
+    connect to StringLiteral and send transaction StringLiteral and read the ethereum transaction id after broadcast (and? SaveAction)* |
+    connect to StringLiteral and send sc StringLiteral and read the erc20 decimals (and? SaveAction)* |
+    connect to StringLiteral and send sc StringLiteral and read the erc20 name (and? SaveAction)* |
+    connect to StringLiteral and send sc StringLiteral and read the erc20 symbol (and? SaveAction)* |
+    connect to StringLiteral and ( send sc StringLiteral and send address StringLiteral and |send address StringLiteral and send sc StringLiteral and ) read the erc20 balance (and? SaveAction)* |
+    connect to StringLiteral and send sc StringLiteral and read the erc20 total supply (and? SaveAction)* |
+    connect to StringLiteral and send transaction_id StringLiteral and read the erc721 id in transaction (and? SaveAction)* |
+    connect to StringLiteral and read the erc721 owner (and? SaveAction)* |
+    connect to StringLiteral and read the erc721 asset (and? SaveAction)*
 }
-
 FsStatement {
-    FsConnectAction (and? SaveAction)*
+    connect to StringLiteral and send path StringLiteral and download and extract (and? SaveAction)* |
+    send path StringLiteral and read file content (and? SaveAction)* |
+    send path StringLiteral and read verbatim file content (and? SaveAction)* |
+    ( send content StringLiteral and send path StringLiteral and |send path StringLiteral and send content StringLiteral and ) store in file (and? SaveAction)* |
+    send path StringLiteral and list directory content (and? SaveAction)* |
+    send path StringLiteral and verify file exists (and? SaveAction)* |
+    send path StringLiteral and verify file does not exist (and? SaveAction)*
 }
-
 GitStatement {
-    GitOpenOrConnectAction (and? SaveAction)*
+    open StringLiteral and verify git repository (and? SaveAction)* |
+    connect to StringLiteral and send path StringLiteral and clone repository (and? SaveAction)* |
+    open StringLiteral and send commit StringLiteral and create new git commit (and? SaveAction)*
 }
-
 HelpersStatement {
-    (HelpersSend | HelpersAction) (and? SaveAction)*
+    ( send object StringLiteral and send path StringLiteral and |send path StringLiteral and send object StringLiteral and ) manipulate and get (and? SaveAction)* |
+    ( send object StringLiteral and send path StringLiteral and send value StringLiteral and |send object StringLiteral and send value StringLiteral and send path StringLiteral and |send path StringLiteral and send object StringLiteral and send value StringLiteral and |send path StringLiteral and send value StringLiteral and send object StringLiteral and |send value StringLiteral and send object StringLiteral and send path StringLiteral and |send value StringLiteral and send path StringLiteral and send object StringLiteral and ) manipulate and set (and? SaveAction)* |
+    ( send object StringLiteral and send sources StringLiteral and |send sources StringLiteral and send object StringLiteral and ) manipulate and merge (and? SaveAction)* |
+    ( send object StringLiteral and send paths StringLiteral and |send paths StringLiteral and send object StringLiteral and ) manipulate and omit (and? SaveAction)* |
+    ( send array StringLiteral and send values StringLiteral and |send values StringLiteral and send array StringLiteral and ) manipulate and concat (and? SaveAction)* |
+    send array StringLiteral and manipulate and compact (and? SaveAction)* |
+    ( send object StringLiteral and send properties StringLiteral and |send properties StringLiteral and send object StringLiteral and ) manipulate and pick (and? SaveAction)* |
+    manipulate and delete (and? SaveAction)*
 }
-
 HttpStatement {
-    HttpConnectAction (and? SaveAction)*
+    connect to StringLiteral and do get (and? SaveAction)* |
+    connect to StringLiteral and send headers StringLiteral and do get (and? SaveAction)* |
+    connect to StringLiteral and do sequential get (and? SaveAction)* |
+    connect to StringLiteral and send headers StringLiteral and do sequential get (and? SaveAction)* |
+    connect to StringLiteral and do parallel get (and? SaveAction)* |
+    connect to StringLiteral and send headers StringLiteral and do parallel get (and? SaveAction)* |
+    connect to StringLiteral and do same get (and? SaveAction)* |
+    connect to StringLiteral and send headers StringLiteral and do same get (and? SaveAction)* |
+    connect to StringLiteral and do post (and? SaveAction)* |
+    connect to StringLiteral and send headers StringLiteral and do post (and? SaveAction)* |
+    connect to StringLiteral and send object StringLiteral and do post (and? SaveAction)* |
+    connect to StringLiteral and ( send object StringLiteral and send headers StringLiteral and |send headers StringLiteral and send object StringLiteral and ) do post (and? SaveAction)* |
+    connect to StringLiteral and do sequential post (and? SaveAction)* |
+    connect to StringLiteral and send headers StringLiteral and do sequential post (and? SaveAction)* |
+    connect to StringLiteral and send object StringLiteral and do sequential post (and? SaveAction)* |
+    connect to StringLiteral and ( send object StringLiteral and send headers StringLiteral and |send headers StringLiteral and send object StringLiteral and ) do sequential post (and? SaveAction)* |
+    connect to StringLiteral and do parallel post (and? SaveAction)* |
+    connect to StringLiteral and send headers StringLiteral and do parallel post (and? SaveAction)* |
+    connect to StringLiteral and send object StringLiteral and do parallel post (and? SaveAction)* |
+    connect to StringLiteral and ( send object StringLiteral and send headers StringLiteral and |send headers StringLiteral and send object StringLiteral and ) do parallel post (and? SaveAction)* |
+    connect to StringLiteral and do same post (and? SaveAction)* |
+    connect to StringLiteral and send headers StringLiteral and do same post (and? SaveAction)* |
+    connect to StringLiteral and send object StringLiteral and do same post (and? SaveAction)* |
+    connect to StringLiteral and ( send object StringLiteral and send headers StringLiteral and |send headers StringLiteral and send object StringLiteral and ) do same post (and? SaveAction)* |
+    connect to StringLiteral and do put (and? SaveAction)* |
+    connect to StringLiteral and send headers StringLiteral and do put (and? SaveAction)* |
+    connect to StringLiteral and send object StringLiteral and do put (and? SaveAction)* |
+    connect to StringLiteral and ( send object StringLiteral and send headers StringLiteral and |send headers StringLiteral and send object StringLiteral and ) do put (and? SaveAction)* |
+    connect to StringLiteral and do sequential put (and? SaveAction)* |
+    connect to StringLiteral and send headers StringLiteral and do sequential put (and? SaveAction)* |
+    connect to StringLiteral and send object StringLiteral and do sequential put (and? SaveAction)* |
+    connect to StringLiteral and ( send object StringLiteral and send headers StringLiteral and |send headers StringLiteral and send object StringLiteral and ) do sequential put (and? SaveAction)* |
+    connect to StringLiteral and do parallel put (and? SaveAction)* |
+    connect to StringLiteral and send headers StringLiteral and do parallel put (and? SaveAction)* |
+    connect to StringLiteral and send object StringLiteral and do parallel put (and? SaveAction)* |
+    connect to StringLiteral and ( send object StringLiteral and send headers StringLiteral and |send headers StringLiteral and send object StringLiteral and ) do parallel put (and? SaveAction)* |
+    connect to StringLiteral and do same put (and? SaveAction)* |
+    connect to StringLiteral and send headers StringLiteral and do same put (and? SaveAction)* |
+    connect to StringLiteral and send object StringLiteral and do same put (and? SaveAction)* |
+    connect to StringLiteral and ( send object StringLiteral and send headers StringLiteral and |send headers StringLiteral and send object StringLiteral and ) do same put (and? SaveAction)* |
+    connect to StringLiteral and do patch (and? SaveAction)* |
+    connect to StringLiteral and send headers StringLiteral and do patch (and? SaveAction)* |
+    connect to StringLiteral and send object StringLiteral and do patch (and? SaveAction)* |
+    connect to StringLiteral and ( send object StringLiteral and send headers StringLiteral and |send headers StringLiteral and send object StringLiteral and ) do patch (and? SaveAction)* |
+    connect to StringLiteral and do sequential patch (and? SaveAction)* |
+    connect to StringLiteral and send headers StringLiteral and do sequential patch (and? SaveAction)* |
+    connect to StringLiteral and send object StringLiteral and do sequential patch (and? SaveAction)* |
+    connect to StringLiteral and ( send object StringLiteral and send headers StringLiteral and |send headers StringLiteral and send object StringLiteral and ) do sequential patch (and? SaveAction)* |
+    connect to StringLiteral and do parallel patch (and? SaveAction)* |
+    connect to StringLiteral and send headers StringLiteral and do parallel patch (and? SaveAction)* |
+    connect to StringLiteral and send object StringLiteral and do parallel patch (and? SaveAction)* |
+    connect to StringLiteral and ( send object StringLiteral and send headers StringLiteral and |send headers StringLiteral and send object StringLiteral and ) do parallel patch (and? SaveAction)* |
+    connect to StringLiteral and do same patch (and? SaveAction)* |
+    connect to StringLiteral and send headers StringLiteral and do same patch (and? SaveAction)* |
+    connect to StringLiteral and send object StringLiteral and do same patch (and? SaveAction)* |
+    connect to StringLiteral and ( send object StringLiteral and send headers StringLiteral and |send headers StringLiteral and send object StringLiteral and ) do same patch (and? SaveAction)* |
+    connect to StringLiteral and do delete (and? SaveAction)* |
+    connect to StringLiteral and send headers StringLiteral and do delete (and? SaveAction)* |
+    connect to StringLiteral and send object StringLiteral and do delete (and? SaveAction)* |
+    connect to StringLiteral and ( send object StringLiteral and send headers StringLiteral and |send headers StringLiteral and send object StringLiteral and ) do delete (and? SaveAction)* |
+    connect to StringLiteral and do sequential delete (and? SaveAction)* |
+    connect to StringLiteral and send headers StringLiteral and do sequential delete (and? SaveAction)* |
+    connect to StringLiteral and send object StringLiteral and do sequential delete (and? SaveAction)* |
+    connect to StringLiteral and ( send object StringLiteral and send headers StringLiteral and |send headers StringLiteral and send object StringLiteral and ) do sequential delete (and? SaveAction)* |
+    connect to StringLiteral and do parallel delete (and? SaveAction)* |
+    connect to StringLiteral and send headers StringLiteral and do parallel delete (and? SaveAction)* |
+    connect to StringLiteral and send object StringLiteral and do parallel delete (and? SaveAction)* |
+    connect to StringLiteral and ( send object StringLiteral and send headers StringLiteral and |send headers StringLiteral and send object StringLiteral and ) do parallel delete (and? SaveAction)* |
+    connect to StringLiteral and do same delete (and? SaveAction)* |
+    connect to StringLiteral and send headers StringLiteral and do same delete (and? SaveAction)* |
+    connect to StringLiteral and send object StringLiteral and do same delete (and? SaveAction)* |
+    connect to StringLiteral and ( send object StringLiteral and send headers StringLiteral and |send headers StringLiteral and send object StringLiteral and ) do same delete (and? SaveAction)*
 }
-
 JsonSchemaStatement {
-    JsonSchemaSend (and? SaveAction)*
+    ( send json_data StringLiteral and send json_schema StringLiteral and |send json_schema StringLiteral and send json_data StringLiteral and ) validate json (and? SaveAction)*
 }
-
 OAuthStatement {
-    OAuthSend (and? SaveAction)*
+    ( send request StringLiteral and send server_data StringLiteral and |send server_data StringLiteral and send request StringLiteral and ) generate access token (and? SaveAction)* |
+    ( send request StringLiteral and send server_data StringLiteral and |send server_data StringLiteral and send request StringLiteral and ) verify request parameters (and? SaveAction)* |
+    ( send request StringLiteral and send server_data StringLiteral and |send server_data StringLiteral and send request StringLiteral and ) generate authorization code (and? SaveAction)* |
+    ( send request StringLiteral and send client StringLiteral and send server_data StringLiteral and send expires_in StringLiteral and |send request StringLiteral and send client StringLiteral and send expires_in StringLiteral and send server_data StringLiteral and |send request StringLiteral and send server_data StringLiteral and send client StringLiteral and send expires_in StringLiteral and |send request StringLiteral and send server_data StringLiteral and send expires_in StringLiteral and send client StringLiteral and |send request StringLiteral and send expires_in StringLiteral and send client StringLiteral and send server_data StringLiteral and |send request StringLiteral and send expires_in StringLiteral and send server_data StringLiteral and send client StringLiteral and |send client StringLiteral and send request StringLiteral and send server_data StringLiteral and send expires_in StringLiteral and |send client StringLiteral and send request StringLiteral and send expires_in StringLiteral and send server_data StringLiteral and |send client StringLiteral and send server_data StringLiteral and send request StringLiteral and send expires_in StringLiteral and |send client StringLiteral and send server_data StringLiteral and send expires_in StringLiteral and send request StringLiteral and |send client StringLiteral and send expires_in StringLiteral and send request StringLiteral and send server_data StringLiteral and |send client StringLiteral and send expires_in StringLiteral and send server_data StringLiteral and send request StringLiteral and |send server_data StringLiteral and send request StringLiteral and send client StringLiteral and send expires_in StringLiteral and |send server_data StringLiteral and send request StringLiteral and send expires_in StringLiteral and send client StringLiteral and |send server_data StringLiteral and send client StringLiteral and send request StringLiteral and send expires_in StringLiteral and |send server_data StringLiteral and send client StringLiteral and send expires_in StringLiteral and send request StringLiteral and |send server_data StringLiteral and send expires_in StringLiteral and send request StringLiteral and send client StringLiteral and |send server_data StringLiteral and send expires_in StringLiteral and send client StringLiteral and send request StringLiteral and |send expires_in StringLiteral and send request StringLiteral and send client StringLiteral and send server_data StringLiteral and |send expires_in StringLiteral and send request StringLiteral and send server_data StringLiteral and send client StringLiteral and |send expires_in StringLiteral and send client StringLiteral and send request StringLiteral and send server_data StringLiteral and |send expires_in StringLiteral and send client StringLiteral and send server_data StringLiteral and send request StringLiteral and |send expires_in StringLiteral and send server_data StringLiteral and send request StringLiteral and send client StringLiteral and |send expires_in StringLiteral and send server_data StringLiteral and send client StringLiteral and send request StringLiteral and ) generate request uri (and? SaveAction)* |
+    ( send token StringLiteral and send server_data StringLiteral and |send server_data StringLiteral and send token StringLiteral and ) get authorization details from token (and? SaveAction)* |
+    ( send request_uri StringLiteral and send data StringLiteral and send server_data StringLiteral and |send request_uri StringLiteral and send server_data StringLiteral and send data StringLiteral and |send data StringLiteral and send request_uri StringLiteral and send server_data StringLiteral and |send data StringLiteral and send server_data StringLiteral and send request_uri StringLiteral and |send server_data StringLiteral and send request_uri StringLiteral and send data StringLiteral and |send server_data StringLiteral and send data StringLiteral and send request_uri StringLiteral and ) add data to authorization details (and? SaveAction)* |
+    ( send request_uri StringLiteral and send server_data StringLiteral and |send server_data StringLiteral and send request_uri StringLiteral and ) get redirect_uri from request_uri (and? SaveAction)*
 }
-
 PocketbaseStatement {
-    PocketbaseConnectAction (and? SaveAction)*
+    connect to StringLiteral and start pb client (and? SaveAction)* |
+    connect to StringLiteral and start capacitor pb client (and? SaveAction)* |
+    send my_credentials StringLiteral and login (and? SaveAction)* |
+    refresh token (and? SaveAction)* |
+    send email StringLiteral and ask password reset (and? SaveAction)* |
+    send list_parameters StringLiteral and get some records (and? SaveAction)* |
+    send show_parameters StringLiteral and get one record (and? SaveAction)* |
+    ( send create_parameters StringLiteral and send record_parameters StringLiteral and |send record_parameters StringLiteral and send create_parameters StringLiteral and ) create record (and? SaveAction)* |
+    ( send update_parameters StringLiteral and send record_parameters StringLiteral and |send record_parameters StringLiteral and send update_parameters StringLiteral and ) update record (and? SaveAction)* |
+    send delete_parameters StringLiteral and delete record (and? SaveAction)* |
+    ( send url StringLiteral and send send_parameters StringLiteral and |send send_parameters StringLiteral and send url StringLiteral and ) send request (and? SaveAction)*
 }
-
 QrCodeStatement {
-    QrCodeSend (and? SaveAction)*
+    send text StringLiteral and create qr code (and? SaveAction)*
 }
-
+RdfStatement {
+    send dictionary StringLiteral and generate serialized canonical rdf (and? SaveAction)*
+}
 RedisStatement {
-    RedisConnectAction (and? SaveAction)*
+    connect to StringLiteral and ( send key StringLiteral and send object StringLiteral and |send object StringLiteral and send key StringLiteral and ) write object into key in redis (and? SaveAction)* |
+    connect to StringLiteral and send key StringLiteral and read key from redis (and? SaveAction)* |
+    connect to StringLiteral and send key StringLiteral and delete key from redis (and? SaveAction)*
 }
-
 ShellStatement {
-    ShellSend (and? SaveAction)*
+    send command StringLiteral and execute in shell (and? SaveAction)*
 }
-
 TimestampStatement {
-    TimestampAction (and? SaveAction)*
+    fetch the local timestamp in milliseconds (and? SaveAction)* |
+    fetch the local timestamp in seconds (and? SaveAction)*
 }
-
 WalletStatement {
-    (WalletSend| WalletAction) (and? SaveAction)*
+    ( send jwk StringLiteral and send object StringLiteral and send holder StringLiteral and send fields StringLiteral and |send jwk StringLiteral and send object StringLiteral and send fields StringLiteral and send holder StringLiteral and |send jwk StringLiteral and send holder StringLiteral and send object StringLiteral and send fields StringLiteral and |send jwk StringLiteral and send holder StringLiteral and send fields StringLiteral and send object StringLiteral and |send jwk StringLiteral and send fields StringLiteral and send object StringLiteral and send holder StringLiteral and |send jwk StringLiteral and send fields StringLiteral and send holder StringLiteral and send object StringLiteral and |send object StringLiteral and send jwk StringLiteral and send holder StringLiteral and send fields StringLiteral and |send object StringLiteral and send jwk StringLiteral and send fields StringLiteral and send holder StringLiteral and |send object StringLiteral and send holder StringLiteral and send jwk StringLiteral and send fields StringLiteral and |send object StringLiteral and send holder StringLiteral and send fields StringLiteral and send jwk StringLiteral and |send object StringLiteral and send fields StringLiteral and send jwk StringLiteral and send holder StringLiteral and |send object StringLiteral and send fields StringLiteral and send holder StringLiteral and send jwk StringLiteral and |send holder StringLiteral and send jwk StringLiteral and send object StringLiteral and send fields StringLiteral and |send holder StringLiteral and send jwk StringLiteral and send fields StringLiteral and send object StringLiteral and |send holder StringLiteral and send object StringLiteral and send jwk StringLiteral and send fields StringLiteral and |send holder StringLiteral and send object StringLiteral and send fields StringLiteral and send jwk StringLiteral and |send holder StringLiteral and send fields StringLiteral and send jwk StringLiteral and send object StringLiteral and |send holder StringLiteral and send fields StringLiteral and send object StringLiteral and send jwk StringLiteral and |send fields StringLiteral and send jwk StringLiteral and send object StringLiteral and send holder StringLiteral and |send fields StringLiteral and send jwk StringLiteral and send holder StringLiteral and send object StringLiteral and |send fields StringLiteral and send object StringLiteral and send jwk StringLiteral and send holder StringLiteral and |send fields StringLiteral and send object StringLiteral and send holder StringLiteral and send jwk StringLiteral and |send fields StringLiteral and send holder StringLiteral and send jwk StringLiteral and send object StringLiteral and |send fields StringLiteral and send holder StringLiteral and send object StringLiteral and send jwk StringLiteral and ) create vc sd jwt (and? SaveAction)* |
+    ( send verifier_url StringLiteral and send issued_vc StringLiteral and send disclosed StringLiteral and send nonce StringLiteral and send holder StringLiteral and |send verifier_url StringLiteral and send issued_vc StringLiteral and send disclosed StringLiteral and send holder StringLiteral and send nonce StringLiteral and |send verifier_url StringLiteral and send issued_vc StringLiteral and send nonce StringLiteral and send disclosed StringLiteral and send holder StringLiteral and |send verifier_url StringLiteral and send issued_vc StringLiteral and send nonce StringLiteral and send holder StringLiteral and send disclosed StringLiteral and |send verifier_url StringLiteral and send issued_vc StringLiteral and send holder StringLiteral and send disclosed StringLiteral and send nonce StringLiteral and |send verifier_url StringLiteral and send issued_vc StringLiteral and send holder StringLiteral and send nonce StringLiteral and send disclosed StringLiteral and |send verifier_url StringLiteral and send disclosed StringLiteral and send issued_vc StringLiteral and send nonce StringLiteral and send holder StringLiteral and |send verifier_url StringLiteral and send disclosed StringLiteral and send issued_vc StringLiteral and send holder StringLiteral and send nonce StringLiteral and |send verifier_url StringLiteral and send disclosed StringLiteral and send nonce StringLiteral and send issued_vc StringLiteral and send holder StringLiteral and |send verifier_url StringLiteral and send disclosed StringLiteral and send nonce StringLiteral and send holder StringLiteral and send issued_vc StringLiteral and |send verifier_url StringLiteral and send disclosed StringLiteral and send holder StringLiteral and send issued_vc StringLiteral and send nonce StringLiteral and |send verifier_url StringLiteral and send disclosed StringLiteral and send holder StringLiteral and send nonce StringLiteral and send issued_vc StringLiteral and |send verifier_url StringLiteral and send nonce StringLiteral and send issued_vc StringLiteral and send disclosed StringLiteral and send holder StringLiteral and |send verifier_url StringLiteral and send nonce StringLiteral and send issued_vc StringLiteral and send holder StringLiteral and send disclosed StringLiteral and |send verifier_url StringLiteral and send nonce StringLiteral and send disclosed StringLiteral and send issued_vc StringLiteral and send holder StringLiteral and |send verifier_url StringLiteral and send nonce StringLiteral and send disclosed StringLiteral and send holder StringLiteral and send issued_vc StringLiteral and |send verifier_url StringLiteral and send nonce StringLiteral and send holder StringLiteral and send issued_vc StringLiteral and send disclosed StringLiteral and |send verifier_url StringLiteral and send nonce StringLiteral and send holder StringLiteral and send disclosed StringLiteral and send issued_vc StringLiteral and |send verifier_url StringLiteral and send holder StringLiteral and send issued_vc StringLiteral and send disclosed StringLiteral and send nonce StringLiteral and |send verifier_url StringLiteral and send holder StringLiteral and send issued_vc StringLiteral and send nonce StringLiteral and send disclosed StringLiteral and |send verifier_url StringLiteral and send holder StringLiteral and send disclosed StringLiteral and send issued_vc StringLiteral and send nonce StringLiteral and |send verifier_url StringLiteral and send holder StringLiteral and send disclosed StringLiteral and send nonce StringLiteral and send issued_vc StringLiteral and |send verifier_url StringLiteral and send holder StringLiteral and send nonce StringLiteral and send issued_vc StringLiteral and send disclosed StringLiteral and |send verifier_url StringLiteral and send holder StringLiteral and send nonce StringLiteral and send disclosed StringLiteral and send issued_vc StringLiteral and |send issued_vc StringLiteral and send verifier_url StringLiteral and send disclosed StringLiteral and send nonce StringLiteral and send holder StringLiteral and |send issued_vc StringLiteral and send verifier_url StringLiteral and send disclosed StringLiteral and send holder StringLiteral and send nonce StringLiteral and |send issued_vc StringLiteral and send verifier_url StringLiteral and send nonce StringLiteral and send disclosed StringLiteral and send holder StringLiteral and |send issued_vc StringLiteral and send verifier_url StringLiteral and send nonce StringLiteral and send holder StringLiteral and send disclosed StringLiteral and |send issued_vc StringLiteral and send verifier_url StringLiteral and send holder StringLiteral and send disclosed StringLiteral and send nonce StringLiteral and |send issued_vc StringLiteral and send verifier_url StringLiteral and send holder StringLiteral and send nonce StringLiteral and send disclosed StringLiteral and |send issued_vc StringLiteral and send disclosed StringLiteral and send verifier_url StringLiteral and send nonce StringLiteral and send holder StringLiteral and |send issued_vc StringLiteral and send disclosed StringLiteral and send verifier_url StringLiteral and send holder StringLiteral and send nonce StringLiteral and |send issued_vc StringLiteral and send disclosed StringLiteral and send nonce StringLiteral and send verifier_url StringLiteral and send holder StringLiteral and |send issued_vc StringLiteral and send disclosed StringLiteral and send nonce StringLiteral and send holder StringLiteral and send verifier_url StringLiteral and |send issued_vc StringLiteral and send disclosed StringLiteral and send holder StringLiteral and send verifier_url StringLiteral and send nonce StringLiteral and |send issued_vc StringLiteral and send disclosed StringLiteral and send holder StringLiteral and send nonce StringLiteral and send verifier_url StringLiteral and |send issued_vc StringLiteral and send nonce StringLiteral and send verifier_url StringLiteral and send disclosed StringLiteral and send holder StringLiteral and |send issued_vc StringLiteral and send nonce StringLiteral and send verifier_url StringLiteral and send holder StringLiteral and send disclosed StringLiteral and |send issued_vc StringLiteral and send nonce StringLiteral and send disclosed StringLiteral and send verifier_url StringLiteral and send holder StringLiteral and |send issued_vc StringLiteral and send nonce StringLiteral and send disclosed StringLiteral and send holder StringLiteral and send verifier_url StringLiteral and |send issued_vc StringLiteral and send nonce StringLiteral and send holder StringLiteral and send verifier_url StringLiteral and send disclosed StringLiteral and |send issued_vc StringLiteral and send nonce StringLiteral and send holder StringLiteral and send disclosed StringLiteral and send verifier_url StringLiteral and |send issued_vc StringLiteral and send holder StringLiteral and send verifier_url StringLiteral and send disclosed StringLiteral and send nonce StringLiteral and |send issued_vc StringLiteral and send holder StringLiteral and send verifier_url StringLiteral and send nonce StringLiteral and send disclosed StringLiteral and |send issued_vc StringLiteral and send holder StringLiteral and send disclosed StringLiteral and send verifier_url StringLiteral and send nonce StringLiteral and |send issued_vc StringLiteral and send holder StringLiteral and send disclosed StringLiteral and send nonce StringLiteral and send verifier_url StringLiteral and |send issued_vc StringLiteral and send holder StringLiteral and send nonce StringLiteral and send verifier_url StringLiteral and send disclosed StringLiteral and |send issued_vc StringLiteral and send holder StringLiteral and send nonce StringLiteral and send disclosed StringLiteral and send verifier_url StringLiteral and |send disclosed StringLiteral and send verifier_url StringLiteral and send issued_vc StringLiteral and send nonce StringLiteral and send holder StringLiteral and |send disclosed StringLiteral and send verifier_url StringLiteral and send issued_vc StringLiteral and send holder StringLiteral and send nonce StringLiteral and |send disclosed StringLiteral and send verifier_url StringLiteral and send nonce StringLiteral and send issued_vc StringLiteral and send holder StringLiteral and |send disclosed StringLiteral and send verifier_url StringLiteral and send nonce StringLiteral and send holder StringLiteral and send issued_vc StringLiteral and |send disclosed StringLiteral and send verifier_url StringLiteral and send holder StringLiteral and send issued_vc StringLiteral and send nonce StringLiteral and |send disclosed StringLiteral and send verifier_url StringLiteral and send holder StringLiteral and send nonce StringLiteral and send issued_vc StringLiteral and |send disclosed StringLiteral and send issued_vc StringLiteral and send verifier_url StringLiteral and send nonce StringLiteral and send holder StringLiteral and |send disclosed StringLiteral and send issued_vc StringLiteral and send verifier_url StringLiteral and send holder StringLiteral and send nonce StringLiteral and |send disclosed StringLiteral and send issued_vc StringLiteral and send nonce StringLiteral and send verifier_url StringLiteral and send holder StringLiteral and |send disclosed StringLiteral and send issued_vc StringLiteral and send nonce StringLiteral and send holder StringLiteral and send verifier_url StringLiteral and |send disclosed StringLiteral and send issued_vc StringLiteral and send holder StringLiteral and send verifier_url StringLiteral and send nonce StringLiteral and |send disclosed StringLiteral and send issued_vc StringLiteral and send holder StringLiteral and send nonce StringLiteral and send verifier_url StringLiteral and |send disclosed StringLiteral and send nonce StringLiteral and send verifier_url StringLiteral and send issued_vc StringLiteral and send holder StringLiteral and |send disclosed StringLiteral and send nonce StringLiteral and send verifier_url StringLiteral and send holder StringLiteral and send issued_vc StringLiteral and |send disclosed StringLiteral and send nonce StringLiteral and send issued_vc StringLiteral and send verifier_url StringLiteral and send holder StringLiteral and |send disclosed StringLiteral and send nonce StringLiteral and send issued_vc StringLiteral and send holder StringLiteral and send verifier_url StringLiteral and |send disclosed StringLiteral and send nonce StringLiteral and send holder StringLiteral and send verifier_url StringLiteral and send issued_vc StringLiteral and |send disclosed StringLiteral and send nonce StringLiteral and send holder StringLiteral and send issued_vc StringLiteral and send verifier_url StringLiteral and |send disclosed StringLiteral and send holder StringLiteral and send verifier_url StringLiteral and send issued_vc StringLiteral and send nonce StringLiteral and |send disclosed StringLiteral and send holder StringLiteral and send verifier_url StringLiteral and send nonce StringLiteral and send issued_vc StringLiteral and |send disclosed StringLiteral and send holder StringLiteral and send issued_vc StringLiteral and send verifier_url StringLiteral and send nonce StringLiteral and |send disclosed StringLiteral and send holder StringLiteral and send issued_vc StringLiteral and send nonce StringLiteral and send verifier_url StringLiteral and |send disclosed StringLiteral and send holder StringLiteral and send nonce StringLiteral and send verifier_url StringLiteral and send issued_vc StringLiteral and |send disclosed StringLiteral and send holder StringLiteral and send nonce StringLiteral and send issued_vc StringLiteral and send verifier_url StringLiteral and |send nonce StringLiteral and send verifier_url StringLiteral and send issued_vc StringLiteral and send disclosed StringLiteral and send holder StringLiteral and |send nonce StringLiteral and send verifier_url StringLiteral and send issued_vc StringLiteral and send holder StringLiteral and send disclosed StringLiteral and |send nonce StringLiteral and send verifier_url StringLiteral and send disclosed StringLiteral and send issued_vc StringLiteral and send holder StringLiteral and |send nonce StringLiteral and send verifier_url StringLiteral and send disclosed StringLiteral and send holder StringLiteral and send issued_vc StringLiteral and |send nonce StringLiteral and send verifier_url StringLiteral and send holder StringLiteral and send issued_vc StringLiteral and send disclosed StringLiteral and |send nonce StringLiteral and send verifier_url StringLiteral and send holder StringLiteral and send disclosed StringLiteral and send issued_vc StringLiteral and |send nonce StringLiteral and send issued_vc StringLiteral and send verifier_url StringLiteral and send disclosed StringLiteral and send holder StringLiteral and |send nonce StringLiteral and send issued_vc StringLiteral and send verifier_url StringLiteral and send holder StringLiteral and send disclosed StringLiteral and |send nonce StringLiteral and send issued_vc StringLiteral and send disclosed StringLiteral and send verifier_url StringLiteral and send holder StringLiteral and |send nonce StringLiteral and send issued_vc StringLiteral and send disclosed StringLiteral and send holder StringLiteral and send verifier_url StringLiteral and |send nonce StringLiteral and send issued_vc StringLiteral and send holder StringLiteral and send verifier_url StringLiteral and send disclosed StringLiteral and |send nonce StringLiteral and send issued_vc StringLiteral and send holder StringLiteral and send disclosed StringLiteral and send verifier_url StringLiteral and |send nonce StringLiteral and send disclosed StringLiteral and send verifier_url StringLiteral and send issued_vc StringLiteral and send holder StringLiteral and |send nonce StringLiteral and send disclosed StringLiteral and send verifier_url StringLiteral and send holder StringLiteral and send issued_vc StringLiteral and |send nonce StringLiteral and send disclosed StringLiteral and send issued_vc StringLiteral and send verifier_url StringLiteral and send holder StringLiteral and |send nonce StringLiteral and send disclosed StringLiteral and send issued_vc StringLiteral and send holder StringLiteral and send verifier_url StringLiteral and |send nonce StringLiteral and send disclosed StringLiteral and send holder StringLiteral and send verifier_url StringLiteral and send issued_vc StringLiteral and |send nonce StringLiteral and send disclosed StringLiteral and send holder StringLiteral and send issued_vc StringLiteral and send verifier_url StringLiteral and |send nonce StringLiteral and send holder StringLiteral and send verifier_url StringLiteral and send issued_vc StringLiteral and send disclosed StringLiteral and |send nonce StringLiteral and send holder StringLiteral and send verifier_url StringLiteral and send disclosed StringLiteral and send issued_vc StringLiteral and |send nonce StringLiteral and send holder StringLiteral and send issued_vc StringLiteral and send verifier_url StringLiteral and send disclosed StringLiteral and |send nonce StringLiteral and send holder StringLiteral and send issued_vc StringLiteral and send disclosed StringLiteral and send verifier_url StringLiteral and |send nonce StringLiteral and send holder StringLiteral and send disclosed StringLiteral and send verifier_url StringLiteral and send issued_vc StringLiteral and |send nonce StringLiteral and send holder StringLiteral and send disclosed StringLiteral and send issued_vc StringLiteral and send verifier_url StringLiteral and |send holder StringLiteral and send verifier_url StringLiteral and send issued_vc StringLiteral and send disclosed StringLiteral and send nonce StringLiteral and |send holder StringLiteral and send verifier_url StringLiteral and send issued_vc StringLiteral and send nonce StringLiteral and send disclosed StringLiteral and |send holder StringLiteral and send verifier_url StringLiteral and send disclosed StringLiteral and send issued_vc StringLiteral and send nonce StringLiteral and |send holder StringLiteral and send verifier_url StringLiteral and send disclosed StringLiteral and send nonce StringLiteral and send issued_vc StringLiteral and |send holder StringLiteral and send verifier_url StringLiteral and send nonce StringLiteral and send issued_vc StringLiteral and send disclosed StringLiteral and |send holder StringLiteral and send verifier_url StringLiteral and send nonce StringLiteral and send disclosed StringLiteral and send issued_vc StringLiteral and |send holder StringLiteral and send issued_vc StringLiteral and send verifier_url StringLiteral and send disclosed StringLiteral and send nonce StringLiteral and |send holder StringLiteral and send issued_vc StringLiteral and send verifier_url StringLiteral and send nonce StringLiteral and send disclosed StringLiteral and |send holder StringLiteral and send issued_vc StringLiteral and send disclosed StringLiteral and send verifier_url StringLiteral and send nonce StringLiteral and |send holder StringLiteral and send issued_vc StringLiteral and send disclosed StringLiteral and send nonce StringLiteral and send verifier_url StringLiteral and |send holder StringLiteral and send issued_vc StringLiteral and send nonce StringLiteral and send verifier_url StringLiteral and send disclosed StringLiteral and |send holder StringLiteral and send issued_vc StringLiteral and send nonce StringLiteral and send disclosed StringLiteral and send verifier_url StringLiteral and |send holder StringLiteral and send disclosed StringLiteral and send verifier_url StringLiteral and send issued_vc StringLiteral and send nonce StringLiteral and |send holder StringLiteral and send disclosed StringLiteral and send verifier_url StringLiteral and send nonce StringLiteral and send issued_vc StringLiteral and |send holder StringLiteral and send disclosed StringLiteral and send issued_vc StringLiteral and send verifier_url StringLiteral and send nonce StringLiteral and |send holder StringLiteral and send disclosed StringLiteral and send issued_vc StringLiteral and send nonce StringLiteral and send verifier_url StringLiteral and |send holder StringLiteral and send disclosed StringLiteral and send nonce StringLiteral and send verifier_url StringLiteral and send issued_vc StringLiteral and |send holder StringLiteral and send disclosed StringLiteral and send nonce StringLiteral and send issued_vc StringLiteral and send verifier_url StringLiteral and |send holder StringLiteral and send nonce StringLiteral and send verifier_url StringLiteral and send issued_vc StringLiteral and send disclosed StringLiteral and |send holder StringLiteral and send nonce StringLiteral and send verifier_url StringLiteral and send disclosed StringLiteral and send issued_vc StringLiteral and |send holder StringLiteral and send nonce StringLiteral and send issued_vc StringLiteral and send verifier_url StringLiteral and send disclosed StringLiteral and |send holder StringLiteral and send nonce StringLiteral and send issued_vc StringLiteral and send disclosed StringLiteral and send verifier_url StringLiteral and |send holder StringLiteral and send nonce StringLiteral and send disclosed StringLiteral and send verifier_url StringLiteral and send issued_vc StringLiteral and |send holder StringLiteral and send nonce StringLiteral and send disclosed StringLiteral and send issued_vc StringLiteral and send verifier_url StringLiteral and ) present vc sd jwt (and? SaveAction)* |
+    ( send verifier_url StringLiteral and send issued_vc StringLiteral and send nonce StringLiteral and send issuer StringLiteral and |send verifier_url StringLiteral and send issued_vc StringLiteral and send issuer StringLiteral and send nonce StringLiteral and |send verifier_url StringLiteral and send nonce StringLiteral and send issued_vc StringLiteral and send issuer StringLiteral and |send verifier_url StringLiteral and send nonce StringLiteral and send issuer StringLiteral and send issued_vc StringLiteral and |send verifier_url StringLiteral and send issuer StringLiteral and send issued_vc StringLiteral and send nonce StringLiteral and |send verifier_url StringLiteral and send issuer StringLiteral and send nonce StringLiteral and send issued_vc StringLiteral and |send issued_vc StringLiteral and send verifier_url StringLiteral and send nonce StringLiteral and send issuer StringLiteral and |send issued_vc StringLiteral and send verifier_url StringLiteral and send issuer StringLiteral and send nonce StringLiteral and |send issued_vc StringLiteral and send nonce StringLiteral and send verifier_url StringLiteral and send issuer StringLiteral and |send issued_vc StringLiteral and send nonce StringLiteral and send issuer StringLiteral and send verifier_url StringLiteral and |send issued_vc StringLiteral and send issuer StringLiteral and send verifier_url StringLiteral and send nonce StringLiteral and |send issued_vc StringLiteral and send issuer StringLiteral and send nonce StringLiteral and send verifier_url StringLiteral and |send nonce StringLiteral and send verifier_url StringLiteral and send issued_vc StringLiteral and send issuer StringLiteral and |send nonce StringLiteral and send verifier_url StringLiteral and send issuer StringLiteral and send issued_vc StringLiteral and |send nonce StringLiteral and send issued_vc StringLiteral and send verifier_url StringLiteral and send issuer StringLiteral and |send nonce StringLiteral and send issued_vc StringLiteral and send issuer StringLiteral and send verifier_url StringLiteral and |send nonce StringLiteral and send issuer StringLiteral and send verifier_url StringLiteral and send issued_vc StringLiteral and |send nonce StringLiteral and send issuer StringLiteral and send issued_vc StringLiteral and send verifier_url StringLiteral and |send issuer StringLiteral and send verifier_url StringLiteral and send issued_vc StringLiteral and send nonce StringLiteral and |send issuer StringLiteral and send verifier_url StringLiteral and send nonce StringLiteral and send issued_vc StringLiteral and |send issuer StringLiteral and send issued_vc StringLiteral and send verifier_url StringLiteral and send nonce StringLiteral and |send issuer StringLiteral and send issued_vc StringLiteral and send nonce StringLiteral and send verifier_url StringLiteral and |send issuer StringLiteral and send nonce StringLiteral and send verifier_url StringLiteral and send issued_vc StringLiteral and |send issuer StringLiteral and send nonce StringLiteral and send issued_vc StringLiteral and send verifier_url StringLiteral and ) verify vc sd jwt (and? SaveAction)* |
+    create p-256 key (and? SaveAction)* |
+    send sk StringLiteral and create p-256 public key (and? SaveAction)* |
+    send token StringLiteral and pretty print sd jwt (and? SaveAction)*
 }
-
 ZencodeStatement {
-    ZencodeSend (and? SaveAction)*
+    ( send script StringLiteral and send data StringLiteral and send keys StringLiteral and |send script StringLiteral and send keys StringLiteral and send data StringLiteral and |send data StringLiteral and send script StringLiteral and send keys StringLiteral and |send data StringLiteral and send keys StringLiteral and send script StringLiteral and |send keys StringLiteral and send script StringLiteral and send data StringLiteral and |send keys StringLiteral and send data StringLiteral and send script StringLiteral and ) execute zencode (and? SaveAction)* |
+    ( send script StringLiteral and send data StringLiteral and send keys StringLiteral and send extra StringLiteral and send conf StringLiteral and |send script StringLiteral and send data StringLiteral and send keys StringLiteral and send conf StringLiteral and send extra StringLiteral and |send script StringLiteral and send data StringLiteral and send extra StringLiteral and send keys StringLiteral and send conf StringLiteral and |send script StringLiteral and send data StringLiteral and send extra StringLiteral and send conf StringLiteral and send keys StringLiteral and |send script StringLiteral and send data StringLiteral and send conf StringLiteral and send keys StringLiteral and send extra StringLiteral and |send script StringLiteral and send data StringLiteral and send conf StringLiteral and send extra StringLiteral and send keys StringLiteral and |send script StringLiteral and send keys StringLiteral and send data StringLiteral and send extra StringLiteral and send conf StringLiteral and |send script StringLiteral and send keys StringLiteral and send data StringLiteral and send conf StringLiteral and send extra StringLiteral and |send script StringLiteral and send keys StringLiteral and send extra StringLiteral and send data StringLiteral and send conf StringLiteral and |send script StringLiteral and send keys StringLiteral and send extra StringLiteral and send conf StringLiteral and send data StringLiteral and |send script StringLiteral and send keys StringLiteral and send conf StringLiteral and send data StringLiteral and send extra StringLiteral and |send script StringLiteral and send keys StringLiteral and send conf StringLiteral and send extra StringLiteral and send data StringLiteral and |send script StringLiteral and send extra StringLiteral and send data StringLiteral and send keys StringLiteral and send conf StringLiteral and |send script StringLiteral and send extra StringLiteral and send data StringLiteral and send conf StringLiteral and send keys StringLiteral and |send script StringLiteral and send extra StringLiteral and send keys StringLiteral and send data StringLiteral and send conf StringLiteral and |send script StringLiteral and send extra StringLiteral and send keys StringLiteral and send conf StringLiteral and send data StringLiteral and |send script StringLiteral and send extra StringLiteral and send conf StringLiteral and send data StringLiteral and send keys StringLiteral and |send script StringLiteral and send extra StringLiteral and send conf StringLiteral and send keys StringLiteral and send data StringLiteral and |send script StringLiteral and send conf StringLiteral and send data StringLiteral and send keys StringLiteral and send extra StringLiteral and |send script StringLiteral and send conf StringLiteral and send data StringLiteral and send extra StringLiteral and send keys StringLiteral and |send script StringLiteral and send conf StringLiteral and send keys StringLiteral and send data StringLiteral and send extra StringLiteral and |send script StringLiteral and send conf StringLiteral and send keys StringLiteral and send extra StringLiteral and send data StringLiteral and |send script StringLiteral and send conf StringLiteral and send extra StringLiteral and send data StringLiteral and send keys StringLiteral and |send script StringLiteral and send conf StringLiteral and send extra StringLiteral and send keys StringLiteral and send data StringLiteral and |send data StringLiteral and send script StringLiteral and send keys StringLiteral and send extra StringLiteral and send conf StringLiteral and |send data StringLiteral and send script StringLiteral and send keys StringLiteral and send conf StringLiteral and send extra StringLiteral and |send data StringLiteral and send script StringLiteral and send extra StringLiteral and send keys StringLiteral and send conf StringLiteral and |send data StringLiteral and send script StringLiteral and send extra StringLiteral and send conf StringLiteral and send keys StringLiteral and |send data StringLiteral and send script StringLiteral and send conf StringLiteral and send keys StringLiteral and send extra StringLiteral and |send data StringLiteral and send script StringLiteral and send conf StringLiteral and send extra StringLiteral and send keys StringLiteral and |send data StringLiteral and send keys StringLiteral and send script StringLiteral and send extra StringLiteral and send conf StringLiteral and |send data StringLiteral and send keys StringLiteral and send script StringLiteral and send conf StringLiteral and send extra StringLiteral and |send data StringLiteral and send keys StringLiteral and send extra StringLiteral and send script StringLiteral and send conf StringLiteral and |send data StringLiteral and send keys StringLiteral and send extra StringLiteral and send conf StringLiteral and send script StringLiteral and |send data StringLiteral and send keys StringLiteral and send conf StringLiteral and send script StringLiteral and send extra StringLiteral and |send data StringLiteral and send keys StringLiteral and send conf StringLiteral and send extra StringLiteral and send script StringLiteral and |send data StringLiteral and send extra StringLiteral and send script StringLiteral and send keys StringLiteral and send conf StringLiteral and |send data StringLiteral and send extra StringLiteral and send script StringLiteral and send conf StringLiteral and send keys StringLiteral and |send data StringLiteral and send extra StringLiteral and send keys StringLiteral and send script StringLiteral and send conf StringLiteral and |send data StringLiteral and send extra StringLiteral and send keys StringLiteral and send conf StringLiteral and send script StringLiteral and |send data StringLiteral and send extra StringLiteral and send conf StringLiteral and send script StringLiteral and send keys StringLiteral and |send data StringLiteral and send extra StringLiteral and send conf StringLiteral and send keys StringLiteral and send script StringLiteral and |send data StringLiteral and send conf StringLiteral and send script StringLiteral and send keys StringLiteral and send extra StringLiteral and |send data StringLiteral and send conf StringLiteral and send script StringLiteral and send extra StringLiteral and send keys StringLiteral and |send data StringLiteral and send conf StringLiteral and send keys StringLiteral and send script StringLiteral and send extra StringLiteral and |send data StringLiteral and send conf StringLiteral and send keys StringLiteral and send extra StringLiteral and send script StringLiteral and |send data StringLiteral and send conf StringLiteral and send extra StringLiteral and send script StringLiteral and send keys StringLiteral and |send data StringLiteral and send conf StringLiteral and send extra StringLiteral and send keys StringLiteral and send script StringLiteral and |send keys StringLiteral and send script StringLiteral and send data StringLiteral and send extra StringLiteral and send conf StringLiteral and |send keys StringLiteral and send script StringLiteral and send data StringLiteral and send conf StringLiteral and send extra StringLiteral and |send keys StringLiteral and send script StringLiteral and send extra StringLiteral and send data StringLiteral and send conf StringLiteral and |send keys StringLiteral and send script StringLiteral and send extra StringLiteral and send conf StringLiteral and send data StringLiteral and |send keys StringLiteral and send script StringLiteral and send conf StringLiteral and send data StringLiteral and send extra StringLiteral and |send keys StringLiteral and send script StringLiteral and send conf StringLiteral and send extra StringLiteral and send data StringLiteral and |send keys StringLiteral and send data StringLiteral and send script StringLiteral and send extra StringLiteral and send conf StringLiteral and |send keys StringLiteral and send data StringLiteral and send script StringLiteral and send conf StringLiteral and send extra StringLiteral and |send keys StringLiteral and send data StringLiteral and send extra StringLiteral and send script StringLiteral and send conf StringLiteral and |send keys StringLiteral and send data StringLiteral and send extra StringLiteral and send conf StringLiteral and send script StringLiteral and |send keys StringLiteral and send data StringLiteral and send conf StringLiteral and send script StringLiteral and send extra StringLiteral and |send keys StringLiteral and send data StringLiteral and send conf StringLiteral and send extra StringLiteral and send script StringLiteral and |send keys StringLiteral and send extra StringLiteral and send script StringLiteral and send data StringLiteral and send conf StringLiteral and |send keys StringLiteral and send extra StringLiteral and send script StringLiteral and send conf StringLiteral and send data StringLiteral and |send keys StringLiteral and send extra StringLiteral and send data StringLiteral and send script StringLiteral and send conf StringLiteral and |send keys StringLiteral and send extra StringLiteral and send data StringLiteral and send conf StringLiteral and send script StringLiteral and |send keys StringLiteral and send extra StringLiteral and send conf StringLiteral and send script StringLiteral and send data StringLiteral and |send keys StringLiteral and send extra StringLiteral and send conf StringLiteral and send data StringLiteral and send script StringLiteral and |send keys StringLiteral and send conf StringLiteral and send script StringLiteral and send data StringLiteral and send extra StringLiteral and |send keys StringLiteral and send conf StringLiteral and send script StringLiteral and send extra StringLiteral and send data StringLiteral and |send keys StringLiteral and send conf StringLiteral and send data StringLiteral and send script StringLiteral and send extra StringLiteral and |send keys StringLiteral and send conf StringLiteral and send data StringLiteral and send extra StringLiteral and send script StringLiteral and |send keys StringLiteral and send conf StringLiteral and send extra StringLiteral and send script StringLiteral and send data StringLiteral and |send keys StringLiteral and send conf StringLiteral and send extra StringLiteral and send data StringLiteral and send script StringLiteral and |send extra StringLiteral and send script StringLiteral and send data StringLiteral and send keys StringLiteral and send conf StringLiteral and |send extra StringLiteral and send script StringLiteral and send data StringLiteral and send conf StringLiteral and send keys StringLiteral and |send extra StringLiteral and send script StringLiteral and send keys StringLiteral and send data StringLiteral and send conf StringLiteral and |send extra StringLiteral and send script StringLiteral and send keys StringLiteral and send conf StringLiteral and send data StringLiteral and |send extra StringLiteral and send script StringLiteral and send conf StringLiteral and send data StringLiteral and send keys StringLiteral and |send extra StringLiteral and send script StringLiteral and send conf StringLiteral and send keys StringLiteral and send data StringLiteral and |send extra StringLiteral and send data StringLiteral and send script StringLiteral and send keys StringLiteral and send conf StringLiteral and |send extra StringLiteral and send data StringLiteral and send script StringLiteral and send conf StringLiteral and send keys StringLiteral and |send extra StringLiteral and send data StringLiteral and send keys StringLiteral and send script StringLiteral and send conf StringLiteral and |send extra StringLiteral and send data StringLiteral and send keys StringLiteral and send conf StringLiteral and send script StringLiteral and |send extra StringLiteral and send data StringLiteral and send conf StringLiteral and send script StringLiteral and send keys StringLiteral and |send extra StringLiteral and send data StringLiteral and send conf StringLiteral and send keys StringLiteral and send script StringLiteral and |send extra StringLiteral and send keys StringLiteral and send script StringLiteral and send data StringLiteral and send conf StringLiteral and |send extra StringLiteral and send keys StringLiteral and send script StringLiteral and send conf StringLiteral and send data StringLiteral and |send extra StringLiteral and send keys StringLiteral and send data StringLiteral and send script StringLiteral and send conf StringLiteral and |send extra StringLiteral and send keys StringLiteral and send data StringLiteral and send conf StringLiteral and send script StringLiteral and |send extra StringLiteral and send keys StringLiteral and send conf StringLiteral and send script StringLiteral and send data StringLiteral and |send extra StringLiteral and send keys StringLiteral and send conf StringLiteral and send data StringLiteral and send script StringLiteral and |send extra StringLiteral and send conf StringLiteral and send script StringLiteral and send data StringLiteral and send keys StringLiteral and |send extra StringLiteral and send conf StringLiteral and send script StringLiteral and send keys StringLiteral and send data StringLiteral and |send extra StringLiteral and send conf StringLiteral and send data StringLiteral and send script StringLiteral and send keys StringLiteral and |send extra StringLiteral and send conf StringLiteral and send data StringLiteral and send keys StringLiteral and send script StringLiteral and |send extra StringLiteral and send conf StringLiteral and send keys StringLiteral and send script StringLiteral and send data StringLiteral and |send extra StringLiteral and send conf StringLiteral and send keys StringLiteral and send data StringLiteral and send script StringLiteral and |send conf StringLiteral and send script StringLiteral and send data StringLiteral and send keys StringLiteral and send extra StringLiteral and |send conf StringLiteral and send script StringLiteral and send data StringLiteral and send extra StringLiteral and send keys StringLiteral and |send conf StringLiteral and send script StringLiteral and send keys StringLiteral and send data StringLiteral and send extra StringLiteral and |send conf StringLiteral and send script StringLiteral and send keys StringLiteral and send extra StringLiteral and send data StringLiteral and |send conf StringLiteral and send script StringLiteral and send extra StringLiteral and send data StringLiteral and send keys StringLiteral and |send conf StringLiteral and send script StringLiteral and send extra StringLiteral and send keys StringLiteral and send data StringLiteral and |send conf StringLiteral and send data StringLiteral and send script StringLiteral and send keys StringLiteral and send extra StringLiteral and |send conf StringLiteral and send data StringLiteral and send script StringLiteral and send extra StringLiteral and send keys StringLiteral and |send conf StringLiteral and send data StringLiteral and send keys StringLiteral and send script StringLiteral and send extra StringLiteral and |send conf StringLiteral and send data StringLiteral and send keys StringLiteral and send extra StringLiteral and send script StringLiteral and |send conf StringLiteral and send data StringLiteral and send extra StringLiteral and send script StringLiteral and send keys StringLiteral and |send conf StringLiteral and send data StringLiteral and send extra StringLiteral and send keys StringLiteral and send script StringLiteral and |send conf StringLiteral and send keys StringLiteral and send script StringLiteral and send data StringLiteral and send extra StringLiteral and |send conf StringLiteral and send keys StringLiteral and send script StringLiteral and send extra StringLiteral and send data StringLiteral and |send conf StringLiteral and send keys StringLiteral and send data StringLiteral and send script StringLiteral and send extra StringLiteral and |send conf StringLiteral and send keys StringLiteral and send data StringLiteral and send extra StringLiteral and send script StringLiteral and |send conf StringLiteral and send keys StringLiteral and send extra StringLiteral and send script StringLiteral and send data StringLiteral and |send conf StringLiteral and send keys StringLiteral and send extra StringLiteral and send data StringLiteral and send script StringLiteral and |send conf StringLiteral and send extra StringLiteral and send script StringLiteral and send data StringLiteral and send keys StringLiteral and |send conf StringLiteral and send extra StringLiteral and send script StringLiteral and send keys StringLiteral and send data StringLiteral and |send conf StringLiteral and send extra StringLiteral and send data StringLiteral and send script StringLiteral and send keys StringLiteral and |send conf StringLiteral and send extra StringLiteral and send data StringLiteral and send keys StringLiteral and send script StringLiteral and |send conf StringLiteral and send extra StringLiteral and send keys StringLiteral and send script StringLiteral and send data StringLiteral and |send conf StringLiteral and send extra StringLiteral and send keys StringLiteral and send data StringLiteral and send script StringLiteral and ) execute zencode (and? SaveAction)*
 }
 
-// ===== Connect Actions =====
-
-DbConnectAction {
-    ((connect to StringLiteral) and)? DbSend
-}
-
-EthereumConnectAction {
-    ((connect to StringLiteral) and)? (EthereumSend | EthereumAction)
-}
-
-FsConnectAction {
-    ((connect to StringLiteral) and)? FsSend
-}
-
-GitOpenOrConnectAction {
-    ((open the StringLiteral | connect to StringLiteral) and)? (GitSend | GitAction)
-}
-
-HttpConnectAction {
-    ((connect to StringLiteral) and)? (HttpSend | HttpAction)
-}
-
-PocketbaseConnectAction {
-    ((connect to StringLiteral) and)? (PocketbaseSend | PocketbaseAction)
-}
-
-RedisConnectAction {
-    ((connect to StringLiteral) and)? RedisSend
-}
-
-// ===== Send Actions =====
-
-DbSend {
-    ((send (statement | parameters | record | table | variable | name) StringLiteral) and)
-    (DbAction | DbSend )
-}
-
-EthereumSend {
-    ((send (address | transaction_id | addresses | transaction | sc) StringLiteral) and)
-    (EthereumAction | EthereumSend)
-}
-
-FsSend {
-    ((send (path | content) StringLiteral) and)
-    (FsAction | FsSend)
-}
-
-GitSend {
-    ((send (path | commit) StringLiteral) and) GitAction
-}
-
-HelpersSend {
-    ((send (path | paths |  object | value | sources | array | values | properties) StringLiteral) and)
-    (HelpersAction | HelpersSend)
-}
-
-HttpSend {
-    ((send (headers | object) StringLiteral) and)
-    (HttpAction | HttpSend)
-}
-
-JsonSchemaSend {
-    ((send (json_data | json_schema) StringLiteral) and)
-    (JsonSchemaAction | JsonSchemaSend)
-}
-
-OAuthSend {
-    ((send (request | server_data | client | expires_in | token | request_uri | data) StringLiteral) and)
-    (OAuthAction | OAuthSend)
-}
-
-PocketbaseSend {
-    ((send (my_credentials | email | list_parameters | show_parameters | create_parameters | record_parameters | update_parameters | delete_parameters | url | send_parameters) StringLiteral) and)
-    (PocketbaseAction | PocketbaseSend)
-}
-
-QrCodeSend {
-    ((send text StringLiteral) and) QrCodeAction
-}
-
-RedisSend {
-    ((send (key | object) StringLiteral) and)
-    (RedisAction | RedisSend)
-}
-
-ShellSend {
-    ((send (command) StringLiteral) and) ShellAction
-}
-
-WalletSend {
-    ((send (jwk | object | holder | fields | verifier_url | issued_vc | disclosed | nonce | sk | token) StringLiteral) and)
-    (WalletAction | WalletSend)
-}
-
-ZencodeSend {
-    ((send (script | data | keys | extra | conf) StringLiteral) and)
-    (ZencodeAction | ZencodeSend)
-}
-
-// ===== Execute Actions =====
+// ===== Plugin-Actions =====
 
 DbAction {
     execute sql statement |
@@ -261,13 +273,13 @@ DbAction {
     read the record of the table |
     save the variable in the database table
 }
-
 EthereumAction {
-    read the ethereum? nonce |
-    read the ethereum? bytes |
-    read the ethereum? balance |
-    read the ethereum? suggested gas price |
-    read the ethereum? transaction id after broadcast |
+    read the ethereum nonce |
+    read the ethereum bytes |
+    read the ethereum balance |
+    read the ethereum balance |
+    read the ethereum suggested gas price |
+    read the ethereum transaction id after broadcast |
     read the erc20 decimals |
     read the erc20 name |
     read the erc20 symbol |
@@ -277,7 +289,6 @@ EthereumAction {
     read the erc721 owner |
     read the erc721 asset
 }
-
 FsAction {
     download and extract |
     read file content |
@@ -287,13 +298,11 @@ FsAction {
     verify file exists |
     verify file does not exist
 }
-
 GitAction {
     verify git repository |
     clone repository |
     create new git commit
 }
-
 HelpersAction {
     manipulate and get |
     manipulate and set |
@@ -304,47 +313,97 @@ HelpersAction {
     manipulate and pick |
     manipulate and delete
 }
-
 HttpAction {
     do get |
+    do get |
+    do sequential get |
     do sequential get |
     do parallel get |
+    do parallel get |
+    do same get |
     do same get |
     do post |
+    do post |
+    do post |
+    do post |
+    do sequential post |
+    do sequential post |
+    do sequential post |
     do sequential post |
     do parallel post |
+    do parallel post |
+    do parallel post |
+    do parallel post |
+    do same post |
+    do same post |
+    do same post |
     do same post |
     do put |
+    do put |
+    do put |
+    do put |
+    do sequential put |
+    do sequential put |
+    do sequential put |
     do sequential put |
     do parallel put |
+    do parallel put |
+    do parallel put |
+    do parallel put |
+    do same put |
+    do same put |
+    do same put |
     do same put |
     do patch |
+    do patch |
+    do patch |
+    do patch |
+    do sequential patch |
+    do sequential patch |
+    do sequential patch |
     do sequential patch |
     do parallel patch |
+    do parallel patch |
+    do parallel patch |
+    do parallel patch |
+    do same patch |
+    do same patch |
+    do same patch |
     do same patch |
     do delete |
+    do delete |
+    do delete |
+    do delete |
+    do sequential delete |
+    do sequential delete |
+    do sequential delete |
     do sequential delete |
     do parallel delete |
+    do parallel delete |
+    do parallel delete |
+    do parallel delete |
+    do same delete |
+    do same delete |
+    do same delete |
     do same delete
 }
-
 JsonSchemaAction {
     validate json
 }
-
 OAuthAction {
     generate access token |
     verify request parameters |
     generate authorization code |
     generate request uri |
     get authorization details from token |
-    add data to authorization details
+    add data to authorization details |
+    get redirect_uri from request_uri
 }
-
 PocketbaseAction {
     start pb client |
     start capacitor pb client |
     login |
+    refresh token |
     ask password reset |
     get some records |
     get one record |
@@ -353,41 +412,39 @@ PocketbaseAction {
     delete record |
     send request
 }
-
 QrCodeAction {
     create qr code
 }
-
+RdfAction {
+    generate serialized canonical rdf
+}
 RedisAction {
     write object into key in redis |
     read key from redis |
     delete key from redis
 }
-
 ShellAction {
     execute in shell
 }
-
 TimestampAction {
     fetch the local timestamp in milliseconds |
     fetch the local timestamp in seconds
 }
-
 WalletAction {
     create vc sd jwt |
     present vc sd jwt |
     verify vc sd jwt |
-    create p256 key |
-    create p256 public key |
+    create p-256 key |
+    create p-256 public key |
     pretty print sd jwt
 }
-
 ZencodeAction {
+    execute zencode |
     execute zencode
 }
 
 SaveAction {
-    output (Keywords | Identifier | StringLiteral)? into StringLiteral
+	output (Keywords | Identifier | StringLiteral)? into StringLiteral
 }
 
 Keywords {
@@ -419,8 +476,8 @@ Keywords {
 	pb[@name=pb], capacitor[@name=capacitor], login[@name=login], ask[@name=ask], password[@name=password], reset[@name=reset], some[@name=some], records[@name=records], one[@name=one], update[@name=update], qr[@name=qr], write[@name=write],
 	into[@name=into], redis[@name=redis], delete[@name=delete], shell[@name=shell], fetch[@name=fetch], local[@name=local], timestamp[@name=timestamp], milliseconds[@name=milliseconds], seconds[@name=seconds], present[@name=present]
 	vc[@name=vc], sd[@name=sd], jwt[@name=jwt], public[@name=public], pretty[@name=pretty], print[@name=print], zencode[@name=zencode], output[@name=output], is[@name=is], then[@name=then],
-	when[@name=when], rule[@name=rule], scenario[@name=scenario], if[@name=if], endif[@name=endif], foreach[@name=foreach], endforeach[@name=endforeach], I[@name=I], p256[@name=p256]
-
+	when[@name=when], rule[@name=rule], scenario[@name=scenario], if[@name=if], endif[@name=endif], foreach[@name=foreach], endforeach[@name=endforeach], I[@name=I], p256[@name=p256], p-256[@name=p-256],
+	redirect_uri[@name=redirect_uri], refresh[@name=refresh], dictionary[@name=dictionary], serialized[@name=serialized], canonical[@name=canonical], rdf[@name=rdf], issuer[@name=issuer]
 }
 
 @tokens {
