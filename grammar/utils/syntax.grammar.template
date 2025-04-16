@@ -1,0 +1,149 @@
+// SPDX-FileCopyrightText: 2024 Dyne.org foundation
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+@top Statement {
+    ( RuleStatement | ScenarioStatement | RuleStatement |  SlangroomStatement | Comment )*
+}
+
+Comment {
+    comment (newline+ |eof)
+}
+
+SlangroomStatement {
+    (GivenStatement | ThenStatement | ThenPrint | GivenHaveStatement | GivenName | WhenStatement | IfEndifStatement |ForEachStatement)
+}
+
+// ===== Rule =====
+RuleStatement {
+    rule (VersionRule | GenericRule) ( newline+ | eof )
+}
+VersionRule {
+    version VersionNumber
+}
+GenericRule {
+    (Identifier | StringLiteral | Keywords)*
+}
+VersionNumber {
+    Number '.'? Number? '.'? Number?
+}
+
+// ===== Scenario =====
+ScenarioStatement {
+    scenario ScenarioType ScenarioComment? ( newline+ | eof )
+}
+ScenarioType {
+    (StringLiteral| Identifier | Keywords)
+}
+ScenarioComment {
+    ":" (Identifier | Keywords | StringLiteral)*
+}
+
+@skip {
+    space
+}
+
+// ===== Zencode Statements =====
+GivenHaveStatement {
+    given that? I have (a? | my? | the?) valid? StringLiteral named? StringLiteral? (inside | in)?  named? StringLiteral?
+    (newline* and I have (a? | my?) valid? StringLiteral named? StringLiteral? (inside | in)? named? StringLiteral?)* ( newline+ | eof )
+}
+GivenName {
+    ((given I am
+    (known as)? StringLiteral) |
+    (given  I? my name is
+    (Identifier | Keywords | StringLiteral)+)) HaveStatement* ( newline+ | eof )
+}
+HaveStatement{
+    newline+ and I have (a? | my?) valid? StringLiteral named? StringLiteral? (inside | in)? named? StringLiteral?
+}
+WhenStatement {
+    when I (Identifier | Keywords | StringLiteral)+ (newline and I (Identifier | Keywords | StringLiteral)+)* (newline+ | eof)
+}
+IfEndifStatement{
+    Condition+ ( GivenStatement | WhenStatement |  ThenStatement | ThenPrint)* endif ( newline+ | eof )
+}
+Condition {
+    if I verify (Identifier | Keywords | StringLiteral)+ ( newline+ | eof )
+}
+ForEachStatement {
+    foreach (StringLiteral | Identifier | Keywords) (in | inside) (StringLiteral | Identifier | Keywords)+  newline+ (GivenStatement | WhenStatement |  ThenStatement | ThenPrint)*
+    endforeach ( newline+ | eof )
+}
+ThenPrint {
+    then I? print (StringLiteral | Identifier | Keywords)+ (newline and +I print (StringLiteral | Identifier | Keywords)+)* ( newline+ | eof )
+}
+
+// ===== Slangroom Statements =====
+GivenStatement {
+    given I
+    (DbStatement | EthereumStatement | FsStatement | GitStatement | HelpersStatement | HttpStatement | JsonSchemaStatement | OAuthStatement | PocketbaseStatement | QrCodeStatement | RdfStatement | RedisStatement | ShellStatement | TimestampStatement | WalletStatement | ZencodeStatement)
+    ( newline+ | eof )
+}
+
+ThenStatement {
+    then I
+    (DbStatement | EthereumStatement | FsStatement | GitStatement | HelpersStatement | HttpStatement | JsonSchemaStatement | OAuthStatement | PocketbaseStatement | QrCodeStatement | RdfStatement | RedisStatement | ShellStatement | TimestampStatement | WalletStatement | ZencodeStatement)
+    ( newline+ | eof )
+}
+
+// ===== Plugin-Specific Statements =====
+
+{{ Plugin-Specific Statements }}
+
+// ===== Actions =====
+
+Action<term> {
+	term
+}
+
+SaveAction {
+	output (Keywords | Identifier | StringLiteral)? into StringLiteral
+}
+
+// ===== Keywords and Token =====
+
+Keywords {
+	version |  unknown | ignore | have | a | my | that | valid | inside | named | am | known | as | connect | to | open | and | send | statement | parameters | record | table | variable | name | address | transaction_id |
+	addresses | transaction | sc | path | content | commit | paths | array | values | value | sources | properties | headers | object | json_data | json_schema | request | uri | server_data | client | expires_in |
+	token | request_uri | data | my_credentials | email | list_parameters | show_parameters | create_parameters | record_parameters | update_parameters | delete_parameters | send_parameters | url | text | command | jwk |
+	holder | fields | verifier_url | issued_vc | disclosed | nonce | sk | script | key | keys | extra | conf | execute | sql | with | read | file | the | of | database | save | ethereum | bytes | balance | suggested |
+	gas | price | id | after | broadcast | erc20 | decimals | symbol | total | supply | erc721 | in | owner | asset | download | extract | verbatim | store | list | directory | exists | does | not | exist | verify | git |
+	repository | clone | create | new | manipulate | get | set | merge | omit | concat | compact | pick | do | sequential | parallel | same | post | put | patch | validate | json | generate | access | authorization | code |
+	details | from | add | start | pb | capacitor | login | ask | password | reset | some | records | one | qr | update | write | into | redis | delete | shell | fetch | local | timestamp | milliseconds | seconds | present | vc |
+	sd | jwt | p256 | public | pretty | print | zencode | output | is | given | then | when | rule | scenario | if | endif | foreach | endforeach | I
+}
+
+@external specialize {Identifier} keywords from "./tokens" {
+	given[@name=given], version[@name=version], unknown[@name=unknown], ignore[@name=ignore], have[@name=have], a[@name=a], my[@name=my], that[@name=that], valid[@name=valid], inside[@name=inside], named[@name=named], am[@name=am], known[@name=known],
+	as[@name=as], connect[@name=connect], to[@name=to], open[@name=open] and[@name=and], send[@name=send], statement[@name=statement], parameters[@name=parameters], record[@name=record], table[@name=table], variable[@name=variable], name[@name=name],
+	address[@name=address], transaction_id[@name=transaction_id], addresses[@name=addresses], transaction[@name=transaction], sc[@name=sc], path[@name=path], content[@name=content], commit[@name=commit], paths[@name=paths],
+	array[@name=array], values[@name=values], value[@name=value], sources[@name=sources], properties[@name=properties], headers[@name=headers], object[@name=object], json_data[@name=json_data], json_schema[@name=json_schema],
+	request[@name=request], server_data[@name=server_data], client[@name=client], expires_in[@name=expires_in], token[@name=token], request_uri[@name=request_uri], data[@name=data], my_credentials[@name=my_credentials],
+	email[@name=email], list_parameters[@name=list_parameters], show_parameters[@name=show_parameters], create_parameters[@name=create_parameters], record_parameters[@name=record_parameters], update_parameters[@name=update_parameters],
+	delete_parameters[@name=delete_parameters], send_parameters[@name=send_parameters], url[@name=url], text[@name=text], command[@name=command], jwk[@name=jwk], holder[@name=holder], fields[@name=fields], verifier_url[@name=verifier_url], issued_vc[@name=issued_vc],
+	disclosed[@name=disclosed], nonce[@name=nonce], sk[@name=sk], script[@name=script], key[@name=key], keys[@name=keys], extra[@name=extra], conf[@name=conf], execute[@name=execute], sql[@name=sql], with[@name=with], read[@name=read],
+	file[@name=file], the[@name=the], of[@name=of], database[@name=database], save[@name=save], ethereum[@name=ethereum], bytes[@name=bytes], balance[@name=balance], suggested[@name=suggested], gas[@name=gas], price[@name=price], id[@name=id],
+	after[@name=after], broadcast[@name=broadcast], erc20[@name=erc20], decimals[@name=decimals], symbol[@name=symbol], total[@name=total], supply[@name=supply], erc721[@name=erc721], in[@name=in], owner[@name=owner],
+	asset[@name=asset], download[@name=download], extract[@name=extract], verbatim[@name=verbatim], store[@name=store], list[@name=list], directory[@name=directory], exists[@name=exists], does[@name=does],
+	not[@name=not], exist[@name=exist], verify[@name=verify], git[@name=git], repository[@name=repository], clone[@name=clone], create[@name=create], new[@name=new], manipulate[@name=manipulate], get[@name=get], set[@name=set], merge[@name=merge],
+	omit[@name=omit],uri[@name=uri], concat[@name=concat], compact[@name=compact], pick[@name=pick], do[@name=do], sequential[@name=sequential], parallel[@name=parallel], same[@name=same], post[@name=post], put[@name=put], patch[@name=patch],
+	validate[@name=validate], json[@name=json], generate[@name=generate], access[@name=access], authorization[@name=authorization], code[@name=code], details[@name=details], from[@name=from], add[@name=add], start[@name=start],
+	pb[@name=pb], capacitor[@name=capacitor], login[@name=login], ask[@name=ask], password[@name=password], reset[@name=reset], some[@name=some], records[@name=records], one[@name=one], update[@name=update], qr[@name=qr], write[@name=write],
+	into[@name=into], redis[@name=redis], delete[@name=delete], shell[@name=shell], fetch[@name=fetch], local[@name=local], timestamp[@name=timestamp], milliseconds[@name=milliseconds], seconds[@name=seconds], present[@name=present]
+	vc[@name=vc], sd[@name=sd], jwt[@name=jwt], public[@name=public], pretty[@name=pretty], print[@name=print], zencode[@name=zencode], output[@name=output], is[@name=is], then[@name=then],
+	when[@name=when], rule[@name=rule], scenario[@name=scenario], if[@name=if], endif[@name=endif], foreach[@name=foreach], endforeach[@name=endforeach], I[@name=I], p256[@name=p256], p-256[@name=p-256],
+	redirect_uri[@name=redirect_uri], refresh[@name=refresh], dictionary[@name=dictionary], serialized[@name=serialized], canonical[@name=canonical], rdf[@name=rdf], issuer[@name=issuer]
+}
+
+@tokens {
+    space { " " | "\t" }
+    newline { "\n" | "\r\n" }
+    comment { "#" (![\n])*}
+    StringLiteral { "'" (![\\\n'] | "\\" _)* "'" }
+    symbols { $[a-zA-Z_] | "_" }
+    Identifier { symbols+ Number* }
+    Number { $[0-9]+ }
+}
+
+@external tokens Eoftoken from "./tokens.js" { eof }
