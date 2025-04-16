@@ -28,8 +28,7 @@ import { pbkdf2 } from 'crypto';
 
 const fullStatementTemplates = [];
 
-let pluginSpecificStatements = '// ===== Plugin-Specific Statements =====\n';
-let pluginActions = '// ===== Plugin-Actions =====\n';
+let pluginSpecificStatements = '';
 const SlangroomPluginsStatements = [];
 
 const permutations = (arr) => {
@@ -52,10 +51,8 @@ const generateStatements = (nameAndPlugin) => {
 	const nameLowerCase = name.toLowerCase();
 	const p = new Slangroom(plugin).getPlugin();
 	const pluginStatement = `${name}Statement`;
-	const pluginAction = `${name}Action`;
 	SlangroomPluginsStatements.push(pluginStatement);
 	const pluginStatementsTable = [];
-	const pluginActionsTable = [];
 	p.forEach(([k]) => {
 		let openConnect = '';
 		let sendParams = '';
@@ -83,9 +80,8 @@ const generateStatements = (nameAndPlugin) => {
 			statementGrammar += permutations(sends).map((perm) => perm.join('')).join('|');
 			if (k.params.length > 1) statementGrammar += `) `;
 		}
-		statementGrammar += `${k.phrase} (and? SaveAction)*`;
+		statementGrammar += `Action<${k.phrase}> (and? SaveAction)*`;
 		pluginStatementsTable.push(statementGrammar);
-		pluginActionsTable.push(k.phrase);
 
 		withParams = withParams.slice(0, -2);
 		whereParams = whereParams.slice(0, -2);
@@ -109,7 +105,6 @@ const generateStatements = (nameAndPlugin) => {
 		);
 	});
 	pluginSpecificStatements += `\n${pluginStatement} {\n    ${pluginStatementsTable.join(' |\n    ')}\n}`;
-	pluginActions += `\n${pluginAction} {\n    ${pluginActionsTable.join(' |\n    ')}\n}`;
 }
 
 [
@@ -133,4 +128,4 @@ const generateStatements = (nameAndPlugin) => {
 
 await pfs.writeFile('../src/complete_statement.ts', `export const fullStatementTemplates = ${JSON.stringify(fullStatementTemplates, null, 4)}`, 'utf-8')
 const syntaxGrammar = await pfs.readFile('./syntax.grammar.template', 'utf-8');
-await pfs.writeFile('../src/syntax.grammar', syntaxGrammar.replace("{{ Plugin-Specific Statements }}", pluginSpecificStatements).replace("{{ Plugin-Actions }}",pluginActions), 'utf-8');
+await pfs.writeFile('../src/syntax.grammar', syntaxGrammar.replace("{{ Plugin-Specific Statements }}", pluginSpecificStatements), 'utf-8');
