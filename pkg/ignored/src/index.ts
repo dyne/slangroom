@@ -70,9 +70,9 @@ export const getIgnoredStatements = async (
 	const invalidLinesNos: number[] = zout.result.invalid.map((x) => x[1]);
 	const ruleUnknownIgnore = JSON.parse(zout.logs).some((x: string) => x.toLowerCase().includes('rule unknown ignore'));;
 	return {
-		ignoredLines: zout.result.ignored.map((x) => [x[0].trim(), x[1]]),
+		ignoredLines: zout.result.ignored.map((x) => [x[0].trim(), x[1] - 1]),
 		invalidLines: zout.result.invalid.map((x) => {
-			return { message: new InvalidStatementError(x[2], !ruleUnknownIgnore && couldBeIgnored(x[1], contract, invalidLinesNos)), lineNo: x[1] };
+			return { message: new InvalidStatementError(x[2], !ruleUnknownIgnore && couldBeIgnored(x[1], contract, invalidLinesNos)), lineNo: x[1] - 1 };
 		})
 	};
 };

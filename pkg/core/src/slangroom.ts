@@ -31,6 +31,8 @@ type GenericError = {
 	start?: number,
 	end?: number
 }
+
+const RUI = 'Rule unknown ignore\n';
 /**
  * The entrypoint to the Slangroom software.
  *
@@ -89,7 +91,7 @@ export class Slangroom {
 		// substitute all tabs with 4 spaces in contract for better error reporting
 		contract = contract.replaceAll('\t', '    ');
 		const paramsGiven = requirifyZenParams(optParams);
-		const { ignoredLines, invalidLines } = await getIgnoredStatements(contract);
+		const { ignoredLines, invalidLines } = await getIgnoredStatements(`${RUI}${contract}`);
 		if (typeof invalidLines[0] !== "undefined") {thorwErrors(invalidLines, contract)}
 		// lex
 		const lexedResult = ignoredLines.map((ignored) => lex(...ignored));
@@ -112,7 +114,7 @@ export class Slangroom {
 			else if (ast.intoSecret) paramsGiven.keys[ast.intoSecret] = res.value;
 		}
 
-		const zout = await zencodeExec(contract, paramsGiven);
+		const zout = await zencodeExec(`${RUI}${contract}`, paramsGiven);
 		const paramsThen: ZenParams = { data: zout.result, keys: paramsGiven.keys };
 
 		const cstThens = parsedLines.filter((x) => x.givenThen === 'then');
