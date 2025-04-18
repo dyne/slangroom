@@ -84,6 +84,7 @@ node_modules
 !/grammar/src/lint.ts
 !/grammar/utils/package.json
 !/grammar/utils/prepare_complete.mjs
+!/grammar/utils/syntax.grammar.template
 
 # oauth test stuff
 pkg/oauth/test/didroom_microservices/

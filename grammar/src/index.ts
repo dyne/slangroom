@@ -37,8 +37,7 @@ export const SlangroomLanguage = LRLanguage.define({
 				'have send open connect print output': t.keyword,
 				'rule VersionRule! GenericRule!': t.heading,
 				'scenario ScenarioType/... ScenarioComment!': t.heading1,
-				'DbAction! EthereumAction! FsAction! GitAction! HelpersAction! HttpAction! JsonSchemaAction! OAuthAction! PocketbaseAction! QrCodeAction! RedisAction! ShellAction! TimestampAction! WalletAction! ZencodeAction!':
-					t.heading2,
+				'Action!': t.heading2,
 				StringLiteral: t.string,
 				Comment: t.lineComment,
 			}),
