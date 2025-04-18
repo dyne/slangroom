@@ -18,8 +18,8 @@ test('Db should execute raw queries', async (t) => {
 	Given I connect to 'database' and send statement 'query_2'  and execute sql statement and output into 'result_2'
 	Given I connect to 'database' and send statement 'query_3'  and execute sql statement and output into 'result_3'
 	Given I connect to 'database' and send statement 'query_4'  and execute sql statement and output into 'result_4'
-	Given I connect to 'database' and send statement 'query_5' and send parameters 'query5_params'  and execute sql statement with parameters and output into 'result_5'
-	Given I connect to 'database' and send statement 'query_6' and send parameters 'query6_params'  and execute sql statement with parameters and output into 'result_6'
+	Given I connect to 'database' and send statement 'query_5' and send parameters 'query5_params'  and execute parametrized sql statement and output into 'result_5'
+	Given I connect to 'database' and send statement 'query_6' and send parameters 'query6_params'  and execute parametrized sql statement and output into 'result_6'
 	Given I have a 'string dictionary' named 'result_1'
 	Given I have a 'string dictionary' named 'result_2'
 	Given I have a 'string dictionary' named 'result_3'
@@ -85,7 +85,7 @@ test('Db should execute raw queries', async (t) => {
 test('Db should fail for wrong database', async (t) => {
 	const rawQuery = `Rule unknown ignore
 	Given I connect to 'database' and send statement 'query_1' and execute sql statement and output into 'result_1'
-	Given I connect to 'database' and send statement 'query_5' and send parameters 'query5_params'  and execute sql statement with parameters and output into 'result_5'
+	Given I connect to 'database' and send statement 'query_5' and send parameters 'query5_params'  and execute parametrized sql statement and output into 'result_5'
 	Given I have a 'string dictionary' named 'result_1'
 	Given I have a 'string dictionary' named 'result_5'
 	Then print all data
@@ -105,7 +105,7 @@ test('Db should fail for wrong database', async (t) => {
 		`0 | Rule unknown ignore
 1 |     Given I connect to 'database' and send statement 'query_1' and execute sql statement and output into 'result_1'
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-2 |     Given I connect to 'database' and send statement 'query_5' and send parameters 'query5_params'  and execute sql statement with parameters and output into 'result_5'
+2 |     Given I connect to 'database' and send statement 'query_5' and send parameters 'query5_params'  and execute parametrized sql statement and output into 'result_5'
 3 |     Given I have a 'string dictionary' named 'result_1'
 
 Error colors:
@@ -132,7 +132,7 @@ Heap:
 test('Db should fail for wrong statement', async (t) => {
 	const rawQuery = `Rule unknown ignore
 	Given I connect to 'database' and send statement 'query_1' and execute sql statement and output into 'result_1'
-	Given I connect to 'database' and send statement 'query_5' and send parameters 'query5_params'  and execute sql statement with parameters and output into 'result_5'
+	Given I connect to 'database' and send statement 'query_5' and send parameters 'query5_params'  and execute parametrized sql statement and output into 'result_5'
 	Given I have a 'string dictionary' named 'result_1'
 	Given I have a 'string dictionary' named 'result_5'
 	Then print all data
@@ -152,7 +152,7 @@ test('Db should fail for wrong statement', async (t) => {
 		`0 | Rule unknown ignore
 1 |     Given I connect to 'database' and send statement 'query_1' and execute sql statement and output into 'result_1'
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-2 |     Given I connect to 'database' and send statement 'query_5' and send parameters 'query5_params'  and execute sql statement with parameters and output into 'result_5'
+2 |     Given I connect to 'database' and send statement 'query_5' and send parameters 'query5_params'  and execute parametrized sql statement and output into 'result_5'
 3 |     Given I have a 'string dictionary' named 'result_1'
 
 Error colors:
