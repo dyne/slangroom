@@ -11,7 +11,7 @@ Comment {
 }
 
 SlangroomStatement {
-    (GivenStatement | ThenStatement | ThenPrint | GivenHaveStatement | GivenName | WhenStatement | IfEndifStatement |ForEachStatement)
+    (GtStatement | PcStatement | ThenPrint | GivenHaveStatement | GivenName | WhenStatement | IfEndifStatement |ForEachStatement)
 }
 
 // ===== Rule =====
@@ -61,13 +61,13 @@ WhenStatement {
     when I (Identifier | Keywords | StringLiteral)+ (newline and I (Identifier | Keywords | StringLiteral)+)* (newline+ | eof)
 }
 IfEndifStatement{
-    Condition+ ( GivenStatement | WhenStatement |  ThenStatement | ThenPrint)* endif ( newline+ | eof )
+    Condition (IfEndifStatement | WhenStatement | ThenPrint)* endif ( newline+ | eof )
 }
 Condition {
     if I verify (Identifier | Keywords | StringLiteral)+ ( newline+ | eof )
 }
 ForEachStatement {
-    foreach (StringLiteral | Identifier | Keywords) (in | inside) (StringLiteral | Identifier | Keywords)+  newline+ (GivenStatement | WhenStatement |  ThenStatement | ThenPrint)*
+    foreach (StringLiteral | Identifier | Keywords) (in | inside) (StringLiteral | Identifier | Keywords)+  newline+ (ForEachStatement | IfEndifStatement | WhenStatement)*
     endforeach ( newline+ | eof )
 }
 ThenPrint {
@@ -75,15 +75,14 @@ ThenPrint {
 }
 
 // ===== Slangroom Statements =====
-GivenStatement {
-    given I
-    (DbStatement | EthereumStatement | FsStatement | GitStatement | HelpersStatement | HttpStatement | JsonSchemaStatement | OAuthStatement | PocketbaseStatement | QrCodeStatement | RdfStatement | RedisStatement | ShellStatement | TimestampStatement | WalletStatement | ZencodeStatement)
+GtStatement {
+    (given | then) I
+    ({{ GtStatements }})
     ( newline+ | eof )
 }
-
-ThenStatement {
-    then I
-    (DbStatement | EthereumStatement | FsStatement | GitStatement | HelpersStatement | HttpStatement | JsonSchemaStatement | OAuthStatement | PocketbaseStatement | QrCodeStatement | RdfStatement | RedisStatement | ShellStatement | TimestampStatement | WalletStatement | ZencodeStatement)
+PcStatement {
+    (prepare | compute) StringLiteral?':'
+    ({{ PcStatements }})
     ( newline+ | eof )
 }
 
@@ -94,11 +93,19 @@ ThenStatement {
 // ===== Actions =====
 
 Action<term> {
-	term
+    term
 }
 
 SaveAction {
-	output (Keywords | Identifier | StringLiteral)? into StringLiteral
+    output (Keywords | Identifier | StringLiteral)? into StringLiteral
+}
+
+ActionExecuteSqlStatementWithParameters  {
+    Action<execute sql statement WithParameters>
+}
+
+WithParameters {
+    with parameters
 }
 
 // ===== Keywords and Token =====
@@ -133,7 +140,8 @@ Keywords {
 	into[@name=into], redis[@name=redis], delete[@name=delete], shell[@name=shell], fetch[@name=fetch], local[@name=local], timestamp[@name=timestamp], milliseconds[@name=milliseconds], seconds[@name=seconds], present[@name=present]
 	vc[@name=vc], sd[@name=sd], jwt[@name=jwt], public[@name=public], pretty[@name=pretty], print[@name=print], zencode[@name=zencode], output[@name=output], is[@name=is], then[@name=then],
 	when[@name=when], rule[@name=rule], scenario[@name=scenario], if[@name=if], endif[@name=endif], foreach[@name=foreach], endforeach[@name=endforeach], I[@name=I], p256[@name=p256], p-256[@name=p-256],
-	redirect_uri[@name=redirect_uri], refresh[@name=refresh], dictionary[@name=dictionary], serialized[@name=serialized], canonical[@name=canonical], rdf[@name=rdf], issuer[@name=issuer]
+	redirect_uri[@name=redirect_uri], refresh[@name=refresh], dictionary[@name=dictionary], serialized[@name=serialized], canonical[@name=canonical], rdf[@name=rdf], issuer[@name=issuer],
+	prepare[@name=prepare], compute[@name=compute], where[@name=where]
 }
 
 @tokens {

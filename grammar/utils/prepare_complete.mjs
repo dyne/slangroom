@@ -24,12 +24,12 @@ import { shell } from "@slangroom/shell";
 import { timestamp } from "@slangroom/timestamp";
 import { wallet } from "@slangroom/wallet";
 import { zencode } from "@slangroom/zencode";
-import { pbkdf2 } from 'crypto';
 
 const fullStatementTemplates = [];
 
 let pluginSpecificStatements = '';
-const SlangroomPluginsStatements = [];
+let statementsGt = '';
+let statementsPc = '';
 
 const permutations = (arr) => {
 	if (arr.length <= 1) return [arr];
@@ -51,37 +51,52 @@ const generateStatements = (nameAndPlugin) => {
 	const nameLowerCase = name.toLowerCase();
 	const p = new Slangroom(plugin).getPlugin();
 	const pluginStatement = `${name}Statement`;
-	SlangroomPluginsStatements.push(pluginStatement);
-	const pluginStatementsTable = [];
+	const pluginStatementsTableGt = [];
+	const pluginStatementsTablePc = [];
 	p.forEach(([k]) => {
 		let openConnect = '';
 		let sendParams = '';
 		let withParams = '';
 		let whereParams = '';
-		let statementGrammar = '';
+		let statementGrammarGt = '';
+		let statementGrammarPc = '';
 		if (k.openconnect) {
 			if (k.openconnect === 'connect') {
 				openConnect = `connect to '' and `;
-				statementGrammar = `connect to StringLiteral and `;
+				statementGrammarPc = statementGrammarGt = `connect to StringLiteral and `;
 			} else if (k.openconnect === 'open') {
 				openConnect = `open '' and `;
-				statementGrammar = `open StringLiteral and `;
+				statementGrammarPc = statementGrammarGt = `open StringLiteral and `;
 			}
 		}
+
+
+		statementGrammarPc += `Action<${k.phrase}>`;
 		let sends = [];
+		let whereWith = [];
 		if (k.params) {
-			if (k.params.length > 1) statementGrammar += `( `;
+			statementGrammarPc += ` (with | where) `;
+			if (k.params.length > 1) {
+				statementGrammarGt += `( `;
+				statementGrammarPc += `(`;
+			}
 			k.params.forEach((param) => {
 				sends.push(`send ${param} StringLiteral and `);
+				whereWith.push(` ${param} is? StringLiteral`);
 				sendParams += `send ${param} '' and `;
 				withParams += `${param} '', `;
 				whereParams += `${param} is '', `;
 			})
-			statementGrammar += permutations(sends).map((perm) => perm.join('')).join('|');
-			if (k.params.length > 1) statementGrammar += `) `;
+			statementGrammarGt += permutations(sends).map((perm) => perm.join('')).join('|');
+			statementGrammarPc += permutations(whereWith).map((perm) => perm.join('","')).join('|');
+			if (k.params.length > 1) {
+				statementGrammarGt += `) `;
+				statementGrammarPc += `) `;
+			}
 		}
-		statementGrammar += `Action<${k.phrase}> (and? SaveAction)*`;
-		pluginStatementsTable.push(statementGrammar);
+		statementGrammarGt += `Action<${k.phrase}> (and? SaveAction)*`;
+		pluginStatementsTableGt.push(statementGrammarGt);
+		pluginStatementsTablePc.push(statementGrammarPc);
 
 		withParams = withParams.slice(0, -2);
 		whereParams = whereParams.slice(0, -2);
@@ -104,7 +119,10 @@ const generateStatements = (nameAndPlugin) => {
 			{ label: `${nameLowerCase} compute '': ${whereStatement.toLowerCase()}`, displayLabel: `Compute '': ${whereStatement}`, type: "keyword", info: `[${name}]` },
 		);
 	});
-	pluginSpecificStatements += `\n${pluginStatement} {\n    ${pluginStatementsTable.join(' |\n    ')}\n}`;
+	pluginSpecificStatements += `\nGt${pluginStatement} {\n    ${pluginStatementsTableGt.join(' |\n    ')}\n}`;
+	pluginSpecificStatements += `\nPc${pluginStatement} {\n    ${pluginStatementsTablePc.join(' |\n    ')}\n}`;
+	statementsGt += `Gt${pluginStatement} |`;
+	statementsPc += `Pc${pluginStatement} |`;
 }
 
 [
@@ -128,4 +146,4 @@ const generateStatements = (nameAndPlugin) => {
 
 await pfs.writeFile('../src/complete_statement.ts', `export const fullStatementTemplates = ${JSON.stringify(fullStatementTemplates, null, 4)}`, 'utf-8')
 const syntaxGrammar = await pfs.readFile('./syntax.grammar.template', 'utf-8');
-await pfs.writeFile('../src/syntax.grammar', syntaxGrammar.replace("{{ Plugin-Specific Statements }}", pluginSpecificStatements), 'utf-8');
+await pfs.writeFile('../src/syntax.grammar', syntaxGrammar.replace("{{ Plugin-Specific Statements }}", pluginSpecificStatements).replace("{{ GtStatements }}", statementsGt.slice(0, -2)).replace("{{ PcStatements }}", statementsPc.slice(0, -2)), 'utf-8');
