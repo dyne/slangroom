@@ -95,6 +95,9 @@ importers:
       '@slangroom/qrcode':
         specifier: workspace:^
         version: link:../../pkg/qrcode
+      '@slangroom/rdf':
+        specifier: workspace:^
+        version: link:../../pkg/rdf
       '@slangroom/redis':
         specifier: workspace:^
         version: link:../../pkg/redis
@@ -258,6 +261,9 @@ importers:
       '@slangroom/qrcode':
         specifier: workspace:*
         version: link:../qrcode
+      '@slangroom/timestamp':
+        specifier: workspace:*
+        version: link:../timestamp
     devDependencies:
       '@playwright/test':
         specifier: ^1.50.1

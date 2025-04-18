@@ -219,6 +219,11 @@ neither the open/connect part nor the parameters part are present.
 | ------------ | ------ | -------------- |
 |              | text   | create qr code |
 
+## rdf plugin
+| open/connect | params     | phrase                            |
+| ------------ | ---------- | --------------------------------- |
+|              | dictionary | generate serialized canonical rdf |
+
 ## redis plugin
 | open/connect | params     | phrase                         |
 | ------------ | ---------- | ------------------------------ |

@@ -26,6 +26,10 @@ test('check results of slangroom', async ({ page }) => {
 	await expect(page.locator('#test-pocketbase-3')).toContainText(
 		"{\"output\":[\"token_refreshed\"]}"
 	);
+
+	await expect(page.locator('#test-timestamp')).toContainText(
+		/{"timestamp":\d{10}}/
+	);
 });
 
 test('check @slangroom/location', async ({ browser, page }) => {

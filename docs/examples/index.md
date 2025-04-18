@@ -422,6 +422,15 @@
 <<< @/../examples/qrcode/qr_code.keys.json{json}
 :::
 
+## rdf plugin examples
+
+### create rdf serialization of a jsonld
+::: code-group
+<<< @/../examples/rdf/rdf_serilize.slang{3 gherkin:line-numbers}
+<<< @/../examples/rdf/rdf_serilize.data.json{json}
+<<< @/../examples/rdf/rdf_serilize.keys.json{json}
+:::
+
 ## redis plugin examples
 
 ### delete key from redis
