@@ -8,9 +8,10 @@
 		"@slangroom/json-schema": "workspace:*",
 		"@slangroom/location": "workspace:*",
 		"@slangroom/pocketbase": "workspace:*",
-		"@slangroom/qrcode": "workspace:*"
+		"@slangroom/qrcode": "workspace:*",
+		"@slangroom/timestamp": "workspace:*"
 	},
-	"version": "1.45.1",
+	"version": "1.45.2",
 	"repository": "https://github.com/dyne/slangroom",
 	"license": "AGPL-3.0-only",
 	"type": "module",

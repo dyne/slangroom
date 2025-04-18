@@ -9,6 +9,7 @@ import { pocketbase, version as pocketbaseVersion } from '@slangroom/pocketbase'
 import { helpers, version as helpersVersion } from '@slangroom/helpers';
 import { JSONSchema, version as jsonSchemaVersion } from '@slangroom/json-schema';
 import { location, version as locationVersion } from '@slangroom/location';
+import { timestamp, version as timestampVersion } from '@slangroom/timestamp';
 import { zenroomVersion } from '@slangroom/deps/zenroom';
 import packageJson from '@slangroom/browser/package.json' with { type: 'json' };
 
@@ -38,6 +39,10 @@ const plugins_dict = {
 	location: {
 		plugin: location,
 		version: locationVersion
+	},
+	timestamp: {
+		plugin: timestamp,
+		version: timestampVersion
 	}
 };
 

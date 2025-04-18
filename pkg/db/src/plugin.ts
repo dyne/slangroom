@@ -105,7 +105,7 @@ export const execute = p.new('connect',
 
 export const executeParams = p.new('connect',
 	['statement', 'parameters'],
-	'execute sql statement with parameters',
+	'execute parametrized sql statement',
 	async (ctx) => {
 		const statement = ctx.fetch('statement') as string;
 		const parameters = ctx.fetch('parameters') as BindOrReplacements;
