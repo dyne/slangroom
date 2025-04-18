@@ -92,9 +92,12 @@ export class Slangroom {
 		contract = contract.replaceAll('\t', '    ');
 		const paramsGiven = requirifyZenParams(optParams);
 		const { ignoredLines, invalidLines } = await getIgnoredStatements(`${RUI}${contract}`);
-		if (typeof invalidLines[0] !== "undefined") {thorwErrors(invalidLines, contract)}
+		if (typeof invalidLines[0] !== "undefined") {thorwErrors(invalidLines.map((x: {message: Error, lineNo: number}) => {
+			x.lineNo = x.lineNo - 1;
+			return x;
+		}), contract)}
 		// lex
-		const lexedResult = ignoredLines.map((ignored) => lex(...ignored));
+		const lexedResult = ignoredLines.map((ignored) => lex(ignored[0], ignored[1] - 1));
 		const lexedErrors = lexedResult.flatMap((x) => {if (!x.ok) return x.error; return [];});
 		if (typeof lexedErrors[0] !== "undefined") thorwErrors(lexedErrors, contract);
 		const lexedLines = lexedResult.flatMap((x) => {if(x.ok) return [x.value]; return [];});
