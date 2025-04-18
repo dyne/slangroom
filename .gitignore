@@ -88,6 +88,9 @@ node_modules
 # oauth test stuff
 pkg/oauth/test/didroom_microservices/
 !/pkg/oauth/test/start_microservices.sh
+!/pkg/oauth/test/authz_server.keys.json
+!/pkg/oauth/test/credential_issuer.keys.json
+!/pkg/oauth/test/relying_party.keys.json
 
 # mise stuff
 !/mise.toml

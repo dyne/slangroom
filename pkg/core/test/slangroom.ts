@@ -126,3 +126,20 @@ test("save secret variables", async (t) => {
 	);
 	t.deepEqual(res.result, { 'no more secret': 'secret stuff', 'not_a_secret': 'not a secret' }, res.logs);
 });
+
+test("multiple rule unknown ignore", async (t) => {
+	const p0 = new Plugin();
+	p0.new('do some stuff', (ctx) => ctx.pass('stuff done'));
+	const slangroom = new Slangroom(p0);
+	const res = await slangroom.execute(`Rule unknown ignore
+		Rule unknown ignore
+		Rule unknown ignore
+		Rule unknown ignore
+		Given I do some stuff and output into 'done'
+
+		Given I have a 'string' named 'done'
+		Then print 'done'
+		`,
+	);
+	t.deepEqual(res.result, { 'done': 'stuff done' }, res.logs);
+});
