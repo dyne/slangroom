@@ -258,6 +258,9 @@ importers:
       '@slangroom/qrcode':
         specifier: workspace:*
         version: link:../qrcode
+      '@slangroom/timestamp':
+        specifier: workspace:*
+        version: link:../timestamp
     devDependencies:
       '@playwright/test':
         specifier: ^1.50.1

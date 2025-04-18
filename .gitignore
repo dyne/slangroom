@@ -88,3 +88,6 @@ node_modules
 # oauth test stuff
 pkg/oauth/test/didroom_microservices/
 !/pkg/oauth/test/start_microservices.sh
+
+# mise stuff
+!/mise.toml
