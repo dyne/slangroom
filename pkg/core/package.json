@@ -1,6 +1,6 @@
 {
 	"name": "@slangroom/core",
-	"version": "1.45.2",
+	"version": "1.45.3",
 	"dependencies": {
 		"@slangroom/deps": "workspace:*",
 		"@slangroom/ignored": "workspace:*",
