@@ -28,7 +28,7 @@ import { zencode } from "@slangroom/zencode";
 const fullStatementTemplates = [];
 // preset of world that are external to the core of slangroom statements
 const words = [
-	'given', 'then', 'I', 'prepare', 'compute', 'open', 'connect', 'to', 'send', 'and', 'where', 'is', 'with', 'output', 'into', // slangroom
+	'given', 'then', 'I', 'prepare', 'compute', 'open', 'connect', 'to', 'send', 'and', 'where', 'is', 'with', 'output', 'secret', 'into', // slangroom
 	'scenario', 'rule', 'version', 'unknown', 'ignore', // begin of contract
 	'when', 'foreach', 'endforeach', 'if', 'endif', // zencode start of sentences different from given and then
 	'that', 'have', 'a', 'my', 'the', 'valid', 'named', 'in', 'inside', 'am', 'name', 'known', 'as', 'verify', 'print' //usefull zencode keywords
@@ -126,12 +126,12 @@ const generateStatements = (nameAndPlugin) => {
 			{ label: `${nameLowerCase} then ${lowerCaseStatement} and output into ''`, displayLabel: `Then ${statement} and output into ''`, type: "keyword", info: `[${name}]` },
 			{ label: `${nameLowerCase} compute '': ${withStatement.toLowerCase()}`, displayLabel: `Compute '': ${withStatement}`, type: "keyword", info: `[${name}]` },
 			{ label: `${nameLowerCase} compute '': ${whereStatement.toLowerCase()}`, displayLabel: `Compute '': ${whereStatement}`, type: "keyword", info: `[${name}]` },
-			{ label: `${nameLowerCase} given ${lowerCaseStatement} and output secret into ''`, displayLabel: `Given ${statement} and output into ''`, type: "keyword", info: `[${name}]` },
-			{ label: `${nameLowerCase} prepare secret '': ${withStatement.toLowerCase()}`, displayLabel: `Prepare '': ${withStatement}`, type: "keyword", info: `[${name}]` },
-			{ label: `${nameLowerCase} prepare secret '': ${whereStatement.toLowerCase()}`, displayLabel: `Prepare '': ${whereStatement}`, type: "keyword", info: `[${name}]` },
-			{ label: `${nameLowerCase} then ${lowerCaseStatement} and output secret into ''`, displayLabel: `Then ${statement} and output into ''`, type: "keyword", info: `[${name}]` },
-			{ label: `${nameLowerCase} compute secret '': ${withStatement.toLowerCase()}`, displayLabel: `Compute '': ${withStatement}`, type: "keyword", info: `[${name}]` },
-			{ label: `${nameLowerCase} compute secret '': ${whereStatement.toLowerCase()}`, displayLabel: `Compute '': ${whereStatement}`, type: "keyword", info: `[${name}]` }
+			{ label: `${nameLowerCase} given ${lowerCaseStatement} and output secret into ''`, displayLabel: `Given ${statement} and output secret into ''`, type: "keyword", info: `[${name}]` },
+			{ label: `${nameLowerCase} prepare secret '': ${withStatement.toLowerCase()}`, displayLabel: `Prepare secret '': ${withStatement}`, type: "keyword", info: `[${name}]` },
+			{ label: `${nameLowerCase} prepare secret '': ${whereStatement.toLowerCase()}`, displayLabel: `Prepare secret '': ${whereStatement}`, type: "keyword", info: `[${name}]` },
+			{ label: `${nameLowerCase} then ${lowerCaseStatement} and output secret into ''`, displayLabel: `Then ${statement} and output secret into ''`, type: "keyword", info: `[${name}]` },
+			{ label: `${nameLowerCase} compute secret '': ${withStatement.toLowerCase()}`, displayLabel: `Compute secret '': ${withStatement}`, type: "keyword", info: `[${name}]` },
+			{ label: `${nameLowerCase} compute secret '': ${whereStatement.toLowerCase()}`, displayLabel: `Compute secret '': ${whereStatement}`, type: "keyword", info: `[${name}]` }
 		);
 	});
 	pluginSpecificStatements += `\nGt${pluginStatement} {\n    ${pluginStatementsTableGt.join(' |\n    ')}\n}`;
