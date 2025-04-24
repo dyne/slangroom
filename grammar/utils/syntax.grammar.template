@@ -141,7 +141,7 @@ Keywords {
 	vc[@name=vc], sd[@name=sd], jwt[@name=jwt], public[@name=public], pretty[@name=pretty], print[@name=print], zencode[@name=zencode], output[@name=output], is[@name=is], then[@name=then],
 	when[@name=when], rule[@name=rule], scenario[@name=scenario], if[@name=if], endif[@name=endif], foreach[@name=foreach], endforeach[@name=endforeach], I[@name=I], p256[@name=p256], p-256[@name=p-256],
 	redirect_uri[@name=redirect_uri], refresh[@name=refresh], dictionary[@name=dictionary], serialized[@name=serialized], canonical[@name=canonical], rdf[@name=rdf], issuer[@name=issuer],
-	prepare[@name=prepare], compute[@name=compute], where[@name=where]
+	prepare[@name=prepare], compute[@name=compute], where[@name=where], parametrized[@name=parametrized]
 }
 
 @tokens {
