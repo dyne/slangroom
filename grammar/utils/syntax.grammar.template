@@ -81,7 +81,7 @@ GtStatement {
     ( newline+ | eof )
 }
 PcStatement {
-    (prepare | compute) StringLiteral?':'
+    (prepare | compute) secret? StringLiteral?':'
     ({{ PcStatements }})
     ( newline+ | eof )
 }
@@ -97,7 +97,7 @@ Action<term> {
 }
 
 SaveAction {
-    output (Keywords | Identifier | StringLiteral)? into StringLiteral
+    output secret? into StringLiteral
 }
 
 ActionExecuteSqlStatementWithParameters  {

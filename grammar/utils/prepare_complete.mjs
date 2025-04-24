@@ -126,6 +126,12 @@ const generateStatements = (nameAndPlugin) => {
 			{ label: `${nameLowerCase} then ${lowerCaseStatement} and output into ''`, displayLabel: `Then ${statement} and output into ''`, type: "keyword", info: `[${name}]` },
 			{ label: `${nameLowerCase} compute '': ${withStatement.toLowerCase()}`, displayLabel: `Compute '': ${withStatement}`, type: "keyword", info: `[${name}]` },
 			{ label: `${nameLowerCase} compute '': ${whereStatement.toLowerCase()}`, displayLabel: `Compute '': ${whereStatement}`, type: "keyword", info: `[${name}]` },
+			{ label: `${nameLowerCase} given ${lowerCaseStatement} and output secret into ''`, displayLabel: `Given ${statement} and output into ''`, type: "keyword", info: `[${name}]` },
+			{ label: `${nameLowerCase} prepare secret '': ${withStatement.toLowerCase()}`, displayLabel: `Prepare '': ${withStatement}`, type: "keyword", info: `[${name}]` },
+			{ label: `${nameLowerCase} prepare secret '': ${whereStatement.toLowerCase()}`, displayLabel: `Prepare '': ${whereStatement}`, type: "keyword", info: `[${name}]` },
+			{ label: `${nameLowerCase} then ${lowerCaseStatement} and output secret into ''`, displayLabel: `Then ${statement} and output into ''`, type: "keyword", info: `[${name}]` },
+			{ label: `${nameLowerCase} compute secret '': ${withStatement.toLowerCase()}`, displayLabel: `Compute '': ${withStatement}`, type: "keyword", info: `[${name}]` },
+			{ label: `${nameLowerCase} compute secret '': ${whereStatement.toLowerCase()}`, displayLabel: `Compute '': ${whereStatement}`, type: "keyword", info: `[${name}]` }
 		);
 	});
 	pluginSpecificStatements += `\nGt${pluginStatement} {\n    ${pluginStatementsTableGt.join(' |\n    ')}\n}`;
