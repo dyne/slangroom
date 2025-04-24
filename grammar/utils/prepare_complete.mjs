@@ -26,6 +26,13 @@ import { wallet } from "@slangroom/wallet";
 import { zencode } from "@slangroom/zencode";
 
 const fullStatementTemplates = [];
+// preset of world that are external to the core of slangroom statements
+const words = [
+	'given', 'then', 'I', 'prepare', 'compute', 'open', 'connect', 'to', 'send', 'and', 'where', 'is', 'with', 'output', 'into', // slangroom
+	'scenario', 'rule', 'version', 'unknown', 'ignore', // begin of contract
+	'when', 'foreach', 'endforeach', 'if', 'endif', // zencode start of sentences different from given and then
+	'that', 'have', 'a', 'my', 'the', 'valid', 'named', 'in', 'inside', 'am', 'name', 'known', 'as', 'verify', 'print' //usefull zencode keywords
+];
 
 let pluginSpecificStatements = '';
 let statementsGt = '';
@@ -81,6 +88,7 @@ const generateStatements = (nameAndPlugin) => {
 				statementGrammarPc += `(`;
 			}
 			k.params.forEach((param) => {
+				if (!words.includes(param)) words.push(param);
 				sends.push(`send ${param} StringLiteral and `);
 				whereWith.push(` ${param} is? StringLiteral`);
 				sendParams += `send ${param} '' and `;
@@ -95,6 +103,7 @@ const generateStatements = (nameAndPlugin) => {
 			}
 		}
 		statementGrammarGt += `Action<${k.phrase}> (and? SaveAction)*`;
+		k.phrase.split(' ').filter(w => w !== "''" && !words.includes(w)).forEach((w) => words.push(w));
 		pluginStatementsTableGt.push(statementGrammarGt);
 		pluginStatementsTablePc.push(statementGrammarPc);
 
@@ -144,6 +153,18 @@ const generateStatements = (nameAndPlugin) => {
 	['Zencode', zencode]
 ].forEach((x) => generateStatements(x))
 
+let tokens = '    ';
+for (const w of words) {
+	tokens += `${w}[@name=${w}], `;
+}
+
 await pfs.writeFile('../src/complete_statement.ts', `export const fullStatementTemplates = ${JSON.stringify(fullStatementTemplates, null, 4)}`, 'utf-8')
 const syntaxGrammar = await pfs.readFile('./syntax.grammar.template', 'utf-8');
-await pfs.writeFile('../src/syntax.grammar', syntaxGrammar.replace("{{ Plugin-Specific Statements }}", pluginSpecificStatements).replace("{{ GtStatements }}", statementsGt.slice(0, -2)).replace("{{ PcStatements }}", statementsPc.slice(0, -2)), 'utf-8');
+await pfs.writeFile(
+	'../src/syntax.grammar',
+	syntaxGrammar
+		.replace("{{ Plugin-Specific Statements }}", pluginSpecificStatements)
+		.replace("{{ GtStatements }}", statementsGt.slice(0, -2))
+		.replace("{{ PcStatements }}", statementsPc.slice(0, -2))
+		.replace("{{ External-Tokens }}", tokens.slice(0, -2)),
+	'utf-8');

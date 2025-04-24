@@ -173,7 +173,6 @@ import {
 	vc,
 	sd,
 	jwt,
-	p256,
 	_public,
 	pretty,
 	print,
@@ -385,7 +384,6 @@ const keywordMap = {
 	foreach,
 	endforeach,
 	I,
-	p256,
 };
 
 export function keywords(name) {
