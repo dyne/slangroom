@@ -33,7 +33,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const ourDirPath = path.resolve(__dirname, "./");
 const descriptionPath = ourDirPath + '/description.md'
 const description = fs.readFileSync(descriptionPath);
-let mdDocumentation = `${description}\n## Tables of all slangroom statements\n\n`;
+let mdDocumentation = `${description}\n`;
 
 // utility to check that all packages are documented
 const pkgPath = path.resolve(__dirname, "../../pkg");
