@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 @top Statement {
-    ( RuleStatement | ScenarioStatement | RuleStatement |  SlangroomStatement | Comment )*
+    ( RuleStatement | ScenarioStatement | RuleStatement | SlangroomStatement | Comment )*
 }
 
 Comment {
@@ -97,7 +97,7 @@ Action<term> {
 }
 
 SaveAction {
-    output secret? into StringLiteral
+    and output secret? into StringLiteral
 }
 
 ActionExecuteSqlStatementWithParameters  {

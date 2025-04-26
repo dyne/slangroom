@@ -1,6 +1,6 @@
 # Single statement
 
-Given I fetch the local timestamp in seconds
+prepare secret 'secrets': read file content where path is 'secrets_path'
 
 ==>
 Statement(SlangroomStatement(GtStatement(given,I,GtTimestampStatement(Action(fetch,the,local,timestamp,in,seconds)))))

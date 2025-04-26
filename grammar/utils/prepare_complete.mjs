@@ -82,7 +82,7 @@ const generateStatements = (nameAndPlugin) => {
 		let sends = [];
 		let whereWith = [];
 		if (k.params) {
-			statementGrammarPc += ` (with | where) `;
+			statementGrammarPc += ` (with | where)`;
 			if (k.params.length > 1) {
 				statementGrammarGt += `( `;
 				statementGrammarPc += `(`;
@@ -102,7 +102,7 @@ const generateStatements = (nameAndPlugin) => {
 				statementGrammarPc += `) `;
 			}
 		}
-		statementGrammarGt += `Action<${k.phrase}> (and? SaveAction)*`;
+		statementGrammarGt += `Action<${k.phrase}> SaveAction?`;
 		k.phrase.split(' ').filter(w => w !== "''" && !words.includes(w)).forEach((w) => words.push(w));
 		pluginStatementsTableGt.push(statementGrammarGt);
 		pluginStatementsTablePc.push(statementGrammarPc);
