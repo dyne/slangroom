@@ -25,6 +25,35 @@ import { timestamp } from "@slangroom/timestamp";
 import { wallet } from "@slangroom/wallet";
 import { zencode } from "@slangroom/zencode";
 
+const reservedWords = new Set([
+	'break', 'case', 'catch', 'class', 'const', 'continue', 'debugger', 'default', 'delete', 'do', 'else', 'export', 'extends',
+	'finally', 'for', 'function', 'if', 'import', 'in', 'instanceof', 'new', 'return', 'super', 'switch', 'this', 'throw', 'try',
+	'typeof', 'var', 'void', 'while', 'with', 'yield', 'enum', 'await', 'implements', 'interface', 'let', 'package', 'private',
+	'protected', 'public', 'static'
+]);
+
+function isReservedWord(word) {
+	if (reservedWords.has(word)) return true;
+	try {
+		new Function(`var ${word};`);
+		return false;
+	} catch {
+		return true;
+	}
+}
+
+function prepareTokens(name){
+	if (isReservedWord(name)) {
+		importTokens += `\t_${name},\n`;
+		keyWordMaps += `\t${name}: _${name},\n`;
+	} else {
+		importTokens += `\t${name},\n`;
+		keyWordMaps += `\t${name},\n`;
+	}
+}
+
+let importTokens = '';
+let keyWordMaps = '';
 const fullStatementTemplates = [];
 // preset of world that are external to the core of slangroom statements
 const words = [
@@ -160,8 +189,11 @@ const generateStatements = (nameAndPlugin) => {
 ].forEach((x) => generateStatements(x))
 
 let tokens = '    ';
+let keywords = '    ';
 for (const w of words) {
 	tokens += `${w}[@name=${w}], `;
+	keywords += `${w} | `;
+	prepareTokens(w);
 }
 
 await pfs.writeFile('../src/complete_statement.ts', `export const fullStatementTemplates = ${JSON.stringify(fullStatementTemplates, null, 4)}`, 'utf-8')
@@ -172,5 +204,13 @@ await pfs.writeFile(
 		.replace("{{ Plugin-Specific Statements }}", pluginSpecificStatements)
 		.replace("{{ GtStatements }}", statementsGt.slice(0, -2))
 		.replace("{{ PcStatements }}", statementsPc.slice(0, -2))
-		.replace("{{ External-Tokens }}", tokens.slice(0, -2)),
+		.replace("{{ External-Tokens }}", tokens.slice(0, -2))
+		.replace("{{ Keywords }}", keywords.slice(0, -2)),
+	'utf-8');
+const tokensFile = await pfs.readFile('./tokens.template', 'utf-8');
+await pfs.writeFile(
+	'../src/tokens.js',
+	tokensFile
+		.replace("{{ tokens }}", importTokens.slice(0, -1))
+		.replace("{{ keywordMap }}", keyWordMaps.slice(0, -1)),
 	'utf-8');

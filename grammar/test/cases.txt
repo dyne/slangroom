@@ -1,9 +1,11 @@
 # Single statement
 
-prepare secret 'secrets': read file content where path is 'secrets_path'
+Prepare secret 'secrets': read file content where path is 'secrets_path'
 
 ==>
-Statement(SlangroomStatement(GtStatement(given,I,GtTimestampStatement(Action(fetch,the,local,timestamp,in,seconds)))))
+Statement(
+	SlangroomStatement(PcStatement(prepare,secret,StringLiteral,PcFsStatement(Action(read,file,content),where,path,is,StringLiteral)))
+)
 
 #Db example
 
@@ -18,7 +20,7 @@ Then print the 'result'
 
 Statement(
 	RuleStatement(rule,GenericRule(Keywords(unknown),Keywords(ignore))),
-	SlangroomStatement(GtStatement(given,I,GtDbStatement(connect,to,StringLiteral,and,send,record,StringLiteral,and,send,table,StringLiteral,and,Action(read,the,record,of,the,table),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtDbStatement(connect,to,StringLiteral,and,send,record,StringLiteral,and,send,table,StringLiteral,and,Action(read,the,record,of,the,table),SaveAction(and,output,into,StringLiteral)))),
 	SlangroomStatement(GivenHaveStatement(given,I,have,a,StringLiteral,named,StringLiteral)),
 	SlangroomStatement(ThenPrint(then,print,Keywords(the),StringLiteral))
 )
@@ -57,8 +59,8 @@ Then I connect to 'ethereum' and send transaction 'signed_ethereum_transaction' 
 Statement(
 	RuleStatement(rule,GenericRule(Keywords(unknown),Keywords(ignore))),
 	ScenarioStatement(scenario,ScenarioType(StringLiteral),ScenarioComment(Keywords(store),Identifier,Keywords(object),Identifier,Identifier)),
-	SlangroomStatement(GtStatement(given,I,GtEthereumStatement(connect,to,StringLiteral,and,send,address,StringLiteral,and,Action(read,the,ethereum,nonce),and,SaveAction(output,into,StringLiteral)))),
-	SlangroomStatement(GtStatement(given,I,GtEthereumStatement(connect,to,StringLiteral,and,Action(read,the,ethereum,suggested,gas,price),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtEthereumStatement(connect,to,StringLiteral,and,send,address,StringLiteral,and,Action(read,the,ethereum,nonce),SaveAction(and,output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtEthereumStatement(connect,to,StringLiteral,and,Action(read,the,ethereum,suggested,gas,price),SaveAction(and,output,into,StringLiteral)))),
 	Comment,
 	SlangroomStatement(GivenHaveStatement(given,I,have,a,StringLiteral)),
 	SlangroomStatement(GivenHaveStatement(given,I,have,a,StringLiteral)),
@@ -73,7 +75,7 @@ Statement(
 	SlangroomStatement(WhenStatement(when,I,Identifier,Keywords(the),Keywords(ethereum),Keywords(transaction),Keywords(to),Keywords(store),StringLiteral)),
 	SlangroomStatement(WhenStatement(when,I,Keywords(create),Keywords(the),Identifier,Keywords(ethereum),Keywords(transaction),Identifier,Identifier,StringLiteral)),
 	SlangroomStatement(ThenPrint(then,print,Keywords(the),StringLiteral)),
-	SlangroomStatement(GtStatement(then,I,GtEthereumStatement(connect,to,StringLiteral,and,send,transaction,StringLiteral,and,Action(read,the,ethereum,transaction,id,after,broadcast),and,SaveAction(output,into,StringLiteral))))
+	SlangroomStatement(GtStatement(then,I,GtEthereumStatement(connect,to,StringLiteral,and,send,transaction,StringLiteral,and,Action(read,the,ethereum,transaction,id,after,broadcast),SaveAction(and,output,into,StringLiteral))))
 )
 
 #Fs example
@@ -126,7 +128,7 @@ Then print the data
 
 Statement(
 	RuleStatement(rule,GenericRule(Keywords(unknown),Keywords(ignore))),
-	SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,array,StringLiteral,and,send,values,StringLiteral,and,Action(manipulate,and,concat),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,array,StringLiteral,and,send,values,StringLiteral,and,Action(manipulate,and,concat),SaveAction(and,output,into,StringLiteral)))),
 	SlangroomStatement(GivenHaveStatement(given,I,have,a,StringLiteral,named,StringLiteral)),
 	SlangroomStatement(ThenPrint(then,print,Keywords(the),Keywords(data)))
 )
@@ -143,7 +145,7 @@ Then print the 'result'
 
 Statement(
 	RuleStatement(rule,GenericRule(Keywords(unknown),Keywords(ignore))),
-	SlangroomStatement(GtStatement(given,I,GtHttpStatement(connect,to,StringLiteral,and,Action(do,get),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtHttpStatement(connect,to,StringLiteral,and,Action(do,get),SaveAction(and,output,into,StringLiteral)))),
 	SlangroomStatement(GivenHaveStatement(given,I,have,a,StringLiteral,named,StringLiteral)),
 	SlangroomStatement(ThenPrint(then,print,Keywords(the),StringLiteral))
 )
@@ -161,7 +163,7 @@ Then print the 'result'
 
 Statement(
 	RuleStatement(rule,GenericRule(Keywords(unknown),Keywords(ignore))),
-	SlangroomStatement(GtStatement(given,I,GtJsonSchemaStatement(send,json_data,StringLiteral,and,send,json_schema,StringLiteral,and,Action(validate,json),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtJsonSchemaStatement(send,json_data,StringLiteral,and,send,json_schema,StringLiteral,and,Action(validate,json),SaveAction(and,output,into,StringLiteral)))),
 	SlangroomStatement(GivenHaveStatement(given,I,have,a,StringLiteral,named,StringLiteral)),
 	SlangroomStatement(ThenPrint(then,print,Keywords(the),StringLiteral))
 )
@@ -191,7 +193,7 @@ Statement(
 	SlangroomStatement(WhenStatement(when,I,Keywords(create),Keywords(the),Identifier,Keywords(get),Keywords(parameters),Keywords(from),StringLiteral,Identifier,Identifier,Identifier)),
 	SlangroomStatement(WhenStatement(when,I,Identifier,StringLiteral,Keywords(to),StringLiteral,Keywords(in),StringLiteral)),
 	SlangroomStatement(ThenPrint(then,print,Keywords(the),StringLiteral)),
-	SlangroomStatement(GtStatement(then,I,GtOAuthStatement(send,request,StringLiteral,and,send,server_data,StringLiteral,and,Action(generate,access,token),and,SaveAction(output,into,StringLiteral))))
+	SlangroomStatement(GtStatement(then,I,GtOAuthStatement(send,request,StringLiteral,and,send,server_data,StringLiteral,and,Action(generate,access,token),SaveAction(and,output,into,StringLiteral))))
 )
 
 #Pocketbase example
@@ -212,7 +214,7 @@ Statement(
 	RuleStatement(rule,GenericRule(Keywords(unknown),Keywords(ignore))),
 	SlangroomStatement(GtStatement(given,I,GtPocketbaseStatement(connect,to,StringLiteral,and,Action(start,pb,client)))),
 	SlangroomStatement(GtStatement(given,I,GtPocketbaseStatement(send,my_credentials,StringLiteral,and,Action(login)))),
-	SlangroomStatement(GtStatement(given,I,GtPocketbaseStatement(send,create_parameters,StringLiteral,and,send,record_parameters,StringLiteral,and,Action(create,record),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtPocketbaseStatement(send,create_parameters,StringLiteral,and,send,record_parameters,StringLiteral,and,Action(create,record),SaveAction(and,output,into,StringLiteral)))),
 	SlangroomStatement(GivenHaveStatement(given,I,have,a,StringLiteral,named,StringLiteral)),
 	SlangroomStatement(ThenPrint(then,print,Keywords(the),StringLiteral))
 )
@@ -230,7 +232,7 @@ Then print the 'result'
 
 Statement(
 	RuleStatement(rule,GenericRule(Keywords(unknown),Keywords(ignore))),
-	SlangroomStatement(GtStatement(given,I,GtQrCodeStatement(send,text,StringLiteral,and,Action(create,qr,code),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtQrCodeStatement(send,text,StringLiteral,and,Action(create,qr,code),SaveAction(and,output,into,StringLiteral)))),
 	SlangroomStatement(GivenHaveStatement(given,I,have,a,StringLiteral,named,StringLiteral)),
 	SlangroomStatement(ThenPrint(then,print,Keywords(the),StringLiteral))
 )
@@ -248,7 +250,7 @@ Then print the 'result'
 
 Statement(
 	RuleStatement(rule,GenericRule(Keywords(unknown),Keywords(ignore))),
-	SlangroomStatement(GtStatement(given,I,GtRedisStatement(connect,to,StringLiteral,and,send,key,StringLiteral,and,Action(delete,key,from,redis),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtRedisStatement(connect,to,StringLiteral,and,send,key,StringLiteral,and,Action(delete,key,from,redis),SaveAction(and,output,into,StringLiteral)))),
 	SlangroomStatement(GivenHaveStatement(given,I,have,a,StringLiteral,named,StringLiteral)),
 	SlangroomStatement(ThenPrint(then,print,Keywords(the),StringLiteral))
 )
@@ -266,7 +268,7 @@ Then print the 'result'
 
 Statement(
 	RuleStatement(rule,GenericRule(Keywords(unknown),Keywords(ignore))),
-	SlangroomStatement(GtStatement(given,I,GtShellStatement(send,command,StringLiteral,and,Action(execute,in,shell),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtShellStatement(send,command,StringLiteral,and,Action(execute,in,shell),SaveAction(and,output,into,StringLiteral)))),
 	SlangroomStatement(GivenHaveStatement(given,I,have,a,StringLiteral,named,StringLiteral)),
 	SlangroomStatement(ThenPrint(then,print,Keywords(the),StringLiteral))
 )
@@ -287,8 +289,8 @@ Then print the 'result_in_milliseconds'
 
 Statement(
 	RuleStatement(rule,GenericRule(Keywords(unknown),Keywords(ignore))),
-	SlangroomStatement(GtStatement(given,I,GtTimestampStatement(Action(fetch,the,local,timestamp,in,seconds),and,SaveAction(output,into,StringLiteral)))),
-	SlangroomStatement(GtStatement(given,I,GtTimestampStatement(Action(fetch,the,local,timestamp,in,milliseconds),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtTimestampStatement(Action(fetch,the,local,timestamp,in,seconds),SaveAction(and,output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtTimestampStatement(Action(fetch,the,local,timestamp,in,milliseconds),SaveAction(and,output,into,StringLiteral)))),
 	SlangroomStatement(GivenHaveStatement(given,I,have,a,StringLiteral,named,StringLiteral)),
 	SlangroomStatement(GivenHaveStatement(given,I,have,a,StringLiteral,named,StringLiteral)),
 	SlangroomStatement(ThenPrint(then,print,Keywords(the),StringLiteral)),
@@ -308,7 +310,7 @@ Then print the 'result'
 
 Statement(
 	RuleStatement(rule,GenericRule(Keywords(unknown),Keywords(ignore))),
-	SlangroomStatement(GtStatement(given,I,GtZencodeStatement(send,keys,StringLiteral,and,send,data,StringLiteral,and,send,script,StringLiteral,and,Action(execute,zencode),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtZencodeStatement(send,keys,StringLiteral,and,send,data,StringLiteral,and,send,script,StringLiteral,and,Action(execute,zencode),SaveAction(and,output,into,StringLiteral)))),
 	SlangroomStatement(GivenHaveStatement(given,I,have,a,StringLiteral,named,StringLiteral)),
 	SlangroomStatement(ThenPrint(then,print,Keywords(the),StringLiteral))
 )
@@ -364,10 +366,10 @@ Statement(
 	ScenarioStatement(scenario,ScenarioType(StringLiteral)),
 	ScenarioStatement(scenario,ScenarioType(StringLiteral),ScenarioComment(Keywords(create),Keywords(jwk))),
 	RuleStatement(rule,GenericRule(Keywords(unknown),Keywords(ignore))),
-	SlangroomStatement(GtStatement(given,I,GtFsStatement(send,path,StringLiteral,and,Action(read,file,content),and,SaveAction(output,into,StringLiteral)))),
-	SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,Action(manipulate,and,get),and,SaveAction(output,into,StringLiteral)))),
-	SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,Action(manipulate,and,get),and,SaveAction(output,into,StringLiteral)))),
-	SlangroomStatement(GtStatement(given,I,GtFsStatement(send,path,StringLiteral,and,Action(read,file,content),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtFsStatement(send,path,StringLiteral,and,Action(read,file,content),SaveAction(and,output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,Action(manipulate,and,get),SaveAction(and,output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,Action(manipulate,and,get),SaveAction(and,output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtFsStatement(send,path,StringLiteral,and,Action(read,file,content),SaveAction(and,output,into,StringLiteral)))),
 	SlangroomStatement(GivenHaveStatement(given,I,have,a,StringLiteral,named,StringLiteral)),
 	Comment,
 	SlangroomStatement(GivenName(given,my,name,is,Keywords(in),Keywords(a),StringLiteral,Keywords(named),StringLiteral)),
@@ -448,43 +450,43 @@ Then print the data
 
 Statement(
 	Comment,
-	SlangroomStatement(GtStatement(given,I,GtFsStatement(send,path,StringLiteral,and,Action(read,file,content),and,SaveAction(output,Identifier,into,StringLiteral)))),
-	SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,Action(manipulate,and,get),and,SaveAction(output,into,StringLiteral)))),
-	SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,Action(manipulate,and,get),and,SaveAction(output,Identifier,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtFsStatement(send,path,StringLiteral,and,Action(read,file,content),SaveAction(and,output,secret,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,Action(manipulate,and,get),SaveAction(and,output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,Action(manipulate,and,get),SaveAction(and,output,secret,into,StringLiteral)))),
 	Comment,
-	SlangroomStatement(GtStatement(given,I,GtFsStatement(send,path,StringLiteral,and,Action(read,file,content),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtFsStatement(send,path,StringLiteral,and,Action(read,file,content),SaveAction(and,output,into,StringLiteral)))),
 	Comment,
 	SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,send,value,StringLiteral,and,Action(manipulate,and,set)))),
 	SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,send,value,StringLiteral,and,Action(manipulate,and,set)))),
 	SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,send,value,StringLiteral,and,Action(manipulate,and,set)))),
-	SlangroomStatement(GtStatement(given,I,GtFsStatement(send,path,StringLiteral,and,Action(read,verbatim,file,content),and,SaveAction(output,into,StringLiteral)))),
-	SlangroomStatement(GtStatement(given,I,GtZencodeStatement(send,keys,StringLiteral,and,send,data,StringLiteral,and,send,script,StringLiteral,and,Action(execute,zencode),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtFsStatement(send,path,StringLiteral,and,Action(read,verbatim,file,content),SaveAction(and,output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtZencodeStatement(send,keys,StringLiteral,and,send,data,StringLiteral,and,send,script,StringLiteral,and,Action(execute,zencode),SaveAction(and,output,into,StringLiteral)))),
 	Comment,
-	SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,Action(manipulate,and,get),and,SaveAction(output,into,StringLiteral)))),
-	SlangroomStatement(GtStatement(given,I,GtHttpStatement(connect,to,StringLiteral,and,Action(do,get),and,SaveAction(output,into,StringLiteral)))),
-	SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,Action(manipulate,and,get),and,SaveAction(output,into,StringLiteral)))),
-	SlangroomStatement(GtStatement(given,I,GtFsStatement(send,path,StringLiteral,and,Action(read,verbatim,file,content),and,SaveAction(output,into,StringLiteral)))),
-	SlangroomStatement(GtStatement(given,I,GtZencodeStatement(send,keys,StringLiteral,and,send,data,StringLiteral,and,send,script,StringLiteral,and,Action(execute,zencode),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,Action(manipulate,and,get),SaveAction(and,output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtHttpStatement(connect,to,StringLiteral,and,Action(do,get),SaveAction(and,output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,Action(manipulate,and,get),SaveAction(and,output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtFsStatement(send,path,StringLiteral,and,Action(read,verbatim,file,content),SaveAction(and,output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtZencodeStatement(send,keys,StringLiteral,and,send,data,StringLiteral,and,send,script,StringLiteral,and,Action(execute,zencode),SaveAction(and,output,into,StringLiteral)))),
 	Comment,
-	SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,Action(manipulate,and,get),and,SaveAction(output,into,StringLiteral)))),
-	SlangroomStatement(GtStatement(given,I,GtHttpStatement(connect,to,StringLiteral,and,Action(do,get),and,SaveAction(output,into,StringLiteral)))),
-	SlangroomStatement(GtStatement(given,I,GtFsStatement(send,path,StringLiteral,and,Action(read,verbatim,file,content),and,SaveAction(output,into,StringLiteral)))),
-	SlangroomStatement(GtStatement(given,I,GtZencodeStatement(send,keys,StringLiteral,and,send,data,StringLiteral,and,send,script,StringLiteral,and,Action(execute,zencode),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,Action(manipulate,and,get),SaveAction(and,output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtHttpStatement(connect,to,StringLiteral,and,Action(do,get),SaveAction(and,output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtFsStatement(send,path,StringLiteral,and,Action(read,verbatim,file,content),SaveAction(and,output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtZencodeStatement(send,keys,StringLiteral,and,send,data,StringLiteral,and,send,script,StringLiteral,and,Action(execute,zencode),SaveAction(and,output,into,StringLiteral)))),
 	Comment,
-	SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,Action(manipulate,and,get),and,SaveAction(output,into,StringLiteral)))),
-	SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,Action(manipulate,and,get),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,Action(manipulate,and,get),SaveAction(and,output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,Action(manipulate,and,get),SaveAction(and,output,into,StringLiteral)))),
 	SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,send,value,StringLiteral,and,Action(manipulate,and,set)))),
 	SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,send,value,StringLiteral,and,Action(manipulate,and,set)))),
 	SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,send,value,StringLiteral,and,Action(manipulate,and,set)))),
 	SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,send,value,StringLiteral,and,Action(manipulate,and,set)))),
 	SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,send,value,StringLiteral,and,Action(manipulate,and,set)))),
 	SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,send,value,StringLiteral,and,Action(manipulate,and,set)))),
-	SlangroomStatement(GtStatement(given,I,GtFsStatement(send,path,StringLiteral,and,Action(read,verbatim,file,content),and,SaveAction(output,into,StringLiteral)))),
-	SlangroomStatement(GtStatement(given,I,GtZencodeStatement(send,keys,StringLiteral,and,send,data,StringLiteral,and,send,script,StringLiteral,and,Action(execute,zencode),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtFsStatement(send,path,StringLiteral,and,Action(read,verbatim,file,content),SaveAction(and,output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtZencodeStatement(send,keys,StringLiteral,and,send,data,StringLiteral,and,send,script,StringLiteral,and,Action(execute,zencode),SaveAction(and,output,into,StringLiteral)))),
 	Comment,
-	SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,Action(manipulate,and,get),and,SaveAction(output,into,StringLiteral)))),
-	SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,Action(manipulate,and,get),and,SaveAction(output,into,StringLiteral)))),
-	SlangroomStatement(GtStatement(given,I,GtHttpStatement(connect,to,StringLiteral,and,send,object,StringLiteral,and,Action(do,post),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,Action(manipulate,and,get),SaveAction(and,output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,Action(manipulate,and,get),SaveAction(and,output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtHttpStatement(connect,to,StringLiteral,and,send,object,StringLiteral,and,Action(do,post),SaveAction(and,output,into,StringLiteral)))),
 	SlangroomStatement(GivenHaveStatement(given,I,have,a,StringLiteral,named,StringLiteral)),
 	SlangroomStatement(ThenPrint(then,print,Keywords(the),Keywords(data)))
 )
@@ -565,7 +567,7 @@ Then I manipulate and delete and output into 'parresult'
 ==>
 
 Statement(
-	SlangroomStatement(GtStatement(given,I,GtFsStatement(send,path,StringLiteral,and,Action(read,file,content),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtFsStatement(send,path,StringLiteral,and,Action(read,file,content),SaveAction(and,output,into,StringLiteral)))),
 	SlangroomStatement(GivenHaveStatement(given,I,have,a,StringLiteral,named,StringLiteral)),
 	Comment,
 	SlangroomStatement(GivenName(given,my,name,is,Keywords(in),Keywords(a),StringLiteral,Keywords(named),StringLiteral)),
@@ -616,13 +618,13 @@ Statement(
     SlangroomStatement(ThenPrint(then,print,Keywords(the),StringLiteral)),
     SlangroomStatement(ThenPrint(then,print,Keywords(the),StringLiteral)),
     SlangroomStatement(ThenPrint(then,print,Keywords(the),StringLiteral)),
-    SlangroomStatement(GtStatement(then,I,GtOAuthStatement(send,request,StringLiteral,and,send,client,StringLiteral,and,send,server_data,StringLiteral,and,send,expires_in,StringLiteral,and,Action(generate,request,uri),and,SaveAction(output,into,StringLiteral)))),
-    SlangroomStatement(GtStatement(then,I,GtHelpersStatement(Action(manipulate,and,delete),and,SaveAction(output,into,StringLiteral)))),
-    SlangroomStatement(GtStatement(then,I,GtHelpersStatement(Action(manipulate,and,delete),and,SaveAction(output,into,StringLiteral)))),
-    SlangroomStatement(GtStatement(then,I,GtHelpersStatement(Action(manipulate,and,delete),and,SaveAction(output,into,StringLiteral)))),
-    SlangroomStatement(GtStatement(then,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,Action(manipulate,and,get),and,SaveAction(output,into,StringLiteral)))),
-    SlangroomStatement(GtStatement(then,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,Action(manipulate,and,get),and,SaveAction(output,into,StringLiteral)))),
-    SlangroomStatement(GtStatement(then,I,GtHelpersStatement(Action(manipulate,and,delete),and,SaveAction(output,into,StringLiteral))))
+    SlangroomStatement(GtStatement(then,I,GtOAuthStatement(send,request,StringLiteral,and,send,client,StringLiteral,and,send,server_data,StringLiteral,and,send,expires_in,StringLiteral,and,Action(generate,request,uri),SaveAction(and,output,into,StringLiteral)))),
+    SlangroomStatement(GtStatement(then,I,GtHelpersStatement(Action(manipulate,and,delete),SaveAction(and,output,into,StringLiteral)))),
+    SlangroomStatement(GtStatement(then,I,GtHelpersStatement(Action(manipulate,and,delete),SaveAction(and,output,into,StringLiteral)))),
+    SlangroomStatement(GtStatement(then,I,GtHelpersStatement(Action(manipulate,and,delete),SaveAction(and,output,into,StringLiteral)))),
+    SlangroomStatement(GtStatement(then,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,Action(manipulate,and,get),SaveAction(and,output,into,StringLiteral)))),
+    SlangroomStatement(GtStatement(then,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,Action(manipulate,and,get),SaveAction(and,output,into,StringLiteral)))),
+    SlangroomStatement(GtStatement(then,I,GtHelpersStatement(Action(manipulate,and,delete),SaveAction(and,output,into,StringLiteral))))
 )
 
 #Test from Didroom 4
@@ -750,21 +752,21 @@ Statement(
 	ScenarioStatement(scenario,ScenarioType(Identifier)),
 	ScenarioStatement(scenario,ScenarioType(Identifier)),
 	Comment,
-	SlangroomStatement(GtStatement(given,I,GtShellStatement(send,command,StringLiteral,and,Action(execute,in,shell),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtShellStatement(send,command,StringLiteral,and,Action(execute,in,shell),SaveAction(and,output,into,StringLiteral)))),
 	SlangroomStatement(GtStatement(given,I,GtFsStatement(send,path,StringLiteral,and,Action(verify,file,does,not,exist)))),
 	Comment,
-	SlangroomStatement(GtStatement(given,I,GtFsStatement(send,path,StringLiteral,and,Action(read,verbatim,file,content),and,SaveAction(output,into,StringLiteral)))),
-	SlangroomStatement(GtStatement(given,I,GtZencodeStatement(send,keys,StringLiteral,and,send,data,StringLiteral,and,send,script,StringLiteral,and,Action(execute,zencode),and,SaveAction(output,Identifier,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtFsStatement(send,path,StringLiteral,and,Action(read,verbatim,file,content),SaveAction(and,output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtZencodeStatement(send,keys,StringLiteral,and,send,data,StringLiteral,and,send,script,StringLiteral,and,Action(execute,zencode),SaveAction(and,output,secret,into,StringLiteral)))),
 	Comment,
-	SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,Action(manipulate,and,get),and,SaveAction(output,into,StringLiteral)))),
-    SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,Action(manipulate,and,get),and,SaveAction(output,Identifier,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,Action(manipulate,and,get),SaveAction(and,output,into,StringLiteral)))),
+    SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,Action(manipulate,and,get),SaveAction(and,output,secret,into,StringLiteral)))),
     Comment,
-	SlangroomStatement(GtStatement(given,I,GtFsStatement(send,path,StringLiteral,and,Action(read,file,content),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(given,I,GtFsStatement(send,path,StringLiteral,and,Action(read,file,content),SaveAction(and,output,into,StringLiteral)))),
     SlangroomStatement(GivenHaveStatement(given,I,have,a,StringLiteral,named,StringLiteral)),
     SlangroomStatement(GivenName(given,I,my,name,is,Keywords(in),Keywords(a),StringLiteral,Keywords(named),StringLiteral,HaveStatement(and,I,have,a,StringLiteral,named,StringLiteral),HaveStatement(and,I,have,a,StringLiteral,in,StringLiteral),HaveStatement(and,I,have,a,StringLiteral,named,StringLiteral))),
     SlangroomStatement(IfEndifStatement(Condition(if,I,verify,StringLiteral,Keywords(is),Identifier,Keywords(in),StringLiteral),WhenStatement(when,I,Identifier,Keywords(from),Keywords(path),StringLiteral,and,I,Identifier,StringLiteral,Keywords(to),StringLiteral),endif)),
     SlangroomStatement(IfEndifStatement(Condition(if,I,verify,StringLiteral,Keywords(is),Keywords(not),Identifier,Keywords(in),StringLiteral),WhenStatement(when,I,Identifier,StringLiteral,Keywords(to),StringLiteral),endif)),
-    SlangroomStatement(WhenStatement(when,I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key),and,I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key),and,I,Keywords(create),Keywords(the),Keywords(ethereum),Keywords(address),and,I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key),and,I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key),and,I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key),and,I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key),and,I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key),and,I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key))),
+    SlangroomStatement(WhenStatement(when,I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key),and,I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key),and,I,Keywords(create),Keywords(the),Keywords(ethereum),Keywords(address),and,I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key),and,I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key),and,I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key),and,I,Keywords(create),Keywords(the),Keywords(issuer),Keywords(public),Keywords(key),and,I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key),and,I,Keywords(create),Keywords(the),Identifier,Keywords(public),Keywords(key))),
     SlangroomStatement(ThenPrint(then,I,print,Keywords(the),StringLiteral,and,I,print,Keywords(the),StringLiteral,and,I,print,Keywords(the),StringLiteral,and,I,print,Keywords(the),StringLiteral,and,I,print,Keywords(the),StringLiteral,and,I,print,Keywords(the),StringLiteral,and,I,print,Keywords(the),StringLiteral,Keywords(as),StringLiteral,and,I,print,Keywords(the),StringLiteral,and,I,print,Keywords(the),StringLiteral,and,I,print,Keywords(my),Keywords(name),Keywords(in),StringLiteral,and,I,print,Keywords(the),StringLiteral,and,I,print,Keywords(the),StringLiteral)),
     Comment,
 	Comment,
@@ -780,34 +782,34 @@ Statement(
     SlangroomStatement(GtStatement(then,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,send,value,StringLiteral,and,Action(manipulate,and,set)))),
     SlangroomStatement(GtStatement(then,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,send,value,StringLiteral,and,Action(manipulate,and,set)))),
     Comment,
-	SlangroomStatement(GtStatement(then,I,GtFsStatement(send,path,StringLiteral,and,Action(read,verbatim,file,content),and,SaveAction(output,into,StringLiteral)))),
-    SlangroomStatement(GtStatement(then,I,GtZencodeStatement(send,keys,StringLiteral,and,send,data,StringLiteral,and,send,script,StringLiteral,and,Action(execute,zencode),and,SaveAction(output,into,StringLiteral)))),
-    SlangroomStatement(GtStatement(then,I,GtHelpersStatement(Action(manipulate,and,delete),and,SaveAction(output,into,StringLiteral)))),
-    SlangroomStatement(GtStatement(then,I,GtHelpersStatement(Action(manipulate,and,delete),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(then,I,GtFsStatement(send,path,StringLiteral,and,Action(read,verbatim,file,content),SaveAction(and,output,into,StringLiteral)))),
+    SlangroomStatement(GtStatement(then,I,GtZencodeStatement(send,keys,StringLiteral,and,send,data,StringLiteral,and,send,script,StringLiteral,and,Action(execute,zencode),SaveAction(and,output,into,StringLiteral)))),
+    SlangroomStatement(GtStatement(then,I,GtHelpersStatement(Action(manipulate,and,delete),SaveAction(and,output,into,StringLiteral)))),
+    SlangroomStatement(GtStatement(then,I,GtHelpersStatement(Action(manipulate,and,delete),SaveAction(and,output,into,StringLiteral)))),
     Comment,
-	SlangroomStatement(GtStatement(then,I,GtHttpStatement(connect,to,StringLiteral,and,send,object,StringLiteral,and,Action(do,post),and,SaveAction(output,into,StringLiteral)))),
-    SlangroomStatement(GtStatement(then,I,GtHelpersStatement(Action(manipulate,and,delete),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(then,I,GtHttpStatement(connect,to,StringLiteral,and,send,object,StringLiteral,and,Action(do,post),SaveAction(and,output,into,StringLiteral)))),
+    SlangroomStatement(GtStatement(then,I,GtHelpersStatement(Action(manipulate,and,delete),SaveAction(and,output,into,StringLiteral)))),
     Comment,
-	SlangroomStatement(GtStatement(then,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,Action(manipulate,and,get),and,SaveAction(output,into,StringLiteral)))),
-    SlangroomStatement(GtStatement(then,I,GtHttpStatement(connect,to,StringLiteral,and,send,object,StringLiteral,and,Action(do,post),and,SaveAction(output,into,StringLiteral)))),
-    SlangroomStatement(GtStatement(then,I,GtHelpersStatement(Action(manipulate,and,delete),and,SaveAction(output,into,StringLiteral)))),
-    SlangroomStatement(GtStatement(then,I,GtHelpersStatement(Action(manipulate,and,delete),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(then,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,Action(manipulate,and,get),SaveAction(and,output,into,StringLiteral)))),
+    SlangroomStatement(GtStatement(then,I,GtHttpStatement(connect,to,StringLiteral,and,send,object,StringLiteral,and,Action(do,post),SaveAction(and,output,into,StringLiteral)))),
+    SlangroomStatement(GtStatement(then,I,GtHelpersStatement(Action(manipulate,and,delete),SaveAction(and,output,into,StringLiteral)))),
+    SlangroomStatement(GtStatement(then,I,GtHelpersStatement(Action(manipulate,and,delete),SaveAction(and,output,into,StringLiteral)))),
     Comment,
-	SlangroomStatement(GtStatement(then,I,GtFsStatement(send,path,StringLiteral,and,Action(read,file,content),and,SaveAction(output,into,StringLiteral)))),
-    SlangroomStatement(GtStatement(then,I,GtFsStatement(send,path,StringLiteral,and,Action(read,verbatim,file,content),and,SaveAction(output,into,StringLiteral)))),
-    SlangroomStatement(GtStatement(then,I,GtZencodeStatement(send,keys,StringLiteral,and,send,data,StringLiteral,and,send,script,StringLiteral,and,Action(execute,zencode),and,SaveAction(output,into,StringLiteral)))),
-    SlangroomStatement(GtStatement(then,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,Action(manipulate,and,get),and,SaveAction(output,into,StringLiteral)))),
+	SlangroomStatement(GtStatement(then,I,GtFsStatement(send,path,StringLiteral,and,Action(read,file,content),SaveAction(and,output,into,StringLiteral)))),
+    SlangroomStatement(GtStatement(then,I,GtFsStatement(send,path,StringLiteral,and,Action(read,verbatim,file,content),SaveAction(and,output,into,StringLiteral)))),
+    SlangroomStatement(GtStatement(then,I,GtZencodeStatement(send,keys,StringLiteral,and,send,data,StringLiteral,and,send,script,StringLiteral,and,Action(execute,zencode),SaveAction(and,output,into,StringLiteral)))),
+    SlangroomStatement(GtStatement(then,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,Action(manipulate,and,get),SaveAction(and,output,into,StringLiteral)))),
     SlangroomStatement(GtStatement(then,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,send,value,StringLiteral,and,Action(manipulate,and,set)))),
     SlangroomStatement(GtStatement(then,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,send,value,StringLiteral,and,Action(manipulate,and,set)))),
     SlangroomStatement(GtStatement(then,I,GtFsStatement(send,path,StringLiteral,and,send,content,StringLiteral,and,Action(store,in,file)))),
     SlangroomStatement(GtStatement(then,I,GtShellStatement(send,command,StringLiteral,and,Action(execute,in,shell)))),
     SlangroomStatement(GtStatement(then,I,GtFsStatement(send,path,StringLiteral,and,send,content,StringLiteral,and,Action(store,in,file)))),
-    SlangroomStatement(GtStatement(then,I,GtHelpersStatement(Action(manipulate,and,delete),and,SaveAction(output,into,StringLiteral)))),
-    SlangroomStatement(GtStatement(then,I,GtHelpersStatement(Action(manipulate,and,delete),and,SaveAction(output,into,StringLiteral)))),
-    SlangroomStatement(GtStatement(then,I,GtHelpersStatement(Action(manipulate,and,delete),and,SaveAction(output,into,StringLiteral)))),
-    SlangroomStatement(GtStatement(then,I,GtHelpersStatement(Action(manipulate,and,delete),and,SaveAction(output,into,StringLiteral)))),
-    SlangroomStatement(GtStatement(then,I,GtHelpersStatement(Action(manipulate,and,delete),and,SaveAction(output,into,StringLiteral)))),
-    SlangroomStatement(GtStatement(then,I,GtHelpersStatement(Action(manipulate,and,delete),and,SaveAction(output,into,StringLiteral))))
+    SlangroomStatement(GtStatement(then,I,GtHelpersStatement(Action(manipulate,and,delete),SaveAction(and,output,into,StringLiteral)))),
+    SlangroomStatement(GtStatement(then,I,GtHelpersStatement(Action(manipulate,and,delete),SaveAction(and,output,into,StringLiteral)))),
+    SlangroomStatement(GtStatement(then,I,GtHelpersStatement(Action(manipulate,and,delete),SaveAction(and,output,into,StringLiteral)))),
+    SlangroomStatement(GtStatement(then,I,GtHelpersStatement(Action(manipulate,and,delete),SaveAction(and,output,into,StringLiteral)))),
+    SlangroomStatement(GtStatement(then,I,GtHelpersStatement(Action(manipulate,and,delete),SaveAction(and,output,into,StringLiteral)))),
+    SlangroomStatement(GtStatement(then,I,GtHelpersStatement(Action(manipulate,and,delete),SaveAction(and,output,into,StringLiteral))))
 )
 
 #Comment after Scenario
@@ -905,10 +907,10 @@ Statement(
 	ScenarioStatement(scenario,ScenarioType(StringLiteral)),
     ScenarioStatement(scenario,ScenarioType(StringLiteral),ScenarioComment(Keywords(create),Keywords(jwk))),
     RuleStatement(rule,GenericRule(Keywords(unknown),Keywords(ignore))),
-    SlangroomStatement(GtStatement(given,I,GtFsStatement(send,path,StringLiteral,and,Action(read,file,content),and,SaveAction(output,into,StringLiteral)))),
-    SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,Action(manipulate,and,get),and,SaveAction(output,into,StringLiteral)))),
-    SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,Action(manipulate,and,get),and,SaveAction(output,into,StringLiteral)))),
-    SlangroomStatement(GtStatement(given,I,GtFsStatement(send,path,StringLiteral,and,Action(read,file,content),and,SaveAction(output,into,StringLiteral)))),
+    SlangroomStatement(GtStatement(given,I,GtFsStatement(send,path,StringLiteral,and,Action(read,file,content),SaveAction(and,output,into,StringLiteral)))),
+    SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,Action(manipulate,and,get),SaveAction(and,output,into,StringLiteral)))),
+    SlangroomStatement(GtStatement(given,I,GtHelpersStatement(send,object,StringLiteral,and,send,path,StringLiteral,and,Action(manipulate,and,get),SaveAction(and,output,into,StringLiteral)))),
+    SlangroomStatement(GtStatement(given,I,GtFsStatement(send,path,StringLiteral,and,Action(read,file,content),SaveAction(and,output,into,StringLiteral)))),
     SlangroomStatement(GivenHaveStatement(given,I,have,a,StringLiteral,named,StringLiteral)),
     Comment,
 	SlangroomStatement(GivenName(given,my,name,is,Keywords(in),Keywords(a),StringLiteral,Keywords(named),StringLiteral)),

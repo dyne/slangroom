@@ -4,6 +4,10 @@
 
 /src
 /test
+/utils
 /node_modules
 rollup.config.js
 tsconfig.json
+tsconfig.json.license
+.releaserc
+package.json.license
