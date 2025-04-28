@@ -11,10 +11,10 @@ test('Create VC SD JWT', async (t) => {
 	const scriptCreate = `
 Rule unknown ignore
 
-Given I create p-256 key and output into 'issuer_jwk'
-Given I create p-256 key and output into 'holder_jwk'
-Given I send sk 'holder_jwk' and create p-256 public key and output into 'holder_public_jwk'
-Given I send sk 'issuer_jwk' and create p-256 public key and output into 'issuer_public_jwk'
+Given I create p256 key and output into 'issuer_jwk'
+Given I create p256 key and output into 'holder_jwk'
+Given I send sk 'holder_jwk' and create p256 public key and output into 'holder_public_jwk'
+Given I send sk 'issuer_jwk' and create p256 public key and output into 'issuer_public_jwk'
 Given I send jwk 'issuer_jwk' and send holder 'holder_public_jwk' and send object 'object' and send fields 'fields' and create vc sd jwt and output into 'vcsdjwt'
 Given I send token 'vcsdjwt' and pretty print sd jwt and output into 'pretty_jwt'
 Given I have a 'string dictionary' named 'issuer_jwk'
