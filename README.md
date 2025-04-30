@@ -144,32 +144,32 @@ A minimal example is:
 
 ```html
 <html>
-	<head>
-		<script type="module" id="slangroom-loader" src="https://cdn.jsdelivr.net/npm/@slangroom/browser"></script>
-	</head>
-	<body>
-		<div id="res"></div>
-		<script>
-			document.getElementById('slangroom-loader').addEventListener('load', () => {
-				const script = `
-					Rule unknown ignore
-					Given I fetch the local timestamp in seconds and output into 'timestamp'
-					Given I have a 'time' named 'timestamp'
-					Then print the 'timestamp'
-					`;
-				const res = document.getElementById('res');
-				slangroom.execute(script, {
-					data: {
-						foo: 'bar',
-						did_url: 'https://did.dyne.org/dids/did:dyne:sandbox.test:pEn78CGNEKvMR7DJQ1yvUVUpAHKzsBz45mQw3zD2js9',
-					},
-				})
-				.then((r) => {
-					res.innerText = JSON.stringify(r.result);
-				});
-			});
-		</script>
-	</body>
+    <head>
+        <script type="module" id="slangroom-loader" src="https://cdn.jsdelivr.net/npm/@slangroom/browser"></script>
+    </head>
+    <body>
+        <div id="res"></div>
+        <script>
+            document.getElementById('slangroom-loader').addEventListener('load', () => {
+                const script = `
+                    Rule unknown ignore
+                    Given I fetch the local timestamp in seconds and output into 'timestamp'
+                    Given I have a 'time' named 'timestamp'
+                    Then print the 'timestamp'
+                    `;
+                const res = document.getElementById('res');
+                slangroom.execute(script, {
+                    data: {
+                        foo: 'bar',
+                        did_url: 'https://did.dyne.org/dids/did:dyne:sandbox.test:pEn78CGNEKvMR7DJQ1yvUVUpAHKzsBz45mQw3zD2js9',
+                    },
+                })
+                .then((r) => {
+                    res.innerText = JSON.stringify(r.result);
+                });
+            });
+        </script>
+    </body>
 </html>
 ```
 
