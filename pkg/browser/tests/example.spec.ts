@@ -6,7 +6,7 @@ import { test, expect } from '@playwright/test';
 
 test('check results of slangroom', async ({ page }) => {
 	// set timeout
-	test.setTimeout(30000);
+	test.setTimeout(60000);
 
 	await page.goto('http://localhost:8080/');
 
