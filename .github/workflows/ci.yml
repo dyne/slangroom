@@ -62,6 +62,7 @@ jobs:
           cd cors-buster
           npm install
           PORT=8000 npm start > log.txt &
+          sleep 5
       - name: 📨 Setup playwright
         run: |
           npx playwright install
