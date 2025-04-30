@@ -245,7 +245,7 @@ export const verifyVcSdJwt = p.new(
 /**
  * @internal
  */
-export const keyGen = p.new('create p-256 key', async (ctx) => {
+export const keyGen = p.new('create p256 key', async (ctx) => {
 	// Elliptic Curve Digital Signature Algorithm with the P-256 curve and the SHA-256 hash function
 	let sk
 	try {
@@ -266,7 +266,7 @@ export const keyGen = p.new('create p-256 key', async (ctx) => {
 /**
  * @internal
  */
-export const pubGen = p.new(['sk'], 'create p-256 public key', async (ctx) => {
+export const pubGen = p.new(['sk'], 'create p256 public key', async (ctx) => {
 	// TODO: typecheck sk
 	const sk = ctx.fetch('sk') as JsonableObject;
 

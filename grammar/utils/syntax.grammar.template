@@ -1,0 +1,123 @@
+// SPDX-FileCopyrightText: 2024 Dyne.org foundation
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
+@top Statement {
+    ( RuleStatement | ScenarioStatement | RuleStatement | SlangroomStatement | Comment )*
+}
+
+Comment {
+    comment (newline+ |eof)
+}
+
+SlangroomStatement {
+    (GtStatement | PcStatement | ThenPrint | GivenHaveStatement | GivenName | WhenStatement | IfEndifStatement |ForEachStatement)
+}
+
+// ===== Rule =====
+RuleStatement {
+    rule (VersionRule | GenericRule) ( newline+ | eof )
+}
+VersionRule {
+    version VersionNumber
+}
+GenericRule {
+    (Keywords | Identifier | StringLiteral)*
+}
+VersionNumber {
+    Number '.'? Number? '.'? Number?
+}
+
+// ===== Scenario =====
+ScenarioStatement {
+    scenario ScenarioType ScenarioComment? ( newline+ | eof )
+}
+ScenarioType {
+    (Keywords | StringLiteral| Identifier)
+}
+ScenarioComment {
+    ":" (Keywords | Identifier | StringLiteral)*
+}
+
+@skip {
+    space
+}
+
+// ===== Zencode Statements =====
+GivenHaveStatement {
+    given that? I have (a? | my? | the?) valid? StringLiteral named? StringLiteral? (inside | in)?  named? StringLiteral?
+    (newline* and I have (a? | my?) valid? StringLiteral named? StringLiteral? (inside | in)? named? StringLiteral?)* ( newline+ | eof )
+}
+GivenName {
+    ((given I am
+    (known as)? StringLiteral) |
+    (given  I? my name is
+    (Keywords | Identifier | StringLiteral)+)) HaveStatement* ( newline+ | eof )
+}
+HaveStatement{
+    newline+ and I have (a? | my?) valid? StringLiteral named? StringLiteral? (inside | in)? named? StringLiteral?
+}
+WhenStatement {
+    when I (Keywords | Identifier | StringLiteral)+ (newline and I (Keywords | Identifier | StringLiteral)+)* (newline+ | eof)
+}
+IfEndifStatement{
+    Condition (IfEndifStatement | WhenStatement | ThenPrint)* endif ( newline+ | eof )
+}
+Condition {
+    if I verify (Keywords | Identifier | StringLiteral)+ ( newline+ | eof )
+}
+ForEachStatement {
+    foreach (Keywords | StringLiteral | Identifier) (in | inside) (Keywords | StringLiteral | Identifier)+  newline+ (ForEachStatement | IfEndifStatement | WhenStatement)*
+    endforeach ( newline+ | eof )
+}
+ThenPrint {
+    then I? print (Keywords | StringLiteral | Identifier)+ (newline and +I print (Keywords | StringLiteral | Identifier)+)* ( newline+ | eof )
+}
+
+// ===== Slangroom Statements =====
+GtStatement {
+    (given | then) I
+    ({{ GtStatements }})
+    ( newline+ | eof )
+}
+PcStatement {
+    (prepare | compute) (secret)? StringLiteral?':'
+    ({{ PcStatements }})
+    ( newline+ | eof )
+}
+
+// ===== Plugin-Specific Statements =====
+
+{{ Plugin-Specific Statements }}
+
+// ===== Actions =====
+
+Action<term> {
+    term
+}
+
+SaveAction {
+    and output secret? into StringLiteral
+}
+
+// ===== Keywords and Token =====
+
+Keywords {
+{{ Keywords }}
+}
+
+@external specialize {Identifier} keywords from "./tokens" {
+{{ External-Tokens }}
+}
+
+@tokens {
+    space { " " | "\t" }
+    newline { "\n" | "\r\n" }
+    comment { "#" (![\n])*}
+    StringLiteral { "'" (![\\\n'] | "\\" _)* "'" }
+    symbols { $[a-zA-Z_] | "_" }
+    Identifier { symbols+ Number* }
+    Number { $[0-9]+ }
+}
+
+@external tokens Eoftoken from "./tokens.js" { eof }

@@ -4,6 +4,7 @@
 
 import { SlangroomLanguage } from '../dist/index.js';
 import { fileTests } from '@lezer/generator/dist/test';
+import { ExternalTokenizer, LRParser } from '@lezer/lr';
 
 import * as fs from 'fs';
 import * as path from 'path';
