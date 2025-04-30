@@ -295,9 +295,12 @@ importers:
       '@slangroom/shared':
         specifier: workspace:*
         version: link:../shared
+      pg-hstore:
+        specifier: ^2.3.4
+        version: 2.3.4
       sequelize:
         specifier: ^6.16.0
-        version: 6.37.3(sqlite3@5.1.7)
+        version: 6.37.3(pg-hstore@2.3.4)(sqlite3@5.1.7)
       sqlite3:
         specifier: ^5.0.0
         version: 5.1.7
@@ -4410,6 +4413,10 @@ packages:
   pg-connection-string@2.6.4:
     resolution: {integrity: sha512-v+Z7W/0EO707aNMaAEfiGnGL9sxxumwLl2fJvCQtMn9Fxsg+lPpPkdcyBSv/KFgpGdYkMfn+EI1Or2EHjpgLCA==}
 
+  pg-hstore@2.3.4:
+    resolution: {integrity: sha512-N3SGs/Rf+xA1M2/n0JBiXFDVMzdekwLZLAO0g7mpDY9ouX+fDI7jS6kTq3JujmYbtNSJ53TJ0q4G98KVZSM4EA==}
+    engines: {node: '>= 0.8.x'}
+
   picocolors@1.0.0:
     resolution: {integrity: sha512-1fygroTLlHu66zi26VoTDv8yRgm0Fccecssto+MhsZ0D/DGW2sm8E8AjW7NU5VVTRt5GxbeZ5qBuJr+HyLYkjQ==}
 
@@ -5210,6 +5217,9 @@ packages:
     resolution: {integrity: sha512-T9q82TJI9e/C1TAxYvfb16xO120tMVFZrGA3f9/P4424DNu6ypK103y0GPFVa17yotwSyZW5iYXgjYHkGrJW/g==}
     engines: {node: '>=0.8.0'}
     hasBin: true
+
+  underscore@1.13.7:
+    resolution: {integrity: sha512-GMXzWtsc57XAtguZgaQViUOzs0KTkk8ojr3/xAxXLITqf/3EMwxC0inyETfDFjH/Krbhuep0HNbbjI9i/q3F3g==}
 
   undici-types@5.26.5:
     resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
@@ -9751,6 +9761,10 @@ snapshots:
 
   pg-connection-string@2.6.4: {}
 
+  pg-hstore@2.3.4:
+    dependencies:
+      underscore: 1.13.7
+
   picocolors@1.0.0: {}
 
   picocolors@1.1.1: {}
@@ -10100,7 +10114,7 @@ snapshots:
 
   sequelize-pool@7.1.0: {}
 
-  sequelize@6.37.3(sqlite3@5.1.7):
+  sequelize@6.37.3(pg-hstore@2.3.4)(sqlite3@5.1.7):
     dependencies:
       '@types/debug': 4.1.12
       '@types/validator': 13.11.9
@@ -10119,6 +10133,7 @@ snapshots:
       validator: 13.11.0
       wkx: 0.5.0
     optionalDependencies:
+      pg-hstore: 2.3.4
       sqlite3: 5.1.7
     transitivePeerDependencies:
       - supports-color
@@ -10571,6 +10586,8 @@ snapshots:
 
   uglify-js@3.17.4:
     optional: true
+
+  underscore@1.13.7: {}
 
   undici-types@5.26.5: {}
 
