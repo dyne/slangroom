@@ -61,7 +61,7 @@ jobs:
           git clone https://github.com/wmhilton/cors-buster
           cd cors-buster
           npm install
-          PORT=8000 npm start &
+          PORT=8000 npm start > log.txt &
       - name: 📨 Setup playwright
         run: |
           npx playwright install
@@ -69,6 +69,10 @@ jobs:
           pnpm build
           pnpm exec playwright test
         working-directory: ./pkg/browser
+      - name: Debug
+        if: always()
+        run: |
+          cat cors-buster/log.txt
       - name: 🪦 kill local microservices
         run: |
           ./pkg/oauth/test/start_microservices.sh cleanup

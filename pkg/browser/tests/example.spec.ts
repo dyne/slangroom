@@ -35,7 +35,7 @@ test('check results of slangroom', async ({ page }) => {
 
 	await expect(page.locator('#test-git')).toContainText(
 		"{\"checked\":\"true\"}",
-		{ timeout: 20000 }
+		{ timeout: 60000 }
 	);
 });
 
