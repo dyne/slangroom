@@ -65,8 +65,8 @@ jobs:
           sleep 5
       - name: 📨 Setup playwright
         run: |
-          npx playwright install
-          npx playwright install-deps
+          pnpm exec playwright install
+          pnpm exec playwright install-deps
           pnpm build
           pnpm exec playwright test
         working-directory: ./pkg/browser
