@@ -105,8 +105,6 @@ export const downloadAndExtract = p.new(
 				if (filename.endsWith('/')) continue; // skip directories
 				const fullPath = path.join(res.dirpath, filename);
 				const dir = path.dirname(fullPath);
-				console.log('dir', dir);
-				console.log('fullPath', fullPath);
 				await fspkg.mkdir(dir, { recursive: true });
 				await fspkg.writeFile(fullPath, fileData);
 			}
