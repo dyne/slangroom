@@ -13,7 +13,7 @@
 		"@slangroom/timestamp": "workspace:*",
 		"buffer": "^6.0.3"
 	},
-	"version": "1.46.1",
+	"version": "1.47.0",
 	"repository": "https://github.com/dyne/slangroom",
 	"license": "AGPL-3.0-only",
 	"type": "module",
