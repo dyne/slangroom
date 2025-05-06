@@ -510,10 +510,10 @@ export const parse = (p: PluginMap, t: Token[], lineNo: number): Cst => {
 	let name = t[0].name;
 	let isGivenThen = name === TokenType.GIVEN || name === TokenType.THEN;
 	let isPrepareCompute =
-		name === TokenType.PREPARE ||
-		name === TokenType.BEFORE ||
-		name === TokenType.COMPUTE ||
-		name === TokenType.AFTER;
+		name === TokenType.PREPARE || name === TokenType.PREPARE+TokenType.COLON ||
+		name === TokenType.BEFORE || name === TokenType.BEFORE+TokenType.COLON ||
+		name === TokenType.COMPUTE || name === TokenType.COMPUTE+TokenType.COLON ||
+		name === TokenType.AFTER || name === TokenType.AFTER+TokenType.COLON;
 	let openConnect: TokenType.OPEN | TokenType.CONNECT | undefined;
 	if (isGivenThen) {
 		cst.givenThen = name as TokenType.GIVEN | TokenType.THEN;
