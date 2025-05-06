@@ -3,6 +3,7 @@
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
 		"@slangroom/deps": "workspace:*",
+		"@slangroom/fs": "workspace:*",
 		"@slangroom/git": "workspace:*",
 		"@slangroom/helpers": "workspace:*",
 		"@slangroom/http": "workspace:*",

@@ -37,6 +37,23 @@ test('check results of slangroom', async ({ page }) => {
 		"{\"checked\":\"true\"}",
 		{ timeout: 60000 }
 	);
+
+	const text = await page.locator('#test-fs').textContent();
+	const json = JSON.parse(text || '{}');
+	expect(json.read_result).toBe('"hello from file"');
+	expect(json.ls_result).toEqual(
+		expect.arrayContaining([
+		  expect.objectContaining({
+			name: "some/path/to/zip/zip_test/folder_1",
+			mode: "40777",
+		  }),
+		  expect.objectContaining({
+			name: "some/path/to/zip/zip_test/test.txt",
+			mode: "100644",
+			size: 23,
+		  }),
+		])
+	  );
 });
 
 test('check @slangroom/location', async ({ browser, page }) => {

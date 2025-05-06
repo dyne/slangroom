@@ -17,6 +17,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 		<div id="test-pocketbase-3"></div>
 		<div id="test-timestamp"></div>
 		<div id="test-git"></div>
+		<div id="test-fs"></div>
 		<script>
 			const script = `
 Rule unknown ignore
@@ -190,6 +191,36 @@ Then print the data
 			})
 			.then((r) => {
 				GitResDiv.innerText = JSON.stringify(r.result);
+			});
+
+			//
+			const scriptFs = `
+Rule unknown ignore
+Prepare: store in file with content 'file_content', path 'file_path'
+Prepare: verify file exists with path 'file_path'
+Prepare: 'read_result': read verbatim file content with path 'file_path'
+
+Prepare: connect to 'url' and download and extract with path 'zip_path'
+Prepare: 'ls_result': list directory content with path 'in_zip'
+
+Given I have a 'string array' named 'ls_result'
+Given I have a 'string' named 'read_result'
+Then print the data
+			`
+
+			const FsResDiv = document.getElementById('test-fs');
+
+			slangroom.execute(scriptFs, {
+				data:{
+					url: "http://localhost:8080/zip_test.zip",
+					zip_path: "some/path/to/zip",
+					in_zip: "some/path/to/zip/zip_test",
+					file_path: "true",
+					file_content: "hello from file"
+				}
+			})
+			.then((r) => {
+				FsResDiv.innerText = JSON.stringify(r.result);
 			});
 		</script>
 	</body>
