@@ -4,12 +4,10 @@
 
 import { Plugin } from '@slangroom/core';
 import { JsonableObject } from '@slangroom/shared';
-import * as path from 'node:path';
-import * as fspkg from 'node:fs/promises';
-import * as os from 'node:os';
+import * as path from 'path';
+import { promises as fspkg } from 'fs';
 import axios from 'axios';
-import extractZip from 'extract-zip';
-// read the version from the package.json
+import { unzipSync } from 'fflate';
 import packageJson from '@slangroom/fs/package.json' with { type: 'json' };
 
 export const version = packageJson.version;
@@ -25,6 +23,7 @@ export class FsError extends Error {
  * @internal
  */
 export const sandboxDir = () => {
+	if (typeof process === 'undefined') return '.';
 	// TODO: sanitize sandboxDir
 	return process.env['FILES_DIR'];
 };
@@ -100,11 +99,17 @@ export const downloadAndExtract = p.new(
 
 		try {
 			const resp = await axios.get(zipUrl, { responseType: 'arraybuffer' });
-			const tempdir = await fspkg.mkdtemp(path.join(os.tmpdir(), 'slangroom-'));
-			const tempfile = path.join(tempdir, 'downloaded');
-			await fspkg.writeFile(tempfile, resp.data);
-			await extractZip(tempfile, { dir: res.dirpath });
-			await fspkg.rm(tempdir, { recursive: true });
+			const zipData = new Uint8Array(resp.data);
+			const files = unzipSync(zipData);
+			for (const [filename, fileData] of Object.entries(files)) {
+				if (filename.endsWith('/')) continue; // skip directories
+				const fullPath = path.join(res.dirpath, filename);
+				const dir = path.dirname(fullPath);
+				console.log('dir', dir);
+				console.log('fullPath', fullPath);
+				await fspkg.mkdir(dir, { recursive: true });
+				await fspkg.writeFile(fullPath, fileData);
+			}
 			return ctx.pass(null);
 		} catch (e) {
 			if (e instanceof Error) return ctx.fail(new FsError(e.message));
