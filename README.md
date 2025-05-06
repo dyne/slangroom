@@ -132,6 +132,7 @@ If you do not wwant to integrate slangroom in your code but wwant to use it, you
 ### 🌐 Usage in the browser
 
 Slangroom can also be directly used in the browser thorugh the plugin @slangroom/browser. This plugin at the moment contains only a subsets of plugin that are:
+* [@slangroom/fs](https://dyne.org/slangroom/examples/#fs-plugin-examples)
 * [@slangroom/git](https://dyne.org/slangroom/examples/#git-plugin-examples)
 * [@slangroom/helpers](https://dyne.org/slangroom/examples/#helpers-plugin-examples)
 * [@slangroom/http](https://dyne.org/slangroom/examples/#http-plugin-examples)
