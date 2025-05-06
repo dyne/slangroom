@@ -136,11 +136,9 @@ const generateStatements = (nameAndPlugin) => {
 		pluginStatementsTableGt.push(statementGrammarGt);
 		pluginStatementsTablePc.push(statementGrammarPc);
 
-		withParams = withParams.slice(0, -2);
-		whereParams = whereParams.slice(0, -2);
 		const statement = `I ${openConnect}${sendParams}${k.phrase}`;
-		const withStatement = `${openConnect}${k.phrase} with ${withParams}`;
-		const whereStatement = `${openConnect}${k.phrase} where ${whereParams}`;
+		const withStatement = `${openConnect}${k.phrase}${withParams !== '' ? ` with ${withParams.slice(0, -2)}` : ''}`;
+		const whereStatement = `${openConnect}${k.phrase}${whereParams !== '' ? ` where ${whereParams.slice(0, -2)}` : ''}`;
 		const lowerCaseStatement = `I ${openConnect}${sendParams.toLowerCase()}${k.phrase.toLowerCase()}`;
 		fullStatementTemplates.push(
 			{ label: `${nameLowerCase} given ${lowerCaseStatement}`, displayLabel: `Given ${statement}`, type: "keyword", info: `[${name}]` },
