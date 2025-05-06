@@ -364,9 +364,6 @@ importers:
       '@slangroom/shared':
         specifier: workspace:*
         version: link:../shared
-      axios:
-        specifier: ^1.6.2
-        version: 1.6.2
       fflate:
         specifier: ^0.8.2
         version: 0.8.2

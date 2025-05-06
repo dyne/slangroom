@@ -13,16 +13,21 @@ import {
 import * as fs from 'node:fs/promises';
 import { join } from 'node:path';
 import * as os from 'node:os';
-import nock from 'nock';
+import http from 'http';
+import { once } from 'events';
 
-nock('http://localhost').get('/').reply(
-	200,
-	// Zip of a file named 'foo.txt' that has the content of 'bar'.
-	Buffer.from(
-		'UEsDBAoAAAAAADRzTFfps6IEBAAAAAQAAAAHABwAZm9vLnR4dFVUCQADs9cnZWELKWV1eAsAAQToAwAABOgDAABiYXIKUEsBAh4DCgAAAAAANHNMV+mzogQEAAAABAAAAAcAGAAAAAAAAQAAAICBAAAAAGZvby50eHRVVAUAA7PXJ2V1eAsAAQToAwAABOgDAABQSwUGAAAAAAEAAQBNAAAARQAAAAAA',
-		'base64',
-	),
-);
+
+const zipBuffer = Buffer.from('UEsDBAoAAAAAADRzTFfps6IEBAAAAAQAAAAHABwAZm9vLnR4dFVUCQADs9cnZWELKWV1eAsAAQToAwAABOgDAABiYXIKUEsBAh4DCgAAAAAANHNMV+mzogQEAAAABAAAAAcAGAAAAAAAAQAAAICBAAAAAGZvby50eHRVVAUAA7PXJ2V1eAsAAQToAwAABOgDAABQSwUGAAAAAAEAAQBNAAAARQAAAAAA', 'base64');
+
+const server = http.createServer((req, res) => {
+	if (req.url === '/') {
+		res.writeHead(200, { 'Content-Type': 'application/zip' });
+		res.end(zipBuffer);
+	}
+});
+await once(server.listen(0), 'listening'); // listen on random free port
+const { port } = server.address() as any;
+const zipUrl = `http://localhost:${port}/`;
 
 // Tests in this file must be run serially, since we're modifying `process.env`
 
@@ -37,12 +42,16 @@ test.beforeEach(async (t) => {
 
 test.afterEach(async (t) => await fs.rm(t.context, { recursive: true }));
 
+test.after.always(() => {
+	server.close();
+});
+
 // Read the comments of the nock instance above in order to understand how this
 // test works.
 test.serial('downloadAndExtract works', async (t) => {
 	const path = join('foo', 'bar');
 	const dir = join(t.context, path);
-	const ctx = new PluginContextTest('http://localhost/', { path: path });
+	const ctx = new PluginContextTest(zipUrl, { path: path });
 	const res = await downloadAndExtract(ctx);
 	t.deepEqual(res, { ok: true, value: null });
 	const content = await fs.readFile(join(dir, 'foo.txt'));

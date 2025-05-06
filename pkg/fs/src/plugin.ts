@@ -6,7 +6,6 @@ import { Plugin } from '@slangroom/core';
 import { JsonableObject } from '@slangroom/shared';
 import * as path from 'path';
 import { promises as fspkg } from 'fs';
-import axios from 'axios';
 import { unzipSync } from 'fflate';
 import packageJson from '@slangroom/fs/package.json' with { type: 'json' };
 
@@ -98,8 +97,9 @@ export const downloadAndExtract = p.new(
 		await fspkg.mkdir(res.dirpath, { recursive: true });
 
 		try {
-			const resp = await axios.get(zipUrl, { responseType: 'arraybuffer' });
-			const zipData = new Uint8Array(resp.data);
+			const resp = await fetch(zipUrl);
+			if (!resp.ok) return ctx.fail(new FsError(`Failed to fetch zip from ${zipUrl}: ${resp.status} ${resp.statusText}`));
+			const zipData = new Uint8Array(await resp.arrayBuffer());
 			const files = unzipSync(zipData);
 			for (const [filename, fileData] of Object.entries(files)) {
 				if (filename.endsWith('/')) continue; // skip directories
