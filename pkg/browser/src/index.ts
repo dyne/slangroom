@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import { Slangroom, version as coreVersion } from '@slangroom/core';
+import { ethereum, version as ethereumVersion } from '@slangroom/ethereum';
 import { fs, version as fsVersion } from '@slangroom/fs';
 import { git, version as gitVersion } from '@slangroom/git';
 import { helpers, version as helpersVersion } from '@slangroom/helpers';
@@ -12,6 +13,7 @@ import { location, version as locationVersion } from '@slangroom/location';
 import { pocketbase, version as pocketbaseVersion } from '@slangroom/pocketbase';
 import { qrcode, version as qrcodeVersion } from '@slangroom/qrcode';
 import { timestamp, version as timestampVersion } from '@slangroom/timestamp';
+import { zencode, version as zencodeVersion } from '@slangroom/zencode';
 import { zenroomVersion } from '@slangroom/deps/zenroom';
 import packageJson from '@slangroom/browser/package.json' with { type: 'json' };
 
@@ -21,6 +23,10 @@ import { Buffer } from 'buffer';
 export const version = packageJson.version;
 
 const plugins_dict = {
+	ethereum: {
+		plugin: ethereum,
+		version: ethereumVersion
+	},
 	fs: {
 		plugin: fs,
 		version: fsVersion
@@ -56,7 +62,11 @@ const plugins_dict = {
 	timestamp: {
 		plugin: timestamp,
 		version: timestampVersion
-	}
+	},
+	zencode: {
+		plugin: zencode,
+		version: zencodeVersion
+	},
 };
 
 let welcome_message = '🎉 Slangroom is ready, installed zenroom and plugins:\n';

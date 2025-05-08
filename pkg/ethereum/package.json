@@ -4,7 +4,6 @@
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
 		"@slangroom/shared": "workspace:*",
-		"axios": "^1.6.2",
 		"web3": "^4.3.0",
 		"web3-validator": "^2.0.3"
 	},

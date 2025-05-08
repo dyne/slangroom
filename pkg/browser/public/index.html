@@ -18,6 +18,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 		<div id="test-timestamp"></div>
 		<div id="test-git"></div>
 		<div id="test-fs"></div>
+		<div id="test-zencode"></div>
 		<script>
 			const script = `
 Rule unknown ignore
@@ -184,7 +185,7 @@ Then print the data
 
 			slangroom.execute(scriptGit, {
 				data:{
-					url: "http://localhost:8000/github.com/srfsh/dumb",
+					url: "https://ghisa.forkbomb.eu?url=https%3A%2F%2Fgithub.com%2Fsrfsh%2Fdumb",
 					path: "slangroom",
 					checked: "true"
 				}
@@ -221,6 +222,37 @@ Then print the data
 			})
 			.then((r) => {
 				FsResDiv.innerText = JSON.stringify(r.result);
+			});
+
+			//
+			const scriptZencode = `
+Rule unknown ignore
+Prepare 'zen_output': execute zencode with script 'zen_script', data 'zen_data', keys 'zen_keys'
+
+Given I have a 'string dictionary' named 'zen_output'
+Then print the data
+			`
+
+			const ZencodeResDiv = document.getElementById('test-zencode');
+
+			slangroom.execute(scriptZencode, {
+				data:{
+					zen_script: `
+					Given I have a 'string' named 'foo'
+					Given I have a 'string' named 'bar'
+					Then print 'foo'
+					Then print 'bar'
+					`,
+					zen_data: {
+						foo: "hello"
+					},
+					zen_keys: {
+						bar: "world"
+					}
+				}
+			})
+			.then((r) => {
+				ZencodeResDiv.innerText = JSON.stringify(r.result);
 			});
 		</script>
 	</body>
