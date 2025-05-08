@@ -3,13 +3,14 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import { Slangroom, version as coreVersion } from '@slangroom/core';
-import { qrcode, version as qrcodeVersion } from '@slangroom/qrcode';
+import { fs, version as fsVersion } from '@slangroom/fs';
 import { git, version as gitVersion } from '@slangroom/git';
-import { http, version as httpVersion } from '@slangroom/http';
-import { pocketbase, version as pocketbaseVersion } from '@slangroom/pocketbase';
 import { helpers, version as helpersVersion } from '@slangroom/helpers';
+import { http, version as httpVersion } from '@slangroom/http';
 import { JSONSchema, version as jsonSchemaVersion } from '@slangroom/json-schema';
 import { location, version as locationVersion } from '@slangroom/location';
+import { pocketbase, version as pocketbaseVersion } from '@slangroom/pocketbase';
+import { qrcode, version as qrcodeVersion } from '@slangroom/qrcode';
 import { timestamp, version as timestampVersion } from '@slangroom/timestamp';
 import { zenroomVersion } from '@slangroom/deps/zenroom';
 import packageJson from '@slangroom/browser/package.json' with { type: 'json' };
@@ -20,25 +21,21 @@ import { Buffer } from 'buffer';
 export const version = packageJson.version;
 
 const plugins_dict = {
+	fs: {
+		plugin: fs,
+		version: fsVersion
+	},
 	git: {
 		plugin: git,
 		version: gitVersion
 	},
-	http: {
-		plugin: http,
-		version: httpVersion
-	},
-	qrcode: {
-		plugin: qrcode,
-		version: qrcodeVersion
-	},
-	pocketbase: {
-		plugin: pocketbase,
-		version: pocketbaseVersion
-	},
 	helpers: {
 		plugin: helpers,
 		version: helpersVersion
+	},
+	http: {
+		plugin: http,
+		version: httpVersion
 	},
 	'json-schema': {
 		plugin: JSONSchema,
@@ -47,6 +44,14 @@ const plugins_dict = {
 	location: {
 		plugin: location,
 		version: locationVersion
+	},
+	pocketbase: {
+		plugin: pocketbase,
+		version: pocketbaseVersion
+	},
+	qrcode: {
+		plugin: qrcode,
+		version: qrcodeVersion
 	},
 	timestamp: {
 		plugin: timestamp,

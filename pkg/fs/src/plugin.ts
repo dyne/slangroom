@@ -4,12 +4,9 @@
 
 import { Plugin } from '@slangroom/core';
 import { JsonableObject } from '@slangroom/shared';
-import * as path from 'node:path';
-import * as fspkg from 'node:fs/promises';
-import * as os from 'node:os';
-import axios from 'axios';
-import extractZip from 'extract-zip';
-// read the version from the package.json
+import * as path from 'path';
+import { promises as fspkg } from 'fs';
+import { unzipSync } from 'fflate';
 import packageJson from '@slangroom/fs/package.json' with { type: 'json' };
 
 export const version = packageJson.version;
@@ -25,6 +22,7 @@ export class FsError extends Error {
  * @internal
  */
 export const sandboxDir = () => {
+	if (typeof process === 'undefined') return '.';
 	// TODO: sanitize sandboxDir
 	return process.env['FILES_DIR'];
 };
@@ -99,12 +97,17 @@ export const downloadAndExtract = p.new(
 		await fspkg.mkdir(res.dirpath, { recursive: true });
 
 		try {
-			const resp = await axios.get(zipUrl, { responseType: 'arraybuffer' });
-			const tempdir = await fspkg.mkdtemp(path.join(os.tmpdir(), 'slangroom-'));
-			const tempfile = path.join(tempdir, 'downloaded');
-			await fspkg.writeFile(tempfile, resp.data);
-			await extractZip(tempfile, { dir: res.dirpath });
-			await fspkg.rm(tempdir, { recursive: true });
+			const resp = await fetch(zipUrl);
+			if (!resp.ok) return ctx.fail(new FsError(`Failed to fetch zip from ${zipUrl}: ${resp.status} ${resp.statusText}`));
+			const zipData = new Uint8Array(await resp.arrayBuffer());
+			const files = unzipSync(zipData);
+			for (const [filename, fileData] of Object.entries(files)) {
+				if (filename.endsWith('/')) continue; // skip directories
+				const fullPath = path.join(res.dirpath, filename);
+				const dir = path.dirname(fullPath);
+				await fspkg.mkdir(dir, { recursive: true });
+				await fspkg.writeFile(fullPath, fileData);
+			}
 			return ctx.pass(null);
 		} catch (e) {
 			if (e instanceof Error) return ctx.fail(new FsError(e.message));

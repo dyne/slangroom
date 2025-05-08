@@ -51,6 +51,7 @@
 !/pkg/browser/tests/**
 !/pkg/browser/public/index.html
 !/pkg/browser/public/location.html
+!/pkg/browser/public/zip_test.zip
 
 # shitdocs
 !/docs/**/*.md
