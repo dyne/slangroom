@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import { Slangroom, version as coreVersion } from '@slangroom/core';
+import { ethereum, version as ethereumVersion } from '@slangroom/ethereum';
 import { fs, version as fsVersion } from '@slangroom/fs';
 import { git, version as gitVersion } from '@slangroom/git';
 import { helpers, version as helpersVersion } from '@slangroom/helpers';
@@ -22,6 +23,10 @@ import { Buffer } from 'buffer';
 export const version = packageJson.version;
 
 const plugins_dict = {
+	ethereum: {
+		plugin: ethereum,
+		version: ethereumVersion
+	},
 	fs: {
 		plugin: fs,
 		version: fsVersion
