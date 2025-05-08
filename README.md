@@ -141,6 +141,7 @@ Slangroom can also be directly used in the browser thorugh the plugin @slangroom
 * [@slangroom/pocketbase](https://dyne.org/slangroom/examples/#pocketbase-plugin-examples)
 * [@slangroom/qrcode](https://dyne.org/slangroom/examples/#qrcode-plugin-examples)
 * [@slangroom/timestamp](https://dyne.org/slangroom/examples/#timestamp-plugin-examples)
+* [@slangroom/zencode](https://dyne.org/slangroom/examples/#zencode-plugin-examples)
 
 A minimal example is:
 

@@ -12,6 +12,7 @@ import { location, version as locationVersion } from '@slangroom/location';
 import { pocketbase, version as pocketbaseVersion } from '@slangroom/pocketbase';
 import { qrcode, version as qrcodeVersion } from '@slangroom/qrcode';
 import { timestamp, version as timestampVersion } from '@slangroom/timestamp';
+import { zencode, version as zencodeVersion } from '@slangroom/zencode';
 import { zenroomVersion } from '@slangroom/deps/zenroom';
 import packageJson from '@slangroom/browser/package.json' with { type: 'json' };
 
@@ -56,7 +57,11 @@ const plugins_dict = {
 	timestamp: {
 		plugin: timestamp,
 		version: timestampVersion
-	}
+	},
+	zencode: {
+		plugin: zencode,
+		version: zencodeVersion
+	},
 };
 
 let welcome_message = '🎉 Slangroom is ready, installed zenroom and plugins:\n';
