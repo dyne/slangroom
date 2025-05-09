@@ -8,12 +8,25 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 From terminals to browsers—powerful, portable, and privacy-preserving execution
 
 Slangroom adapts to your environment with multiple deployment options:
+<!-- no toc -->
+- [⌨️ CLI](#-cli)
+	- [🧠 Slangroom-exec](#-slangroom-exec): Execute Slangroom contracts read from `STDIN`
+	- [👯 Twinroom](#-twinroom): turn Slangroom contracts into CLI commands
+- [🌐 WEB](#-web)
+	- [🛝 Online playgorund](#-online-playgorund): Test slangroom contracts instantly on web
+	- [🧩 Webcomponent](#-webcomponent): Make your HTML a Dyner place
+	- [📜 HTML](#-html): Direclty use slangroom in your html page
+- [📡 REST](#-rest)
+	- [🪄 Noˑcodeˑroom](#-noˑcodeˑroom): No code REST API server based on Slangroom
+	- [😈 Twinroom in daemon mode](#-twinroom-in-daemon-mode): Turn Slangroom contracts into API
+- [🐯 JS/TS](#-js-ts)
+    - [📚 Library](#-library): Integrates slangroom in your JS/TS project
 
-## ⌨️ CLI
+## ⌨️ CLI {#-cli}
 
 Terminal whisperer? 🦜 Slangroom speaks your language!
 
-### 🧠 Slangroom-exec
+### 🧠 Slangroom-exec {#-slangroom-exec}
 
 [Slangroom-exec](https://github.com/dyne/slangroom-exec) is a simple utility that reads from `STDIN` the following content
 * conf
@@ -41,7 +54,7 @@ EOF
 
 [📖 Full documentation](https://github.com/dyne/slangroom-exec?tab=readme-ov-file#slangroom-exec-)
 
-### 👯 Twinroom
+### 👯 Twinroom {#-twinroom}
 
 [Twinroom](https://github.com/forkbombEu/twinroom) builds on slangroom-exec, letting you turn Slangroom
 contracts into CLI commands (and even more!).
@@ -73,19 +86,19 @@ curl -X GET http://localhost:3000/test/hello
 
 [🔮 Explore Twinroom magic](https://github.com/forkbombEu/twinroom?tab=readme-ov-file#twinroom-)
 
-## 🌐 Web
+## 🌐 Web {#-web}
 
 Like Bash, but cuter 💅 And serverless.
 
-### 🛝 Online playgorund
+### 🛝 Online playgorund {#-online-playgorund}
 
 Test slangroom contracts instantly on the [web playgorund](https://dyne.org/slangroom/playground/)
 
-### 🧩 Webcomponent
+### 🧩 Webcomponent {#-webcomponent}
 
 How did we build the web playgound? Simply using [dyne components](https://github.com/dyne/components)
 
-### 📜 Simple integration in html file
+### 📜 Simple integration in html file {#-html}
 
 Slangroom can also be directly used in the browser thorugh the plugin @slangroom/browser. This plugin at the moment contains only a subsets of plugin that are:
 * [@slangroom/fs](https://dyne.org/slangroom/examples/#fs-plugin-examples)
@@ -126,10 +139,65 @@ A minimal example is:
 </html>
 ```
 
-## 📡 REST
+## 📡 REST {#-rest}
 
-### 🪄 No-Code-Room
+### 🪄 Noˑcodeˑroom {#-noˑcodeˑroom}
 
-### 😈 Twinroom in deamon mode
+### 😈 Twinroom in daemon mode {#-twinroom-in-daemon-mode}
 
-## 📚 Library
+## 🐯 JS/TS {#-js-ts}
+
+### 📚 Library {#-library}
+
+```js
+import { Slangroom } from '@slangroom/core';
+import { db } from '@slangroom/db';
+import { ethereum } from '@slangroom/ethereum';
+import { fs } from '@slangroom/fs';
+import { git } from '@slangroom/git';
+import { helpers } from '@slangroom/helpers';
+import { http } from '@slangroom/http';
+import { JSONSchema } from '@slangroom/json-schema';
+import { oauth } from '@slangroom/oauth';
+import { pocketbase } from '@slangroom/pocketbase';
+import { qrcode } from '@slangroom/qrcode';
+import { rdf } from '@slangroom/rdf';
+import { redis } from '@slangroom/redis';
+import { shell } from '@slangroom/shell';
+import { timestamp } from '@slangroom/timestamp';
+import { wallet } from '@slangroom/wallet';
+import { zencode } from '@slangroom/zencode';
+
+const SLANGROOM_PLUGINS = [
+	db,
+	ethereum,
+	fs,
+	git,
+	helpers,
+	http,
+	JSONSchema,
+	oauth,
+	pocketbase,
+	qrcode,
+	rdf,
+	redis,
+	shell,
+	timestamp,
+	wallet,
+	zencode
+];
+
+const slang = new Slangroom(SLANGROOM_PLUGINS);
+
+// slangroom contract that you want to run
+// here we simply take the timestamp in seconds
+const script = `Rule unknown ignore
+Given I fetch the local timestamp in seconds and output into 'timestamp'
+Given I have a 'time' named 'timestamp'
+Then print the 'timestamp'
+`;
+const data = {};
+const keys = {};
+
+const res = await slangroom.execute(script, { data, keys })
+```
