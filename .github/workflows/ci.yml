@@ -58,7 +58,7 @@ jobs:
             --server.host 0.0.0.0 \
             --server.port 9485 \
             --chain.chainId 1717658228 \
-            --wallet.seed "spoon ostrich survey tumble tube used person also wasp rack cabbage liberty"
+            --wallet.seed "spoon ostrich survey tumble tube used person also wasp rack cabbage liberty" &
         working-directory: ./pkg/ethereum
       - name: 🧪 Run the tests
         run: pnpm coverage
