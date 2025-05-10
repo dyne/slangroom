@@ -52,6 +52,14 @@ jobs:
       - name: 🤖 Start microservices
         run: |
           ./pkg/oauth/test/start_microservices.sh setup
+      - name: 🤖 Start ganache
+        run: |
+          pnpm exec ganache \
+            --server.host 0.0.0.0 \
+            --server.port 9485 \
+            --chain.chainId 1717658228 \
+            --wallet.seed "spoon ostrich survey tumble tube used person also wasp rack cabbage liberty"
+        working-directory: ./pkg/ethereum
       - name: 🧪 Run the tests
         run: pnpm coverage
       - name: 🧪 Test grammar package
