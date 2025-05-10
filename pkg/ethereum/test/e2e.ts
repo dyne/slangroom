@@ -12,7 +12,7 @@ let storageContractAddress: string;
 
 // Solidity contract compiled with solc@0.7.x in ABI and bytecode (IMPORTANT: v^0.8.0 will not work!)
 /***
- * // SPDX-License-Identifier: GPL-3.0
+ * // SPDX-License-Identifier: AGPL-3.0-or-later
  * pragma solidity >=0.7.0;
  *
  * contract StorageData {
