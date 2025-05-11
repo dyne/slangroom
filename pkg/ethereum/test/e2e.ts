@@ -114,7 +114,7 @@ Then print data
 	);
 });
 
-test.skip('Make slangroom fail', async (t) => {
+test('Make slangroom fail', async (t) => {
 	const contract = `
 Rule unknown ignore
 Scenario ethereum
