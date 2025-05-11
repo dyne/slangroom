@@ -82,7 +82,7 @@ test.serial('listDirectoryContent works', async (t) => {
 	const dir = join(t.context, path);
 	await fs.mkdir(dir, { recursive: true });
 	const files = [join(dir, 'file0'), join(dir, 'file1')];
-	files.forEach(async (f) => await fs.appendFile(f, ''));
+	await Promise.all(files.map((f) => fs.appendFile(f, '')));
 	const stats = await Promise.all(files.map((f) => fs.stat(f)));
 	const ctx = PluginContextTest.params({ path: path });
 	const value = stats.map((stat, i) => {
