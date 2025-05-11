@@ -54,6 +54,6 @@
 		"build": "pnpm exec esbuild --bundle src/index.ts --outfile=build/slangroom.js --target=ESNext --external:crypto --alias:fs=@zenfs/core --alias:path=path-browserify && cp build/slangroom.js public"
 	},
 	"engines": {
-		"node": "^18.20.0 || ^20.10.0 || ^22 || ^23"
+		"node": "^18.20.0 || ^20.10.0 || ^22 || ^23 || ^24"
 	}
 }
