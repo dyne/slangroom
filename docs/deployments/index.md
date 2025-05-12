@@ -3,7 +3,7 @@ SPDX-FileCopyrightText: 2023-2025 Dyne.org foundation
 SPDX-License-Identifier: AGPL-3.0-or-later
 -->
 
-# 🚀 Run Slangroom Your Way
+# 🚀 Run Slangroom Your Way {#-top}
 
 From terminals to browsers—powerful, portable, and privacy-preserving execution
 
@@ -52,7 +52,8 @@ Then print the 'timestamp'
 EOF
 ```
 
-[📖 Full documentation](https://github.com/dyne/slangroom-exec?tab=readme-ov-file#slangroom-exec-)
+[📖 Full documentation](https://github.com/dyne/slangroom-exec?tab=readme-ov-file#slangroom-exec-) |
+[🔝 Back to top](#-top)
 
 ### 👯 Twinroom {#-twinroom}
 
@@ -60,7 +61,7 @@ EOF
 contracts into CLI commands (and even more!).
 Not enough? It let you also:
 * run external slangroom contracts dynamically 🧨
-* Expose commands as HTTP API endpoints (daemon mode) 😈
+* Expose commands as HTTP API endpoints: [daemon mode](#-twinroom-in-daemon-mode) 😈
 
 Some twinroom examples:
 ```bash
@@ -79,12 +80,10 @@ Then print the string '😘 Welcome to the Slangroom World 🌈'
 Then print the 'timestamp'
 EOF
 twinroom $(pwd) welcome
-# 😈 start the daemon mode
-twinroom --daemon
-curl -X GET http://localhost:3000/test/hello
 ```
 
-[🔮 Explore Twinroom magic](https://github.com/forkbombEu/twinroom?tab=readme-ov-file#twinroom-)
+[📖 Full documentation](https://github.com/forkbombEu/twinroom?tab=readme-ov-file#twinroom-) |
+[🔝 Back to top](#-top)
 
 ## 🌐 Web {#-web}
 
@@ -94,9 +93,14 @@ Like Bash, but cuter 💅 And serverless.
 
 Test slangroom contracts instantly on the [web playgorund](https://dyne.org/slangroom/playground/)
 
+[🔝 Back to top](#-top)
+
 ### 🧩 Webcomponent {#-webcomponent}
 
 How did we build the web playgound? Simply using [dyne components](https://github.com/dyne/components)
+
+[📖 Full documentation](https://dyne.org/components/?path=/docs/welcome--docs) |
+[🔝 Back to top](#-top)
 
 ### 📜 Simple integration in html file {#-html}
 
@@ -139,13 +143,56 @@ A minimal example is:
 </html>
 ```
 
+[🔝 Back to top](#-top)
+
 ## 📡 REST {#-rest}
+
+Your contracts, now RESTing comfortably in an endpoint near you. 🛏
 
 ### 🪄 Noˑcodeˑroom {#-noˑcodeˑroom}
 
+[Noˑcodeˑroom](https://github.com/ForkbombEu/ncr) lets you execute Slangroom smart contracts
+via RESTful API calls, turning natural language logic into live endpoints—no traditional code needed.
+Its strength lies in flexible configuration: you can set it up using command-line options or
+environment variables, and control the behavior of each API endpoint through a simple metadata file.
+
+First steps with ncr:
+
+```bash
+# download the binary (only for linux at the moment)
+wget https://github.com/forkbombeu/ncr/releases/latest/download/ncr -O ~/.local/bin/ncr && chmod +x ~/.local/bin/ncr
+
+# checkout this repo
+git clone https://github.com/forkbombeu/ncr
+
+# run the server on port 3000 with the example folders
+ncr -p 3000 -z ./ncr/tests/fixtures --public-directory ./ncr/public
+```
+
+[📖 Full documentation](https://github.com/ForkbombEu/ncr?tab=readme-ov-file#no%CB%91code%CB%91room-) |
+[🔝 Back to top](#-top)
+
 ### 😈 Twinroom in daemon mode {#-twinroom-in-daemon-mode}
 
+[Twinroom](https://github.com/forkbombEu/twinroom) builds on slangroom-exec, letting you turn Slangroom
+contracts into [CLI commands](#-twinroom) or HTTP API endpoints.
+
+```bash
+# ⬇️ download the binary
+wget https://github.com/forkbombeu/twinroom/releases/latest/download/twinroom -O ~/.local/bin/twinroom && chmod +x ~/.local/bin/twinroom
+
+# 😈 start the daemon mode
+twinroom --daemon
+# visit http://localhost:3000/slang for the swagger documentation ot just test it
+curl -X GET http://localhost:3000/test/hello
+```
+
+[📖 Full documentation](https://github.com/forkbombEu/twinroom?tab=readme-ov-file#twinroom-) |
+[🔝 Back to top](#-top)
+
 ## 🐯 JS/TS {#-js-ts}
+
+Write your will in words, and watch JavaScript make it real. ✍
 
 ### 📚 Library {#-library}
 
@@ -201,3 +248,5 @@ const keys = {};
 
 const res = await slangroom.execute(script, { data, keys })
 ```
+
+[🔝 Back to top](#-top)
