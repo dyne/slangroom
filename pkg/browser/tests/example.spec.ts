@@ -59,10 +59,9 @@ test('check results of slangroom', async ({ page }) => {
 		"{\"zen_output\":{\"bar\":\"world\",\"foo\":\"hello\"}}"
 	);
 
-	const textEth = await page.locator('#test-ethereum').textContent();
-	const jsonEth = JSON.parse(textEth || '{}');
-	expect(jsonEth.signed_ethereum_transaction).toBeTruthy();
-	expect(jsonEth.transaction_id).toBeTruthy();
+	await expect(page.locator('#test-ethereum')).toContainText(
+		/{"signed_ethereum_transaction":"[0-9a-fA-F]+","transaction_id":"[0-9a-fA-F]+"}/
+	);
 });
 
 test('check @slangroom/location', async ({ browser, page }) => {
