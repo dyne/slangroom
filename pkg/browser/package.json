@@ -14,7 +14,7 @@
 		"@slangroom/timestamp": "workspace:*",
 		"buffer": "^6.0.3"
 	},
-	"version": "1.48.0",
+	"version": "1.48.1",
 	"repository": "https://github.com/dyne/slangroom",
 	"license": "AGPL-3.0-only",
 	"type": "module",

@@ -1,6 +1,6 @@
 {
 	"name": "@slangroom/redis",
-	"version": "1.48.0",
+	"version": "1.48.1",
 	"dependencies": {
 		"@redis/client": "^1.5.12",
 		"@slangroom/core": "workspace:*",
