@@ -58,6 +58,11 @@ test('check results of slangroom', async ({ page }) => {
 	await expect(page.locator('#test-zencode')).toContainText(
 		"{\"zen_output\":{\"bar\":\"world\",\"foo\":\"hello\"}}"
 	);
+
+	const textEth = await page.locator('#test-ethereum').textContent();
+	const jsonEth = JSON.parse(textEth || '{}');
+	expect(jsonEth.signed_ethereum_transaction).toBeTruthy();
+	expect(jsonEth.transaction_id).toBeTruthy();
 });
 
 test('check @slangroom/location', async ({ browser, page }) => {
