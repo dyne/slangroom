@@ -14,7 +14,7 @@ Slangroom adapts to your environment with multiple deployment options:
 	- [👯 Twinroom](#-twinroom): turn Slangroom contracts into CLI commands
 - [🌐 WEB](#-web)
 	- [🛝 Online playgorund](#-online-playgorund): Test slangroom contracts instantly on web
-	- [🧩 Webcomponent](#-webcomponent): Make your HTML a Dyner place
+	- [🧩 Web component](#-web-component): Make your HTML a Dyner place
 	- [📜 HTML](#-html): Direclty use slangroom in your html page
 - [📡 REST](#-rest)
 	- [🪄 Noˑcodeˑroom](#-noˑcodeˑroom): No code REST API server based on Slangroom
@@ -95,9 +95,28 @@ Test slangroom contracts instantly on the [web playgorund](https://dyne.org/slan
 
 [🔝 Back to top](#-top)
 
-### 🧩 Webcomponent {#-webcomponent}
+### 🧩 Web component {#-web-component}
 
-How did we build the web playgound? Simply using [dyne components](https://github.com/dyne/components)
+[Dyne Components](https://github.com/dyne/components) is a UI component library designed for
+[Dyne.org](https://dyne.org) hackers to easily implement web pages that adhere to Dyne.org's
+design principles. It offers a set of reusable, customizable web components, such as buttons and inputs,
+built with modern web standards. The library is optimized for seamless integration into web projects,
+promoting consistency and efficiency in web development.
+
+```html
+<!doctype html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@dyne/components/dist/dyne-components/dyne-components.css" />
+        <script type="module" src="https://cdn.jsdelivr.net/npm/@dyne/components/dist/dyne-components/dyne-components.esm.js"></script>
+    </head>
+    <body>
+        <dyne-button emphasis="high">I'm useless but I love you 🥰</dyne-button>
+    </body>
+</html>
+```
 
 [📖 Full documentation](https://dyne.org/components/?path=/docs/welcome--docs) |
 [🔝 Back to top](#-top)
