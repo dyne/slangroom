@@ -112,11 +112,15 @@ export const ethBrodcast = p.new(
 		const web3 = new Web3(ctx.fetchConnect()[0]);
 		const rawtx = ctx.fetch('transaction');
 		if (typeof rawtx !== 'string') return ctx.fail(new EthereumError('transaction must be string'));
-		const receipt = await web3.eth.sendSignedTransaction(
-			rawtx.startsWith('0x') ? rawtx : '0x' + rawtx,
-		);
-		if (!receipt.status) ctx.fail(new EthereumError('transaction failed'));
-		return ctx.pass(receipt.transactionHash.toString().substring(2)); // remove 0x
+		try {
+			const receipt = await web3.eth.sendSignedTransaction(
+				rawtx.startsWith('0x') ? rawtx : '0x' + rawtx,
+			);
+			if (!receipt.status) return ctx.fail(new EthereumError('transaction failed'));
+			return ctx.pass(receipt.transactionHash.toString().substring(2)); // remove 0x
+		} catch (e) {
+			return ctx.fail(new EthereumError(e.message));
+		}
 	},
 );
 
