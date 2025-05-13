@@ -9,7 +9,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 # Slangroom <!-- omit in toc -->
 
-### Zencode plugins? Slangroom!</br>Enhance zencode smart–contracts with your slang <!-- omit in toc -->
+### [Zencode](https://dev.zenroom.org/#/) plugins? Slangroom!</br>Enhance zencode smart–contracts with your slang <!-- omit in toc -->
 
 </div>
 
@@ -25,7 +25,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 ## ✨ Slangroom features <!-- omit in toc -->
 
-Slangroom is a plugin system to enhance the domain-specific [Zencode language](hhttps://dev.zenroom.org/#/), allowing to define custom operations to new sentences and making it easy to execute fast cryptographic operations on any data structure.
+Slangroom is a plugin system to enhance the domain-specific [Zencode language](https://dev.zenroom.org/#/), allowing to define custom operations to new sentences and making it easy to execute fast cryptographic operations on any data structure.
 
 Zencode has a **no-code** approach. It is a domain-specific language (DSL) **similar to human language**. One can process large data structures through complex cryptographic and logical transformations.
 
