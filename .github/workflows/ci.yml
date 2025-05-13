@@ -58,7 +58,8 @@ jobs:
             --server.host 0.0.0.0 \
             --server.port 9485 \
             --chain.chainId 1717658228 \
-            --wallet.seed "spoon ostrich survey tumble tube used person also wasp rack cabbage liberty" &
+            --wallet.seed "spoon ostrich survey tumble tube used person also wasp rack cabbage liberty" \
+            > ganache.log 2>&1 &
         working-directory: ./pkg/ethereum
       - name: 🧪 Run the tests
         run: pnpm coverage
@@ -71,6 +72,10 @@ jobs:
           pnpm build
           pnpm exec playwright test
         working-directory: ./pkg/browser
+      - name: Debug ganache
+        if: always()
+        run: |
+          cat ganache.log
       - name: 🪦 kill local microservices
         run: |
           ./pkg/oauth/test/start_microservices.sh cleanup
