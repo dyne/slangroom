@@ -75,7 +75,7 @@ jobs:
       - name: Debug ganache
         if: always()
         run: |
-          cat ganache.log
+          cat ./pkg/ethereum/ganache.log
       - name: 🪦 kill local microservices
         run: |
           ./pkg/oauth/test/start_microservices.sh cleanup
