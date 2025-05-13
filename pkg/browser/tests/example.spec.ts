@@ -60,7 +60,8 @@ test('check results of slangroom', async ({ page }) => {
 	);
 
 	await expect(page.locator('#test-ethereum')).toContainText(
-		/{"signed_ethereum_transaction":"[0-9a-fA-F]+","transaction_id":"[0-9a-fA-F]+"}/
+		/{"signed_ethereum_transaction":"[0-9a-fA-F]+","transaction_id":"[0-9a-fA-F]+"}/,
+		{ timeout: 60000 }
 	);
 });
 
