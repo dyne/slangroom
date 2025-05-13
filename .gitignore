@@ -30,6 +30,7 @@
 !/pnpm-workspace.yaml
 !/.prettierrc
 !/.prettierignore
+!/eslint.config.mjs
 # shared by pkgs
 !/tsconfig.json
 !/.npmignore

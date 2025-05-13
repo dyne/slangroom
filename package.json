@@ -26,7 +26,7 @@
   ],
   "license": "AGPL-3.0-only",
   "scripts": {
-    "lint": "eslint --ext .ts pkg/*/src pkg/*/test",
+    "lint": "eslint pkg/*/src pkg/*/test",
     "format": "prettier --ignore-path .gitignore --write '**/*.+(js|ts|json|html)'",
     "test": "pnpm build && pnpm -F @slangroom/* exec ava --verbose build/esm/test",
     "test:grammar": "pnpm build:grammar && pnpm -F codemirror-lang-slangroom test",
@@ -46,19 +46,17 @@
   "devDependencies": {
     "@lerna-lite/publish": "^3.10.0",
     "@types/node": "^22.7.6",
-    "@typescript-eslint/eslint-plugin": "^8.9.0",
-    "@typescript-eslint/parser": "^8.9.0",
     "ava": "^6.1.3",
     "c8": "^10.1.2",
     "esbuild": "^0.24.0",
     "eslint": "^9.12.0",
-    "eslint-config-prettier": "^9.1.0",
     "nock": "^13.5.5",
     "prettier": "^3.3.3",
     "ts-node": "^10.9.2",
     "tslib": "^2.8.0",
     "typedoc": "^0.26.10",
     "typescript": "^5.6.3",
+    "typescript-eslint": "^8.32.1",
     "vitepress": "^1.4.1"
   },
   "engines": {
