@@ -243,6 +243,9 @@ importers:
       '@slangroom/deps':
         specifier: workspace:*
         version: link:../deps
+      '@slangroom/ethereum':
+        specifier: workspace:*
+        version: link:../ethereum
       '@slangroom/fs':
         specifier: workspace:*
         version: link:../fs
@@ -270,6 +273,9 @@ importers:
       '@slangroom/timestamp':
         specifier: workspace:*
         version: link:../timestamp
+      '@slangroom/zencode':
+        specifier: workspace:*
+        version: link:../zencode
       buffer:
         specifier: ^6.0.3
         version: 6.0.3
@@ -346,9 +352,6 @@ importers:
       '@slangroom/shared':
         specifier: workspace:*
         version: link:../shared
-      axios:
-        specifier: ^1.6.2
-        version: 1.6.2
       web3:
         specifier: ^4.3.0
         version: 4.3.0(bufferutil@4.0.7)(encoding@0.1.13)(typescript@5.6.3)(utf-8-validate@6.0.3)(zod@3.24.1)

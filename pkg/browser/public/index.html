@@ -18,6 +18,8 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 		<div id="test-timestamp"></div>
 		<div id="test-git"></div>
 		<div id="test-fs"></div>
+		<div id="test-zencode"></div>
+		<div id="test-ethereum"></div>
 		<script>
 			const script = `
 Rule unknown ignore
@@ -184,7 +186,7 @@ Then print the data
 
 			slangroom.execute(scriptGit, {
 				data:{
-					url: "http://localhost:8000/github.com/srfsh/dumb",
+					url: "https://ghisa.forkbomb.eu?url=https%3A%2F%2Fgithub.com%2Fsrfsh%2Fdumb",
 					path: "slangroom",
 					checked: "true"
 				}
@@ -221,6 +223,83 @@ Then print the data
 			})
 			.then((r) => {
 				FsResDiv.innerText = JSON.stringify(r.result);
+			});
+
+			//
+			const scriptZencode = `
+Rule unknown ignore
+Prepare 'zen_output': execute zencode with script 'zen_script', data 'zen_data', keys 'zen_keys'
+
+Given I have a 'string dictionary' named 'zen_output'
+Then print the data
+			`
+
+			const ZencodeResDiv = document.getElementById('test-zencode');
+
+			slangroom.execute(scriptZencode, {
+				data:{
+					zen_script: `
+					Given I have a 'string' named 'foo'
+					Given I have a 'string' named 'bar'
+					Then print 'foo'
+					Then print 'bar'
+					`,
+					zen_data: {
+						foo: "hello"
+					},
+					zen_keys: {
+						bar: "world"
+					}
+				}
+			})
+			.then((r) => {
+				ZencodeResDiv.innerText = JSON.stringify(r.result);
+			});
+
+			//
+			const scriptEthereum = `
+Scenario 'ethereum': Store an object on eth
+
+Prepare 'ethereum_nonce': connect to 'ethereum' and read the ethereum nonce where address is 'address'
+Prepare 'gas_price': connect to 'ethereum' and read the ethereum suggested gas price
+
+# from slangroom
+Given I have a 'ethereum nonce'
+Given I have a 'gas price'
+
+# from keys
+Given I have the 'keyring'
+
+# from data
+Given I have a 'ethereum address' named 'receiver'
+Given I have a 'gas limit'
+
+# create the signed transaction to store the data
+When I create the ethereum transaction to 'receiver'
+When I create the signed ethereum transaction for chain 'fabt'
+
+Then print the 'signed ethereum transaction'
+
+Compute 'transaction_id': connect to 'ethereum' and read the ethereum transaction id after broadcast where transaction is 'signed_ethereum_transaction'
+			`
+
+			const EthereumResDiv = document.getElementById('test-ethereum');
+
+			slangroom.execute(scriptEthereum, {
+				data: {
+					"address": "0xFf02577F140557190693cFf549025e66119FEA52",
+					"gas_limit": "100000",
+					"receiver": "0x615a400a7569FAf6708b74CDed2AA975Ce452182",
+				},
+				keys: {
+					"ethereum": "http://localhost:9485",
+					"keyring": {
+						"ethereum": "42c707f93abe706a7733ec4ed411bad3a795f9be3b314ea1e034ac3b153e149d"
+					}
+				}
+			})
+			.then((r) => {
+				EthereumResDiv.innerText = JSON.stringify(r.result);
 			});
 		</script>
 	</body>

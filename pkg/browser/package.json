@@ -3,6 +3,7 @@
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
 		"@slangroom/deps": "workspace:*",
+		"@slangroom/ethereum": "workspace:*",
 		"@slangroom/fs": "workspace:*",
 		"@slangroom/git": "workspace:*",
 		"@slangroom/helpers": "workspace:*",
@@ -12,6 +13,7 @@
 		"@slangroom/pocketbase": "workspace:*",
 		"@slangroom/qrcode": "workspace:*",
 		"@slangroom/timestamp": "workspace:*",
+		"@slangroom/zencode": "workspace:*",
 		"buffer": "^6.0.3"
 	},
 	"version": "1.48.2",

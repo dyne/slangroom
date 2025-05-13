@@ -43,17 +43,26 @@ test('check results of slangroom', async ({ page }) => {
 	expect(json.read_result).toBe('"hello from file"');
 	expect(json.ls_result).toEqual(
 		expect.arrayContaining([
-		  expect.objectContaining({
-			name: "some/path/to/zip/zip_test/folder_1",
-			mode: "40777",
-		  }),
-		  expect.objectContaining({
-			name: "some/path/to/zip/zip_test/test.txt",
-			mode: "100644",
-			size: 23,
-		  }),
+			expect.objectContaining({
+				name: "some/path/to/zip/zip_test/folder_1",
+				mode: "40777",
+			}),
+			expect.objectContaining({
+				name: "some/path/to/zip/zip_test/test.txt",
+				mode: "100644",
+				size: 23,
+			}),
 		])
-	  );
+	);
+
+	await expect(page.locator('#test-zencode')).toContainText(
+		"{\"zen_output\":{\"bar\":\"world\",\"foo\":\"hello\"}}"
+	);
+
+	await expect(page.locator('#test-ethereum')).toContainText(
+		/{"signed_ethereum_transaction":"[0-9a-fA-F]+","transaction_id":"[0-9a-fA-F]+"}/,
+		{ timeout: 60000 }
+	);
 });
 
 test('check @slangroom/location', async ({ browser, page }) => {
