@@ -77,7 +77,7 @@ test('load invalid schema', async (t) => {
 				},
 			},
 		});
-	} catch (e) {
+	} catch {
 		error = 'Invalid JSON schema';
 	}
 

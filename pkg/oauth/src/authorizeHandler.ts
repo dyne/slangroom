@@ -414,7 +414,7 @@ export class AuthorizeHandler {
 	 */
 
 	async saveAuthorizationCode(authorizationCode: string, expiresAt: Date, redirectUri: string, scope: string[], client: Client, user: User, codeChallenge: string, codeChallengeMethod: string, authorization_details: { [key: string]: any }[], rand_uri: string) {
-		let code: AuthorizationCode = {
+		const code: AuthorizationCode = {
 			authorizationCode: authorizationCode,
 			expiresAt: expiresAt,
 			redirectUri: redirectUri,

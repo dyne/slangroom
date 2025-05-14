@@ -116,7 +116,7 @@ test.serial('Db read from a db and write in another one', async (t) => {
 		let query = await Result2.findByPk(1) as Result1;
 		query = query?.get({ plain: true });
 		res2 = JSON.parse(query?.["result"] ?? "{}");
-	} catch (e) {
+	} catch {
 		res2 = null;
 	}
 	sequelize2.close();

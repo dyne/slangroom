@@ -3,7 +3,8 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import { Plugin } from '@slangroom/core';
-import { Ajv, type ValidationError } from 'ajv';
+import { Ajv, type ValidationError, type AnySchema } from 'ajv';
+import type { Jsonable } from '@slangroom/shared';
 // read the version from the package.json
 import packageJson from '@slangroom/json-schema/package.json' with { type: 'json' };
 
@@ -38,18 +39,16 @@ export const validateJSON = p.new(
 	PHRASE_VALIDATE_JSON,
 	async (ctx) => {
 		const data = ctx.fetch(ARG_JSON_DATA);
-		const schema = ctx.fetch(ARG_JSON_SCHEMA);
+		const schema = ctx.fetch(ARG_JSON_SCHEMA) as AnySchema;
 
 		try {
 			const ajv = new Ajv({ allErrors: true });
 
-			// @ts-ignore
 			const validate = ajv.compile(schema);
 			validate(data);
 
-			// @ts-ignore
 			return ctx.pass({
-				errors: validate.errors ?? [],
+				errors: validate.errors as unknown as Jsonable[] ?? [],
 			});
 		} catch (e) {
 			return ctx.fail(new JsonSchemaError('JSON Schema not valid' + e.message));
