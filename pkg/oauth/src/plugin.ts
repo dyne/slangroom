@@ -76,8 +76,8 @@ const getInMemoryCache = (
 	return inMemoryCache;
 };
 
-let authenticateHandler: any;
-const getAuthenticateHandler = (model: InMemoryCache, authenticationUrl?: string): any => {
+let authenticateHandler: AuthenticateHandler;
+const getAuthenticateHandler = (model: InMemoryCache, authenticationUrl?: string): AuthenticateHandler => {
 	if (!authenticateHandler) {
 		authenticateHandler = new AuthenticateHandler({ model: model }, authenticationUrl);
 	}

@@ -286,7 +286,7 @@ export const prettyPrintSdJwt = p.new(['token'], 'pretty print sd jwt', async (c
 	const tryDecode = (s: string) => {
 		try {
 			return JSON.parse(atob(s));
-		} catch (e) {
+		} catch {
 			return s;
 		}
 	};
