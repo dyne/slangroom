@@ -50,7 +50,7 @@ export const ethBytes = p.new(
 		try {
 			const dataRead = receipt.logs[0]?.data?.slice(2);
 			return ctx.pass(dataRead?.toString() || '');
-		} catch (e) {
+		} catch {
 			return ctx.fail(new EthereumError('Empty transaction'));
 		}
 	},

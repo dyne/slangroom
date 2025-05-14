@@ -69,7 +69,7 @@ const server = {
 async function create_dpop_proof() {
 	//this is done client side for token request
 	// here for now, just for testing
-	var private_jwk = {
+	const private_jwk = {
 		kty: 'EC',
 		x: 'iyuaHgjseiWTdKd_EuhxO43oayK05z_wEb2SlsxofSo',
 		y: 'EJBrgZE_wqm3P0bPuuYpO-5wbEbk9xy-8hdOiVODjOM',
@@ -77,7 +77,7 @@ async function create_dpop_proof() {
 		crv: 'P-256',
 	};
 
-	var privateKey = await importJWK(private_jwk);
+	const privateKey = await importJWK(private_jwk);
 
 	const dpop = new SignJWT({
 		jti: randomBytes(16).toString('base64url'),

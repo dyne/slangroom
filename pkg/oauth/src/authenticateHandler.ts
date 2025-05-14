@@ -24,6 +24,12 @@ import { importJWK, jwtVerify } from 'jose';
 import bs58 from 'bs58';
 import { InMemoryCache } from '@slangroom/oauth';
 
+type VerificationMethod = {
+	type?: string;
+	publicKeyBase58?: string;
+	[key: string]: unknown;
+};
+
 export class AuthenticateHandler {
 	addAcceptedScopesHeader: boolean | undefined;
 	addAuthorizedScopesHeader: boolean | undefined;
@@ -113,7 +119,7 @@ export class AuthenticateHandler {
 
 			const result = await response.json();
 
-			const base58Key = result.didDocument.verificationMethod.find((value: any) => value.type == 'EcdsaSecp256r1VerificationKey').publicKeyBase58;
+			const base58Key = result.didDocument.verificationMethod.find((value: VerificationMethod) => value?.type == 'EcdsaSecp256r1VerificationKey').publicKeyBase58;
 			const uint8Key = bs58.decode(base58Key);
 			const x_base64Key = Buffer.from(uint8Key.buffer.slice(0, 32)).toString('base64url');
 			const y_base64Key = Buffer.from(uint8Key.buffer.slice(32)).toString('base64url');
@@ -182,7 +188,7 @@ export class AuthenticateHandler {
 		}
 		const result = await response.json();
 		const credentials_supported = result.credential_configurations_supported;
-		var valid_credentials = Object.values(credentials_supported).some((value: any) => value.vct === scope);
+		const valid_credentials = Object.values(credentials_supported).some((value: any) => value.vct === scope);
 		return valid_credentials;
 	}
 

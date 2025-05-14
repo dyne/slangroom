@@ -22,10 +22,10 @@ export class PocketBaseError extends Error {
 let pb: PocketBase;
 const p = new Plugin();
 
-const serverUrlSchema = z.literal(
+const _serverUrlSchema = z.literal(
 	`http${z.union([z.literal('s'), z.literal('')])}://${z.string()}/`,
 );
-export type ServerUrl = z.infer<typeof serverUrlSchema>;
+export type ServerUrl = z.infer<typeof _serverUrlSchema>;
 
 const credentialsSchema = z.object({
 	email: z.string().email(),
