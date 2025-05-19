@@ -338,6 +338,15 @@ importers:
         specifier: ^5.0.0
         version: 5.19.1
 
+  pkg/did:
+    dependencies:
+      '@slangroom/core':
+        specifier: workspace:*
+        version: link:../core
+      '@slangroom/shared':
+        specifier: workspace:*
+        version: link:../shared
+
   pkg/ethereum:
     dependencies:
       '@slangroom/core':
