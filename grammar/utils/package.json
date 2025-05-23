@@ -6,10 +6,10 @@
 	"scripts": {
 		"grammar-prepare": "node ./prepare_complete.mjs"
 	},
-	"dependencies": {},
 	"devDependencies": {
 		"@slangroom/core": "workspace:*",
 		"@slangroom/db": "workspace:*",
+		"@slangroom/deps": "workspace:*",
 		"@slangroom/ethereum": "workspace:*",
 		"@slangroom/fs": "workspace:*",
 		"@slangroom/git": "workspace:*",
