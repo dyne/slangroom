@@ -24,6 +24,7 @@ import { shell } from "@slangroom/shell";
 import { timestamp } from "@slangroom/timestamp";
 import { wallet } from "@slangroom/wallet";
 import { zencode } from "@slangroom/zencode";
+import { zencode_get_statements } from '@slangroom/deps/zenroom';
 
 const reservedWords = new Set([
 	'break', 'case', 'catch', 'class', 'const', 'continue', 'debugger', 'default', 'delete', 'do', 'else', 'export', 'extends',
@@ -192,6 +193,28 @@ for (const w of words) {
 	tokens += `${w}[@name=${w}], `;
 	keywords += `${w} | `;
 	prepareTokens(w);
+}
+
+// add the zencode statements
+const zencodeStatements = JSON.parse((await zencode_get_statements()).result);
+for (const prefix of ['Given', 'Then', 'When', 'If', 'Foreach']) {
+	for (const statement of zencodeStatements[prefix]) {
+		if (prefix === 'Foreach') {
+			fullStatementTemplates.push(
+				{ label: `${prefix} ${statement}`, displayLabel: `${prefix} ${statement}`, type: "keyword", info: `[${prefix}]` }
+			);
+		} else {
+			fullStatementTemplates.push(
+				{ label: `${prefix} I ${statement}`, displayLabel: `${prefix} I ${statement}`, type: "keyword", info: `[${prefix}]` }
+			);
+			if (prefix === 'If') {
+				fullStatementTemplates.push(
+					{ label: `When I ${statement}`, displayLabel: `When I ${statement}`, type: "keyword", info: `[When]` }
+				);
+			}
+		}
+
+	}
 }
 
 await pfs.writeFile('../src/complete_statement.ts', `export const fullStatementTemplates = ${JSON.stringify(fullStatementTemplates, null, 4)}`, 'utf-8')
