@@ -24,7 +24,7 @@ const p = new Plugin();
 
 /* Parse QueryString using String Splitting */
 function parseQueryStringToDictionary(queryString: string) {
-	var dictionary: { [key: string]: string } = {};
+	const dictionary: { [key: string]: string } = {};
 
 	// remove the '?' from the beginning of the
 	// if it exists
@@ -33,16 +33,16 @@ function parseQueryStringToDictionary(queryString: string) {
 	}
 
 	// Step 1: separate out each key/value pair
-	var parts = queryString.split('&');
+	const parts = queryString.split('&');
 
-	for (var i = 0; i < parts.length; i++) {
-		var p = parts[i];
+	for (let i = 0; i < parts.length; i++) {
+		const p = parts[i];
 		// Step 2: Split Key/Value pair
-		var keyValuePair = p!.split('=');
+		const keyValuePair = p!.split('=');
 
 		// Step 3: Add Key/Value pair to Dictionary object
-		var key = keyValuePair[0];
-		var value = keyValuePair[1];
+		const key = keyValuePair[0];
+		let value = keyValuePair[1];
 
 		// decode URI encoded string
 		value = decodeURIComponent(value!);
@@ -76,8 +76,8 @@ const getInMemoryCache = (
 	return inMemoryCache;
 };
 
-let authenticateHandler: any;
-const getAuthenticateHandler = (model: InMemoryCache, authenticationUrl?: string): any => {
+let authenticateHandler: AuthenticateHandler;
+const getAuthenticateHandler = (model: InMemoryCache, authenticationUrl?: string): AuthenticateHandler => {
 	if (!authenticateHandler) {
 		authenticateHandler = new AuthenticateHandler({ model: model }, authenticationUrl);
 	}

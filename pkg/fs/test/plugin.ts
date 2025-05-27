@@ -15,6 +15,7 @@ import { join } from 'node:path';
 import * as os from 'node:os';
 import http from 'http';
 import { once } from 'events';
+import { AddressInfo } from 'node:net';
 
 
 const zipBuffer = Buffer.from('UEsDBAoAAAAAADRzTFfps6IEBAAAAAQAAAAHABwAZm9vLnR4dFVUCQADs9cnZWELKWV1eAsAAQToAwAABOgDAABiYXIKUEsBAh4DCgAAAAAANHNMV+mzogQEAAAABAAAAAcAGAAAAAAAAQAAAICBAAAAAGZvby50eHRVVAUAA7PXJ2V1eAsAAQToAwAABOgDAABQSwUGAAAAAAEAAQBNAAAARQAAAAAA', 'base64');
@@ -26,7 +27,7 @@ const server = http.createServer((req, res) => {
 	}
 });
 await once(server.listen(0), 'listening'); // listen on random free port
-const { port } = server.address() as any;
+const { port } = server.address() as AddressInfo;
 const zipUrl = `http://localhost:${port}/`;
 
 // Tests in this file must be run serially, since we're modifying `process.env`

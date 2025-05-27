@@ -15,7 +15,7 @@ const rules = {
 	VSCHAR: /^[\u0020-\u007E]+$/
 };
 
-/* eslint-enable no-control-regex */
+ 
 
 /**
  * Minimal, RFC 6749, compliant unicode validator.

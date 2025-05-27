@@ -143,7 +143,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 			codeChallengeMethod: code['codeChallengeMethod'],
 		};
 
-		var keys = Object.keys(code);
+		const keys = Object.keys(code);
 		keys.forEach((key: string) => {
 			if (!codeSaved[key]) {
 				codeSaved[key] = code[key];
@@ -169,7 +169,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 		const base_uri = "urn:ietf:params:oauth:request_uri:";
 		const rand_uri = request_uri.replace(base_uri, "");
 		const auth_code = this.getAuthCodeFromUri(rand_uri);
-		let auth_details = this.getAuthorizationDetails(auth_code.authorizationCode);
+		const auth_details = this.getAuthorizationDetails(auth_code.authorizationCode);
 		//TODO: case of multiple elem in auth_details
 		if (auth_details[0]) {
 			auth_details[0]['claims'] = data;
@@ -187,7 +187,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	 *
 	 */
 	getAuthorizationCode(authorizationCode: string): Promise<Falsey | AuthorizationCode> {
-		var codes = this.codes.filter(function (code) {
+		const codes = this.codes.filter(function (code) {
 			return code.authorizationCode === authorizationCode;
 		});
 		return Promise.resolve(codes[0]);
@@ -217,7 +217,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	 *
 	 */
 	saveAuthorizationCode(code: Pick<AuthorizationCode, "authorizationCode" | "expiresAt" | "redirectUri" | "scope" | "codeChallenge" | "codeChallengeMethod">, client: Client, user: User, authorization_details?: { [key: string]: any }[], rand_uri?: string): Promise<Falsey | AuthorizationCode> {
-		let codeSaved: AuthorizationCode = {
+		const codeSaved: AuthorizationCode = {
 			authorizationCode: code.authorizationCode,
 			expiresAt: code.expiresAt,
 			redirectUri: code.redirectUri,
@@ -257,7 +257,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	 */
 
 	getAccessToken(bearerToken: string): Promise<Token | Falsey> {
-		var tokens = this.tokens.filter(function (token) {
+		const tokens = this.tokens.filter(function (token) {
 			return token.accessToken === bearerToken;
 		});
 
@@ -269,7 +269,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	 */
 
 	getRefreshToken(bearerToken: string) {
-		var tokens = this.tokens.filter(function (token) {
+		const tokens = this.tokens.filter(function (token) {
 			return token.refreshToken === bearerToken;
 		});
 
@@ -324,7 +324,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 			tokenSaved['jkt'] = this.createJWKThumbprint(dpop_jwk['jwk']);
 		}
 		if (this.options && this.options['allowExtendedTokenAttributes']) {
-			var keys = Object.keys(token);
+			const keys = Object.keys(token);
 			keys.forEach((key: string) => {
 				if (!tokenSaved[key]) {
 					tokenSaved[key] = token[key];
@@ -345,9 +345,9 @@ export class InMemoryCache implements AuthorizationCodeModel {
 
 	async createServerJWS(clientId: string) {
 		if (this.serverData.jwk == null) throw new OAuthError("Missing server private JWK");
-		let privateKey = await importJWK(this.serverData.jwk);
-		let alg = this.serverData.jwk.alg || 'ES256';
-		let public_jwk: JWK = {
+		const privateKey = await importJWK(this.serverData.jwk);
+		const alg = this.serverData.jwk.alg || 'ES256';
+		const public_jwk: JWK = {
 			kty: this.serverData.jwk.kty!,
 			x: this.serverData.jwk.x!,
 			y: this.serverData.jwk.y!,
@@ -388,7 +388,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 
 	// For reference see Section 4.3 of RFC9449 https://datatracker.ietf.org/doc/html/rfc9449.html
 	async verifyDpopProof(dpop: string, request: Request) {
-		let FIVE_MIN = 300000;
+		const FIVE_MIN = 300000;
 		const defaultValues = {
 			typ: 'dpop+jwt',
 			alg: 'ES256',
@@ -429,9 +429,9 @@ export class InMemoryCache implements AuthorizationCodeModel {
 
 	async verifyDpopHeader(request: Request) {
 		if (request.headers) {
-			var dpop = request.headers['dpop'];
+			const dpop = request.headers['dpop'];
 			if (dpop) {
-				var check = await this.verifyDpopProof(dpop, request);
+				const check = await this.verifyDpopProof(dpop, request);
 				if (!check) throw new OAuthError('Invalid request: DPoP header parameter is not valid');
 				const header = decodeProtectedHeader(dpop);
 				const dpop_saved = { id: request.body['client_id'], jwk: header.jwk };
@@ -442,7 +442,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	}
 
 	getDpopJWK(id: string) {
-		var jwks = this.dpop_jwks.filter(function (dpop_jwk: any) {
+		const jwks = this.dpop_jwks.filter(function (dpop_jwk: any) {
 			return dpop_jwk.id === id;
 		});
 		return Promise.resolve(jwks[0]);
@@ -473,8 +473,8 @@ export class InMemoryCache implements AuthorizationCodeModel {
 		}
 		const result = await response.json();
 		const credentials_supported: { [key: string]: { vct: string, claims?: { [key: string]: { mandatory?: boolean }}}} = result.credential_configurations_supported;
-		var valid_credentials = [];
-		var credential_claims = new Map<string, string[]>();
+		const valid_credentials = [];
+		const credential_claims = new Map<string, string[]>();
 
 		for (const value of Object.values(credentials_supported)) {
 			if (value.vct === scope) {
@@ -509,7 +509,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 				throw new OAuthError('Invalid request: needed resource to verify scope');
 		}
 
-		var verified_credentials = await this.verifyCredentialId(scope[0]!, resource);
+		const verified_credentials = await this.verifyCredentialId(scope[0]!, resource);
 
 		if (verified_credentials.valid_credentials.length > 0) return Promise.resolve(scope);
 		else return false;
