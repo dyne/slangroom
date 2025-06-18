@@ -38,4 +38,19 @@ cleanup() {
 	rm -rf ${ms_test_dir}
 }
 
-"$@"
+usage() {
+	echo "Usage: $0 {setup|cleanup}"
+	exit 1
+}
+
+case "$1" in
+	setup)
+		setup
+		;;
+	cleanup)
+		cleanup
+		;;
+	*)
+		usage
+		;;
+esac
