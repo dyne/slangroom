@@ -1,6 +1,6 @@
 {
 	"name": "@slangroom/rdf",
-	"version": "1.48.3",
+	"version": "1.48.4",
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
 		"jsonld": "^8.3.3",
