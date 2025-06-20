@@ -165,7 +165,7 @@ export class AuthenticateHandler {
 	 */
 
 	// for reference see: https://openid.github.io/OpenID4VCI/openid-4-verifiable-credential-issuance-wg-draft.html#section-5.1.2
-	async verifyScope(scope: string[], resource: string) {
+	async verifyScope(scope: string, resource: string) {
 		if (!scope) {
 			throw new InsufficientScopeError(
 				'Insufficient scope: authorized scope is insufficient',
@@ -182,7 +182,7 @@ export class AuthenticateHandler {
 		}
 		const result = await response.json();
 		const credentials_supported = result.credential_configurations_supported;
-		var valid_credentials = Object.values(credentials_supported).some((value: any) => value.vct === scope);
+		var valid_credentials = Object.entries(credentials_supported).some(([key, value]: [string, any]) => key === scope || value.vct === scope);
 		return valid_credentials;
 	}
 

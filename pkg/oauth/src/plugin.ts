@@ -408,14 +408,14 @@ Output:
 export const changeAuthDetails = p.new(
 	['request_uri', 'data', 'server_data'],
 	'add data to authorization details',
-	async (ctx) => {
+	(ctx) => {
 		const params = ctx.fetch('data') as JsonableObject;
 		const uri = ctx.fetch('request_uri') as string;
 		const validatedServerData = validServerData(ctx.fetch('server_data'));
 		if (!validatedServerData.ok) return ctx.fail(validatedServerData.error);
 
 		try {
-			const res = await validatedServerData.model.updateAuthorizationDetails(uri, params);
+			const res = validatedServerData.model.updateAuthorizationDetails(uri, params);
 			return ctx.pass(res);
 		} catch (e) {
 			return ctx.fail(new OauthError(e.message));
