@@ -44,6 +44,7 @@
 !/pkg/*/test/**/*.ts
 !/pkg/*/package.json
 !/pkg/*/pnpm-lock.yaml
+!/pkg/*/types/**/*.d.ts
 !/pkg/*/tsconfig.json
 !/pkg/*/.npmignore
 
