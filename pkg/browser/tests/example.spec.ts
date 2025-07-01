@@ -40,7 +40,7 @@ test('check results of slangroom', async ({ page }) => {
 
 	const text = await page.locator('#test-fs').textContent();
 	const json = JSON.parse(text || '{}');
-	expect(json.read_result).toBe('"hello from file"');
+	expect(json.read_result).toBe('hello from file');
 	expect(json.ls_result).toEqual(
 		expect.arrayContaining([
 			expect.objectContaining({
