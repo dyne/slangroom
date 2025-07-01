@@ -150,7 +150,9 @@ export const readVerbatimFileContent = p.new(['path'], 'read verbatim file conte
  */
 export const storeInFile = p.new(['content', 'path'], 'store in file', async (ctx) => {
 	// TODO: should `ctx.fetch('content')` return a JsonableObject?
-	const content = JSON.stringify(ctx.fetch('content'));
+	let content = ctx.fetch('content');
+	if( typeof content === 'object' ) content = JSON.stringify(content);
+	if (typeof content !== 'string') return ctx.fail(new FsError('content must be string or object'));
 	const unsafe = ctx.fetch('path');
 	if (typeof unsafe !== 'string') return ctx.fail(new FsError('path must be string'));
 

@@ -77,6 +77,16 @@ test.serial('storeInFile works', async (t) => {
 	t.is(buf.toString(), jsonify(content));
 });
 
+test.serial('storeInFile works with string', async (t) => {
+	const path = 'foo';
+	const content = 'a string';
+	const ctx = PluginContextTest.params({ path: path, content: content });
+	const res = await storeInFile(ctx);
+	t.deepEqual(res, { ok: true, value: null });
+	const buf = await fs.readFile(join(t.context, path));
+	t.is(buf.toString(), content);
+});
+
 test.serial('listDirectoryContent works', async (t) => {
 	const path = join('foo', 'bar');
 	const dir = join(t.context, path);
