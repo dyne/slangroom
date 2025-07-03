@@ -21,6 +21,13 @@ export default defineConfig({
 				rel: "stylesheet",
 				href: "https://cdn.jsdelivr.net/npm/@dyne/components@latest/dist/dyne-components/dyne-components.css"
 			}
+		],
+		[
+			'link',
+			{
+				rel: "icon",
+				href: "https://dyne.org/favicon.svg"
+			}
 		]
 	],
 
