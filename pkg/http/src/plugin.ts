@@ -21,15 +21,10 @@ export type HttpMethod = 'get' | 'post' | 'put' | 'patch' | 'delete';
 
 const p = new Plugin();
 
-/**
- * The default timeout of an HTTP request in milliseconds.
- */
-export const DefaultTimeoutMs = 5000;
-
 const { request } = axios.create({
 	headers: { 'Content-Type': 'application/json' },
 	validateStatus: null,
-	timeout: DefaultTimeoutMs,
+	timeout: 0, // no timeout
 });
 
 const defaultRequest = (m: HttpMethod): PluginExecutor => {
