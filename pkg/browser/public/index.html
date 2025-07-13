@@ -21,100 +21,138 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 		<div id="test-zencode"></div>
 		<div id="test-ethereum"></div>
 		<script>
-			const script = `
-Rule unknown ignore
+			async function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)) };
+			async function runTest() {
+				let loginToken;
+				// div
+				const HttpResDiv = document.getElementById('test1');
+				const JSONSChemaResDiv = document.getElementById('test-json-schema');
+				const PocketbaseResDiv = document.getElementById('test-pocketbase');
+				const Pocketbase2ResDiv = document.getElementById('test-pocketbase-2');
+				const Pocketbase3ResDiv = document.getElementById('test-pocketbase-3');
+				const TimestampResDiv = document.getElementById('test-timestamp');
+				const GitResDiv = document.getElementById('test-git');
+				const FsResDiv = document.getElementById('test-fs');
+				const ZencodeResDiv = document.getElementById('test-zencode');
+				const EthereumResDiv = document.getElementById('test-ethereum');
+
+				// scripts
+				const scriptHttp = `
 Given I connect to 'did_url' and do get and output into 'did'
 Given I have a 'string dictionary' named 'did'
 Given I have a 'string' named 'foo'
 Then print data
 `;
-
-			const resDiv = document.getElementById('test1');
-
-			slangroom
-				.execute(script, {
-					data: {
-						foo: 'bar',
-						did_url:
-							'https://did.dyne.org/dids/did:dyne:sandbox.test:pEn78CGNEKvMR7DJQ1yvUVUpAHKzsBz45mQw3zD2js9',
-					},
-				})
-				.then((r) => {
-					resDiv.innerText = JSON.stringify(r.result);
-				});
-
-			//
-
-			const scriptJSONSchema = `
-Rule unknown ignore
+				const scriptJSONSchema = `
 Given I send json_data 'data' and send json_schema 'schema' and validate json and output into 'out'
 Given I have a 'string dictionary' named 'out'
 Then print 'out'
-			`
-
-			const JSONSChemaResDiv = document.getElementById('test-json-schema');
-
-			slangroom
-				.execute(scriptJSONSchema, {
-					data: {
-						schema: {
-							type: 'string'
-						},
-						data: 'ciao',
-					},
-				})
-				.then((r) => {
-					JSONSChemaResDiv.innerText = JSON.stringify(r.result);
-				});
-
-			//
-
-			let loginToken;
-			const scriptPocketbase = `
-Rule unknown ignore
+`;
+				const scriptPocketbase = `
 Given I connect to 'pb_address' and start capacitor pb client
 Given I send my_credentials 'my_credentials' and login and output into 'loginOutput'
 Given I send show_parameters 'show_parameters' and get one record and output into 'output'
 Given I have a 'string dictionary' named 'output'
 Given I have a 'string dictionary' named 'loginOutput'
 Then print data
-			`
+`;
+				const script2Pocketbase = `
+Given I connect to 'pb_address' and start capacitor pb client
+Given I send show_parameters 'show_parameters' and get one record and output into 'output'
+Given I have a 'string dictionary' named 'output'
+Then print data
+`;
+				const script3Pocketbase = `
+Given I connect to 'pb_address' and start capacitor pb client
+Given I refresh token and output into 'refresh_output'
+Given I have a 'string dictionary' named 'refresh_output'
+Given I have a 'string' named 'loginToken'
+When I pickup from path 'refresh_output.token'
+When I verify 'token' is not equal to 'loginToken'
+Then print string 'token refreshed'
+`;
+				const scriptTimestamp = `
+Given I fetch the local timestamp in seconds and output into 'timestamp'
+Given I have a 'time' named 'timestamp'
+Then print the 'timestamp'
+`;
+				const scriptGit = `
+Given I connect to 'url' and send path 'path' and clone repository
+Given I have a 'string' named 'checked'
+Then print the data
+`;
+				const scriptFs = `
+Prepare: store in file with content 'file_content', path 'file_path'
+Prepare: verify file exists with path 'file_path'
+Prepare: 'read_result': read verbatim file content with path 'file_path'
+Prepare: connect to 'url' and download and extract with path 'zip_path'
+Prepare: 'ls_result': list directory content with path 'in_zip'
+Given I have a 'string array' named 'ls_result'
+Given I have a 'string' named 'read_result'
+Then print the data
+`;
+				const scriptZencode = `
+Rule unknown ignore
+Prepare 'zen_output': execute zencode with script 'zen_script', data 'zen_data', keys 'zen_keys'
+Given I have a 'string dictionary' named 'zen_output'
+Then print the data
+`;
+				const scriptEthereum = `
+Scenario 'ethereum': Store an object on eth
+Prepare 'ethereum_nonce': connect to 'ethereum' and read the ethereum nonce where address is 'address'
+Prepare 'gas_price': connect to 'ethereum' and read the ethereum suggested gas price
+# from slangroom
+Given I have a 'ethereum nonce'
+Given I have a 'gas price'
+# from keys
+Given I have the 'keyring'
+# from data
+Given I have a 'ethereum address' named 'receiver'
+Given I have a 'gas limit'
+# create the signed transaction to store the data
+When I create the ethereum transaction to 'receiver'
+When I create the signed ethereum transaction for chain 'fabt'
+Then print the 'signed ethereum transaction'
+Compute 'transaction_id': connect to 'ethereum' and read the ethereum transaction id after broadcast where transaction is 'signed_ethereum_transaction'
+`;
 
-			const PocketbaseResDiv = document.getElementById('test-pocketbase');
+				const rHttp = await slangroom.execute(scriptHttp, {
+					data: {
+						foo: 'bar',
+						did_url:
+						'https://did.dyne.org/dids/did:dyne:sandbox.test:pEn78CGNEKvMR7DJQ1yvUVUpAHKzsBz45mQw3zD2js9',
+					},
+				});
+				HttpResDiv.innerText = JSON.stringify(rHttp.result);
 
-			slangroom
-				.execute(scriptPocketbase, {
+				const rJSONSchema = await slangroom.execute(scriptJSONSchema, {
+					data: {
+						schema: {
+							type: 'string'
+						},
+						data: 'ciao',
+					},
+				});
+				JSONSChemaResDiv.innerText = JSON.stringify(rJSONSchema.result);
+
+				const rPocketbase = await slangroom.execute(scriptPocketbase, {
 					data: {
 						pb_address: "http://127.0.0.1:8090/",
 						my_credentials: {
 							email: "test@test.eu",
 							password: "testtest"
-					},
-					show_parameters: {
-						collection: "organizations",
-						id: "p7viyzsihrn52uj",
-						fields: "description"
+						},
+						show_parameters: {
+							collection: "organizations",
+							id: "p7viyzsihrn52uj",
+							fields: "description"
+						}
 					}
-				}})
-				.then((r) => {
-					PocketbaseResDiv.innerText = JSON.stringify(r.result);
-					loginToken = r.result.loginOutput.token;
-			});
+				});
+				PocketbaseResDiv.innerText = JSON.stringify(rPocketbase.result);
+				loginToken = rPocketbase.result.loginOutput.token;
 
-			//
-
-			const script2Pocketbase = `
-Rule unknown ignore
-Given I connect to 'pb_address' and start capacitor pb client
-Given I send show_parameters 'show_parameters' and get one record and output into 'output'
-Given I have a 'string dictionary' named 'output'
-Then print data
-			`
-
-			const Pocketbase2ResDiv = document.getElementById('test-pocketbase-2');
-
-			setTimeout(() => {
-				slangroom.execute(script2Pocketbase, {
+				const r2Pocketbase = await slangroom.execute(script2Pocketbase, {
 					data: {
 						pb_address: "http://127.0.0.1:8090/",
 						show_parameters: {
@@ -123,184 +161,78 @@ Then print data
 							fields: "name"
 						}
 					}
-				})
-				.then((r) => {
-					Pocketbase2ResDiv.innerText = JSON.stringify(r.result);
-				})}, 2000);
+				});
+				Pocketbase2ResDiv.innerText = JSON.stringify(r2Pocketbase.result);
 
-			//
-
-			const script3Pocketbase = `
-Rule unknown ignore
-Given I connect to 'pb_address' and start capacitor pb client
-Given I refresh token and output into 'refresh_output'
-Given I have a 'string dictionary' named 'refresh_output'
-Given I have a 'string' named 'loginToken'
-When I pickup from path 'refresh_output.token'
-When I verify 'token' is not equal to 'loginToken'
-Then print string 'token refreshed'
-			`
-
-			const Pocketbase3ResDiv = document.getElementById('test-pocketbase-3');
-
-			setTimeout(() => {
-				slangroom.execute(script3Pocketbase, {
+				await sleep(1000);
+				const r3Pocketbase = await slangroom.execute(script3Pocketbase, {
 					data: {
 						pb_address: "http://127.0.0.1:8090/",
 						loginToken
 					}
-				})
-				.then((r) => {
-					Pocketbase3ResDiv.innerText = JSON.stringify(r.result);
-				})}, 2000);
+				});
+				Pocketbase3ResDiv.innerText = JSON.stringify(r3Pocketbase.result);
 
-			//
+				const rTimestamp = await slangroom.execute(scriptTimestamp, {
+					data: {}
+				});
+				TimestampResDiv.innerText = JSON.stringify(rTimestamp.result);
 
-			const scriptTimestamp = `
-Rule unknown ignore
-Given I fetch the local timestamp in seconds and output into 'timestamp'
-Given I have a 'time' named 'timestamp'
-Then print the 'timestamp'
-			`
+				const rGit = await slangroom.execute(scriptGit, {
+					data:{
+						url: "https://ghisa.forkbomb.eu?url=https%3A%2F%2Fgithub.com%2Fsrfsh%2Fdumb",
+						path: "slangroom",
+						checked: "true"
+					}
+				});
+				GitResDiv.innerText = JSON.stringify(rGit.result);
 
-			const TimestampResDiv = document.getElementById('test-timestamp');
+				const rFs = await slangroom.execute(scriptFs, {
+					data:{
+						url: "http://localhost:8080/zip_test.zip",
+						zip_path: "some/path/to/zip",
+						in_zip: "some/path/to/zip/zip_test",
+						file_path: "true",
+						file_content: "hello from file"
+					}
+				});
+				FsResDiv.innerText = JSON.stringify(rFs.result);
 
-			slangroom.execute(scriptTimestamp, {
-				data: {}
-			})
-			.then((r) => {
-				TimestampResDiv.innerText = JSON.stringify(r.result);
-			});
+				const rZencode = await slangroom.execute(scriptZencode, {
+					data:{
+						zen_script: `
+					        Given I have a 'string' named 'foo'
+					        Given I have a 'string' named 'bar'
+					        Then print 'foo'
+					        Then print 'bar'
+					    `,
+						zen_data: {
+							foo: "hello"
+						},
+						zen_keys: {
+							bar: "world"
+						}
+					}
+				});
+				ZencodeResDiv.innerText = JSON.stringify(rZencode.result);
 
-			//
-			const scriptGit = `
-Rule unknown ignore
-Given I connect to 'url' and send path 'path' and clone repository
-# Given I open 'path' and verify git repository
-
-Given I have a 'string' named 'checked'
-Then print the data
-			`
-
-			const GitResDiv = document.getElementById('test-git');
-
-			slangroom.execute(scriptGit, {
-				data:{
-					url: "https://ghisa.forkbomb.eu?url=https%3A%2F%2Fgithub.com%2Fsrfsh%2Fdumb",
-					path: "slangroom",
-					checked: "true"
-				}
-			})
-			.then((r) => {
-				GitResDiv.innerText = JSON.stringify(r.result);
-			});
-
-			//
-			const scriptFs = `
-Rule unknown ignore
-Prepare: store in file with content 'file_content', path 'file_path'
-Prepare: verify file exists with path 'file_path'
-Prepare: 'read_result': read verbatim file content with path 'file_path'
-
-Prepare: connect to 'url' and download and extract with path 'zip_path'
-Prepare: 'ls_result': list directory content with path 'in_zip'
-
-Given I have a 'string array' named 'ls_result'
-Given I have a 'string' named 'read_result'
-Then print the data
-			`
-
-			const FsResDiv = document.getElementById('test-fs');
-
-			slangroom.execute(scriptFs, {
-				data:{
-					url: "http://localhost:8080/zip_test.zip",
-					zip_path: "some/path/to/zip",
-					in_zip: "some/path/to/zip/zip_test",
-					file_path: "true",
-					file_content: "hello from file"
-				}
-			})
-			.then((r) => {
-				FsResDiv.innerText = JSON.stringify(r.result);
-			});
-
-			//
-			const scriptZencode = `
-Rule unknown ignore
-Prepare 'zen_output': execute zencode with script 'zen_script', data 'zen_data', keys 'zen_keys'
-
-Given I have a 'string dictionary' named 'zen_output'
-Then print the data
-			`
-
-			const ZencodeResDiv = document.getElementById('test-zencode');
-
-			slangroom.execute(scriptZencode, {
-				data:{
-					zen_script: `
-					Given I have a 'string' named 'foo'
-					Given I have a 'string' named 'bar'
-					Then print 'foo'
-					Then print 'bar'
-					`,
-					zen_data: {
-						foo: "hello"
+				const rEthereum = await slangroom.execute(scriptEthereum, {
+					data: {
+						"address": "0xFf02577F140557190693cFf549025e66119FEA52",
+						"gas_limit": "100000",
+						"receiver": "0x615a400a7569FAf6708b74CDed2AA975Ce452182",
 					},
-					zen_keys: {
-						bar: "world"
+					keys: {
+						"ethereum": "http://localhost:9485",
+						"keyring": {
+							"ethereum": "42c707f93abe706a7733ec4ed411bad3a795f9be3b314ea1e034ac3b153e149d"
+						}
 					}
-				}
-			})
-			.then((r) => {
-				ZencodeResDiv.innerText = JSON.stringify(r.result);
-			});
+				});
+				EthereumResDiv.innerText = JSON.stringify(rEthereum.result);
+			}
 
-			//
-			const scriptEthereum = `
-Scenario 'ethereum': Store an object on eth
-
-Prepare 'ethereum_nonce': connect to 'ethereum' and read the ethereum nonce where address is 'address'
-Prepare 'gas_price': connect to 'ethereum' and read the ethereum suggested gas price
-
-# from slangroom
-Given I have a 'ethereum nonce'
-Given I have a 'gas price'
-
-# from keys
-Given I have the 'keyring'
-
-# from data
-Given I have a 'ethereum address' named 'receiver'
-Given I have a 'gas limit'
-
-# create the signed transaction to store the data
-When I create the ethereum transaction to 'receiver'
-When I create the signed ethereum transaction for chain 'fabt'
-
-Then print the 'signed ethereum transaction'
-
-Compute 'transaction_id': connect to 'ethereum' and read the ethereum transaction id after broadcast where transaction is 'signed_ethereum_transaction'
-			`
-
-			const EthereumResDiv = document.getElementById('test-ethereum');
-
-			slangroom.execute(scriptEthereum, {
-				data: {
-					"address": "0xFf02577F140557190693cFf549025e66119FEA52",
-					"gas_limit": "100000",
-					"receiver": "0x615a400a7569FAf6708b74CDed2AA975Ce452182",
-				},
-				keys: {
-					"ethereum": "http://localhost:9485",
-					"keyring": {
-						"ethereum": "42c707f93abe706a7733ec4ed411bad3a795f9be3b314ea1e034ac3b153e149d"
-					}
-				}
-			})
-			.then((r) => {
-				EthereumResDiv.innerText = JSON.stringify(r.result);
-			});
+			runTest();
 		</script>
 	</body>
 </html>
