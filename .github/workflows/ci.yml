@@ -23,6 +23,7 @@ jobs:
   reuse:
     name: 🚨 reuse
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
     steps:
       - uses: actions/checkout@v4
       - uses: fsfe/reuse-action@v5
@@ -34,6 +35,7 @@ jobs:
       max-parallel: 1
       matrix:
         node: [ lts/*, current ]
+    if: github.event_name == 'pull_request'
     steps:
       - name: 🛠️ Prepare pnpm workspace
         uses: dyne/pnpm@main
@@ -77,7 +79,6 @@ jobs:
 
   build_docs:
     runs-on: ubuntu-latest
-    needs: build_and_test
     if: github.ref == 'refs/heads/main'
     steps:
       - name: 🛠️ Prepare pnpm workspace
@@ -105,7 +106,6 @@ jobs:
 
   publish:
     runs-on: ubuntu-latest
-    needs: build_and_test
     if: github.ref == 'refs/heads/main'
     steps:
     - name: 🛠️ Prepare pnpm workspace
@@ -124,4 +124,3 @@ jobs:
       env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
