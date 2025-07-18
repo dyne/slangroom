@@ -1,6 +1,6 @@
 {
 	"name": "@slangroom/oauth",
-	"version": "1.48.9",
+	"version": "1.48.10",
 	"dependencies": {
 		"@node-oauth/oauth2-server": "^5.1.0",
 		"@slangroom/core": "workspace:*",
