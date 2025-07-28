@@ -339,7 +339,7 @@ importers:
         version: 10.5.0
       zenroom:
         specifier: ^5.0.0
-        version: 5.23.2
+        version: 5.24.9
 
   pkg/ethereum:
     dependencies:
@@ -5597,8 +5597,9 @@ packages:
     resolution: {integrity: sha512-GQHQqAopRhwU8Kt1DDM8NjibDXHC8eoh1erhGAJPEyveY9qqVeXvVikNKrDz69sHowPMorbPUrH/mx8c50eiBQ==}
     engines: {node: '>=18'}
 
-  zenroom@5.23.2:
-    resolution: {integrity: sha512-MxfT1893v6++kS11Ic4N1Xd8/zpL4eyoKkPIcjzwKxrsfGSvhxAqXceTa8xvwwie1FlJIIhhCFkC8sNSGU4PiQ==}
+  zenroom@5.24.9:
+    resolution: {integrity: sha512-ws3HHbzG1zuPIv91bofMGmJKvxMHWBjSbFYnafQ9AArlWI8asIbiqkSDqUbgqEoY0bWnLJDKlGHedzZtr8tHvQ==}
+    engines: {node: '>=22'}
 
   zod@3.24.1:
     resolution: {integrity: sha512-muH7gBL9sI1nciMZV67X5fTKKBLtwpZ5VBp1vsOQzj1MhrBZ4wlVCm3gedKZWLp0Oyel8sIGfeiz54Su+OVT+A==}
@@ -11130,7 +11131,7 @@ snapshots:
 
   yoctocolors@2.1.1: {}
 
-  zenroom@5.23.2: {}
+  zenroom@5.24.9: {}
 
   zod@3.24.1: {}
 
