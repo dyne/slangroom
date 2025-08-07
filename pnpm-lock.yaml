@@ -378,8 +378,8 @@ importers:
         specifier: workspace:*
         version: link:../core
       isomorphic-git:
-        specifier: ^1.25.10
-        version: 1.25.10
+        specifier: ^1.32.3
+        version: 1.32.3
 
   pkg/helpers:
     dependencies:
@@ -3229,10 +3229,6 @@ packages:
     resolution: {integrity: sha512-VuuG0wCnjhnylG1ABXT3dAuIpTNDs/G8jlpmwXY03fXoXy/8ZK8/T+hMzt8L4WnrLCJgdybqgPagnF/f97cg3A==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
 
-  ignore@5.3.0:
-    resolution: {integrity: sha512-g7dmpshy+gD7mh88OC9NwSGTKoc3kyLAZQRU1mt53Aw/vnvfXnbC+F/7F7QoYVKbV+KNvJx8wArewKy1vXMtlg==}
-    engines: {node: '>= 4'}
-
   ignore@5.3.2:
     resolution: {integrity: sha512-hsBTNUqQTDwkWtcdYI2i06Y/nUBEsNEDJKjWdigLvegy8kDuJAS8uRlpkkcQpyEXL0Z/pjDy5HBmMjRCJ2gq+g==}
     engines: {node: '>= 4'}
@@ -3431,9 +3427,9 @@ packages:
     resolution: {integrity: sha512-WhB9zCku7EGTj/HQQRz5aUQEUeoQZH2bWcltRErOpymJ4boYE6wL9Tbr23krRPSZ+C5zqNSrSw+Cc7sZZ4b7vg==}
     engines: {node: '>=0.10.0'}
 
-  isomorphic-git@1.25.10:
-    resolution: {integrity: sha512-IxGiaKBwAdcgBXwIcxJU6rHLk+NrzYaaPKXXQffcA0GW3IUrQXdUPDXDo+hkGVcYruuz/7JlGBiuaeTCgIgivQ==}
-    engines: {node: '>=12'}
+  isomorphic-git@1.32.3:
+    resolution: {integrity: sha512-gTcJH3JaUdj7WFGnPKnn7XpO1qAeu3nsiC7m2vEdHEsJx8fmBVQ8ji4FQG26JJArFd3MYyuA43pA7bk0DI6+Ww==}
+    engines: {node: '>=14.17'}
     hasBin: true
 
   isomorphic-ws@5.0.0:
@@ -8651,8 +8647,6 @@ snapshots:
     dependencies:
       minimatch: 9.0.5
 
-  ignore@5.3.0: {}
-
   ignore@5.3.2: {}
 
   ignore@7.0.4: {}
@@ -8799,15 +8793,16 @@ snapshots:
 
   isobject@3.0.1: {}
 
-  isomorphic-git@1.25.10:
+  isomorphic-git@1.32.3:
     dependencies:
       async-lock: 1.4.1
       clean-git-ref: 2.0.1
       crc-32: 1.2.2
       diff3: 0.0.3
-      ignore: 5.3.0
+      ignore: 5.3.2
       minimisted: 2.0.1
       pako: 1.0.11
+      path-browserify: 1.0.1
       pify: 4.0.1
       readable-stream: 3.6.2
       sha.js: 2.4.11
