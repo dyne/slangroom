@@ -5,7 +5,7 @@
 import { Plugin } from '@slangroom/core';
 import gitpkg from 'isomorphic-git';
 // TODO: why does this require index.js?
-import http from 'isomorphic-git/http/web/index.js';
+import http from 'isomorphic-git/http/web';
 import { promises as fs } from 'fs';
 import path from 'path';
 // read the version from the package.json
