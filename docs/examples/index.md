@@ -31,6 +31,15 @@
 <<< @/../examples/db/sql_statement_with_params.keys.json{json}
 :::
 
+## did plugin examples
+
+### resolve a did
+::: code-group
+<<< @/../examples/did/resolve.slang{1 gherkin:line-numbers}
+<<< @/../examples/did/resolve.data.json{json}
+<<< @/../examples/did/resolve.keys.json{json}
+:::
+
 ## ethereum plugin examples
 
 ### complex example
