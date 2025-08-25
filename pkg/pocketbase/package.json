@@ -6,7 +6,7 @@
 		"@slangroom/core": "workspace:*",
 		"@slangroom/shared": "workspace:*",
 		"pocketbase": "0.25.1",
-		"zod": "4.1.1"
+		"zod": "3.25.76"
 	},
 	"repository": "https://github.com/dyne/slangroom",
 	"license": "AGPL-3.0-only",
