@@ -15,7 +15,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 
 <p align="center">
   <a href="https://dyne.org">
-    <img src="https://files.dyne.org/software_by_dyne.png" width="170">
+    <img src="https://dyne.org/favicon.svg" width="170">
   </a>
 </p>
 
@@ -261,7 +261,7 @@ Availabe bugs are reported via [GitHub issues](https://github.com/dyne/slangroom
 ***
 ## 😍 Acknowledgements
 
-<img alt="software by Dyne.org" src="https://files.dyne.org/software_by_dyne.png" width="150" />
+<img alt="software by Dyne.org" src="https://dyne.org/favicon.svg" width="150" />
 
 Copyleft 🄯 2023—2025 by [Dyne.org](https://www.dyne.org) foundation, Amsterdam.
 
