@@ -3,8 +3,8 @@
 	"version": "1.49.0",
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
-		"jsonld": "^8.3.3",
-		"rdf-canonize": "^4.0.1"
+		"jsonld": "8.3.3",
+		"rdf-canonize": "4.0.1"
 	},
 	"repository": "https://github.com/dyne/slangroom",
 	"license": "AGPL-3.0-only",

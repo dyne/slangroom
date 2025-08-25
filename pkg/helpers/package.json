@@ -4,8 +4,8 @@
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
 		"@slangroom/shared": "workspace:*",
-		"@types/lodash": "^4.14.202",
-		"lodash": "^4.17.21"
+		"@types/lodash": "4.14.202",
+		"lodash": "4.17.21"
 	},
 	"repository": "https://github.com/dyne/slangroom",
 	"license": "AGPL-3.0-only",

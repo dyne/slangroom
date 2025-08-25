@@ -4,9 +4,9 @@
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
 		"@slangroom/shared": "workspace:*",
-		"pg-hstore": "^2.3.4",
-		"sequelize": "^6.16.0",
-		"sqlite3": "^5.0.0"
+		"pg-hstore": "2.3.4",
+		"sequelize": "6.16.0",
+		"sqlite3": "5.0.0"
 	},
 	"repository": "https://github.com/dyne/slangroom",
 	"license": "AGPL-3.0-only",

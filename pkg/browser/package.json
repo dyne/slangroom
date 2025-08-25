@@ -14,7 +14,7 @@
 		"@slangroom/qrcode": "workspace:*",
 		"@slangroom/timestamp": "workspace:*",
 		"@slangroom/zencode": "workspace:*",
-		"buffer": "^6.0.3"
+		"buffer": "6.0.3"
 	},
 	"version": "1.49.0",
 	"repository": "https://github.com/dyne/slangroom",

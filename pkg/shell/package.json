@@ -3,7 +3,7 @@
 	"version": "1.49.0",
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
-		"execa": "^8.0.1"
+		"execa": "8.0.1"
 	},
 	"repository": "https://github.com/dyne/slangroom",
 	"license": "AGPL-3.0-only",

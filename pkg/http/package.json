@@ -4,7 +4,7 @@
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
 		"@slangroom/shared": "workspace:*",
-		"axios": "^1.6.2"
+		"axios": "1.6.2"
 	},
 	"repository": "https://github.com/dyne/slangroom",
 	"license": "AGPL-3.0-only",
