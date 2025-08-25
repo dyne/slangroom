@@ -49,7 +49,7 @@ importers:
         version: 8.32.1(eslint@9.12.0)(typescript@5.6.3)
       vitepress:
         specifier: ^1.4.1
-        version: 1.4.1(@algolia/client-search@4.24.0)(@types/node@22.7.6)(axios@1.6.2)(postcss@8.4.47)(qrcode@1.5.3)(search-insights@2.13.0)(typescript@5.6.3)
+        version: 1.4.1(@algolia/client-search@4.24.0)(@types/node@22.7.6)(axios@1.6.2)(postcss@8.4.47)(qrcode@1.5.4)(search-insights@2.13.0)(typescript@5.6.3)
 
   docs/statements:
     dependencies:
@@ -274,7 +274,7 @@ importers:
         specifier: workspace:*
         version: link:../zencode
       buffer:
-        specifier: ^6.0.3
+        specifier: 6.0.3
         version: 6.0.3
     devDependencies:
       '@playwright/test':
@@ -308,7 +308,7 @@ importers:
         specifier: workspace:*
         version: link:../shared
       fastest-levenshtein:
-        specifier: ^1.0.16
+        specifier: 1.0.16
         version: 1.0.16
 
   pkg/db:
@@ -320,22 +320,22 @@ importers:
         specifier: workspace:*
         version: link:../shared
       pg-hstore:
-        specifier: ^2.3.4
+        specifier: 2.3.4
         version: 2.3.4
       sequelize:
-        specifier: ^6.16.0
+        specifier: 6.37.3
         version: 6.37.3(pg-hstore@2.3.4)(sqlite3@5.1.7)
       sqlite3:
-        specifier: ^5.0.0
+        specifier: 5.1.7
         version: 5.1.7
 
   pkg/deps:
     dependencies:
       chalk:
-        specifier: ^5.3.0
-        version: 5.3.0
+        specifier: 5.6.0
+        version: 5.6.0
       chevrotain:
-        specifier: ^10.5.0
+        specifier: 10.5.0
         version: 10.5.0
       zenroom:
         specifier: ^5.0.0
@@ -359,10 +359,10 @@ importers:
         specifier: workspace:*
         version: link:../shared
       web3:
-        specifier: ^4.3.0
-        version: 4.3.0(bufferutil@4.0.7)(encoding@0.1.13)(typescript@5.6.3)(utf-8-validate@6.0.3)(zod@3.24.1)
+        specifier: 4.3.0
+        version: 4.3.0(bufferutil@4.0.7)(encoding@0.1.13)(typescript@5.6.3)(utf-8-validate@6.0.3)(zod@3.25.76)
       web3-validator:
-        specifier: ^2.0.3
+        specifier: 2.0.3
         version: 2.0.3
     devDependencies:
       ganache:
@@ -378,7 +378,7 @@ importers:
         specifier: workspace:*
         version: link:../shared
       fflate:
-        specifier: ^0.8.2
+        specifier: 0.8.2
         version: 0.8.2
 
   pkg/git:
@@ -387,7 +387,7 @@ importers:
         specifier: workspace:*
         version: link:../core
       isomorphic-git:
-        specifier: ^1.32.3
+        specifier: 1.32.3
         version: 1.32.3
 
   pkg/helpers:
@@ -399,10 +399,10 @@ importers:
         specifier: workspace:*
         version: link:../shared
       '@types/lodash':
-        specifier: ^4.14.202
+        specifier: 4.14.202
         version: 4.14.202
       lodash:
-        specifier: ^4.17.21
+        specifier: 4.17.21
         version: 4.17.21
 
   pkg/http:
@@ -414,7 +414,7 @@ importers:
         specifier: workspace:*
         version: link:../shared
       axios:
-        specifier: ^1.6.2
+        specifier: 1.6.2
         version: 1.6.2
 
   pkg/ignored:
@@ -435,8 +435,8 @@ importers:
         specifier: workspace:*
         version: link:../shared
       ajv:
-        specifier: ^8.13.0
-        version: 8.13.0
+        specifier: 8.17.1
+        version: 8.17.1
 
   pkg/location:
     dependencies:
@@ -447,7 +447,7 @@ importers:
   pkg/oauth:
     dependencies:
       '@node-oauth/oauth2-server':
-        specifier: ^5.1.0
+        specifier: 5.1.0
         version: 5.1.0
       '@slangroom/core':
         specifier: workspace:*
@@ -456,16 +456,16 @@ importers:
         specifier: workspace:*
         version: link:../shared
       bs58:
-        specifier: ^5.0.0
+        specifier: 5.0.0
         version: 5.0.0
       jose:
-        specifier: ^5.1.3
+        specifier: 5.1.3
         version: 5.1.3
 
   pkg/pocketbase:
     dependencies:
       '@capacitor/preferences':
-        specifier: ^6.0.3
+        specifier: 6.0.3
         version: 6.0.3(@capacitor/core@6.0.0)
       '@slangroom/core':
         specifier: workspace:*
@@ -474,11 +474,11 @@ importers:
         specifier: workspace:*
         version: link:../shared
       pocketbase:
-        specifier: ^0.25.1
+        specifier: 0.25.1
         version: 0.25.1
       zod:
-        specifier: ^3.24.1
-        version: 3.24.1
+        specifier: 3.25.76
+        version: 3.25.76
 
   pkg/qrcode:
     dependencies:
@@ -486,8 +486,8 @@ importers:
         specifier: workspace:*
         version: link:../core
       qrcode:
-        specifier: ^1.5.3
-        version: 1.5.3
+        specifier: 1.5.4
+        version: 1.5.4
     devDependencies:
       '@types/qrcode':
         specifier: ^1.5.5
@@ -499,10 +499,10 @@ importers:
         specifier: workspace:*
         version: link:../core
       jsonld:
-        specifier: ^8.3.3
+        specifier: 8.3.3
         version: 8.3.3(web-streams-polyfill@3.3.3)
       rdf-canonize:
-        specifier: ^4.0.1
+        specifier: 4.0.1
         version: 4.0.1
     devDependencies:
       '@types/jsonld':
@@ -515,7 +515,7 @@ importers:
   pkg/redis:
     dependencies:
       '@redis/client':
-        specifier: ^1.5.12
+        specifier: 1.5.12
         version: 1.5.12
       '@slangroom/core':
         specifier: workspace:*
@@ -536,7 +536,7 @@ importers:
         specifier: workspace:*
         version: link:../core
       execa:
-        specifier: ^8.0.1
+        specifier: 8.0.1
         version: 8.0.1
 
   pkg/timestamp:
@@ -551,10 +551,10 @@ importers:
   pkg/wallet:
     dependencies:
       '@meeco/sd-jwt':
-        specifier: ^0.0.3
+        specifier: 0.0.3
         version: 0.0.3
       '@meeco/sd-jwt-vc':
-        specifier: ^0.0.4
+        specifier: 0.0.4
         version: 0.0.4
       '@slangroom/core':
         specifier: workspace:*
@@ -563,10 +563,10 @@ importers:
         specifier: workspace:*
         version: link:../shared
       bs58:
-        specifier: ^5.0.0
+        specifier: 5.0.0
         version: 5.0.0
       jose:
-        specifier: ^5.1.3
+        specifier: 5.1.3
         version: 5.1.3
 
   pkg/zencode:
@@ -1757,8 +1757,8 @@ packages:
   '@types/unist@3.0.3':
     resolution: {integrity: sha512-ko/gIFJRv177XgZsZcBwnqJN5x/Gien8qNOn0D5bQU/zAzVf9Zt3BlcUiLqhV9y4ARk0GbT3tnUiPNgnTXzc/Q==}
 
-  '@types/validator@13.11.9':
-    resolution: {integrity: sha512-FCTsikRozryfayPuiI46QzH3fnrOoctTjvOYZkho9BTFLCOZ2rgZJHMOVgCOfttjPJcgOx52EpkY0CMfy87MIw==}
+  '@types/validator@13.15.2':
+    resolution: {integrity: sha512-y7pa/oEJJ4iGYBxOpfAKn5b9+xuihvzDVnC/OSvlVnGxVg0pOqmjiMafiJ1KVNQEaPZf9HsEp5icEwGg8uIe5Q==}
 
   '@types/web-bluetooth@0.0.20':
     resolution: {integrity: sha512-g9gZnnXVq7gM7v3tJCWV/qw7w+KeOlSHAhgF9RytFyifW6AF61hdT2ucrYhPq9hLs5JIryeupHV3qGk95dH9ow==}
@@ -1994,8 +1994,8 @@ packages:
     resolution: {integrity: sha512-H0TSyFNDMomMNJQBn8wFV5YC/2eJ+VXECwOadZJT554xP6cODZHPX3H9QMQECxvrgiSOP1pHjy1sMWQVYJOUOA==}
     engines: {node: '>= 14'}
 
-  agentkeepalive@4.5.0:
-    resolution: {integrity: sha512-5GG/5IbQQpC9FpkRGsSvZI5QYeSCzlJHdpBQntCsuTOxhKD8lqKhrleg2Yi7yvMIf82Ycmmqln9U8V9qwEiJew==}
+  agentkeepalive@4.6.0:
+    resolution: {integrity: sha512-kja8j7PjmncONqaTsB8fQ+wE2mSU2DJ9D4XKoJ5PFWIdRMa6SLSN1ff4mOr4jCbfRSsxR4keIiySJU0N9T5hIQ==}
     engines: {node: '>= 8.0.0'}
 
   aggregate-error@3.1.0:
@@ -2009,8 +2009,8 @@ packages:
   ajv@6.12.6:
     resolution: {integrity: sha512-j3fVLgvTo527anyYyJOGTYJbG+vnnQYvE0m5mmkc1TK+nxAppkCLMIL0aZ4dblVCNoGShhm+kzE4ZUykBoMg4g==}
 
-  ajv@8.13.0:
-    resolution: {integrity: sha512-PRA911Blj99jR5RMeTunVbNXMF6Lp4vZXnk5GQjcnUWUTsrXtekg/pnmFFI2u/I36Y/2bITGS30GZCXei6uNkA==}
+  ajv@8.17.1:
+    resolution: {integrity: sha512-B/gBuNg5SiMTrPkC+A2+cW0RszwxYmn6VYxB/inlBStS5nx6xHIt/ehKRhIMhqusl7a8LjQoZnjCs5vhwxOQ1g==}
 
   algoliasearch@4.24.0:
     resolution: {integrity: sha512-bf0QV/9jVejssFBmz2HQLxUadxk574t4iwjCKp5E7NBzwKkrDEhKPISIIjAU/p6K5qDx3qoeh4+26zWN1jmw3g==}
@@ -2272,6 +2272,10 @@ packages:
 
   chalk@5.3.0:
     resolution: {integrity: sha512-dLitG79d+GV1Nb/VYcCDFivJeK1hiukt9QjRNVOsUtTy1rR1YJsmpGGTZ3qJos+uw7WmWF4wUwBd9jxjocFC2w==}
+    engines: {node: ^12.17.0 || ^14.13 || >=16.0.0}
+
+  chalk@5.6.0:
+    resolution: {integrity: sha512-46QrSQFyVSEyYAgQ22hQ+zDa60YHA4fBstHmtSApj1Y5vKtG27fWowW03jCk5KcbXEWPZUIR894aARCA/G1kfQ==}
     engines: {node: ^12.17.0 || ^14.13 || >=16.0.0}
 
   char-regex@1.0.2:
@@ -2687,14 +2691,11 @@ packages:
   emojilib@2.4.0:
     resolution: {integrity: sha512-5U0rVMU5Y2n2+ykNLQqMoqklN9ICBT/KsvC1Gz6vqHbz2AXXGkG+Pm5rMWk/8Vjrr/mY9985Hi8DYzn1F09Nyw==}
 
-  encode-utf8@1.0.3:
-    resolution: {integrity: sha512-ucAnuBEhUK4boH2HjVYG5Q2mQyPorvv0u/ocS+zhdw0S8AlHYY+GOFhP1Gio5z4icpP2ivFSvhtFjQi8+T9ppw==}
-
   encoding@0.1.13:
     resolution: {integrity: sha512-ETBauow1T35Y/WZMkio9jiM0Z5xjHHmJ4XmjZOq1l/dXz3lr2sRn87nJy20RupqSh1F2m3HHPSp8ShIPQJrJ3A==}
 
-  end-of-stream@1.4.4:
-    resolution: {integrity: sha512-+uw1inIHVPQoaVuHzRyXd21icM+cnt4CzD5rW+NC1wjOUSTOs+Te7FOv7AhN7vS9x/oIyhLP5PR1H+phQAHu5Q==}
+  end-of-stream@1.4.5:
+    resolution: {integrity: sha512-ooEGc6HP26xXq/N+GCGOT0JKCLDGrq2bQUZrQ7gyrJiZANJ/8YDTxTpQBXGMn+WbIQXNVpyWymm7KYVICQnyOg==}
 
   entities@4.5.0:
     resolution: {integrity: sha512-V0hjH4dGPh9Ao5p0MoRY6BVqtwCjhz6vI5LT8AJ55H+4g9/4vbHx1I54fS0XuclLhDHArPQCiMjDxjaL8fPxhw==}
@@ -2854,6 +2855,9 @@ packages:
 
   fast-levenshtein@2.0.6:
     resolution: {integrity: sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw==}
+
+  fast-uri@3.0.6:
+    resolution: {integrity: sha512-Atfo14OibSv5wAp4VWNsFYE1AchQRTv9cBGWET4pZWHzYshFSS9NQI6I57rdKn9croWVMbYFbLhJ+yJvmZIIHw==}
 
   fastest-levenshtein@1.0.16:
     resolution: {integrity: sha512-eRnCtTTtGZFpQCwhJiUOuxPQWRXVKYDn0b2PeHfXL6/Zi53SLAzAHfVhVWK2AryC/WH05kGfxhFIPvTF0SXQzg==}
@@ -3929,8 +3933,8 @@ packages:
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
     hasBin: true
 
-  napi-build-utils@1.0.2:
-    resolution: {integrity: sha512-ONmRUqK7zj7DWX0D9ADe03wbwOBZxNAfF20PlGfCWQcD3+/MakShIHrMqx9YwPTfxDdF1zLeL+RGZiR9kGMLdg==}
+  napi-build-utils@2.0.0:
+    resolution: {integrity: sha512-GEbrYkbfF7MoNaoh2iGG84Mnf/WZfB0GdGEsM8wz7Expx/LlWf5U8t9nvJKXSp3qr5IsEbK04cBGhol/KwOsWA==}
 
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
@@ -3953,13 +3957,12 @@ packages:
     resolution: {integrity: sha512-XKYnqUrCwXC8DGG1xX4YH5yNIrlh9c065uaMZZHUoeUUINTOyt+x/G+ezYk0Ft6ExSREVIs+qBJDK503viTfFA==}
     engines: {node: '>= 10.13'}
 
-  node-abi@3.62.0:
-    resolution: {integrity: sha512-CPMcGa+y33xuL1E0TcNIu4YyaZCxnnvkVaEXrsosR3FxN+fV8xvb7Mzpb7IgKler10qeMkE6+Dp8qJhpzdq35g==}
+  node-abi@3.75.0:
+    resolution: {integrity: sha512-OhYaY5sDsIka7H7AtijtI9jwGYLyl29eQn/W623DiN/MIv5sUqc4g7BIDThX+gb7di9f6xK02nkp8sdfFWZLTg==}
     engines: {node: '>=10'}
 
-  node-addon-api@7.1.0:
-    resolution: {integrity: sha512-mNcltoe1R8o7STTegSOHdnJNN7s5EUvhoS7ShnTHDyOSd+8H+UdWODq6qSv67PjC8Zc5JRT8+oLAMCr0SIXw7g==}
-    engines: {node: ^16 || ^18 || >= 20}
+  node-addon-api@7.1.1:
+    resolution: {integrity: sha512-5m3bsyrjFWE1xf7nz7YXdN4udnVtXK6/Yfgn5qnahL6bCkf2yKt4k3nuTKAtT4r3IG8JNR2ncsIMdZuAzJjHQQ==}
 
   node-domexception@1.0.0:
     resolution: {integrity: sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==}
@@ -4058,10 +4061,6 @@ packages:
   npm-run-path@4.0.1:
     resolution: {integrity: sha512-S48WzZW777zhNIrn7gxOlISNAqi9ZC/uQFnRdbeIHhZhCA6UqpkOT8T1G7BvfdgP4Er8gF4sUbaS0i7QvIfCWw==}
     engines: {node: '>=8'}
-
-  npm-run-path@5.1.0:
-    resolution: {integrity: sha512-sJOdmRGrY2sjNTRMbSvluQqg+8X7ZK61yvzBEIDhz4f8z1TZFYABsqjjCBd/0PUNE9M6QDgHJXQkGUEm7Q+l9Q==}
-    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
   npm-run-path@5.3.0:
     resolution: {integrity: sha512-ppwTtiJZq0O/ai0z7yfudtBpWIoxM8yE6nHi1X47eFR2EWORqfbu6CnPlNsjeN683eT0qG6H/Pyf9fCcvjnnnQ==}
@@ -4436,8 +4435,8 @@ packages:
   preact@10.24.3:
     resolution: {integrity: sha512-Z2dPnBnMUfyQfSQ+GBdsGa16hz35YmLmtTLhM169uW944hYL6xzTYkJjC07j+Wosz733pMWx0fgON3JNw1jJQA==}
 
-  prebuild-install@7.1.2:
-    resolution: {integrity: sha512-UnNke3IQb6sgarcZIDU3gbMeTp/9SSU1DAIkil7PrqG1vZlBtY5msYccSKSHDqa3hNg436IXK+SNImReuA1wEQ==}
+  prebuild-install@7.1.3:
+    resolution: {integrity: sha512-8Mf2cbV7x1cXPUILADGI3wuhfqWvtiLA1iclTDbFRZkgRQS0NqsPZphna9V+HyTEadheuPmjaJMsbzKQFOzLug==}
     engines: {node: '>=10'}
     hasBin: true
 
@@ -4503,8 +4502,8 @@ packages:
   proxy-from-env@1.1.0:
     resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
 
-  pump@3.0.0:
-    resolution: {integrity: sha512-LwZy+p3SFs1Pytd/jYct4wpv49HiYCqd9Rlc5ZVdk0V+8Yzv6jR5Blk3TRmPL1ft69TxP0IMZGJ+WPFU2BFhww==}
+  pump@3.0.3:
+    resolution: {integrity: sha512-todwxLMY7/heScKmntwQG8CXVkWUOdYxIvY2s0VWAAMh/nd8SoYiRaKjlr7+iCs984f2P8zvrfWcDDYVb73NfA==}
 
   punycode.js@2.3.1:
     resolution: {integrity: sha512-uxFIHU0YlHYhDQtV4R9J6a52SLx28BCjT+4ieh7IGbgwVJWO+km431c4yRlREUAsAmt/uMjQUyQHNEPf0M39CA==}
@@ -4514,8 +4513,8 @@ packages:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
 
-  qrcode@1.5.3:
-    resolution: {integrity: sha512-puyri6ApkEHYiVl4CFzo1tDkAZ+ATcnbJrJ6RiBM1Fhctdn/ix9MTE3hRph33omisEbC/2fcfemsseiKgBPKZg==}
+  qrcode@1.5.4:
+    resolution: {integrity: sha512-1ca71Zgiu6ORjHqFBDpnSMTR2ReToX4l1Au1VFLyVeBTFavzQnv5JxMFr3ukHVKpSrSA2MCk0lNJSykjUfz7Zg==}
     engines: {node: '>=10.13.0'}
     hasBin: true
 
@@ -4613,8 +4612,8 @@ packages:
     resolution: {integrity: sha512-oKWePCxqpd6FlLvGV1VU0x7bkPmmCNolxzjMf4NczoDnQcIWrAF+cPtZn5i6n+RfD2d9i0tzpKnG6Yk168yIyw==}
     hasBin: true
 
-  retry-as-promised@7.0.4:
-    resolution: {integrity: sha512-XgmCoxKWkDofwH8WddD0w85ZfqYz+ZHlr5yo+3YUCfycWawU56T5ckWXsScsj5B8tqUcIG67DxXByo3VUgiAdA==}
+  retry-as-promised@7.1.1:
+    resolution: {integrity: sha512-hMD7odLOt3LkTjcif8aRZqi/hybjpLNgSk5oF5FCowfCjok6LukpN2bDX7R5wDmbgBQFn7YoBxSagmtXHaJYJw==}
 
   retry@0.12.0:
     resolution: {integrity: sha512-9LkiTwjUh6rT555DtE9rTX+BKByPfrMzEAtnlEtdEwr3Nkffwiihqe2bWADg+OQRjt9gl6ICdmB/ZFDCGAtSow==}
@@ -4812,10 +4811,6 @@ packages:
     resolution: {integrity: sha512-GNAq/eg8Udq2x0eNiFkr9gRg5bA7PXEWagQdeRX4cPSG+X/8V38v637gim9bjFptMk1QWsCTr0ttrJEiXbNnRw==}
     engines: {node: '>= 14'}
 
-  socks@2.8.1:
-    resolution: {integrity: sha512-B6w7tkwNid7ToxjZ08rQMT8M9BJAf8DKx8Ft4NivzH0zBUfd6jldGcisJn/RLgxcX3FPNDdNQCUEMMT79b+oCQ==}
-    engines: {node: '>= 10.0.0', npm: '>= 3.0.0'}
-
   socks@2.8.3:
     resolution: {integrity: sha512-l5x7VUUWbjVFbafGLxPWkYsHIhEvmF85tbIeFZWc8ZPtoMyybuEhL7Jye/ooC4/d48FgOjSJXgsF/AJPYCW8Zw==}
     engines: {node: '>= 10.0.0', npm: '>= 3.0.0'}
@@ -4989,8 +4984,8 @@ packages:
   tabbable@6.2.0:
     resolution: {integrity: sha512-Cat63mxsVJlzYvN51JmVXIgNoUokrIaT2zLclCXjRd8boZ0004U4KCs/sToJ75C6sdlByWxpYnb5Boif1VSFew==}
 
-  tar-fs@2.1.1:
-    resolution: {integrity: sha512-V0r2Y9scmbDRLCNex/+hYzvp/zyYjvFbHPNgVTKfQvVrb6guiE/fxP+XblDNR011utopbkex2nM4dHNV6GDsng==}
+  tar-fs@2.1.3:
+    resolution: {integrity: sha512-090nwYJDmlhwFwEW3QQl+vaNnxsO2yVsd45eTKRBzSzu+hlb1w2K9inVq5b0ngXuLVqQ4ApvsUHHnu/zQNkWAg==}
 
   tar-stream@2.2.0:
     resolution: {integrity: sha512-ujeqbceABgwMZxEJnk2HDY2DlnUZ+9oEcb1KzTVfYHio0UE6dG71n60d8D2I4qNvleWrrXpmjpt7vZeF1LnMZQ==}
@@ -5608,6 +5603,9 @@ packages:
 
   zod@3.24.1:
     resolution: {integrity: sha512-muH7gBL9sI1nciMZV67X5fTKKBLtwpZ5VBp1vsOQzj1MhrBZ4wlVCm3gedKZWLp0Oyel8sIGfeiz54Su+OVT+A==}
+
+  zod@3.25.76:
+    resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
@@ -6964,13 +6962,13 @@ snapshots:
 
   '@types/unist@3.0.3': {}
 
-  '@types/validator@13.11.9': {}
+  '@types/validator@13.15.2': {}
 
   '@types/web-bluetooth@0.0.20': {}
 
   '@types/ws@8.5.3':
     dependencies:
-      '@types/node': 22.15.3
+      '@types/node': 24.0.3
 
   '@typescript-eslint/eslint-plugin@8.32.1(@typescript-eslint/parser@8.32.1(eslint@9.12.0)(typescript@5.6.3))(eslint@9.12.0)(typescript@5.6.3)':
     dependencies:
@@ -7158,7 +7156,7 @@ snapshots:
       - '@vue/composition-api'
       - vue
 
-  '@vueuse/integrations@11.1.0(axios@1.6.2)(focus-trap@7.6.0)(qrcode@1.5.3)(vue@3.5.12(typescript@5.6.3))':
+  '@vueuse/integrations@11.1.0(axios@1.6.2)(focus-trap@7.6.0)(qrcode@1.5.4)(vue@3.5.12(typescript@5.6.3))':
     dependencies:
       '@vueuse/core': 11.1.0(vue@3.5.12(typescript@5.6.3))
       '@vueuse/shared': 11.1.0(vue@3.5.12(typescript@5.6.3))
@@ -7166,7 +7164,7 @@ snapshots:
     optionalDependencies:
       axios: 1.6.2
       focus-trap: 7.6.0
-      qrcode: 1.5.3
+      qrcode: 1.5.4
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
@@ -7202,11 +7200,11 @@ snapshots:
 
   abbrev@2.0.0: {}
 
-  abitype@0.7.1(typescript@5.6.3)(zod@3.24.1):
+  abitype@0.7.1(typescript@5.6.3)(zod@3.25.76):
     dependencies:
       typescript: 5.6.3
     optionalDependencies:
-      zod: 3.24.1
+      zod: 3.25.76
 
   abort-controller@3.0.0:
     dependencies:
@@ -7265,7 +7263,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  agentkeepalive@4.5.0:
+  agentkeepalive@4.6.0:
     dependencies:
       humanize-ms: 1.2.1
     optional: true
@@ -7287,12 +7285,12 @@ snapshots:
       json-schema-traverse: 0.4.1
       uri-js: 4.4.1
 
-  ajv@8.13.0:
+  ajv@8.17.1:
     dependencies:
       fast-deep-equal: 3.1.3
+      fast-uri: 3.0.6
       json-schema-traverse: 1.0.0
       require-from-string: 2.0.2
-      uri-js: 4.4.1
 
   algoliasearch@4.24.0:
     dependencies:
@@ -7619,6 +7617,8 @@ snapshots:
       supports-color: 7.2.0
 
   chalk@5.3.0: {}
+
+  chalk@5.6.0: {}
 
   char-regex@1.0.2: {}
 
@@ -8003,14 +8003,12 @@ snapshots:
 
   emojilib@2.4.0: {}
 
-  encode-utf8@1.0.3: {}
-
   encoding@0.1.13:
     dependencies:
       iconv-lite: 0.6.3
     optional: true
 
-  end-of-stream@1.4.4:
+  end-of-stream@1.4.5:
     dependencies:
       once: 1.4.0
 
@@ -8201,7 +8199,7 @@ snapshots:
       human-signals: 5.0.0
       is-stream: 3.0.0
       merge-stream: 2.0.0
-      npm-run-path: 5.1.0
+      npm-run-path: 5.3.0
       onetime: 6.0.0
       signal-exit: 4.1.0
       strip-final-newline: 3.0.0
@@ -8240,6 +8238,8 @@ snapshots:
   fast-json-stable-stringify@2.1.0: {}
 
   fast-levenshtein@2.0.6: {}
+
+  fast-uri@3.0.6: {}
 
   fastest-levenshtein@1.0.16: {}
 
@@ -9070,7 +9070,7 @@ snapshots:
 
   make-fetch-happen@9.1.0:
     dependencies:
-      agentkeepalive: 4.5.0
+      agentkeepalive: 4.6.0
       cacache: 15.3.0
       http-cache-semantics: 4.1.1
       http-proxy-agent: 4.0.1
@@ -9107,7 +9107,7 @@ snapshots:
   marked-terminal@7.1.0(marked@12.0.2):
     dependencies:
       ansi-escapes: 7.0.0
-      chalk: 5.3.0
+      chalk: 5.6.0
       cli-highlight: 2.1.11
       cli-table3: 0.6.5
       marked: 12.0.2
@@ -9334,7 +9334,7 @@ snapshots:
 
   nanoid@3.3.7: {}
 
-  napi-build-utils@1.0.2: {}
+  napi-build-utils@2.0.0: {}
 
   natural-compare@1.4.0: {}
 
@@ -9356,11 +9356,11 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  node-abi@3.62.0:
+  node-abi@3.75.0:
     dependencies:
       semver: 7.6.3
 
-  node-addon-api@7.1.0: {}
+  node-addon-api@7.1.1: {}
 
   node-domexception@1.0.0: {}
 
@@ -9488,10 +9488,6 @@ snapshots:
   npm-run-path@4.0.1:
     dependencies:
       path-key: 3.1.1
-
-  npm-run-path@5.1.0:
-    dependencies:
-      path-key: 4.0.0
 
   npm-run-path@5.3.0:
     dependencies:
@@ -9781,19 +9777,19 @@ snapshots:
 
   preact@10.24.3: {}
 
-  prebuild-install@7.1.2:
+  prebuild-install@7.1.3:
     dependencies:
       detect-libc: 2.0.3
       expand-template: 2.0.3
       github-from-package: 0.0.0
       minimist: 1.2.8
       mkdirp-classic: 0.5.3
-      napi-build-utils: 1.0.2
-      node-abi: 3.62.0
-      pump: 3.0.0
+      napi-build-utils: 2.0.0
+      node-abi: 3.75.0
+      pump: 3.0.3
       rc: 1.2.8
       simple-get: 4.0.1
-      tar-fs: 2.1.1
+      tar-fs: 2.1.3
       tunnel-agent: 0.6.0
 
   prelude-ls@1.2.1: {}
@@ -9833,19 +9829,18 @@ snapshots:
 
   proxy-from-env@1.1.0: {}
 
-  pump@3.0.0:
+  pump@3.0.3:
     dependencies:
-      end-of-stream: 1.4.4
+      end-of-stream: 1.4.5
       once: 1.4.0
 
   punycode.js@2.3.1: {}
 
   punycode@2.3.1: {}
 
-  qrcode@1.5.3:
+  qrcode@1.5.4:
     dependencies:
       dijkstrajs: 1.0.3
-      encode-utf8: 1.0.3
       pngjs: 5.0.0
       yargs: 15.4.1
 
@@ -9960,7 +9955,7 @@ snapshots:
       path-parse: 1.0.7
       supports-preserve-symlinks-flag: 1.0.0
 
-  retry-as-promised@7.0.4: {}
+  retry-as-promised@7.1.1: {}
 
   retry@0.12.0: {}
 
@@ -10075,16 +10070,16 @@ snapshots:
   sequelize@6.37.3(pg-hstore@2.3.4)(sqlite3@5.1.7):
     dependencies:
       '@types/debug': 4.1.12
-      '@types/validator': 13.11.9
-      debug: 4.3.4
+      '@types/validator': 13.15.2
+      debug: 4.3.7
       dottie: 2.0.6
       inflection: 1.13.4
       lodash: 4.17.21
       moment: 2.30.1
       moment-timezone: 0.5.45
       pg-connection-string: 2.6.4
-      retry-as-promised: 7.0.4
-      semver: 7.6.0
+      retry-as-promised: 7.1.1
+      semver: 7.6.3
       sequelize-pool: 7.1.0
       toposort-class: 1.0.1
       uuid: 8.3.2
@@ -10185,7 +10180,7 @@ snapshots:
     dependencies:
       agent-base: 6.0.2
       debug: 4.3.7
-      socks: 2.8.1
+      socks: 2.8.3
     transitivePeerDependencies:
       - supports-color
     optional: true
@@ -10197,12 +10192,6 @@ snapshots:
       socks: 2.8.3
     transitivePeerDependencies:
       - supports-color
-
-  socks@2.8.1:
-    dependencies:
-      ip-address: 9.0.5
-      smart-buffer: 4.2.0
-    optional: true
 
   socks@2.8.3:
     dependencies:
@@ -10252,8 +10241,8 @@ snapshots:
   sqlite3@5.1.7:
     dependencies:
       bindings: 1.5.0
-      node-addon-api: 7.1.0
-      prebuild-install: 7.1.2
+      node-addon-api: 7.1.1
+      prebuild-install: 7.1.3
       tar: 6.2.1
     optionalDependencies:
       node-gyp: 8.4.1
@@ -10379,17 +10368,17 @@ snapshots:
 
   tabbable@6.2.0: {}
 
-  tar-fs@2.1.1:
+  tar-fs@2.1.3:
     dependencies:
       chownr: 1.1.4
       mkdirp-classic: 0.5.3
-      pump: 3.0.0
+      pump: 3.0.3
       tar-stream: 2.2.0
 
   tar-stream@2.2.0:
     dependencies:
       bl: 4.1.0
-      end-of-stream: 1.4.4
+      end-of-stream: 1.4.5
       fs-constants: 1.0.0
       inherits: 2.0.4
       readable-stream: 3.6.2
@@ -10692,7 +10681,7 @@ snapshots:
       '@types/node': 22.7.6
       fsevents: 2.3.3
 
-  vitepress@1.4.1(@algolia/client-search@4.24.0)(@types/node@22.7.6)(axios@1.6.2)(postcss@8.4.47)(qrcode@1.5.3)(search-insights@2.13.0)(typescript@5.6.3):
+  vitepress@1.4.1(@algolia/client-search@4.24.0)(@types/node@22.7.6)(axios@1.6.2)(postcss@8.4.47)(qrcode@1.5.4)(search-insights@2.13.0)(typescript@5.6.3):
     dependencies:
       '@docsearch/css': 3.6.2
       '@docsearch/js': 3.6.2(@algolia/client-search@4.24.0)(search-insights@2.13.0)
@@ -10704,7 +10693,7 @@ snapshots:
       '@vue/devtools-api': 7.5.2
       '@vue/shared': 3.5.12
       '@vueuse/core': 11.1.0(vue@3.5.12(typescript@5.6.3))
-      '@vueuse/integrations': 11.1.0(axios@1.6.2)(focus-trap@7.6.0)(qrcode@1.5.3)(vue@3.5.12(typescript@5.6.3))
+      '@vueuse/integrations': 11.1.0(axios@1.6.2)(focus-trap@7.6.0)(qrcode@1.5.4)(vue@3.5.12(typescript@5.6.3))
       focus-trap: 7.6.0
       mark.js: 8.11.1
       minisearch: 7.1.0
@@ -10786,9 +10775,9 @@ snapshots:
     dependencies:
       web3-types: 1.3.1
 
-  web3-eth-abi@4.1.4(typescript@5.6.3)(zod@3.24.1):
+  web3-eth-abi@4.1.4(typescript@5.6.3)(zod@3.25.76):
     dependencies:
-      abitype: 0.7.1(typescript@5.6.3)(zod@3.24.1)
+      abitype: 0.7.1(typescript@5.6.3)(zod@3.25.76)
       web3-errors: 1.1.4
       web3-types: 1.3.1
       web3-utils: 4.1.0
@@ -10807,12 +10796,12 @@ snapshots:
       web3-utils: 4.1.0
       web3-validator: 2.0.3
 
-  web3-eth-contract@4.1.4(bufferutil@4.0.7)(encoding@0.1.13)(typescript@5.6.3)(utf-8-validate@6.0.3)(zod@3.24.1):
+  web3-eth-contract@4.1.4(bufferutil@4.0.7)(encoding@0.1.13)(typescript@5.6.3)(utf-8-validate@6.0.3)(zod@3.25.76):
     dependencies:
       web3-core: 4.3.2(bufferutil@4.0.7)(encoding@0.1.13)(utf-8-validate@6.0.3)
       web3-errors: 1.1.4
-      web3-eth: 4.3.1(bufferutil@4.0.7)(encoding@0.1.13)(typescript@5.6.3)(utf-8-validate@6.0.3)(zod@3.24.1)
-      web3-eth-abi: 4.1.4(typescript@5.6.3)(zod@3.24.1)
+      web3-eth: 4.3.1(bufferutil@4.0.7)(encoding@0.1.13)(typescript@5.6.3)(utf-8-validate@6.0.3)(zod@3.25.76)
+      web3-eth-abi: 4.1.4(typescript@5.6.3)(zod@3.25.76)
       web3-types: 1.3.1
       web3-utils: 4.1.0
       web3-validator: 2.0.3
@@ -10823,13 +10812,13 @@ snapshots:
       - utf-8-validate
       - zod
 
-  web3-eth-ens@4.0.8(bufferutil@4.0.7)(encoding@0.1.13)(typescript@5.6.3)(utf-8-validate@6.0.3)(zod@3.24.1):
+  web3-eth-ens@4.0.8(bufferutil@4.0.7)(encoding@0.1.13)(typescript@5.6.3)(utf-8-validate@6.0.3)(zod@3.25.76):
     dependencies:
       '@adraffy/ens-normalize': 1.10.0
       web3-core: 4.3.2(bufferutil@4.0.7)(encoding@0.1.13)(utf-8-validate@6.0.3)
       web3-errors: 1.1.4
-      web3-eth: 4.3.1(bufferutil@4.0.7)(encoding@0.1.13)(typescript@5.6.3)(utf-8-validate@6.0.3)(zod@3.24.1)
-      web3-eth-contract: 4.1.4(bufferutil@4.0.7)(encoding@0.1.13)(typescript@5.6.3)(utf-8-validate@6.0.3)(zod@3.24.1)
+      web3-eth: 4.3.1(bufferutil@4.0.7)(encoding@0.1.13)(typescript@5.6.3)(utf-8-validate@6.0.3)(zod@3.25.76)
+      web3-eth-contract: 4.1.4(bufferutil@4.0.7)(encoding@0.1.13)(typescript@5.6.3)(utf-8-validate@6.0.3)(zod@3.25.76)
       web3-net: 4.0.7(bufferutil@4.0.7)(encoding@0.1.13)(utf-8-validate@6.0.3)
       web3-types: 1.3.1
       web3-utils: 4.1.0
@@ -10848,10 +10837,10 @@ snapshots:
       web3-utils: 4.1.0
       web3-validator: 2.0.3
 
-  web3-eth-personal@4.0.8(bufferutil@4.0.7)(encoding@0.1.13)(typescript@5.6.3)(utf-8-validate@6.0.3)(zod@3.24.1):
+  web3-eth-personal@4.0.8(bufferutil@4.0.7)(encoding@0.1.13)(typescript@5.6.3)(utf-8-validate@6.0.3)(zod@3.25.76):
     dependencies:
       web3-core: 4.3.2(bufferutil@4.0.7)(encoding@0.1.13)(utf-8-validate@6.0.3)
-      web3-eth: 4.3.1(bufferutil@4.0.7)(encoding@0.1.13)(typescript@5.6.3)(utf-8-validate@6.0.3)(zod@3.24.1)
+      web3-eth: 4.3.1(bufferutil@4.0.7)(encoding@0.1.13)(typescript@5.6.3)(utf-8-validate@6.0.3)(zod@3.25.76)
       web3-rpc-methods: 1.1.4(bufferutil@4.0.7)(encoding@0.1.13)(utf-8-validate@6.0.3)
       web3-types: 1.3.1
       web3-utils: 4.1.0
@@ -10863,12 +10852,12 @@ snapshots:
       - utf-8-validate
       - zod
 
-  web3-eth@4.3.1(bufferutil@4.0.7)(encoding@0.1.13)(typescript@5.6.3)(utf-8-validate@6.0.3)(zod@3.24.1):
+  web3-eth@4.3.1(bufferutil@4.0.7)(encoding@0.1.13)(typescript@5.6.3)(utf-8-validate@6.0.3)(zod@3.25.76):
     dependencies:
       setimmediate: 1.0.5
       web3-core: 4.3.2(bufferutil@4.0.7)(encoding@0.1.13)(utf-8-validate@6.0.3)
       web3-errors: 1.1.4
-      web3-eth-abi: 4.1.4(typescript@5.6.3)(zod@3.24.1)
+      web3-eth-abi: 4.1.4(typescript@5.6.3)(zod@3.25.76)
       web3-eth-accounts: 4.1.0
       web3-net: 4.0.7(bufferutil@4.0.7)(encoding@0.1.13)(utf-8-validate@6.0.3)
       web3-providers-ws: 4.0.7(bufferutil@4.0.7)(utf-8-validate@6.0.3)
@@ -10949,17 +10938,17 @@ snapshots:
       web3-types: 1.3.1
       zod: 3.24.1
 
-  web3@4.3.0(bufferutil@4.0.7)(encoding@0.1.13)(typescript@5.6.3)(utf-8-validate@6.0.3)(zod@3.24.1):
+  web3@4.3.0(bufferutil@4.0.7)(encoding@0.1.13)(typescript@5.6.3)(utf-8-validate@6.0.3)(zod@3.25.76):
     dependencies:
       web3-core: 4.3.2(bufferutil@4.0.7)(encoding@0.1.13)(utf-8-validate@6.0.3)
       web3-errors: 1.1.4
-      web3-eth: 4.3.1(bufferutil@4.0.7)(encoding@0.1.13)(typescript@5.6.3)(utf-8-validate@6.0.3)(zod@3.24.1)
-      web3-eth-abi: 4.1.4(typescript@5.6.3)(zod@3.24.1)
+      web3-eth: 4.3.1(bufferutil@4.0.7)(encoding@0.1.13)(typescript@5.6.3)(utf-8-validate@6.0.3)(zod@3.25.76)
+      web3-eth-abi: 4.1.4(typescript@5.6.3)(zod@3.25.76)
       web3-eth-accounts: 4.1.0
-      web3-eth-contract: 4.1.4(bufferutil@4.0.7)(encoding@0.1.13)(typescript@5.6.3)(utf-8-validate@6.0.3)(zod@3.24.1)
-      web3-eth-ens: 4.0.8(bufferutil@4.0.7)(encoding@0.1.13)(typescript@5.6.3)(utf-8-validate@6.0.3)(zod@3.24.1)
+      web3-eth-contract: 4.1.4(bufferutil@4.0.7)(encoding@0.1.13)(typescript@5.6.3)(utf-8-validate@6.0.3)(zod@3.25.76)
+      web3-eth-ens: 4.0.8(bufferutil@4.0.7)(encoding@0.1.13)(typescript@5.6.3)(utf-8-validate@6.0.3)(zod@3.25.76)
       web3-eth-iban: 4.0.7
-      web3-eth-personal: 4.0.8(bufferutil@4.0.7)(encoding@0.1.13)(typescript@5.6.3)(utf-8-validate@6.0.3)(zod@3.24.1)
+      web3-eth-personal: 4.0.8(bufferutil@4.0.7)(encoding@0.1.13)(typescript@5.6.3)(utf-8-validate@6.0.3)(zod@3.25.76)
       web3-net: 4.0.7(bufferutil@4.0.7)(encoding@0.1.13)(utf-8-validate@6.0.3)
       web3-providers-http: 4.1.0(encoding@0.1.13)
       web3-providers-ws: 4.0.7(bufferutil@4.0.7)(utf-8-validate@6.0.3)
@@ -11007,7 +10996,7 @@ snapshots:
 
   wkx@0.5.0:
     dependencies:
-      '@types/node': 22.15.3
+      '@types/node': 24.0.3
 
   word-wrap@1.2.5: {}
 
@@ -11138,5 +11127,7 @@ snapshots:
   zenroom@5.24.10: {}
 
   zod@3.24.1: {}
+
+  zod@3.25.76: {}
 
   zwitch@2.0.4: {}

@@ -5,7 +5,7 @@
 		"@slangroom/deps": "workspace:*",
 		"@slangroom/ignored": "workspace:*",
 		"@slangroom/shared": "workspace:*",
-		"fastest-levenshtein": "^1.0.16"
+		"fastest-levenshtein": "1.0.16"
 	},
 	"repository": "https://github.com/dyne/slangroom",
 	"license": "AGPL-3.0-only",

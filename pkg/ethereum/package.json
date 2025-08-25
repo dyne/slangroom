@@ -4,8 +4,8 @@
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
 		"@slangroom/shared": "workspace:*",
-		"web3": "^4.3.0",
-		"web3-validator": "^2.0.3"
+		"web3": "4.3.0",
+		"web3-validator": "2.0.3"
 	},
 	"repository": "https://github.com/dyne/slangroom",
 	"license": "AGPL-3.0-only",
