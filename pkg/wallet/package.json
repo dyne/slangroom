@@ -1,6 +1,6 @@
 {
 	"name": "@slangroom/wallet",
-	"version": "1.49.2",
+	"version": "1.49.3",
 	"dependencies": {
 		"@meeco/sd-jwt": "0.0.3",
 		"@meeco/sd-jwt-vc": "0.0.4",
