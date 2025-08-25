@@ -60,6 +60,11 @@ neither the open/connect part nor the parameters part are present.
 | connect      | record,table         | read the record of the table            |
 | connect      | variable,name,table  | save the variable in the database table |
 
+## did plugin
+| open/connect | params | phrase          |
+| ------------ | ------ | --------------- |
+|              | did    | resolve the did |
+
 ## ethereum plugin
 | open/connect | params         | phrase                                           |
 | ------------ | -------------- | ------------------------------------------------ |
@@ -266,14 +271,14 @@ neither the open/connect part nor the parameters part are present.
 |              |        | fetch the local timestamp in seconds      |
 
 ## wallet plugin
-| open/connect | params                                        | phrase                  |
-| ------------ | --------------------------------------------- | ----------------------- |
-|              | jwk,object,holder,fields                      | create vc sd jwt        |
-|              | verifier_url,issued_vc,disclosed,nonce,holder | present vc sd jwt       |
-|              | verifier_url,issued_vc,nonce,issuer           | verify vc sd jwt        |
-|              |                                               | create p-256 key        |
-|              | sk                                            | create p-256 public key |
-|              | token                                         | pretty print sd jwt     |
+| open/connect | params                                        | phrase                 |
+| ------------ | --------------------------------------------- | ---------------------- |
+|              | jwk,object,holder,fields                      | create vc sd jwt       |
+|              | verifier_url,issued_vc,disclosed,nonce,holder | present vc sd jwt      |
+|              | verifier_url,issued_vc,nonce,issuer           | verify vc sd jwt       |
+|              |                                               | create p256 key        |
+|              | sk                                            | create p256 public key |
+|              | token                                         | pretty print sd jwt    |
 
 ## zencode plugin
 | open/connect | params                      | phrase          |

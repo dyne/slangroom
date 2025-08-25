@@ -59,6 +59,9 @@ importers:
       '@slangroom/db':
         specifier: workspace:^
         version: link:../../pkg/db
+      '@slangroom/did':
+        specifier: workspace:^
+        version: link:../../pkg/did
       '@slangroom/ethereum':
         specifier: workspace:^
         version: link:../../pkg/ethereum
