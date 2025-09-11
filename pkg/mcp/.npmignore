@@ -1,0 +1,14 @@
+node_modules
+*.tsbuildinfo
+build
+coverage
+.nyc_output
+test
+.prettierrc
+.eslintrc
+.gitignore
+.prettierignore
+.editorconfig
+CONTRIBUTING.md
+CHANGELOG.md
+README.md.license
