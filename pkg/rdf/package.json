@@ -1,6 +1,6 @@
 {
 	"name": "@slangroom/rdf",
-	"version": "1.49.5",
+	"version": "1.49.6",
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
 		"jsonld": "github:dyne/jsonld.js",
