@@ -502,8 +502,8 @@ importers:
         specifier: workspace:*
         version: link:../core
       jsonld:
-        specifier: 8.3.3
-        version: 8.3.3(web-streams-polyfill@3.3.3)
+        specifier: github:dyne/jsonld.js
+        version: https://codeload.github.com/dyne/jsonld.js/tar.gz/836e150adc967157bd24e11496e280723b64a8ed
       rdf-canonize:
         specifier: 4.0.1
         version: 4.0.1
@@ -739,9 +739,9 @@ packages:
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
     engines: {node: '>=12'}
 
-  '@digitalbazaar/http-client@3.4.1':
-    resolution: {integrity: sha512-Ahk1N+s7urkgj7WvvUND5f8GiWEPfUw0D41hdElaqLgu8wZScI8gdI0q+qWw5N1d35x7GCRH2uk9mi+Uzo9M3g==}
-    engines: {node: '>=14.0'}
+  '@digitalbazaar/http-client@4.2.0':
+    resolution: {integrity: sha512-OGju/GYp0V72qlZ/Pd4jGEwqBwT/Za/tw+Z3AC7lgMheGqsbhTZrtc5iLz9z59G/Q53QyE2fnjHV8N9wjBpiWA==}
+    engines: {node: '>=18.0'}
 
   '@docsearch/css@3.6.2':
     resolution: {integrity: sha512-vKNZepO2j7MrYBTZIGXvlUOIR+v9KRf70FApRgovWrj3GTs1EITz/Xb0AOlm1xsQBp16clVZj1SY/qaOJbQtZw==}
@@ -1092,10 +1092,6 @@ packages:
     resolution: {integrity: sha512-tqsQiBQDQdmPWE1xkkBq4rlSW5QZpLOUJ5RJh2/9fug+q9tnUhuZoVLk7s0scUIKTOzEtR72DFBXI4WiZcMpvw==}
     engines: {node: '>=14'}
     hasBin: true
-
-  '@fastify/busboy@2.1.1':
-    resolution: {integrity: sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==}
-    engines: {node: '>=14'}
 
   '@gar/promisify@1.1.3':
     resolution: {integrity: sha512-k2Ty1JcVojjJFwrg/ThKi2ujJ7XNLYaFGNB/bWT9wGR+oSMJHMa5w+CUq6p/pVrKeNNgA7pCqEcjSnHVoqJQFw==}
@@ -3533,8 +3529,9 @@ packages:
   jsonfile@6.1.0:
     resolution: {integrity: sha512-5dgndWOriYSm5cnYaJNhalLNDKOqFwyDB/rr1E9ZsGciGvKPs8R2xYGCacuf3z6K1YKDz182fd+fY3cn3pMqXQ==}
 
-  jsonld@8.3.3:
-    resolution: {integrity: sha512-9YcilrF+dLfg9NTEof/mJLMtbdX1RJ8dbWtJgE00cMOIohb1lIyJl710vFiTaiHTl6ZYODJuBd32xFvUhmv3kg==}
+  jsonld@https://codeload.github.com/dyne/jsonld.js/tar.gz/836e150adc967157bd24e11496e280723b64a8ed:
+    resolution: {tarball: https://codeload.github.com/dyne/jsonld.js/tar.gz/836e150adc967157bd24e11496e280723b64a8ed}
+    version: 8.3.4-0
     engines: {node: '>=14'}
 
   jsonparse@1.3.1:
@@ -3557,19 +3554,9 @@ packages:
     resolution: {integrity: sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==}
     engines: {node: '>=0.10.0'}
 
-  ky-universal@0.11.0:
-    resolution: {integrity: sha512-65KyweaWvk+uKKkCrfAf+xqN2/epw1IJDtlyCPxYffFCMR8u1sp2U65NtWpnozYfZxQ6IUzIlvUcw+hQ82U2Xw==}
-    engines: {node: '>=14.16'}
-    peerDependencies:
-      ky: '>=0.31.4'
-      web-streams-polyfill: '>=3.2.1'
-    peerDependenciesMeta:
-      web-streams-polyfill:
-        optional: true
-
-  ky@0.33.3:
-    resolution: {integrity: sha512-CasD9OCEQSFIam2U8efFK81Yeg8vNMTBUqtMOHlrcWQHqUX3HeCl9Dr31u4toV7emlH8Mymk5+9p0lL6mKb/Xw==}
-    engines: {node: '>=14.16'}
+  ky@1.12.0:
+    resolution: {integrity: sha512-YRLmSUHCwOJRBMArtqMRLOmO7fewn3yOoui6aB8ERkRVXupa0UiaQaKbIXteMt4jUElhbdqTMsLFHs8APxxUoQ==}
+    engines: {node: '>=18'}
 
   level-concat-iterator@3.1.0:
     resolution: {integrity: sha512-BWRCMHBxbIqPxJ8vHOvKUsaO0v1sLYZtjN3K2iZJsRBYtp+ONsY6Jfi6hy9K3+zolgQRryhIn2NRZjZnWJ9NmQ==}
@@ -5184,9 +5171,9 @@ packages:
   undici-types@7.8.0:
     resolution: {integrity: sha512-9UJ2xGDvQ43tYyVMpuHlsgApydB8ZKfVYTsLDhXkFL/6gfkp+U8xTGdh8pMJv1SpZna0zxG1DwsKZsreLbXBxw==}
 
-  undici@5.29.0:
-    resolution: {integrity: sha512-raqeBD6NQK4SkWhQzeYKd1KmIG6dllBOTt55Rmkt4HtI9mwdWtJljnrXjAFUBLTSN67HWrOIZ3EPF4kjUw80Bg==}
-    engines: {node: '>=14.0'}
+  undici@6.22.0:
+    resolution: {integrity: sha512-hU/10obOIu62MGYjdskASR3CUAiYaFTtC9Pa6vHyf//mAipSvSQg6od2CnJswq7fvzNS3zJhxoRkgNVaHurWKw==}
+    engines: {node: '>=18.17'}
 
   unicode-emoji-modifier-base@1.0.0:
     resolution: {integrity: sha512-yLSH4py7oFH3oG/9K+XWrz1pSi3dfUrWEnInbxMfArOfc1+33BlGPQtLsOYwvdMy11AwUBetYuaRxSPqgkq+8g==}
@@ -5823,13 +5810,10 @@ snapshots:
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
 
-  '@digitalbazaar/http-client@3.4.1(web-streams-polyfill@3.3.3)':
+  '@digitalbazaar/http-client@4.2.0':
     dependencies:
-      ky: 0.33.3
-      ky-universal: 0.11.0(ky@0.33.3)(web-streams-polyfill@3.3.3)
-      undici: 5.29.0
-    transitivePeerDependencies:
-      - web-streams-polyfill
+      ky: 1.12.0
+      undici: 6.22.0
 
   '@docsearch/css@3.6.2': {}
 
@@ -6041,8 +6025,6 @@ snapshots:
       levn: 0.4.1
 
   '@ethereumjs/rlp@4.0.1': {}
-
-  '@fastify/busboy@2.1.1': {}
 
   '@gar/promisify@1.1.3':
     optional: true
@@ -8896,14 +8878,12 @@ snapshots:
     optionalDependencies:
       graceful-fs: 4.2.11
 
-  jsonld@8.3.3(web-streams-polyfill@3.3.3):
+  jsonld@https://codeload.github.com/dyne/jsonld.js/tar.gz/836e150adc967157bd24e11496e280723b64a8ed:
     dependencies:
-      '@digitalbazaar/http-client': 3.4.1(web-streams-polyfill@3.3.3)
+      '@digitalbazaar/http-client': 4.2.0
       canonicalize: 1.0.8
       lru-cache: 6.0.0
       rdf-canonize: 3.4.0
-    transitivePeerDependencies:
-      - web-streams-polyfill
 
   jsonparse@1.3.1: {}
 
@@ -8921,15 +8901,7 @@ snapshots:
 
   kind-of@6.0.3: {}
 
-  ky-universal@0.11.0(ky@0.33.3)(web-streams-polyfill@3.3.3):
-    dependencies:
-      abort-controller: 3.0.0
-      ky: 0.33.3
-      node-fetch: 3.3.2
-    optionalDependencies:
-      web-streams-polyfill: 3.3.3
-
-  ky@0.33.3: {}
+  ky@1.12.0: {}
 
   level-concat-iterator@3.1.0:
     dependencies:
@@ -10555,9 +10527,7 @@ snapshots:
 
   undici-types@7.8.0: {}
 
-  undici@5.29.0:
-    dependencies:
-      '@fastify/busboy': 2.1.1
+  undici@6.22.0: {}
 
   unicode-emoji-modifier-base@1.0.0: {}
 
