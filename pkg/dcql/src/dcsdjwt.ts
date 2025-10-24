@@ -24,7 +24,7 @@ const fetchIssuerJwk = async(issuerUrl: string): Promise<JWK> => {
 		if (!jwksResponse.ok) throw new Error(`Invalid credential issuer: jwks not found anywhere`);
 		jwks = await response.json();
 	}
-	const k = jwks.keys.find((k) => k.use === 'sig')
+	const k = jwks.keys[0];
 	if (!k) throw new Error('Invalid credential issuer: jwk used to signed not found');
 	return k;
 }
@@ -113,6 +113,7 @@ export const parseDcSdJwt = async(dcSdJwtKb: string) => {
 	return {
 		credential_format: 'dc+sd-jwt',
 		vct: res.payload['vct'] || res.payload['type'],
-		claims: flattenDcAndPayload(res.disclosures, res.payload)
+		claims: flattenDcAndPayload(res.disclosures, res.payload),
+		cryptographic_holder_binding: true
 	}
 }
