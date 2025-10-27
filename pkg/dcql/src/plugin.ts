@@ -65,23 +65,23 @@ export const validateVpToken = p.new(
 	'validate the vp_token against dcql_query',
 	async (ctx) => {
 		const stringVpToken = ctx.fetch('vp_token');
-		if (typeof stringVpToken !== 'string') return ctx.fail(new DcqlError('vp_token must be a string'));
+		if (typeof stringVpToken !== 'string') return ctx.fail(new DcqlError('Invalid vp_token: it must be a string'));
 		let jsonVpToken: VpToken;
 		try {
 			jsonVpToken = JSON.parse(stringVpToken);
 			VpTokenSchema.parse(jsonVpToken);
 		} catch (e) {
-			return ctx.fail(new DcqlError('vp_token must be an encoded JSON'))
+			return ctx.fail(new DcqlError('Invalid vp_token: it must be an encoded JSON'))
 		}
 		const dcqlQuery = ctx.fetch('dcql_query');
-		if (typeof dcqlQuery !== 'object') return ctx.fail(new DcqlError('dcql_query must be an object'));
+		if (typeof dcqlQuery !== 'object') return ctx.fail(new DcqlError('Invalid dcql_query: it must be an object'));
 		let parsedDcqlQuery;
 		try {
 			parsedDcqlQuery = DcqlQuery.parse(dcqlQuery as DcqlQuery.Input);
 			//@ts-expect-error
 			DcqlQuery.validate(parsedDcqlQuery);
 		} catch (e) {
-			return ctx.fail(new DcqlError(`invalid dcql_query: ${e.message}`))
+			return ctx.fail(new DcqlError(`Invalid dcql_query: ${e.message}`))
 		}
 
 		try {
@@ -118,10 +118,6 @@ export const validateVpToken = p.new(
 		} catch (e) {
 			return ctx.fail(new DcqlError(e.message))
 		}
-		// 1.parse each vp_token
-		// 2.extract iss and holder pks and validate their signature
-		// 3.validate against dcql
-
 		return ctx.pass('vp_token is valid')
 	}
 )

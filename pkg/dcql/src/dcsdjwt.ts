@@ -110,6 +110,11 @@ export const parseDcSdJwt = async(dcSdJwtKb: string) => {
 	} else {
 		throw new Error('Invalid credential: issuer key type not yet supported');
 	}
+	// expired credential
+	const now = Math.floor(Date.now() / 1000);
+	if (typeof res.payload['exp'] !== 'number' || res.payload['exp'] < now ) {
+		throw new Error('Invalid credential: expired')
+	}
 	return {
 		credential_format: 'dc+sd-jwt',
 		vct: res.payload['vct'] || res.payload['type'],
