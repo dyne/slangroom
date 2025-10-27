@@ -6,13 +6,15 @@ import { zencodeExec } from '@slangroom/shared';
 import {
 	extractKey,
 	es256kb,
-	es256dcsdjwt,
-	type JWK,
-	type ExtractKeyOutput,
-	type Es256dcsdjwtOutput,
+	es256dcsdjwt
 } from './zencode.js';
+import type {
+	ExtractKeyOutput,
+	Es256dcsdjwtOutput,
+	JWK
+} from './types.js'
 
-const fetchIssuerJwk = async(issuerUrl: string): Promise<JWK> => {
+async function fetchIssuerJwk(issuerUrl: string): Promise<JWK> {
 	const response = await fetch(issuerUrl);
 	if (!response.ok) throw new Error(`Invalid credential: issuer well-known not found at ${issuerUrl}`);
 	const wk = await response.json();

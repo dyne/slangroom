@@ -2,30 +2,6 @@
 //
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
-export type JWK = {
-	kty: string;
-	use?: string;
-	key_ops?: string[];
-	alg?: string;
-	kid?: string;
-	// For EC keys
-	crv?: string;
-	x?: string;
-	y?: string;
-	// For RSA keys
-	n?: string;
-	e?: string;
-	// Optional extra fields
-	[prop: string]: any;
-}
-
-export type ExtractKeyOutput = {
-	result: {
-		iss: string;
-		jwk: JWK;
-	},
-	logs: string;
-}
 export const extractKey = `
 Scenario 'sd_jwt': dc+sd-jwt_kb
 
@@ -67,13 +43,6 @@ When I set 'result' to 'OK' as 'string'
 Then print the 'result'
 `
 
-export type Es256dcsdjwtOutput = {
-	result: {
-		disclosures: [string, string, string | number | boolean][];
-		payload: Record<string, unknown>;
-	},
-	logs: string;
-}
 export const es256dcsdjwt = `
 Scenario 'w3c': dcsdjwt
 Scenario 'sd_jwt': cred
