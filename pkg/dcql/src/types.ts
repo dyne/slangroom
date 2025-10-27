@@ -20,7 +20,7 @@ export const LdpVcArraySchema = z.array(
 					proofValue: z.string(),
 					type: z.string(),
 					verificationMethod: z.string()
-				}),
+				}).catchall(z.any()),
 				credentialSubject: z.object().catchall(z.any()),
 				issuer: z.string(),
 				validUntil: z.string()
