@@ -9,7 +9,22 @@ export const LdpVcArraySchema = z.array(
 	z.object({
 		"@context": z.array(z.string()),
 		type: z.array(z.string()),
-		verifiableCredential: z.array(z.object().catchall(z.any())).nonempty(),
+		verifiableCredential: z.array(
+			z.object({
+				"@context": z.array(z.string()),
+				type: z.array(z.string()),
+				proof: z.object({
+					created: z.string(),
+					cryptosuite: z.string(),
+					proofPurpose: z.string(),
+					proofValue: z.string(),
+					type: z.string(),
+					verificationMethod: z.string()
+				}),
+				credentialSubject: z.object().catchall(z.any()),
+				issuer: z.string(),
+				validUntil: z.string()
+			}).catchall(z.any())).nonempty(),
 		holder: z.string(),
 		proof: z.object({
 			challenge: z.string(),
@@ -24,6 +39,7 @@ export const LdpVcArraySchema = z.array(
 	}).catchall(z.any())
 );
 export type LdpVcElementType = z.infer<typeof LdpVcArraySchema.element>;
+export type LdpVcVerifiableCredentialelementType = LdpVcElementType["verifiableCredential"][number];
 
 const Presentation = z.union([DcSdJwtArraySchema, LdpVcArraySchema]);
 export const VpTokenSchema = z.record(

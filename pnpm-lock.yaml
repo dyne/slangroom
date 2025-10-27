@@ -337,6 +337,9 @@ importers:
       '@slangroom/core':
         specifier: workspace:*
         version: link:../core
+      '@slangroom/rdf':
+        specifier: workspace:*
+        version: link:../rdf
       '@slangroom/shared':
         specifier: workspace:*
         version: link:../shared

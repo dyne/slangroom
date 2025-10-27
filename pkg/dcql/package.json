@@ -4,6 +4,7 @@
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
 		"@slangroom/shared": "workspace:*",
+		"@slangroom/rdf": "workspace:*",
 		"dcql": "^1.0.1",
 		"zod": "4.1.12"
 	},
