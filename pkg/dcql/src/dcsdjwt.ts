@@ -3,26 +3,20 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import { zencodeExec } from '@slangroom/shared';
-import {
-	extractKey,
-	es256kb,
-	es256dcsdjwt
-} from './zencode.js';
-import type {
-	ExtractKeyOutput,
-	Es256dcsdjwtOutput,
-	JWK
-} from './types.js'
+import { extractKey, es256kb, es256dcsdjwt } from './zencode.js';
+import type { ExtractKeyOutput, Es256dcsdjwtOutput, JWK } from './types.js';
 
 async function fetchIssuerJwk(issuerUrl: string): Promise<JWK> {
 	const response = await fetch(issuerUrl);
-	if (!response.ok) throw new Error(`Invalid credential: issuer well-known not found at ${issuerUrl}`);
+	if (!response.ok)
+		throw new Error(`Invalid credential: issuer well-known not found at ${issuerUrl}`);
 	const wk = await response.json();
-	let jwks: { keys: JWK[]}
+	let jwks: { keys: JWK[] };
 	if (wk.jwks) {
 		jwks = wk.jwks;
 	} else {
-		const jwksResponse = await fetch(wk.jwks_uri || issuerUrl.replace('.well-known/openid-credential-issuer', 'jwks'))
+		// is there a default url to check? /jwks, /.well-known/jwks?
+		const jwksResponse = await fetch(wk.jwks_uri);
 		if (!jwksResponse.ok) throw new Error(`Invalid credential issuer: jwks not found anywhere`);
 		jwks = await response.json();
 	}
@@ -31,7 +25,10 @@ async function fetchIssuerJwk(issuerUrl: string): Promise<JWK> {
 	return k;
 }
 
-function flattenDcAndPayload(disclosures: [string, string, string | boolean | number][], payload: Record<string, unknown>) {
+function flattenDcAndPayload(
+	disclosures: [string, string, string | boolean | number][],
+	payload: Record<string, unknown>,
+) {
 	const result: Record<string, string | boolean | number> = {};
 	function flatten(path: string, value: unknown): void {
 		if (typeof value === 'object') {
@@ -47,7 +44,7 @@ function flattenDcAndPayload(disclosures: [string, string, string | boolean | nu
 		}
 	}
 	// Handle disclosures
-	disclosures.forEach(disclosure => {
+	disclosures.forEach((disclosure) => {
 		const [_, firstKey, thirdElement] = disclosure;
 		let parsed;
 		try {
@@ -62,65 +59,56 @@ function flattenDcAndPayload(disclosures: [string, string, string | boolean | nu
 	for (const key in payload) {
 		flatten(key, payload[key]);
 	}
-  	return result;
+	return result;
 }
 
-export const parseDcSdJwt = async(dcSdJwtKb: string) => {
-	const extractKeyOut = await zencodeExec(
-		extractKey,
-		{
-			data: {credential: dcSdJwtKb},
-			keys: {}
-		}
-	) as ExtractKeyOutput;
+export const parseDcSdJwt = async (dcSdJwtKb: string) => {
+	const extractKeyOut = (await zencodeExec(extractKey, {
+		data: { credential: dcSdJwtKb },
+		keys: {},
+	})) as ExtractKeyOutput;
 	// holder key binding
-	const parts = dcSdJwtKb.split('~')
-	if (parts.length < 2) throw new Error('Invalid credential: disclosuers not found in dc+sd-jwt')
+	const parts = dcSdJwtKb.split('~');
+	if (parts.length < 2) throw new Error('Invalid credential: disclosuers not found in dc+sd-jwt');
 	const kb = parts.at(-1);
-	const credential = parts.slice(0, -1).join(`~`) + '~'
-	if ( extractKeyOut.result.jwk.crv === 'P-256' ) {
-		await zencodeExec(
-			es256kb,
-			{
-				data: {
-					x: extractKeyOut.result.jwk.x!,
-					y: extractKeyOut.result.jwk.y!,
-					kb: kb!,
-					credential: credential
-				},
-				keys: {}
-			}
-		);
+	const credential = parts.slice(0, -1).join(`~`) + '~';
+	if (extractKeyOut.result.jwk.crv === 'P-256') {
+		await zencodeExec(es256kb, {
+			data: {
+				x: extractKeyOut.result.jwk.x!,
+				y: extractKeyOut.result.jwk.y!,
+				kb: kb!,
+				credential: credential,
+			},
+			keys: {},
+		});
 	} else {
 		throw new Error('Invalid credential: holder key type not yet supported');
 	}
 	// issuer signature
 	const issJwk = await fetchIssuerJwk(extractKeyOut.result.iss);
 	let res;
-	if ( issJwk.crv === 'P-256' ) {
-		const result = await zencodeExec(
-			es256dcsdjwt,
-			{
-				data: {
-					credential,
-					jwk: issJwk
-				},
-				keys: {}
-			}
-		) as Es256dcsdjwtOutput;
+	if (issJwk.crv === 'P-256') {
+		const result = (await zencodeExec(es256dcsdjwt, {
+			data: {
+				credential,
+				jwk: issJwk,
+			},
+			keys: {},
+		})) as Es256dcsdjwtOutput;
 		res = result.result;
 	} else {
 		throw new Error('Invalid credential: issuer key type not yet supported');
 	}
 	// expired credential
 	const now = Math.floor(Date.now() / 1000);
-	if (typeof res.payload['exp'] !== 'number' || res.payload['exp'] < now ) {
-		throw new Error('Invalid credential: expired')
+	if (typeof res.payload['exp'] !== 'number' || res.payload['exp'] < now) {
+		throw new Error('Invalid credential: expired');
 	}
 	return {
 		credential_format: 'dc+sd-jwt',
 		vct: res.payload['vct'] || res.payload['type'],
 		claims: flattenDcAndPayload(res.disclosures, res.payload),
-		cryptographic_holder_binding: true
-	}
-}
+		cryptographic_holder_binding: true,
+	};
+};

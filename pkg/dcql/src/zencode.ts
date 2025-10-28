@@ -14,7 +14,7 @@ When I pickup a 'string' from path 'credential.jwt.payload.cnf.jwk'
 
 Then print the 'iss'
 Then print the 'jwk'
-`
+`;
 
 export const es256kb = `
 Scenario 'w3c': jwt and jws
@@ -41,7 +41,7 @@ When I verify jws signature in 'kb_string'
 
 When I set 'result' to 'OK' as 'string'
 Then print the 'result'
-`
+`;
 
 export const es256dcsdjwt = `
 Scenario 'w3c': dcsdjwt
@@ -60,7 +60,7 @@ When I pickup a 'string' from path 'credential.jwt.payload'
 
 Then print the 'disclosures'
 Then print the 'payload'
-`
+`;
 
 /*
  * LDP_VC contracts
@@ -85,4 +85,4 @@ When I verify 'serialized_hash' has a es256 signature in 'proofValue' by 'pk'
 
 When I set 'result' to 'OK' as 'string'
 Then print the 'result'
-`
+`;
