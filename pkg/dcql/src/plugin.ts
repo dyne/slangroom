@@ -88,9 +88,9 @@ export const validateVpToken = p.new(
 					}),
 				),
 			);
-			// @ts-expect-error – credential_sets can be undefined at runtime
 			const presentationQueryResult = DcqlPresentationResult.fromDcqlPresentation(
 				parsedPresentation,
+				// @ts-expect-error – credential_sets can be undefined at runtime
 				{ dcqlQuery: parsedDcqlQuery },
 			);
 			if (!presentationQueryResult.can_be_satisfied)
