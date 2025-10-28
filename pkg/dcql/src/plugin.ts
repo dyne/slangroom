@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 
 import { Plugin } from '@slangroom/core';
+import type { JsonableObject } from '@slangroom/shared';
 import { DcqlQuery, DcqlPresentationResult } from 'dcql';
 import { parseDcSdJwt } from './dcsdjwt.js';
 import { parseLdpVc } from './ldpvc.js';
@@ -95,10 +96,20 @@ export const validateVpToken = p.new(
 			);
 			if (!presentationQueryResult.can_be_satisfied)
 				throw new Error(`Invalid vp_token: it does not satisfy the dcql_query`);
+			const result: Record<string, unknown> = {}
+			for (const [key, match] of Object.entries(presentationQueryResult.credential_matches)) {
+				const outputs: Record<string, unknown>[] = [];
+				match.valid_credentials?.forEach(vc => {
+					vc.claims?.valid_claim_sets?.forEach(vcs => {
+						if (vcs.output) outputs.push(vcs.output);
+					});
+				});
+				result[key] = outputs;
+			}
+			return ctx.pass(result as JsonableObject);
 		} catch (e) {
 			return ctx.fail(new DcqlError(e.message));
 		}
-		return ctx.pass('vp_token is valid');
 	},
 );
 
