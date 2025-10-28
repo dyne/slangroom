@@ -59,6 +59,9 @@ importers:
       '@slangroom/db':
         specifier: workspace:^
         version: link:../../pkg/db
+      '@slangroom/dcql':
+        specifier: workspace:^
+        version: link:../../pkg/dcql
       '@slangroom/did':
         specifier: workspace:^
         version: link:../../pkg/did
