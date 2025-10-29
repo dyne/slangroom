@@ -77,11 +77,10 @@ const dcSdJwtVpToken = {
 }
 
 const VALIDATE = `
-Prepare: validate the vp_token against dcql_query where vp_token is 'vp_token', dcql_query is 'dcql_query'
+Prepare 'res': validate the vp_token against dcql_query where vp_token is 'vp_token', dcql_query is 'dcql_query'
 
-Given I have a 'string' named 'vp_token'
-When I set 'result' to 'OK' as 'string'
-Then print the 'result'
+Given I have a 'string dictionary' named 'res'
+Then print the 'res'
 `
 
 test('dc+sd-jwt', async (t) => {
@@ -111,13 +110,22 @@ test('dc+sd-jwt', async (t) => {
 			]
 		}
 	}
+	const out = {
+		res: {
+			my_dcsdjwt_credential: [
+				{
+					has_discount_from_voucher: 20
+				}
+			]
+		}
+	}
 	const slangroom = new Slangroom(dcql);
 	const fn = slangroom.execute(VALIDATE, {
         data: dcSdJwtVpToken,
 		keys: dcSdJwtDcqlQuery
     });
 	const result = await fn;
-	t.is(result.result['result'], 'OK');
+	t.deepEqual(result.result, out, JSON.stringify(result));
 });
 
 
@@ -156,13 +164,23 @@ test('dc+sd-jwt claims in both disclosure and payload', async (t) => {
 			]
 		}
 	}
+	const out = {
+		res: {
+			my_dcsdjwt_credential: [
+				{
+					has_discount_from_voucher: 20,
+					iss: "https://issuer1.zenswarm.forkbomb.eu/credential_issuer"
+				}
+			]
+		}
+	}
 	const slangroom = new Slangroom(dcql);
 	const fn = slangroom.execute(VALIDATE, {
         data: dcSdJwtVpToken,
 		keys: dcSdJwtDcqlQuery
     });
 	const result = await fn;
-	t.is(result.result['result'], 'OK');
+	t.deepEqual(result.result, out, JSON.stringify(result));
 });
 
 test('dc+sd-jwt failing beacuse dcql query ask for more claims than the presented one', async (t) => {
@@ -205,10 +223,10 @@ test('dc+sd-jwt failing beacuse dcql query ask for more claims than the presente
 	const error = await t.throwsAsync(fn);
 	t.true(stripAnsiCodes((error as Error).message).startsWith(
 `0 | 
-1 | Prepare: validate the vp_token against dcql_query where vp_token is 'vp_token', dcql_query is 'dcql_query'
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1 | Prepare 'res': validate the vp_token against dcql_query where vp_token is 'vp_token', dcql_query is 'dcql_query'
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 2 | 
-3 | Given I have a 'string' named 'vp_token'
+3 | Given I have a 'string dictionary' named 'res'
 
 Error colors:
  - error
@@ -217,7 +235,7 @@ Error colors:
  - extra words
 
 Slangroom @slangroom/dcql@${packageJson.version} Error: Invalid vp_token: it does not satisfy the dcql_query
-`));
+`), (error as Error).message);
 });
 
 test('dc+sd-jwt failing beacuse dcql query ask for more credentials than the presented one', async (t) => {
@@ -271,10 +289,10 @@ test('dc+sd-jwt failing beacuse dcql query ask for more credentials than the pre
 	const error = await t.throwsAsync(fn);
 	t.true(stripAnsiCodes((error as Error).message).startsWith(
 `0 | 
-1 | Prepare: validate the vp_token against dcql_query where vp_token is 'vp_token', dcql_query is 'dcql_query'
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1 | Prepare 'res': validate the vp_token against dcql_query where vp_token is 'vp_token', dcql_query is 'dcql_query'
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 2 | 
-3 | Given I have a 'string' named 'vp_token'
+3 | Given I have a 'string dictionary' named 'res'
 
 Error colors:
  - error
@@ -283,7 +301,7 @@ Error colors:
  - extra words
 
 Slangroom @slangroom/dcql@${packageJson.version} Error: Invalid vp_token: it does not satisfy the dcql_query
-`));
+`), (error as Error).message);
 });
 
 test('ldp_vc', async (t) => {
@@ -324,13 +342,26 @@ test('ldp_vc', async (t) => {
 			]
 		}
 	}
+	const out = {
+		res: {
+			my_ldpvc_credential: [
+				{
+					credentialSubject: {
+						formid: "aducB7jazEVpH3hHdLBzzM",
+						instanceid: "uuid:c2492b4d-bdbb-3554-88c0-383dca60482a",
+						submissiondate: "2025-10-16T14:04:41.643318+00:00"
+					}
+				}
+			]
+		}
+	}
 	const slangroom = new Slangroom(dcql);
 	const fn = slangroom.execute(VALIDATE, {
         data: ldpVcVpToken,
 		keys: dcqlQuery
     });
 	const result = await fn;
-	t.is(result.result['result'], 'OK');
+	t.deepEqual(result.result, out, JSON.stringify(result));
 });
 
 test('dc+sd-jwt & ldp_vc', async (t) => {
@@ -391,6 +422,24 @@ test('dc+sd-jwt & ldp_vc', async (t) => {
 			]
 		}
 	}
+	const out = {
+		res: {
+			my_ldpvc_credential: [
+				{
+					credentialSubject: {
+						formid: "aducB7jazEVpH3hHdLBzzM",
+						instanceid: "uuid:c2492b4d-bdbb-3554-88c0-383dca60482a",
+						submissiondate: "2025-10-16T14:04:41.643318+00:00"
+					}
+				}
+			],
+			my_dcsdjwt_credential: [
+				{
+					has_discount_from_voucher: 20
+				}
+			]
+		}
+	}
 	const slangroom = new Slangroom(dcql);
 	const fn = slangroom.execute(VALIDATE, {
         data: {
@@ -399,5 +448,5 @@ test('dc+sd-jwt & ldp_vc', async (t) => {
 		keys: dcSdJwtLdpVcDcqlQuery
     });
 	const result = await fn;
-	t.is(result.result['result'], 'OK');
+	t.deepEqual(result.result, out, JSON.stringify(result));
 });
