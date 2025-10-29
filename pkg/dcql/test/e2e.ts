@@ -450,3 +450,110 @@ test('dc+sd-jwt & ldp_vc', async (t) => {
 	const result = await fn;
 	t.deepEqual(result.result, out, JSON.stringify(result));
 });
+
+test('complex query', async (t) => {
+	const complexQuery = {
+		dcql_query: {
+			credentials: [
+				{
+					id: "my_dcsdjwt_credential",
+					format: "dc+sd-jwt",
+					meta: {
+						vct_values: [
+							"discount_from_voucher"
+						]
+					},
+					claims: [
+						{
+							id: "a",
+							path: [
+								"has_discount_from_voucher"
+							],
+							values: [
+								20,
+								30
+							]
+						},
+						{
+							id: "b",
+							path: [
+								"iss"
+							]
+						},
+						{
+							id: "c",
+							path: [
+								"sub"
+							],
+							values: [
+								"did:example.com"
+							]
+						}
+					],
+					claim_sets: [
+						["a", "b"],
+						["a", "c"]
+					]
+				},
+				{
+					id: "my_ldpvc_credential",
+					format: "ldp_vc",
+					meta: {
+						type_values: [
+							[
+								"questionnaire"
+							]
+						]
+					},
+					claims: [
+						{
+							path: [
+								"credentialSubject",
+								"formid"
+							]
+						},
+						{
+							path: [
+								"credentialSubject",
+								"instanceid"
+							]
+						},
+						{
+							path: [
+								"credentialSubject",
+								"submissiondate"
+							]
+						}
+					]
+				}
+			],
+			credential_sets: [
+				{
+					options: [
+						[
+							"my_ldpvc_credential"
+						]
+					],
+					required: false
+				}
+			]
+		}
+	}
+	const out = {
+		res: {
+			my_dcsdjwt_credential: [
+				{
+					has_discount_from_voucher: 20,
+					iss: "https://issuer1.zenswarm.forkbomb.eu/credential_issuer"
+				}
+			]
+		}
+	}
+	const slangroom = new Slangroom(dcql);
+	const fn = slangroom.execute(VALIDATE, {
+        data: dcSdJwtVpToken,
+		keys: complexQuery
+    });
+	const result = await fn;
+	t.deepEqual(result.result, out, JSON.stringify(result));
+});
