@@ -502,7 +502,7 @@ importers:
         specifier: workspace:*
         version: link:../core
       jsonld:
-        specifier: github:dyne/jsonld.js
+        specifier: github:dyne/jsonld.js#836e150adc967157bd24e11496e280723b64a8ed
         version: https://codeload.github.com/dyne/jsonld.js/tar.gz/836e150adc967157bd24e11496e280723b64a8ed
       rdf-canonize:
         specifier: 4.0.1

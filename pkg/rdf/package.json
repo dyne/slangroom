@@ -3,7 +3,7 @@
 	"version": "1.49.6",
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
-		"jsonld": "github:dyne/jsonld.js",
+		"jsonld": "github:dyne/jsonld.js#836e150adc967157bd24e11496e280723b64a8ed",
 		"rdf-canonize": "4.0.1"
 	},
 	"repository": "https://github.com/dyne/slangroom",
