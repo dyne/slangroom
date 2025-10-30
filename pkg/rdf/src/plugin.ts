@@ -20,6 +20,15 @@ export class RdfError extends Error {
 
 const p = new Plugin();
 
+export const rdfCanon = async (input: Record<string, unknown>): Promise<string> => {
+	const quads = await jsonld.toRDF(input as object, {format: "application/n-quads"}) as string;
+	const normalized: string = await canonize(quads, {
+		algorithm: 'RDFC-1.0',
+		inputFormat: 'application/n-quads'
+	});
+	return btoa(normalized);
+}
+
 /**
  * @internal
  */
@@ -32,12 +41,8 @@ export const canonicalization = p.new(
 			return ctx.fail(new RdfError('Invalid input, it must be an object'))
 		}
 		try {
-			const quads = await jsonld.toRDF(input as object, {format: "application/n-quads"}) as string;
-			const normalized: string = await canonize(quads, {
-			  algorithm: 'RDFC-1.0',
-			  inputFormat: 'application/n-quads'
-			});
-			return ctx.pass(btoa(normalized));
+			const canonResult = await rdfCanon(input as Record<string, unknown>);
+			return ctx.pass(canonResult);
 		} catch(e) {
 			return ctx.fail(new RdfError((e as Error).message))
 		}

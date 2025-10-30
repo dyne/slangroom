@@ -11,6 +11,7 @@ let examplesDoc = `\n# Slangroom examples\n\n`;
 
 [
 	'db',
+	'dcql',
 	'did',
 	'ethereum',
 	'fs',
