@@ -12,6 +12,7 @@
 	"dependencies": {
 		"@slangroom/core": "workspace:^",
 		"@slangroom/db": "workspace:^",
+		"@slangroom/dcql": "workspace:^",
 		"@slangroom/did": "workspace:^",
 		"@slangroom/ethereum": "workspace:^",
 		"@slangroom/fs": "workspace:^",
