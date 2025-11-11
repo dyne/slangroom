@@ -74,12 +74,12 @@ Given I have a 'base64' named 'serializedProof'
 Given I have a 'base64' named 'serializedWithoutProof'
 Given I have a 'base58' part of 'proofValue' after string prefix 'z'
 # create hash of serialized data
-When I create the hash of 'serializedKbProof'
-and rename 'hash' to 'serializedKbProof_hash'
-and I create the hash of 'serializedKbWithoutProof'
-and rename 'hash' to 'serializedKbWithoutProof_hash'
-When I append 'serializedKbWithoutProof_hash' to 'serializedKbProof_hash'
-When I rename 'serializedKbProof_hash' to 'serialized_hash'
+When I create the hash of 'serializedProof'
+and rename 'hash' to 'serializedProof_hash'
+and I create the hash of 'serializedWithoutProof'
+and rename 'hash' to 'serializedWithoutProof_hash'
+When I append 'serializedWithoutProof_hash' to 'serializedProof_hash'
+When I rename 'serializedProof_hash' to 'serialized_hash'
 # verify
 When I verify 'serialized_hash' has a es256 signature in 'proofValue' by 'pk'
 
