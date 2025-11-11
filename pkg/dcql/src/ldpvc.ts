@@ -63,9 +63,9 @@ const rdfValidation = async (vp: LdpVcElementType | LdpVcVerifiableCredentialele
 };
 export const parseLdpVc = async (ldpVc: LdpVcElementType) => {
 	// holder key binding
-	rdfValidation(ldpVc);
+	await rdfValidation(ldpVc);
 	// issuer signature
-	rdfValidation(ldpVc.verifiableCredential[0]!);
+	await rdfValidation(ldpVc.verifiableCredential[0]!);
 	// expired
 	const now = Date.now();
 	const exp = Date.parse(ldpVc.verifiableCredential[0]!.validUntil);
