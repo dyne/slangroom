@@ -1,6 +1,6 @@
 {
 	"name": "@slangroom/qrcode",
-	"version": "1.49.7",
+	"version": "1.50.0",
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
 		"qrcode": "1.5.4"
