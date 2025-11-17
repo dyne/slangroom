@@ -95,7 +95,7 @@ export const validateVpToken = p.new(
 				{ dcqlQuery: parsedDcqlQuery },
 			);
 			if (!presentationQueryResult.can_be_satisfied)
-				throw new Error(`Invalid vp_token: it does not satisfy the dcql_query`);
+				throw new Error(`Invalid vp_token: it does not satisfy the dcql_query: \n${JSON.stringify(presentationQueryResult, null, 2)}`);
 			const result: Record<string, unknown> = {}
 			for (const [key, match] of Object.entries(presentationQueryResult.credential_matches)) {
 				const outputs: Record<string, unknown>[] = [];

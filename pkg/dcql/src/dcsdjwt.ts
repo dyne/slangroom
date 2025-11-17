@@ -25,40 +25,26 @@ async function fetchIssuerJwk(issuerUrl: string): Promise<JWK> {
 	return k;
 }
 
-function flattenDcAndPayload(
+function getClaims(
 	disclosures: [string, string, string | boolean | number][],
 	payload: Record<string, unknown>,
 ) {
-	const result: Record<string, string | boolean | number> = {};
-	function flatten(path: string, value: unknown): void {
-		if (typeof value === 'object') {
-			if (Array.isArray(value)) {
-				value.forEach((v, i) => flatten(`${path}.${i}`, v));
-			} else {
-				for (const key in value) {
-					flatten(`${path}.${key}`, (value as Record<string, unknown>)[key]);
-				}
-			}
-		} else if (value && ['string', 'number', 'boolean'].includes(typeof value)) {
-			result[path] = value as string | boolean | number;
-		}
-	}
+	const result: Record<string, unknown> = {};
 	// Handle disclosures
 	disclosures.forEach((disclosure) => {
-		const [_, firstKey, thirdElement] = disclosure;
+		const [, key, value] = disclosure;
 		let parsed;
 		try {
-			parsed = typeof thirdElement === 'string' ? JSON.parse(thirdElement) : thirdElement;
+			parsed = typeof value === 'string' ? JSON.parse(value) : value;
 		} catch {
-			parsed = thirdElement; // Not JSON
+			parsed = value; // Not JSON
 		}
-		flatten(firstKey, parsed);
+		result[key] = parsed;
 	});
 
+	const { _sd, _sd_alg, ...restPayload } = payload;
 	// Handle payload
-	for (const key in payload) {
-		flatten(key, payload[key]);
-	}
+	Object.assign(result, restPayload);
 	return result;
 }
 
@@ -108,7 +94,7 @@ export const parseDcSdJwt = async (dcSdJwtKb: string) => {
 	return {
 		credential_format: 'dc+sd-jwt',
 		vct: res.payload['vct'] || res.payload['type'],
-		claims: flattenDcAndPayload(res.disclosures, res.payload),
+		claims: getClaims(res.disclosures, res.payload),
 		cryptographic_holder_binding: true,
 	};
 };

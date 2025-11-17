@@ -8,7 +8,7 @@ import { dcql } from '@slangroom/dcql';
 // read the version from the package.json
 import packageJson from '@slangroom/dcql/package.json' with { type: 'json' };
 
-const stripAnsiCodes = (str: string) => str.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '');
+const stripAnsiCodes = (str: string) => str.replace(/[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]/g, '').replace(/[ \t]+(?=\r?\n|$)/g, '');
 
 const ldpVcVpTokenJson = {
 	my_ldpvc_credential: [
@@ -74,6 +74,15 @@ const dcSdJwtVpTokenJson = {
 }
 const dcSdJwtVpToken = {
 	vp_token: JSON.stringify(dcSdJwtVpTokenJson)
+}
+
+const dcSdJwtPIDVpTokenJson = {
+	my_dcsdjwt_PID_credential: [
+		"eyJhbGciOiAiRVMyNTYiLCAidHlwIjogImRjK3NkLWp3dCJ9.eyJfc2QiOiBbIjMxZ29vOWRLeXlRZmdZSGxtQUMzOWg5dl9RNUJaak5DMmxiNENjSE1iSjQiLCAiM1VMWk03WURaYjFNT3F4cC15eks4TTROM3JVQ0UzMWR3NHVRMTJHMlBZayIsICI3Zk5ubVo5Zy1wWkgycl9KQU5JVGpLRmFnMlgyaFdkaFp2SWlZX0h2Z19VIiwgImdUN3ktTnRmamtVUWpEaHdjalV6X0t3VENEQTJ3RTJzc3NtbWhIOXZQU0kiLCAiVVdzOVdURFJkb18tNWgyUjMtQzBrTXpWTFpRNGg3eFBzU2F3YVJVY0xqcyIsICJwRlZ2WkVlUURwZkQ0OHl2SUU3SHdaX2Zxa2VSUEZhVnI3bVRRenQ0aVFRIiwgIkcxb25iRlFvN214cC1tanNIcXZISm4xNE1fYTlZYWhCR29QOEtTWGFkZTgiXSwgIl9zZF9hbGciOiAic2hhLTI1NiIsICJjbmYiOiB7Imp3ayI6IHsiY3J2IjogIlAtMjU2IiwgImt0eSI6ICJFQyIsICJ4IjogInpKLTR1d0VWVlYxQW9GcW1yZVlzUlh1SjhGbzVHRVVUeTZ0aklBdjdUcFkiLCAieSI6ICJWb1h2YTNUSkdzSjluOVlXNXcwamUwenpTaGZic3dBZ3pIcjVMRkJIM2xnIn19LCAiZXhwIjogMTc5NDkwNjMzMSwgImlhdCI6IDE3NjMzNzAzMzEsICJpc3MiOiAiaHR0cHM6Ly9jaS50ZXN0LmRpZHJvb20uY29tL2NyZWRlbnRpYWxfaXNzdWVyIiwgIm5iZiI6IDE3NjMzNzAzMzEsICJzdWIiOiAiZGlkOmR5bmU6c2FuZGJveC5zaWducm9vbTo0S0V5bVdnTERVZjFMTmNrZXhZOTZkZkt6NXZINzlkaURla2dMTVI5RldwSCIsICJ0eXBlIjogIlZlcmlmaWFibGVQSURTREpXVCJ9.o0hZ_fn6-4b4bcfMtVRPHrvdlLhZU_fffd3WPi5YO65kQz_PumY4PPsAWGFK8KPP4DABgg816QDgUhlVkt578w~WyJtVEo5WUNZT3MwaDB5T2NocU5ILWRnIiwgImdpdmVuX25hbWUiLCAiQm9iIl0~WyI2ZXRoTDNITTVxNEtoblVFTFNtYzVnIiwgImZhbWlseV9uYW1lIiwgIkRvZSJd~WyJJbmk4NnZJQkxVZk41YUQ2QVowNWNBIiwgImFkZHJlc3MiLCB7ImNvdW50cnkiOiAiSVQiLCAiZm9ybWF0dGVkIjogIlZpYSBBbGVzc2FuZHJvIE1hbnpvbmkgMTIsIFR1cmluLCAxMDEyMiwgUGllZG1vbnQsIEl0YWx5IiwgImxvY2FsaXR5IjogIlR1cmluIiwgInBvc3RhbF9jb2RlIjogIjEwMTIyIiwgInJlZ2lvbiI6ICJQaWVkbW9udCIsICJzdHJlZXRfYWRkcmVzcyI6ICJWaWEgQWxlc3NhbmRybyBNYW56b25pIDEyIn1d~WyI4VHcxanAzOWc0UWR5eGUwMkVWNHRnIiwgImFnZV9vdmVyXzE4IiwgdHJ1ZV0~eyJhbGciOiJFUzI1NiIsInR5cCI6ImtiK2p3dCJ9.eyJhdWQiOiJkZWNlbnRyYWxpemVkX2lkZW50aWZpZXI6ZGlkOmR5bmU6c2FuZGJveC5nZW5lcmljaXNzdWVyOkU1eVRaeEMxeXFQZGpxamtQNkhpY0R6MlJMRUdQcTdzZWlMMzFyeDRqN3ByIiwiaWF0IjoxNzYzMzcwNDg0LCJub25jZSI6ImI2NmM1YmVlZjkyZjY0ZTdmN2RhMGM1NmYyOGE4MmY1NmIzZDljMzEyMGRlYzFlNTY5M2Q2MzRiMmE1NGJmY2QiLCJzZF9oYXNoIjoiTVN4Rk5HNUJjS0hzVUc3enBVc2F5TmxpcUJjaDQ2cUVMa3RfeXpzRlgzcyJ9.fuyVqfGwkDpdaHFZBHVeZRcLDxzTXpfPkKfZgPxHu8wSCIYzJOIHKqMLGoF8vBzdWQvJ9i_FzWxu-zJ5YRPZ2A"
+	]
+}
+const dcSdJwtPIDVpToken = {
+	vp_token: JSON.stringify(dcSdJwtPIDVpTokenJson)
 }
 
 const VALIDATE = `
@@ -222,10 +231,10 @@ test('dc+sd-jwt failing beacuse dcql query ask for more claims than the presente
     });
 	const error = await t.throwsAsync(fn);
 	t.true(stripAnsiCodes((error as Error).message).startsWith(
-`0 | 
+`0 |
 1 | Prepare 'res': validate the vp_token against dcql_query where vp_token is 'vp_token', dcql_query is 'dcql_query'
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-2 | 
+2 |
 3 | Given I have a 'string dictionary' named 'res'
 
 Error colors:
@@ -234,7 +243,7 @@ Error colors:
  - missing words
  - extra words
 
-Slangroom @slangroom/dcql@${packageJson.version} Error: Invalid vp_token: it does not satisfy the dcql_query
+Slangroom @slangroom/dcql@${packageJson.version} Error: Invalid vp_token: it does not satisfy the dcql_query:
 `), (error as Error).message);
 });
 
@@ -288,10 +297,10 @@ test('dc+sd-jwt failing beacuse dcql query ask for more credentials than the pre
     });
 	const error = await t.throwsAsync(fn);
 	t.true(stripAnsiCodes((error as Error).message).startsWith(
-`0 | 
+`0 |
 1 | Prepare 'res': validate the vp_token against dcql_query where vp_token is 'vp_token', dcql_query is 'dcql_query'
     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-2 | 
+2 |
 3 | Given I have a 'string dictionary' named 'res'
 
 Error colors:
@@ -300,7 +309,7 @@ Error colors:
  - missing words
  - extra words
 
-Slangroom @slangroom/dcql@${packageJson.version} Error: Invalid vp_token: it does not satisfy the dcql_query
+Slangroom @slangroom/dcql@${packageJson.version} Error: Invalid vp_token: it does not satisfy the dcql_query:
 `), (error as Error).message);
 });
 
@@ -555,5 +564,83 @@ test('complex query', async (t) => {
 		keys: complexQuery
     });
 	const result = await fn;
+	t.deepEqual(result.result, out, JSON.stringify(result));
+});
+
+test('query that ask for a object claim', async (t) => {
+	const objectQuery = {
+		dcql_query: {
+			credentials: [
+				{
+					id: "my_dcsdjwt_PID_credential",
+					format: "dc+sd-jwt",
+					meta: {
+						vct_values: [
+							"VerifiablePIDSDJWT"
+						]
+					},
+					claims: [
+						{
+							path: [
+								"given_name"
+							]
+						},
+						{
+							path: [
+								"family_name"
+							]
+						},
+						{
+							path: [
+								"address",
+							]
+						},
+						{
+							path: [
+								"age_over_18"
+							],
+							values: [
+								true
+							]
+						},
+						{
+							path: [
+								"iss"
+							],
+							values: [
+								"https://ci.test.didroom.com/credential_issuer"
+							]
+						}
+					]
+				}
+			]
+		}
+	}
+	const slangroom = new Slangroom(dcql);
+	const fn = slangroom.execute(VALIDATE, {
+		data: dcSdJwtPIDVpToken,
+		keys: objectQuery
+	});
+	const result = await fn;
+	const out = {
+		res: {
+			my_dcsdjwt_PID_credential: [
+				{
+					given_name: "Bob",
+					family_name: "Doe",
+					age_over_18: true,
+					address: {
+						country:"IT",
+						formatted:"Via Alessandro Manzoni 12, Turin, 10122, Piedmont, Italy",
+						locality:"Turin",
+						postal_code:"10122",
+						region:"Piedmont",
+						street_address:"Via Alessandro Manzoni 12"
+					},
+					iss: "https://ci.test.didroom.com/credential_issuer"
+				}
+			]
+		}
+	}
 	t.deepEqual(result.result, out, JSON.stringify(result));
 });
