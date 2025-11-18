@@ -28,7 +28,7 @@
   "scripts": {
     "lint": "eslint pkg/*/src pkg/*/test",
     "format": "prettier --ignore-path .gitignore --write '**/*.+(js|ts|json|html)'",
-    "test": "pnpm build && pnpm -F @slangroom/dcql exec ava --verbose build/esm/test",
+    "test": "pnpm build && pnpm -F @slangroom/* exec ava --verbose build/esm/test",
     "test:grammar": "pnpm build:grammar && pnpm -F codemirror-lang-slangroom test",
     "coverage": "c8 -r text -r lcov -o .coverage --exclude '**/test/' pnpm test",
     "clean": "rm -rf .coverage && pnpm -F @slangroom/* exec -- rm -rf build",
