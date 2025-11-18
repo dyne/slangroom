@@ -34,7 +34,7 @@ jobs:
       fail-fast: false
       max-parallel: 1
       matrix:
-        node: [ lts/*, 25.2.0 ]
+        node: [ lts/*, 25.1.0 ]
     if: github.event_name == 'pull_request'
     steps:
       - name: 🛠️ Prepare pnpm workspace
