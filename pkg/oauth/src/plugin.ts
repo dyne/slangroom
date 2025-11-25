@@ -4,7 +4,7 @@
 
 import { Plugin } from '@slangroom/core';
 import OAuth2Server from '@node-oauth/oauth2-server';
-import { Request, Response } from '@node-oauth/oauth2-server';
+import { Request, Response, type Client } from '@node-oauth/oauth2-server';
 import { AuthenticateHandler, InMemoryCache, AuthorizeHandler } from '@slangroom/oauth';
 import { Jsonable, JsonableObject } from '@slangroom/shared';
 import { JWK } from 'jose';
@@ -329,7 +329,7 @@ export const createRequestUri = p.new(
 		const validatedServerData = validServerData(ctx.fetch('server_data'));
 		if (!validatedServerData.ok) return ctx.fail(validatedServerData.error);
 
-		const client = ctx.fetch('client') as JsonableObject;
+		const client = ctx.fetch('client') as Client;
 		const expires_in = ctx.fetch('expires_in') as number;
 
 		const response = new Response();

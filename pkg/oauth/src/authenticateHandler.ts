@@ -118,20 +118,21 @@ export class AuthenticateHandler {
 			const x_base64Key = Buffer.from(uint8Key.buffer.slice(0, 32)).toString('base64url');
 			const y_base64Key = Buffer.from(uint8Key.buffer.slice(32)).toString('base64url');
 
-			const publicKey = await importJWK(
-				{
-					crv: 'P-256',
-					kty: 'EC',
-					x: x_base64Key,
-					y: y_base64Key,
-				},
-				'ES256',
-			);
-
-			//TODO?: add more checks on payload/header?
-			const outVerify = await jwtVerify(client['clientSecret'], publicKey);
-			if (!outVerify) {
-				return undefined;
+			if (client['clientSecret']) {
+				const publicKey = await importJWK(
+					{
+						crv: 'P-256',
+						kty: 'EC',
+						x: x_base64Key,
+						y: y_base64Key,
+					},
+					'ES256',
+				);
+				//TODO?: add more checks on payload/header?
+				const outVerify = await jwtVerify(client['clientSecret'], publicKey);
+				if (!outVerify) {
+					return undefined;
+				}
 			}
 			return client['id'];
 		} catch (e) {

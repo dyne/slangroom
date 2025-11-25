@@ -66,35 +66,21 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	 * Create a new object Client in this.clients.
 	 */
 
-	async setClient(client: { [key: string]: any }): Promise<Client> {
-		if (!client['id']) {
+	setClient(client: Client): Client {
+		const id = client.id;
+		if (!id) {
 			throw new OAuthError("Invalid Client, missing property 'id'");
 		}
-		if (!client['grants']) {
+		const grants = client.grants;
+		if (!grants) {
 			throw new OAuthError("Invalid Client, missing property 'grants'");
 		}
-		if (!client['clientSecret']) {
-			throw new OAuthError("Invalid Client, missing property 'clientSecret'");
+		// remove existing client
+		if (this.clients.get(id)) {
+			this.clients.delete(id);
 		}
-		const ex_client = await this.getClient(client['id'], client['clientSecret'])
-
-		if (ex_client) {
-			this.revokeClient(ex_client);
-		}
-
-		const clientSaved: Client = {
-			id: client['id'],
-			grants: client['grants'],
-			clientSecret: client['clientSecret'],
-			redirectUris: client['redirectUris'],
-			accessTokenLifetime: client['accessTokenLifetime'],
-			refreshTokenLifetime: client['refreshTokenLifetime'],
-			scope: client['scope'],
-			resource: client['resource']
-		};
-
-		this.clients.set(client['id'], clientSaved);
-		return clientSaved;
+		this.clients.set(id, client);
+		return client;
 	}
 
 	/**
@@ -280,15 +266,12 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	/**
 	 * Get client.
 	 */
-	getClient(clientId: string, clientSecret?: string): Promise<Client | Falsey> {
+	async getClient(clientId: string, clientSecret?: string): Promise<Client | Falsey> {
 		const client = this.clients.get(clientId);
 
-		if (client && clientSecret) {
-			if (client['clientSecret'] != clientSecret) {
-				new OAuthError("clientSecret does not match. This means that there are possibly many client with the same id");
-			}
+		if (client && clientSecret && client['clientSecret'] != clientSecret) {
+			new OAuthError("clientSecret does not match. This means that there are possibly many client with the same id");
 		}
-
 		return Promise.resolve(client);
 	}
 
