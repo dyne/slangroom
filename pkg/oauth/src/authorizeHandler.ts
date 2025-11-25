@@ -8,6 +8,7 @@ import url from 'node:url';
 import { InMemoryCache, AuthenticateHandler, pkce, isFormat } from '@slangroom/oauth';
 import { createHash, randomBytes } from "crypto";
 
+const BASE_URI = "urn:ietf:params:oauth:request_uri:";
 /**
  * Response types.
  */
@@ -92,9 +93,8 @@ export class AuthorizeHandler {
 		if (!request.body.request_uri) throw new InvalidRequestError("Missing parameter: request_uri");
 		if (!request.body.client_id) throw new InvalidRequestError("Missing parameter: client_id");
 
-		const base_uri = "urn:ietf:params:oauth:request_uri:";
 		let rand_uri = request.body.request_uri;
-		rand_uri = rand_uri.replace(base_uri, "");
+		rand_uri = rand_uri.replace(BASE_URI, "");
 
 		const timestamp = Math.round(new Date(rand_uri.substring(0, 10)).getTime() / 1000);
 		const time_now = Math.round(Date.now() / 1000);
@@ -128,9 +128,8 @@ export class AuthorizeHandler {
 			);
 		}
 
-		const base_uri = "urn:ietf:params:oauth:request_uri:";
 		let rand_uri = request.body.request_uri;
-		rand_uri = rand_uri.replace(base_uri, "");
+		rand_uri = rand_uri.replace(BASE_URI, "");
 
 		const code = this.getAuthorizationCode(rand_uri);
 		if (!code) throw new Error(`Failed to get Authorization Code from '${request.body.request_uri}'`);
@@ -202,7 +201,6 @@ export class AuthorizeHandler {
 			const codeChallengeMethod = this.getCodeChallengeMethod(request);
 
 			const timestamp = Math.round(Date.now() / 1000);
-			const base_uri = "urn:ietf:params:oauth:request_uri:";
 			const rand_uri = timestamp.toString().concat(randomBytes(20).toString('hex'));
 
 			const code = await this.saveAuthorizationCode(
@@ -223,7 +221,7 @@ export class AuthorizeHandler {
 			const redirectUri = this.buildSuccessRedirectUri(uri, responseTypeInstance);
 			this.updateResponse(response, redirectUri, state);
 
-			return { request_uri: base_uri.concat(rand_uri), expires_in: par_expires_in }
+			return { request_uri: BASE_URI.concat(rand_uri), expires_in: par_expires_in }
 		} catch (err) {
 			let e = err;
 
@@ -267,7 +265,7 @@ export class AuthorizeHandler {
 	 */
 
 	async getClient(request: Request) {
-		const clientId = request.body.client_id || request.query!["client_id"];
+		const clientId = request.body.client_id || request.query?.["client_id"];
 
 		if (!clientId) {
 			throw new InvalidRequestError('Missing parameter: `client_id`');
@@ -277,13 +275,12 @@ export class AuthorizeHandler {
 			throw new InvalidRequestError('Invalid parameter: `client_id`');
 		}
 
-		const redirectUri = request.body.redirect_uri || request.query!["redirect_uri"];
+		const redirectUri = request.body.redirect_uri || request.query?.["redirect_uri"];
 
 		if (redirectUri && !isFormat.uri(redirectUri)) {
 			throw new InvalidRequestError('Invalid request: `redirect_uri` is not a valid URI');
 		}
-		const clientSecret = request.body.client_secret;
-		const client = await this.model.getClient(clientId, clientSecret);
+		const client = await this.model.getClient(clientId, request.body.client_secret);
 
 		if (!client) {
 			throw new InvalidClientError('Invalid client: client credentials are invalid');
@@ -370,7 +367,7 @@ export class AuthorizeHandler {
 	 */
 
 	getState(request: Request) {
-		const state = request.body.state || request.query!["state"];
+		const state = request.body.state || request.query?.["state"];
 		const stateExists = state && state.length > 0;
 		const stateIsValid = stateExists ? isFormat.vschar(state) : this.allowEmptyState;
 
@@ -415,12 +412,12 @@ export class AuthorizeHandler {
 
 	async saveAuthorizationCode(authorizationCode: string, expiresAt: Date, redirectUri: string, scope: string[], client: Client, user: User, codeChallenge: string, codeChallengeMethod: string, authorization_details: { [key: string]: any }[], rand_uri: string) {
 		let code: AuthorizationCode = {
-			authorizationCode: authorizationCode,
-			expiresAt: expiresAt,
-			redirectUri: redirectUri,
-			scope: scope,
-			user: user,
-			client: client
+			authorizationCode,
+			expiresAt,
+			redirectUri,
+			scope,
+			user,
+			client
 		};
 		if (codeChallenge && codeChallengeMethod) {
 			code.codeChallenge = codeChallenge;
@@ -445,7 +442,7 @@ export class AuthorizeHandler {
 	 */
 
 	getResponseType(request: Request) {
-		const responseType = request.body.response_type || request.query!["response_type"];
+		const responseType = request.body.response_type || request.query?.["response_type"];
 
 		if (!responseType) {
 			throw new InvalidRequestError('Missing parameter: `response_type`');
@@ -502,7 +499,7 @@ export class AuthorizeHandler {
 	}
 
 	getCodeChallenge(request: Request) {
-		return request.body.code_challenge || request.query!["code_challenge"];
+		return request.body.code_challenge || request.query?.["code_challenge"];
 	}
 
 	/**
@@ -513,7 +510,7 @@ export class AuthorizeHandler {
 	 *  (see https://www.rfc-editor.org/rfc/rfc7636#section-4.4)
 	 */
 	getCodeChallengeMethod(request: Request) {
-		const algorithm = request.body.code_challenge_method || request.query!["code_challenge_method"];
+		const algorithm = request.body.code_challenge_method || request.query?.["code_challenge_method"];
 
 		if (algorithm && !pkce.isValidMethod(algorithm)) {
 			throw new InvalidRequestError(
