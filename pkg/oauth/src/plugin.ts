@@ -271,7 +271,7 @@ Output:
 export const createAuthorizationCode = p.new(
 	['request', 'server_data'],
 	'generate authorization code',
-	async (ctx) => {
+	(ctx) => {
 		const validatedRequest = validRequest(ctx.fetch('request'), 'GET');
 		if (!validatedRequest.ok) return ctx.fail(validatedRequest.error);
 		const validatedServerData = validServerData(ctx.fetch('server_data'));
@@ -290,7 +290,7 @@ export const createAuthorizationCode = p.new(
 				allowEmptyState: false,
 				authorizationCodeLifetime: 5 * 60, // 5 minutes.
 			};
-			const res_authCode = await new AuthorizeHandler(authorize_options).handle(
+			const res_authCode = new AuthorizeHandler(authorize_options).handle(
 				validatedRequest.request,
 				response,
 			);

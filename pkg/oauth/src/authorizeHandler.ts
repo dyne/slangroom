@@ -115,7 +115,7 @@ export class AuthorizeHandler {
 	 * Authorize Handler.
 	 */
 	// handle /authorize request containing request_uri and client_id
-	async handle(request: Request, response: Response) {
+	handle(request: Request, response: Response) {
 		if (!(request instanceof Request)) {
 			throw new InvalidArgumentError(
 				'Invalid argument: `request` must be an instance of Request',
@@ -169,16 +169,18 @@ export class AuthorizeHandler {
 
 		if (!user) throw new UnauthorizedClientError("Client authentication failed");
 
+		let validScope: string[];
+		let auth_det_parsed;
 		if (request.body.authorization_details) {
 			const auth_det = JSON.parse(request.body.authorization_details) as AuthorizationDetails;
-			var authorization_details = await this.verifyAuthrizationDetails(auth_det);
-			if (authorization_details.length === 0) throw new OAuthError("Given authorization_details are not valid");
-			var validScope: string[] = [authorization_details[0]['credential_configuration_id']];
+			auth_det_parsed = await this.verifyAuthrizationDetails(auth_det);
+			if (auth_det_parsed.length === 0) throw new OAuthError("Given authorization_details are not valid");
+			validScope = auth_det_parsed.map(item => item['credential_configuration_id'] ?? item['vct']!);
 		} else {
 			const resource = request.body.resource;
 			const requestedScope = this.getScope(request);
 			if (!requestedScope) throw new InvalidRequestError("Neither authorization_details, nor scope parameter found in request");
-			var validScope = await this.validateScope(user, client, requestedScope, resource);
+			validScope = await this.validateScope(user, client, requestedScope, resource);
 		}
 
 		let uri;
@@ -211,8 +213,8 @@ export class AuthorizeHandler {
 				user,
 				codeChallenge,
 				codeChallengeMethod,
-				authorization_details,
-				rand_uri
+				rand_uri,
+				auth_det_parsed
 			);
 			if (!code) { throw Error("Failed to create the Authorization Code"); }
 
@@ -310,7 +312,7 @@ export class AuthorizeHandler {
 		return client;
 	}
 
-	async verifyAuthrizationDetails(authorization_details: AuthorizationDetails) {
+	async verifyAuthrizationDetails(authorization_details: AuthorizationDetails): Promise<AuthorizationDetails> {
 		const verifiedAuthDetails: any = [];
 		await Promise.all(authorization_details.map(async (dict: AuthorizationDetails[number]) => {
 			const { type, credential_configuration_id: ccid, format, vct, locations } = dict;
@@ -330,7 +332,7 @@ export class AuthorizeHandler {
 			if (ccid) {
 				verified_credentials = await this.model.verifyCredentialId(ccid, resource);
 			} else {
-				verified_credentials = await this.model.verifyCredentialVct(vct, resource);
+				verified_credentials = await this.model.verifyCredentialVct(vct!, resource);
 			}
 			if (verified_credentials.valid_credentials.length == 0) throw new OAuthError(`Invalid authorization_details: '${dict['credential_configuration_id']}' is not a valid credential_id `)
 
@@ -353,14 +355,9 @@ export class AuthorizeHandler {
 	async validateScope(user: User, client: Client, scope: string[], resource: string) {
 		if (this.model.validateScope) {
 			const validatedScope = await this.model.validateScope(user, client, scope, resource);
-
-			if (!validatedScope) {
-				throw new InvalidScopeError('Invalid scope: Requested scope is invalid');
-			}
-
+			if (!validatedScope) throw new InvalidScopeError('Invalid scope: Requested scope is invalid');
 			return validatedScope;
 		}
-
 		return scope;
 	}
 
@@ -422,7 +419,7 @@ export class AuthorizeHandler {
 	 * Save authorization code.
 	 */
 
-	async saveAuthorizationCode(authorizationCode: string, expiresAt: Date, redirectUri: string, scope: string[], client: Client, user: User, codeChallenge: string, codeChallengeMethod: string, authorization_details: AuthorizationDetails, rand_uri: string) {
+	async saveAuthorizationCode(authorizationCode: string, expiresAt: Date, redirectUri: string, scope: string[], client: Client, user: User, codeChallenge: string, codeChallengeMethod: string, rand_uri: string, authorization_details?: AuthorizationDetails) {
 		let code: AuthorizationCode = {
 			authorizationCode,
 			expiresAt,

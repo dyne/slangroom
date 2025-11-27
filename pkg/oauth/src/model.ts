@@ -54,14 +54,15 @@ export type AuthorizationDetails = {
 }[];
 
 type SimplifiedClaimConfig = {
-  mandatory?: boolean;
+	mandatory?: boolean;
 };
 type SimplifiedCredentialConfig = {
-  vct: string;
-  claims?: Record<string, SimplifiedClaimConfig>;
+	vct: string;
+	scope?: string;
+	claims?: Record<string, SimplifiedClaimConfig>;
 };
 type SimplifiedIssuerMetadata = {
-  credential_configurations_supported: Record<string, SimplifiedCredentialConfig>;
+	credential_configurations_supported: Record<string, SimplifiedCredentialConfig>;
 };
 
 export class InMemoryCache implements AuthorizationCodeModel {
@@ -506,14 +507,14 @@ export class InMemoryCache implements AuthorizationCodeModel {
 		};
 	}
 
-	async verifyCredentialId(scope: string, resource: string) {
+	async verifyCredentialId(id: string, resource: string) {
 		const supported = (await this.getIssuerMetadata(resource)).credential_configurations_supported;
 		const entry = this.findCredentialEntry(
 			supported,
-			(key, value) => key === scope || value.vct === scope
+			(key, _) => key === id
 		);
 		return entry
-			? this.buildResponse(scope, entry)
+			? this.buildResponse(id, entry)
 			: { valid_credentials: [], credential_claims: new Map<string, string[]>() };
 	}
 
@@ -528,26 +529,22 @@ export class InMemoryCache implements AuthorizationCodeModel {
 			: { valid_credentials: [], credential_claims: new Map<string, string[]>() };
 	}
 
-	async validateScope(user: User, client: Client, scope?: string[] | undefined, resource?: string): Promise<Falsey | string[]> {
-
+	async validateScope(user: User, client: Client, scope?: string[] | undefined, resource?: string): Promise<string[]> {
 		if (!user || !client) throw new OAuthError("Invalid input parameters for ValidateScope");
-
-		if (!scope) {
-			throw new InsufficientScopeError(
-				'Insufficient scope: authorized scope is insufficient',
+		if (!scope?.length) throw new InsufficientScopeError('Insufficient scope: authorized scope is insufficient');
+		const resourceUrl = resource ?? client['resource'];
+		if (!resourceUrl) throw new OAuthError('Invalid request: needed resource to verify scope');
+		const supported = (await this.getIssuerMetadata(resourceUrl)).credential_configurations_supported;
+		const validScopes: string[] = [];
+		for (const s of scope) {
+			const entry = this.findCredentialEntry(
+				supported,
+				(_, value) => value.scope === s
 			);
+			if (!entry) throw new InsufficientScopeError('Insufficient scope: authorized scope is insufficient');
+			validScopes.push(s);
 		}
-		if (!resource) {
-			var resource = client['resource'] as string | undefined;
-			if (!resource)
-				throw new OAuthError('Invalid request: needed resource to verify scope');
-		}
-
-		var verified_credentials = await this.verifyCredentialId(scope[0]!, resource);
-
-		if (verified_credentials.valid_credentials.length > 0) return Promise.resolve(scope);
-		else return false;
-
+		return validScopes;
 	}
 
 	async getAuthDetailsFromToken(accessToken: string) {
