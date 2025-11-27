@@ -5,7 +5,7 @@
 import { Client, User, Request, Response, InvalidScopeError, AuthorizationCode } from "@node-oauth/oauth2-server";
 import { InvalidArgumentError, InvalidClientError, InvalidRequestError, UnsupportedResponseTypeError, OAuthError, ServerError, UnauthorizedClientError, AccessDeniedError } from '@node-oauth/oauth2-server';
 import url from 'node:url';
-import { InMemoryCache, AuthenticateHandler, pkce, isFormat } from '@slangroom/oauth';
+import { InMemoryCache, AuthenticateHandler, pkce, isFormat, type AuthorizationDetails } from '@slangroom/oauth';
 import { createHash, randomBytes } from "crypto";
 
 const BASE_URI = "urn:ietf:params:oauth:request_uri:";
@@ -37,9 +37,12 @@ const respType = class CodeResponseType {
 	}
 }
 
-const responseTypes: { [key: string]: any } = {
+const responseTypes: { code: typeof respType } = {
 	code: respType,
 };
+function isResponseTypeKey(key: string): key is keyof typeof responseTypes {
+	return Object.prototype.hasOwnProperty.call(responseTypes, key);
+}
 
 let par_expires_in: number = 600;
 export class AuthorizeHandler {
@@ -115,7 +118,7 @@ export class AuthorizeHandler {
 	 * Authorize Handler.
 	 */
 	// handle /authorize request containing request_uri and client_id
-	async handle(request: Request, response: Response) {
+	handle(request: Request, response: Response) {
 		if (!(request instanceof Request)) {
 			throw new InvalidArgumentError(
 				'Invalid argument: `request` must be an instance of Request',
@@ -169,17 +172,18 @@ export class AuthorizeHandler {
 
 		if (!user) throw new UnauthorizedClientError("Client authentication failed");
 
+		let validScope: string[];
+		let auth_det_parsed: AuthorizationDetails = [{type: 'openid_credential'}];
 		if (request.body.authorization_details) {
-			const auth_det = JSON.parse(request.body.authorization_details);
-			var authorization_details = await this.verifyAuthrizationDetails(auth_det);
-			if (authorization_details.length === 0) throw new OAuthError("Given authorization_details are not valid");
-			var validScope: string[] = [authorization_details[0]['credential_configuration_id']];
-		}
-		else {
+			const auth_det = JSON.parse(request.body.authorization_details) as AuthorizationDetails;
+			auth_det_parsed = await this.verifyAuthrizationDetails(auth_det);
+			if (auth_det_parsed.length === 0) throw new OAuthError("Given authorization_details are not valid");
+			validScope = auth_det_parsed.map(item => item['credential_configuration_id'] ?? item['vct']!);
+		} else {
 			const resource = request.body.resource;
 			const requestedScope = this.getScope(request);
 			if (!requestedScope) throw new InvalidRequestError("Neither authorization_details, nor scope parameter found in request");
-			var validScope = await this.validateScope(user, client, requestedScope, resource);
+			validScope = await this.validateScope(user, client, requestedScope, resource);
 		}
 
 		let uri;
@@ -212,8 +216,8 @@ export class AuthorizeHandler {
 				user,
 				codeChallenge,
 				codeChallengeMethod,
-				authorization_details,
-				rand_uri
+				rand_uri,
+				auth_det_parsed
 			);
 			if (!code) { throw Error("Failed to create the Authorization Code"); }
 
@@ -311,15 +315,28 @@ export class AuthorizeHandler {
 		return client;
 	}
 
-	async verifyAuthrizationDetails(authorization_details: { [key: string]: any }[]) {
+	async verifyAuthrizationDetails(authorization_details: AuthorizationDetails): Promise<AuthorizationDetails> {
 		const verifiedAuthDetails: any = [];
-		await Promise.all(authorization_details.map(async (dict: { [key: string]: any }) => {
+		await Promise.all(authorization_details.map(async (dict: AuthorizationDetails[number]) => {
+			const { type, credential_configuration_id: ccid, format, vct, locations } = dict;
 
-			if (!dict['type']) throw new OAuthError("Invalid authorization_details: missing parameter type");
-			if (!dict['locations']) throw new OAuthError("Invalid authorization_details: missing parameter locations");
-			if (!dict['credential_configuration_id']) throw new OAuthError("Invalid authorization_details: missing parameter credential_configuration_id");
+			if (!type) throw new OAuthError("Invalid authorization_details: missing parameter type");
+			if (ccid && format) throw new OAuthError("Invalid authorization_details: credential_configuration_id and format are mutually exclusive");
+			if (!ccid && !format) throw new OAuthError("Invalid authorization_details: missing parameter credential_configuration_id and format");
+			if (format === 'dc+sd-jwt' && !vct) throw new OAuthError("Invalid authorization_details: missing parameter vct");
 
-			const verified_credentials = await this.model.verifyCredentialId(dict['credential_configuration_id'], dict['locations'][0]);
+			// default resource, issuer and authz_server on the same server
+			let resource = this.model.serverData.url;
+			if (locations) {
+				if (locations[0] === undefined) throw new OAuthError("Invalid authorization_details: locations is empty");
+				resource = locations[0];
+			}
+			let verified_credentials;
+			if (ccid) {
+				verified_credentials = await this.model.verifyCredentialId(ccid, resource);
+			} else {
+				verified_credentials = await this.model.verifyCredentialVct(vct!, resource);
+			}
 			if (verified_credentials.valid_credentials.length == 0) throw new OAuthError(`Invalid authorization_details: '${dict['credential_configuration_id']}' is not a valid credential_id `)
 
 			// const claims = verified_credentials.credential_claims.get(dict['credential_configuration_id']);
@@ -341,14 +358,9 @@ export class AuthorizeHandler {
 	async validateScope(user: User, client: Client, scope: string[], resource: string) {
 		if (this.model.validateScope) {
 			const validatedScope = await this.model.validateScope(user, client, scope, resource);
-
-			if (!validatedScope) {
-				throw new InvalidScopeError('Invalid scope: Requested scope is invalid');
-			}
-
+			if (!validatedScope) throw new InvalidScopeError('Invalid scope: Requested scope is invalid');
 			return validatedScope;
 		}
-
 		return scope;
 	}
 
@@ -410,8 +422,8 @@ export class AuthorizeHandler {
 	 * Save authorization code.
 	 */
 
-	async saveAuthorizationCode(authorizationCode: string, expiresAt: Date, redirectUri: string, scope: string[], client: Client, user: User, codeChallenge: string, codeChallengeMethod: string, authorization_details: { [key: string]: any }[], rand_uri: string) {
-		let code: AuthorizationCode = {
+	async saveAuthorizationCode(authorizationCode: string, expiresAt: Date, redirectUri: string, scope: string[], client: Client, user: User, codeChallenge: string, codeChallengeMethod: string, rand_uri: string, authorization_details?: AuthorizationDetails) {
+		const code: AuthorizationCode = {
 			authorizationCode,
 			expiresAt,
 			redirectUri,
@@ -447,8 +459,7 @@ export class AuthorizeHandler {
 		if (!responseType) {
 			throw new InvalidRequestError('Missing parameter: `response_type`');
 		}
-
-		if (!Object.prototype.hasOwnProperty.call(responseTypes, responseType)) {
+		if (!isResponseTypeKey(responseType)) {
 			throw new UnsupportedResponseTypeError(
 				'Unsupported response type: `response_type` is not supported',
 			);

@@ -24,7 +24,7 @@ const p = new Plugin();
 
 /* Parse QueryString using String Splitting */
 function parseQueryStringToDictionary(queryString: string) {
-	var dictionary: { [key: string]: string } = {};
+	const dictionary: { [key: string]: string } = {};
 
 	// remove the '?' from the beginning of the
 	// if it exists
@@ -33,16 +33,16 @@ function parseQueryStringToDictionary(queryString: string) {
 	}
 
 	// Step 1: separate out each key/value pair
-	var parts = queryString.split('&');
+	const parts = queryString.split('&');
 
-	for (var i = 0; i < parts.length; i++) {
-		var p = parts[i];
+	for (let i = 0; i < parts.length; i++) {
+		const p = parts[i];
 		// Step 2: Split Key/Value pair
-		var keyValuePair = p!.split('=');
+		const keyValuePair = p!.split('=');
 
 		// Step 3: Add Key/Value pair to Dictionary object
-		var key = keyValuePair[0];
-		var value = keyValuePair[1];
+		const key = keyValuePair[0];
+		let value = keyValuePair[1];
 
 		// decode URI encoded string
 		value = decodeURIComponent(value!);
@@ -76,8 +76,8 @@ const getInMemoryCache = (
 	return inMemoryCache;
 };
 
-let authenticateHandler: any;
-const getAuthenticateHandler = (model: InMemoryCache, authenticationUrl?: string): any => {
+let authenticateHandler: AuthenticateHandler | undefined;;
+const getAuthenticateHandler = (model: InMemoryCache, authenticationUrl?: string): AuthenticateHandler => {
 	if (!authenticateHandler) {
 		authenticateHandler = new AuthenticateHandler({ model: model }, authenticationUrl);
 	}
@@ -271,7 +271,7 @@ Output:
 export const createAuthorizationCode = p.new(
 	['request', 'server_data'],
 	'generate authorization code',
-	async (ctx) => {
+	(ctx) => {
 		const validatedRequest = validRequest(ctx.fetch('request'), 'GET');
 		if (!validatedRequest.ok) return ctx.fail(validatedRequest.error);
 		const validatedServerData = validServerData(ctx.fetch('server_data'));
@@ -290,7 +290,7 @@ export const createAuthorizationCode = p.new(
 				allowEmptyState: false,
 				authorizationCodeLifetime: 5 * 60, // 5 minutes.
 			};
-			const res_authCode = await new AuthorizeHandler(authorize_options).handle(
+			const res_authCode = new AuthorizeHandler(authorize_options).handle(
 				validatedRequest.request,
 				response,
 			);
@@ -339,7 +339,7 @@ export const createRequestUri = p.new(
 				validatedServerData.model,
 				validatedServerData.authenticationUrl,
 			);
-			await validatedServerData.model.setClient(client);
+			validatedServerData.model.setClient(client);
 			const authorize_options = {
 				model: validatedServerData.model,
 				authenticateHandler: handler,

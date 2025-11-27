@@ -32,13 +32,46 @@ class OAuthError extends Error {
 	}
 }
 
+export type AuthorizationDetails = {
+	type: 'openid_credential';
+	credential_configuration_id?: string;
+	format?: string;
+	locations?: string[];
+	vct?: string;
+	claims?: {
+		path: string[];
+		mandatory?: boolean;
+		display?: {
+			name?: string;
+			locale?: string;
+		}
+	}[];
+	credential_definition?: {
+		"@context"?: string[];
+		type?: string[];
+	};
+	[key: string]: any;
+}[];
+
+type SimplifiedClaimConfig = {
+	mandatory?: boolean;
+};
+type SimplifiedCredentialConfig = {
+	vct?: string;
+	scope?: string;
+	claims?: Record<string, SimplifiedClaimConfig>;
+};
+type SimplifiedIssuerMetadata = {
+	credential_configurations_supported: Record<string, SimplifiedCredentialConfig>;
+};
+
 export class InMemoryCache implements AuthorizationCodeModel {
 	clients: Map<string, Client>;
 	tokens: Token[];
 	users: User[];
 	codes: AuthorizationCode[];
 	uri_codes: Map<string, AuthorizationCode>;
-	authorization_details: Map<string, { [key: string]: any }[]>;
+	authorization_details: Map<string, AuthorizationDetails>;
 	serverData: { jwk: JWK, url: string };
 	options: JsonableObject;
 	dpop_jwks: { [key: string]: any }[];
@@ -129,7 +162,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 			codeChallengeMethod: code['codeChallengeMethod'],
 		};
 
-		var keys = Object.keys(code);
+		const keys = Object.keys(code);
 		keys.forEach((key: string) => {
 			if (!codeSaved[key]) {
 				codeSaved[key] = code[key];
@@ -155,7 +188,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 		const base_uri = "urn:ietf:params:oauth:request_uri:";
 		const rand_uri = request_uri.replace(base_uri, "");
 		const auth_code = this.getAuthCodeFromUri(rand_uri);
-		let auth_details = this.getAuthorizationDetails(auth_code.authorizationCode);
+		const auth_details = this.getAuthorizationDetails(auth_code.authorizationCode);
 		//TODO: case of multiple elem in auth_details
 		if (auth_details[0]) {
 			auth_details[0]['claims'] = data;
@@ -173,7 +206,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	 *
 	 */
 	getAuthorizationCode(authorizationCode: string): Promise<Falsey | AuthorizationCode> {
-		var codes = this.codes.filter(function (code) {
+		const codes = this.codes.filter(function (code) {
 			return code.authorizationCode === authorizationCode;
 		});
 		return Promise.resolve(codes[0]);
@@ -202,8 +235,8 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	 * Invoked to save an authorization code.
 	 *
 	 */
-	saveAuthorizationCode(code: Pick<AuthorizationCode, "authorizationCode" | "expiresAt" | "redirectUri" | "scope" | "codeChallenge" | "codeChallengeMethod">, client: Client, user: User, authorization_details?: { [key: string]: any }[], rand_uri?: string): Promise<Falsey | AuthorizationCode> {
-		let codeSaved: AuthorizationCode = {
+	saveAuthorizationCode(code: Pick<AuthorizationCode, "authorizationCode" | "expiresAt" | "redirectUri" | "scope" | "codeChallenge" | "codeChallengeMethod">, client: Client, user: User, authorization_details?: AuthorizationDetails, rand_uri?: string): Promise<Falsey | AuthorizationCode> {
+		const codeSaved: AuthorizationCode = {
 			authorizationCode: code.authorizationCode,
 			expiresAt: code.expiresAt,
 			redirectUri: code.redirectUri,
@@ -243,7 +276,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	 */
 
 	getAccessToken(bearerToken: string): Promise<Token | Falsey> {
-		var tokens = this.tokens.filter(function (token) {
+		const tokens = this.tokens.filter(function (token) {
 			return token.accessToken === bearerToken;
 		});
 
@@ -255,7 +288,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	 */
 
 	getRefreshToken(bearerToken: string) {
-		var tokens = this.tokens.filter(function (token) {
+		const tokens = this.tokens.filter(function (token) {
 			return token.refreshToken === bearerToken;
 		});
 
@@ -307,7 +340,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 			tokenSaved['jkt'] = this.createJWKThumbprint(dpop_jwk['jwk']);
 		}
 		if (this.options && this.options['allowExtendedTokenAttributes']) {
-			var keys = Object.keys(token);
+			const keys = Object.keys(token);
 			keys.forEach((key: string) => {
 				if (!tokenSaved[key]) {
 					tokenSaved[key] = token[key];
@@ -328,9 +361,9 @@ export class InMemoryCache implements AuthorizationCodeModel {
 
 	async createServerJWS(clientId: string) {
 		if (this.serverData.jwk == null) throw new OAuthError("Missing server private JWK");
-		let privateKey = await importJWK(this.serverData.jwk);
-		let alg = this.serverData.jwk.alg || 'ES256';
-		let public_jwk: JWK = {
+		const privateKey = await importJWK(this.serverData.jwk);
+		const alg = this.serverData.jwk.alg || 'ES256';
+		const public_jwk: JWK = {
 			kty: this.serverData.jwk.kty!,
 			x: this.serverData.jwk.x!,
 			y: this.serverData.jwk.y!,
@@ -371,7 +404,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 
 	// For reference see Section 4.3 of RFC9449 https://datatracker.ietf.org/doc/html/rfc9449.html
 	async verifyDpopProof(dpop: string, request: Request) {
-		let FIVE_MIN = 300000;
+		const FIVE_MIN = 300000;
 		const defaultValues = {
 			typ: 'dpop+jwt',
 			alg: 'ES256',
@@ -412,9 +445,9 @@ export class InMemoryCache implements AuthorizationCodeModel {
 
 	async verifyDpopHeader(request: Request) {
 		if (request.headers) {
-			var dpop = request.headers['dpop'];
+			const dpop = request.headers['dpop'];
 			if (dpop) {
-				var check = await this.verifyDpopProof(dpop, request);
+				const check = await this.verifyDpopProof(dpop, request);
 				if (!check) throw new OAuthError('Invalid request: DPoP header parameter is not valid');
 				const header = decodeProtectedHeader(dpop);
 				const dpop_saved = { id: request.body['client_id'], jwk: header.jwk };
@@ -425,7 +458,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	}
 
 	getDpopJWK(id: string) {
-		var jwks = this.dpop_jwks.filter(function (dpop_jwk: any) {
+		const jwks = this.dpop_jwks.filter(function (dpop_jwk: any) {
 			return dpop_jwk.id === id;
 		});
 		return Promise.resolve(jwks[0]);
@@ -441,13 +474,13 @@ export class InMemoryCache implements AuthorizationCodeModel {
 		return Buffer.from(digest).toString('base64url');
 	}
 
-	validateRedirectUri?(redirect_uri: string, client: Client): Promise<boolean> {
+	validateRedirectUri(redirect_uri: string, client: Client): Promise<boolean> {
 		if (redirect_uri && client)
 			return Promise.resolve(true);
 		return Promise.resolve(true);
 	}
 
-	async verifyCredentialId(scope: string, resource: string) {
+	private async getIssuerMetadata(resource: string): Promise<SimplifiedIssuerMetadata> {
 		if (resource.slice(-1) === "/") resource = resource.slice(0, -1);
 		const url = resource + '/.well-known/openid-credential-issuer';
 		const response = await fetch(url);
@@ -455,48 +488,63 @@ export class InMemoryCache implements AuthorizationCodeModel {
 			throw new OAuthError(`Fetch to url ${url} failed with error status: ${response.status}`);
 		}
 		const result = await response.json();
-		const credentials_supported: { [key: string]: { vct?: string, claims?: { [key: string]: { mandatory?: boolean }}}} = result.credential_configurations_supported;
-		var valid_credentials = [];
-		var credential_claims = new Map<string, string[]>();
-
-		for (const [key, value] of Object.entries(credentials_supported)) {
-			if (key === scope || value.vct === scope) {
-				valid_credentials.push(scope);
-				const issuerClaims = value.claims;
-				const claims = [];
-				for (const key in issuerClaims) {
-					if (issuerClaims[key]?.mandatory) {
-						claims.push(key);
-					}
-				}
-				credential_claims.set(scope, claims);
-				break;
-			}
-		}
-
-		return { valid_credentials: valid_credentials, credential_claims: credential_claims };
+		return result;
+	}
+	private extractMandatoryClaims(entry: SimplifiedCredentialConfig) {
+		return Object.entries(entry.claims ?? {})
+			.filter(([_, claim]) => claim?.mandatory)
+			.map(([key]) => key);
+	}
+	private findCredentialEntry(supported: Record<string, SimplifiedCredentialConfig>, predicate: (key: string, value: SimplifiedCredentialConfig) => boolean) {
+		const found = Object.entries(supported).find(([key, value]) => predicate(key, value));
+		return found?.[1];
+	}
+	private buildResponse(id: string, entry: SimplifiedCredentialConfig) {
+		const claims = this.extractMandatoryClaims(entry);
+		return {
+			valid_credentials: [id],
+			credential_claims: new Map([[id, claims]]),
+		};
 	}
 
-	async validateScope?(user: User, client: Client, scope?: string[] | undefined, resource?: string): Promise<Falsey | string[]> {
+	async verifyCredentialId(id: string, resource: string) {
+		const supported = (await this.getIssuerMetadata(resource)).credential_configurations_supported;
+		const entry = this.findCredentialEntry(
+			supported,
+			(key, _) => key === id
+		);
+		return entry
+			? this.buildResponse(id, entry)
+			: { valid_credentials: [], credential_claims: new Map<string, string[]>() };
+	}
 
+	async verifyCredentialVct(vct: string, resource: string) {
+		const supported = (await this.getIssuerMetadata(resource)).credential_configurations_supported;
+		const entry = this.findCredentialEntry(
+			supported,
+			(_, value) => value.vct === vct
+		);
+		return entry
+			? this.buildResponse(vct, entry)
+			: { valid_credentials: [], credential_claims: new Map<string, string[]>() };
+	}
+
+	async validateScope(user: User, client: Client, scope?: string[] | undefined, resource?: string): Promise<string[]> {
 		if (!user || !client) throw new OAuthError("Invalid input parameters for ValidateScope");
-
-		if (!scope) {
-			throw new InsufficientScopeError(
-				'Insufficient scope: authorized scope is insufficient',
+		if (!scope || scope.length === 0) throw new InsufficientScopeError('Insufficient scope: authorized scope is insufficient');
+		const resourceUrl = resource ?? client['resource'];
+		if (!resourceUrl) throw new OAuthError('Invalid request: needed resource to verify scope');
+		const supported = (await this.getIssuerMetadata(resourceUrl)).credential_configurations_supported;
+		const validScopes: string[] = [];
+		for (const s of scope) {
+			const entry = this.findCredentialEntry(
+				supported,
+				(key, value) => value.scope === s || key === s
 			);
+			if (!entry) throw new InsufficientScopeError('Insufficient scope: authorized scope is insufficient');
+			validScopes.push(s);
 		}
-		if (!resource) {
-			var resource = client['resource'] as string | undefined;
-			if (!resource)
-				throw new OAuthError('Invalid request: needed resource to verify scope');
-		}
-
-		var verified_credentials = await this.verifyCredentialId(scope[0]!, resource);
-
-		if (verified_credentials.valid_credentials.length > 0) return Promise.resolve(scope);
-		else return false;
-
+		return validScopes;
 	}
 
 	async getAuthDetailsFromToken(accessToken: string) {
