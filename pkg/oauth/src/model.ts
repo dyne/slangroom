@@ -236,7 +236,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	 *
 	 */
 	saveAuthorizationCode(code: Pick<AuthorizationCode, "authorizationCode" | "expiresAt" | "redirectUri" | "scope" | "codeChallenge" | "codeChallengeMethod">, client: Client, user: User, authorization_details?: AuthorizationDetails, rand_uri?: string): Promise<Falsey | AuthorizationCode> {
-		let codeSaved: AuthorizationCode = {
+		const codeSaved: AuthorizationCode = {
 			authorizationCode: code.authorizationCode,
 			expiresAt: code.expiresAt,
 			redirectUri: code.redirectUri,
@@ -531,7 +531,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 
 	async validateScope(user: User, client: Client, scope?: string[] | undefined, resource?: string): Promise<string[]> {
 		if (!user || !client) throw new OAuthError("Invalid input parameters for ValidateScope");
-		if (!scope?.length) throw new InsufficientScopeError('Insufficient scope: authorized scope is insufficient');
+		if (!scope || scope.length === 0) throw new InsufficientScopeError('Insufficient scope: authorized scope is insufficient');
 		const resourceUrl = resource ?? client['resource'];
 		if (!resourceUrl) throw new OAuthError('Invalid request: needed resource to verify scope');
 		const supported = (await this.getIssuerMetadata(resourceUrl)).credential_configurations_supported;
@@ -539,7 +539,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 		for (const s of scope) {
 			const entry = this.findCredentialEntry(
 				supported,
-				(_, value) => value.scope === s
+				(key, value) => value.scope === s || key === s
 			);
 			if (!entry) throw new InsufficientScopeError('Insufficient scope: authorized scope is insufficient');
 			validScopes.push(s);
