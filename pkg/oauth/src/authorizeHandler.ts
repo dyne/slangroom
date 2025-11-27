@@ -170,7 +170,7 @@ export class AuthorizeHandler {
 		if (!user) throw new UnauthorizedClientError("Client authentication failed");
 
 		let validScope: string[];
-		let auth_det_parsed;
+		let auth_det_parsed: AuthorizationDetails = [{type: 'openid_credential'}];
 		if (request.body.authorization_details) {
 			const auth_det = JSON.parse(request.body.authorization_details) as AuthorizationDetails;
 			auth_det_parsed = await this.verifyAuthrizationDetails(auth_det);
