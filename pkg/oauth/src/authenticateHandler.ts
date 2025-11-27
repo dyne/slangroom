@@ -183,7 +183,7 @@ export class AuthenticateHandler {
 		}
 		const result = await response.json();
 		const credentials_supported = result.credential_configurations_supported;
-		return Object.entries(credentials_supported).some(([key, value]: [string, any]) => key === scope || value.vct === scope);
+		return Object.entries(credentials_supported).some(([key, value]: [string, unknown]) => key === scope || typeof value === 'object' && value != null && 'vct' in value && value.vct === scope);
 	}
 
 	/**

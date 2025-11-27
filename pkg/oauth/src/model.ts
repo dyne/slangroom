@@ -57,7 +57,7 @@ type SimplifiedClaimConfig = {
 	mandatory?: boolean;
 };
 type SimplifiedCredentialConfig = {
-	vct: string;
+	vct?: string;
 	scope?: string;
 	claims?: Record<string, SimplifiedClaimConfig>;
 };

@@ -37,9 +37,12 @@ const respType = class CodeResponseType {
 	}
 }
 
-const responseTypes: { [key: string]: any } = {
+const responseTypes: { code: typeof respType } = {
 	code: respType,
 };
+function isResponseTypeKey(key: string): key is keyof typeof responseTypes {
+	return Object.prototype.hasOwnProperty.call(responseTypes, key);
+}
 
 let par_expires_in: number = 600;
 export class AuthorizeHandler {
@@ -456,8 +459,7 @@ export class AuthorizeHandler {
 		if (!responseType) {
 			throw new InvalidRequestError('Missing parameter: `response_type`');
 		}
-
-		if (!Object.prototype.hasOwnProperty.call(responseTypes, responseType)) {
+		if (!isResponseTypeKey(responseType)) {
 			throw new UnsupportedResponseTypeError(
 				'Unsupported response type: `response_type` is not supported',
 			);
