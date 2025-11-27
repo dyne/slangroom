@@ -339,7 +339,7 @@ export const createRequestUri = p.new(
 				validatedServerData.model,
 				validatedServerData.authenticationUrl,
 			);
-			await validatedServerData.model.setClient(client);
+			validatedServerData.model.setClient(client);
 			const authorize_options = {
 				model: validatedServerData.model,
 				authenticateHandler: handler,

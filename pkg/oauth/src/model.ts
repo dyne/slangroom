@@ -32,13 +32,45 @@ class OAuthError extends Error {
 	}
 }
 
+export type AuthorizationDetails = {
+	type: 'openid_credential';
+	credential_configuration_id?: string;
+	format?: string;
+	locations?: string[];
+	vct?: string;
+	claims?: {
+		path: string[];
+		mandatory?: boolean;
+		display?: {
+			name?: string;
+			locale?: string;
+		}
+	}[];
+	credential_definition?: {
+		"@context"?: string[];
+		type?: string[];
+	};
+	[key: string]: any;
+}[];
+
+type SimplifiedClaimConfig = {
+  mandatory?: boolean;
+};
+type SimplifiedCredentialConfig = {
+  vct: string;
+  claims?: Record<string, SimplifiedClaimConfig>;
+};
+type SimplifiedIssuerMetadata = {
+  credential_configurations_supported: Record<string, SimplifiedCredentialConfig>;
+};
+
 export class InMemoryCache implements AuthorizationCodeModel {
 	clients: Map<string, Client>;
 	tokens: Token[];
 	users: User[];
 	codes: AuthorizationCode[];
 	uri_codes: Map<string, AuthorizationCode>;
-	authorization_details: Map<string, { [key: string]: any }[]>;
+	authorization_details: Map<string, AuthorizationDetails>;
 	serverData: { jwk: JWK, url: string };
 	options: JsonableObject;
 	dpop_jwks: { [key: string]: any }[];
@@ -202,7 +234,7 @@ export class InMemoryCache implements AuthorizationCodeModel {
 	 * Invoked to save an authorization code.
 	 *
 	 */
-	saveAuthorizationCode(code: Pick<AuthorizationCode, "authorizationCode" | "expiresAt" | "redirectUri" | "scope" | "codeChallenge" | "codeChallengeMethod">, client: Client, user: User, authorization_details?: { [key: string]: any }[], rand_uri?: string): Promise<Falsey | AuthorizationCode> {
+	saveAuthorizationCode(code: Pick<AuthorizationCode, "authorizationCode" | "expiresAt" | "redirectUri" | "scope" | "codeChallenge" | "codeChallengeMethod">, client: Client, user: User, authorization_details?: AuthorizationDetails, rand_uri?: string): Promise<Falsey | AuthorizationCode> {
 		let codeSaved: AuthorizationCode = {
 			authorizationCode: code.authorizationCode,
 			expiresAt: code.expiresAt,
@@ -441,13 +473,13 @@ export class InMemoryCache implements AuthorizationCodeModel {
 		return Buffer.from(digest).toString('base64url');
 	}
 
-	validateRedirectUri?(redirect_uri: string, client: Client): Promise<boolean> {
+	validateRedirectUri(redirect_uri: string, client: Client): Promise<boolean> {
 		if (redirect_uri && client)
 			return Promise.resolve(true);
 		return Promise.resolve(true);
 	}
 
-	async verifyCredentialId(scope: string, resource: string) {
+	private async getIssuerMetadata(resource: string): Promise<SimplifiedIssuerMetadata> {
 		if (resource.slice(-1) === "/") resource = resource.slice(0, -1);
 		const url = resource + '/.well-known/openid-credential-issuer';
 		const response = await fetch(url);
@@ -455,29 +487,48 @@ export class InMemoryCache implements AuthorizationCodeModel {
 			throw new OAuthError(`Fetch to url ${url} failed with error status: ${response.status}`);
 		}
 		const result = await response.json();
-		const credentials_supported: { [key: string]: { vct?: string, claims?: { [key: string]: { mandatory?: boolean }}}} = result.credential_configurations_supported;
-		var valid_credentials = [];
-		var credential_claims = new Map<string, string[]>();
-
-		for (const [key, value] of Object.entries(credentials_supported)) {
-			if (key === scope || value.vct === scope) {
-				valid_credentials.push(scope);
-				const issuerClaims = value.claims;
-				const claims = [];
-				for (const key in issuerClaims) {
-					if (issuerClaims[key]?.mandatory) {
-						claims.push(key);
-					}
-				}
-				credential_claims.set(scope, claims);
-				break;
-			}
-		}
-
-		return { valid_credentials: valid_credentials, credential_claims: credential_claims };
+		return result;
+	}
+	private extractMandatoryClaims(entry: SimplifiedCredentialConfig) {
+		return Object.entries(entry.claims ?? {})
+			.filter(([_, claim]) => claim?.mandatory)
+			.map(([key]) => key);
+	}
+	private findCredentialEntry(supported: Record<string, SimplifiedCredentialConfig>, predicate: (key: string, value: SimplifiedCredentialConfig) => boolean) {
+		const found = Object.entries(supported).find(([key, value]) => predicate(key, value));
+		return found?.[1];
+	}
+	private buildResponse(id: string, entry: SimplifiedCredentialConfig) {
+		const claims = this.extractMandatoryClaims(entry);
+		return {
+			valid_credentials: [id],
+			credential_claims: new Map([[id, claims]]),
+		};
 	}
 
-	async validateScope?(user: User, client: Client, scope?: string[] | undefined, resource?: string): Promise<Falsey | string[]> {
+	async verifyCredentialId(scope: string, resource: string) {
+		const supported = (await this.getIssuerMetadata(resource)).credential_configurations_supported;
+		const entry = this.findCredentialEntry(
+			supported,
+			(key, value) => key === scope || value.vct === scope
+		);
+		return entry
+			? this.buildResponse(scope, entry)
+			: { valid_credentials: [], credential_claims: new Map<string, string[]>() };
+	}
+
+	async verifyCredentialVct(vct: string, resource: string) {
+		const supported = (await this.getIssuerMetadata(resource)).credential_configurations_supported;
+		const entry = this.findCredentialEntry(
+			supported,
+			(_, value) => value.vct === vct
+		);
+		return entry
+			? this.buildResponse(vct, entry)
+			: { valid_credentials: [], credential_claims: new Map<string, string[]>() };
+	}
+
+	async validateScope(user: User, client: Client, scope?: string[] | undefined, resource?: string): Promise<Falsey | string[]> {
 
 		if (!user || !client) throw new OAuthError("Invalid input parameters for ValidateScope");
 

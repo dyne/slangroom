@@ -5,7 +5,7 @@
 import { Client, User, Request, Response, InvalidScopeError, AuthorizationCode } from "@node-oauth/oauth2-server";
 import { InvalidArgumentError, InvalidClientError, InvalidRequestError, UnsupportedResponseTypeError, OAuthError, ServerError, UnauthorizedClientError, AccessDeniedError } from '@node-oauth/oauth2-server';
 import url from 'node:url';
-import { InMemoryCache, AuthenticateHandler, pkce, isFormat } from '@slangroom/oauth';
+import { InMemoryCache, AuthenticateHandler, pkce, isFormat, type AuthorizationDetails } from '@slangroom/oauth';
 import { createHash, randomBytes } from "crypto";
 
 const BASE_URI = "urn:ietf:params:oauth:request_uri:";
@@ -170,12 +170,11 @@ export class AuthorizeHandler {
 		if (!user) throw new UnauthorizedClientError("Client authentication failed");
 
 		if (request.body.authorization_details) {
-			const auth_det = JSON.parse(request.body.authorization_details);
+			const auth_det = JSON.parse(request.body.authorization_details) as AuthorizationDetails;
 			var authorization_details = await this.verifyAuthrizationDetails(auth_det);
 			if (authorization_details.length === 0) throw new OAuthError("Given authorization_details are not valid");
 			var validScope: string[] = [authorization_details[0]['credential_configuration_id']];
-		}
-		else {
+		} else {
 			const resource = request.body.resource;
 			const requestedScope = this.getScope(request);
 			if (!requestedScope) throw new InvalidRequestError("Neither authorization_details, nor scope parameter found in request");
@@ -311,15 +310,28 @@ export class AuthorizeHandler {
 		return client;
 	}
 
-	async verifyAuthrizationDetails(authorization_details: { [key: string]: any }[]) {
+	async verifyAuthrizationDetails(authorization_details: AuthorizationDetails) {
 		const verifiedAuthDetails: any = [];
-		await Promise.all(authorization_details.map(async (dict: { [key: string]: any }) => {
+		await Promise.all(authorization_details.map(async (dict: AuthorizationDetails[number]) => {
+			const { type, credential_configuration_id: ccid, format, vct, locations } = dict;
 
-			if (!dict['type']) throw new OAuthError("Invalid authorization_details: missing parameter type");
-			if (!dict['locations']) throw new OAuthError("Invalid authorization_details: missing parameter locations");
-			if (!dict['credential_configuration_id']) throw new OAuthError("Invalid authorization_details: missing parameter credential_configuration_id");
+			if (!type) throw new OAuthError("Invalid authorization_details: missing parameter type");
+			if (ccid && format) throw new OAuthError("Invalid authorization_details: credential_configuration_id and format are mutually exclusive");
+			if (!ccid && !format) throw new OAuthError("Invalid authorization_details: missing parameter credential_configuration_id and format");
+			if (format === 'dc+sd-jwt' && !vct) throw new OAuthError("Invalid authorization_details: missing parameter vct");
 
-			const verified_credentials = await this.model.verifyCredentialId(dict['credential_configuration_id'], dict['locations'][0]);
+			// default resource, issuer and authz_server on the same server
+			let resource = this.model.serverData.url;
+			if (locations) {
+				if (locations[0] === undefined) throw new OAuthError("Invalid authorization_details: locations is empty");
+				resource = locations[0];
+			}
+			let verified_credentials;
+			if (ccid) {
+				verified_credentials = await this.model.verifyCredentialId(ccid, resource);
+			} else {
+				verified_credentials = await this.model.verifyCredentialVct(vct, resource);
+			}
 			if (verified_credentials.valid_credentials.length == 0) throw new OAuthError(`Invalid authorization_details: '${dict['credential_configuration_id']}' is not a valid credential_id `)
 
 			// const claims = verified_credentials.credential_claims.get(dict['credential_configuration_id']);
@@ -410,7 +422,7 @@ export class AuthorizeHandler {
 	 * Save authorization code.
 	 */
 
-	async saveAuthorizationCode(authorizationCode: string, expiresAt: Date, redirectUri: string, scope: string[], client: Client, user: User, codeChallenge: string, codeChallengeMethod: string, authorization_details: { [key: string]: any }[], rand_uri: string) {
+	async saveAuthorizationCode(authorizationCode: string, expiresAt: Date, redirectUri: string, scope: string[], client: Client, user: User, codeChallenge: string, codeChallengeMethod: string, authorization_details: AuthorizationDetails, rand_uri: string) {
 		let code: AuthorizationCode = {
 			authorizationCode,
 			expiresAt,
