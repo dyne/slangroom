@@ -58,7 +58,7 @@ test('parallel concatenated hash canonicalization', async (t) => {
 	const slangroom = new Slangroom(rdf);
 	const script: string = `
 Prepare 'res': generate concatenated hash of serialized canonical rdf with array 'dataset'
-Given I have a 'string' named 'res'
+Given I have a 'base64' named 'res'
 Then print the data
 `;
 	const fn = slangroom.execute(script, {
@@ -112,7 +112,7 @@ test('parallel concatenated hash canonicalization with empty array', async (t) =
 	const slangroom = new Slangroom(rdf);
 	const script: string = `
 Prepare 'res': generate concatenated hash of serialized canonical rdf with array 'dataset'
-Given I have a 'string' named 'res'
+Given I have a 'base64' named 'res'
 Then print the data
 `;
 	const fn = slangroom.execute(script, {
