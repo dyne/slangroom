@@ -119,7 +119,7 @@ Compute 'transaction_id': connect to 'ethereum' and read the ethereum transactio
 `;
 				const scriptRdf = `
 Prepare 'res': generate serialized canonical rdf with dictionary 'dataset'
-Given I have a 'string' named 'res'
+Given I have a 'base64' named 'res'
 When I create the hash of 'res'
 Then print the 'hash'
 `;

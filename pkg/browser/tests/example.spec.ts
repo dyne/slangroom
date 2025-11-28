@@ -65,7 +65,7 @@ test('check results of slangroom', async ({ page }) => {
 	);
 
 	await expect(page.locator('#test-rdf')).toContainText(
-		"{\"hash\":\"2SPkGPCiBUIwU3Q6NSKxhTmcVbEky5qarjpOGnlVjyI=\"}"
+		"{\"hash\":\"72YGxw/9PeHGHro1eQaoMXB46QkFU1stRi/uGphj3mY=\"}"
 	);
 
 });
