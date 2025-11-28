@@ -1,0 +1,41 @@
+{
+	"data": {
+		"dataset": [
+			{
+				"document": {
+					"@context": [
+						"https://www.w3.org/ns/credentials/v2",
+						"https://www.w3.org/ns/credentials/examples/v2"
+					],
+					"id": "http://university.example/credentials/3732",
+					"type": [
+						"VerifiableCredential",
+						"ExampleDegreeCredential"
+					],
+					"issuer": "https://university.example/issuers/565049",
+					"validFrom": "2010-01-01T00:00:00Z",
+					"credentialSubject": {
+						"id": "did:example:ebfeb1f712ebc6f1c276e12ec21",
+						"degree": {
+							"type": "ExampleBachelorDegree",
+							"name": "Bachelor of Science and Arts"
+						}
+					}
+				},
+				"proof_config": {
+					"@context": [
+						"https://www.w3.org/ns/credentials/v2",
+						"https://w3id.org/security/data-integrity/v2"
+					],
+					"challenge": "32c0afbea6c11920b4de569966887b94d1112b0582e5dc1d9eb9d5ee50ff4e15",
+					"created": "2025-11-28T00:58:38Z",
+					"cryptosuite": "ecdsa-rdfc-2019",
+					"domain": "did:dyne:sandbox.genericissuer:DyptDVGbNeNsT5ooKrrHCAY2zvCxbecn6yum4WRZfphL",
+					"proofPurpose": "authentication",
+					"type": "DataIntegrityProof",
+					"verificationMethod": "did:dyne:sandbox.signroom:PTDvvQn1iWQiVxkfsDnUid8FbieKbHq46Qs8c9CZx67#es256_public_key"
+				}
+			}
+		]
+	}
+}

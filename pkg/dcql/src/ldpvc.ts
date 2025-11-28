@@ -42,8 +42,8 @@ const rdfValidation = async (vp: LdpVcElementType | LdpVcVerifiableCredentialele
 	(proofWithoutProofValue as typeof proofWithoutProofValue & { '@context'?: unknown })[
 		'@context'
 	] = JSON.parse(JSON.stringify(vpWithoutProof['@context']));
-	const serializedWithoutProof = await rdfCanon(vpWithoutProof);
-	const serializedProof = await rdfCanon(proofWithoutProofValue);
+	const serializedWithoutProof = btoa(await rdfCanon(vpWithoutProof));
+	const serializedProof = btoa(await rdfCanon(proofWithoutProofValue));
 	const { pkType, pk } = await resolveDid(proofWithoutProofValue.verificationMethod);
 	switch (pkType) {
 		case 'es256_public_key':

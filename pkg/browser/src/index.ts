@@ -12,6 +12,7 @@ import { JSONSchema, version as jsonSchemaVersion } from '@slangroom/json-schema
 import { location, version as locationVersion } from '@slangroom/location';
 import { pocketbase, version as pocketbaseVersion } from '@slangroom/pocketbase';
 import { qrcode, version as qrcodeVersion } from '@slangroom/qrcode';
+import { rdf, version as rdfVersion } from '@slangroom/rdf';
 import { timestamp, version as timestampVersion } from '@slangroom/timestamp';
 import { zencode, version as zencodeVersion } from '@slangroom/zencode';
 import { zenroomVersion } from '@slangroom/deps/zenroom';
@@ -58,6 +59,10 @@ const plugins_dict = {
 	qrcode: {
 		plugin: qrcode,
 		version: qrcodeVersion
+	},
+	rdf: {
+		plugin: rdf,
+		version: rdfVersion
 	},
 	timestamp: {
 		plugin: timestamp,

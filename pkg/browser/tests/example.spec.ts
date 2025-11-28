@@ -63,6 +63,11 @@ test('check results of slangroom', async ({ page }) => {
 		/{"signed_ethereum_transaction":"[0-9a-fA-F]+","transaction_id":"[0-9a-fA-F]+"}/,
 		{ timeout: 60000 }
 	);
+
+	await expect(page.locator('#test-rdf')).toContainText(
+		"{\"hash\":\"72YGxw/9PeHGHro1eQaoMXB46QkFU1stRi/uGphj3mY=\"}"
+	);
+
 });
 
 test('check @slangroom/location', async ({ browser, page }) => {
