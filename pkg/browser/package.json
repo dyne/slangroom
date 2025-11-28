@@ -17,7 +17,7 @@
 		"@slangroom/zencode": "workspace:*",
 		"buffer": "6.0.3"
 	},
-	"version": "1.50.4",
+	"version": "1.51.0",
 	"repository": "https://github.com/dyne/slangroom",
 	"license": "AGPL-3.0-only",
 	"type": "module",
