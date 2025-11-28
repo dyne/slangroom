@@ -74,6 +74,8 @@ use it in your code in the following way:
 ```ts
 import { Slangroom } from '@slangroom/core';
 import { db } from '@slangroom/db';
+import { dcql } from '@slangroom/dcql';
+import { did } from '@slangroom/did';
 import { ethereum } from '@slangroom/ethereum';
 import { fs } from '@slangroom/fs';
 import { git } from '@slangroom/git';
@@ -92,6 +94,8 @@ import { zencode } from '@slangroom/zencode';
 
 const SLANGROOM_PLUGINS = [
 	db,
+	dcql,
+	did,
 	ethereum,
 	fs,
 	git,
@@ -141,6 +145,7 @@ Slangroom can also be directly used in the browser thorugh the plugin @slangroom
 * [@slangroom/location](https://dyne.org/slangroom/examples/#location-plugin-examples)
 * [@slangroom/pocketbase](https://dyne.org/slangroom/examples/#pocketbase-plugin-examples)
 * [@slangroom/qrcode](https://dyne.org/slangroom/examples/#qrcode-plugin-examples)
+* [@slangroom/rdf](https://dyne.org/slangroom/examples/#rdf-plugin-examples)
 * [@slangroom/timestamp](https://dyne.org/slangroom/examples/#timestamp-plugin-examples)
 * [@slangroom/zencode](https://dyne.org/slangroom/examples/#zencode-plugin-examples)
 
@@ -184,7 +189,7 @@ A minimal example is:
 
 To build slangroom locally you need:
 * `pnpm@9`
-* `node@^20.10.0` or `node@22`
+* `node@^20.10.0` or `node@22` or `node@24`
 
 both of this dependencies can be install with [mise](https://mise.jdx.dev/) by simply running `mise install` in the root of this repository. So the steps to build slangroom are:
 
@@ -222,6 +227,15 @@ In order to test slangroom you will need to:
 	./slangroom/pkg/oauth/test/start_microservices.sh setup
 	```
 	This is needed to test the oauth plugin.
+* start ganache:
+	```sh
+	cd pkg/ethereum && pnpm exec ganache \
+		--server.host 0.0.0.0 \
+		--server.port 9485 \
+		--chain.chainId 1717658228 \
+		--wallet.seed "spoon ostrich survey tumble tube used person also wasp rack cabbage liberty" &
+	```
+	This is neede to test the ethereum plugin
 
 After that the above services are started the tests can be launched with
 ```sh
