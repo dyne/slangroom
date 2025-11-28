@@ -3,6 +3,7 @@
 	"version": "1.50.4",
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
+		"@slangroom/deps": "workspace:*",
 		"jsonld": "9.0.0",
 		"rdf-canonize": "5.0.0"
 	},
