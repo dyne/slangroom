@@ -12,6 +12,7 @@
 		"@slangroom/location": "workspace:*",
 		"@slangroom/pocketbase": "workspace:*",
 		"@slangroom/qrcode": "workspace:*",
+		"@slangroom/rdf": "workspace:*",
 		"@slangroom/timestamp": "workspace:*",
 		"@slangroom/zencode": "workspace:*",
 		"buffer": "6.0.3"

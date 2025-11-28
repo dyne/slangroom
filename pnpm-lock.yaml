@@ -273,6 +273,9 @@ importers:
       '@slangroom/qrcode':
         specifier: workspace:*
         version: link:../qrcode
+      '@slangroom/rdf':
+        specifier: workspace:*
+        version: link:../rdf
       '@slangroom/timestamp':
         specifier: workspace:*
         version: link:../timestamp
