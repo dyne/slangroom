@@ -311,7 +311,7 @@ importers:
   pkg/cerbos:
     dependencies:
       '@cerbos/http':
-        specifier: ^0.23.4
+        specifier: 0.23.4
         version: 0.23.4(@bufbuild/protobuf@2.10.1)(@cerbos/api@0.3.0)
       '@slangroom/core':
         specifier: workspace:*
@@ -320,7 +320,7 @@ importers:
         specifier: workspace:*
         version: link:../shared
       zod:
-        specifier: ^4.1.13
+        specifier: 4.1.13
         version: 4.1.13
     devDependencies:
       cerbos:
