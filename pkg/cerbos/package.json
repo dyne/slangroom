@@ -32,5 +32,9 @@
 	},
 	"engines": {
 		"node": "^18.20.0 || ^20.10.0 || >=22"
+	},
+	"devDependencies": {
+		"cerbos": "^0.47.0",
+		"cerbosctl": "^0.47.0"
 	}
 }

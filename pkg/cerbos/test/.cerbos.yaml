@@ -5,6 +5,6 @@ server:
 storage:
   driver: "disk"
   disk:
-    directory: policies
+    directory: test/policies
 schema:
   enforcement: reject

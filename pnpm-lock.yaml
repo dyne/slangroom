@@ -319,6 +319,13 @@ importers:
       zod:
         specifier: ^4.1.13
         version: 4.1.13
+    devDependencies:
+      cerbos:
+        specifier: ^0.47.0
+        version: 0.47.0
+      cerbosctl:
+        specifier: ^0.47.0
+        version: 0.47.0
 
   pkg/core:
     dependencies:
@@ -380,7 +387,7 @@ importers:
         specifier: 10.5.0
         version: 10.5.0
       zenroom:
-        specifier: ^5.28.5
+        specifier: ^5.0.0
         version: 5.28.5
 
   pkg/did:
@@ -747,6 +754,46 @@ packages:
   '@cerbos/api@0.3.0':
     resolution: {integrity: sha512-5FDET4b/483FxT32OoUspzJd80v07WBE8TjoD96mmpAtlGah0w3jRqu7ST7imXS8mrSENvmVSoEYvQc1fMuJPw==}
     engines: {node: '>= 20'}
+
+  '@cerbos/cerbos-darwin-arm64@0.47.0':
+    resolution: {integrity: sha512-iosce8nO5gCviXltdP0HQpxiB0x3WWAMpwef1dZcQeNEuyPnxI83WIKfGJo2kmpjaqkhlY1FhndzR0FI4IDtCw==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@cerbos/cerbos-darwin-x64@0.47.0':
+    resolution: {integrity: sha512-72OPabYn2tqrSVqmpabd2y3V5C3oCBqQct5gvbxhn4+Sd1XhP0jJOfMYF5YQOiKKV+OPMf6xv3VQ8PXqsPViCQ==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@cerbos/cerbos-linux-arm64@0.47.0':
+    resolution: {integrity: sha512-Od3u0jpNts4bodeugrG8ZopGFyq/Qp2nditND11ZKs60KnHSvuLdIGraR0Ey23bazPZzcrUmVoSIpEeCxJlbNw==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@cerbos/cerbos-linux-x64@0.47.0':
+    resolution: {integrity: sha512-E3S0YeXRZrrnp7ZEHNilinjR9WBcJWIngvAYUISQwpPs8IimQhg8zFMrib4/hIBz6zVeXzt2Aa4+1d3A0XEErw==}
+    cpu: [x64]
+    os: [linux]
+
+  '@cerbos/cerbosctl-darwin-arm64@0.47.0':
+    resolution: {integrity: sha512-mbrNr6HuBR3zg6NqkgG/DbRROB3c4x9qt6m9HX3TMucl7SC3lOJqyB6Vm3sGiaK/hdzjaYRmP1P4Z/EUlrwGmA==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@cerbos/cerbosctl-darwin-x64@0.47.0':
+    resolution: {integrity: sha512-u98iEKG0PU/bZbCEHXdGcyG1fVimS6Jw6XUvhTuD08LHx3VOoOIKKSmEAPkgqWqbDJ3enFd7ATBA0txVGhWOHg==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@cerbos/cerbosctl-linux-arm64@0.47.0':
+    resolution: {integrity: sha512-HnG1F1CqS3DKkoK7ZCZlv5Q2bMmfJJaElBNx9JnOizEnMeuY08/byozIy+XEytvnRkf/vGwvAkN9DZAG9dIc+g==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@cerbos/cerbosctl-linux-x64@0.47.0':
+    resolution: {integrity: sha512-q6n+SlULIwK1EEagmd2ucdaIWkND5d70yqqiLz0U7metw1BLOqSmAK8lLF0SbDdZAHin5AvxuzgwUq0tXop1vg==}
+    cpu: [x64]
+    os: [linux]
 
   '@cerbos/core@0.25.2':
     resolution: {integrity: sha512-iPVTTxuxRR+y6Xe4O61LoJQ7afZGobMZrVqKlI+sEg8YrPoJel+NOtZn2D4xAFO2hBEUROr/uoYp400FZ7Pzrg==}
@@ -2331,6 +2378,14 @@ packages:
 
   ccount@2.0.1:
     resolution: {integrity: sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg==}
+
+  cerbos@0.47.0:
+    resolution: {integrity: sha512-5YvzrpqMQ5cH2Qh8Nui9ge6qJaIeDfC7Wa/EZUg49IBTMx1D3/smW8EwjJhr2VH96uSH+Cx3X1UZoUrlIBUR0Q==}
+    hasBin: true
+
+  cerbosctl@0.47.0:
+    resolution: {integrity: sha512-O1A14DYtR3wWP0IfLAIHm2vdZuhYXtJQRCEA1xXwCTzcPliu+EwfU5u71K6epESttRbxMGA/1XJe/5Dc4pQZGw==}
+    hasBin: true
 
   chalk@2.4.2:
     resolution: {integrity: sha512-Mti+f9lpJNcwF4tWV8/OrTTtF1gZi+f8FqlyAdouralcFWFQWF2+NgCHShjkCb+IFBLq9buZwE1xckQU4peSuQ==}
@@ -5907,6 +5962,30 @@ snapshots:
     dependencies:
       '@bufbuild/protobuf': 2.10.1
 
+  '@cerbos/cerbos-darwin-arm64@0.47.0':
+    optional: true
+
+  '@cerbos/cerbos-darwin-x64@0.47.0':
+    optional: true
+
+  '@cerbos/cerbos-linux-arm64@0.47.0':
+    optional: true
+
+  '@cerbos/cerbos-linux-x64@0.47.0':
+    optional: true
+
+  '@cerbos/cerbosctl-darwin-arm64@0.47.0':
+    optional: true
+
+  '@cerbos/cerbosctl-darwin-x64@0.47.0':
+    optional: true
+
+  '@cerbos/cerbosctl-linux-arm64@0.47.0':
+    optional: true
+
+  '@cerbos/cerbosctl-linux-x64@0.47.0':
+    optional: true
+
   '@cerbos/core@0.25.2(@bufbuild/protobuf@2.10.1)':
     dependencies:
       '@bufbuild/protobuf': 2.10.1
@@ -7761,6 +7840,20 @@ snapshots:
       nofilter: 3.1.0
 
   ccount@2.0.1: {}
+
+  cerbos@0.47.0:
+    optionalDependencies:
+      '@cerbos/cerbos-darwin-arm64': 0.47.0
+      '@cerbos/cerbos-darwin-x64': 0.47.0
+      '@cerbos/cerbos-linux-arm64': 0.47.0
+      '@cerbos/cerbos-linux-x64': 0.47.0
+
+  cerbosctl@0.47.0:
+    optionalDependencies:
+      '@cerbos/cerbosctl-darwin-arm64': 0.47.0
+      '@cerbos/cerbosctl-darwin-x64': 0.47.0
+      '@cerbos/cerbosctl-linux-arm64': 0.47.0
+      '@cerbos/cerbosctl-linux-x64': 0.47.0
 
   chalk@2.4.2:
     dependencies:
