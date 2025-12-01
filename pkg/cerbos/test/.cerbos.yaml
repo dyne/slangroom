@@ -1,0 +1,10 @@
+engine:
+  defaultPolicyVersion: "default"
+server:
+  httpListenAddr: ":3592"
+storage:
+  driver: "disk"
+  disk:
+    directory: policies
+schema:
+  enforcement: reject

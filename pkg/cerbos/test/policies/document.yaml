@@ -1,0 +1,26 @@
+apiVersion: api.cerbos.dev/v1
+resourcePolicy:
+  version: "default"
+  resource: "document"
+  rules:
+    - actions:
+        - create
+        - read
+      effect: EFFECT_ALLOW
+      roles:
+        - user
+
+    - actions:
+        - view
+      effect: EFFECT_ALLOW
+      roles:
+        - user
+      condition:
+        match:
+          expr: P.attr.tier == "PREMIUM" && R.attr.owner == P.id
+
+    - actions:
+        - "*"
+      effect: EFFECT_ALLOW
+      roles:
+        - admin

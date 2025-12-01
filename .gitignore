@@ -97,5 +97,10 @@ pkg/oauth/test/didroom_microservices/
 !/pkg/oauth/test/credential_issuer.keys.json
 !/pkg/oauth/test/relying_party.keys.json
 
+# cerbos test stuff
+!/pkg/cerbos/test/.cerbos.yaml
+!/pkg/cerbos/test/policies/document.yaml
+!/pkg/cerbos/test/policies/_schemas/document.json
+
 # mise stuff
 !/mise.toml

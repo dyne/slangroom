@@ -1,0 +1,36 @@
+{
+	"name": "@slangroom/cerbos",
+	"version": "1.51.0",
+	"dependencies": {
+		"@cerbos/http": "^0.23.4",
+		"@slangroom/core": "workspace:*",
+		"@slangroom/shared": "workspace:*",
+		"zod": "^4.1.13"
+	},
+	"repository": "https://github.com/dyne/slangroom",
+	"license": "AGPL-3.0-only",
+	"type": "module",
+	"main": "./build/esm/src/index.js",
+	"types": "./build/esm/src/index.d.ts",
+	"exports": {
+		".": {
+			"import": {
+				"types": "./build/esm/src/index.d.ts",
+				"default": "./build/esm/src/index.js"
+			}
+		},
+		"./*": {
+			"import": {
+				"types": "./build/esm/src/*.d.ts",
+				"default": "./build/esm/src/*.js"
+			}
+		},
+		"./package.json": "./package.json"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"engines": {
+		"node": "^18.20.0 || ^20.10.0 || >=22"
+	}
+}
