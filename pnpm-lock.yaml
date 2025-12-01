@@ -53,6 +53,9 @@ importers:
 
   docs/statements:
     dependencies:
+      '@slangroom/cerbos':
+        specifier: workspace:^
+        version: link:../../pkg/cerbos
       '@slangroom/core':
         specifier: workspace:^
         version: link:../../pkg/core

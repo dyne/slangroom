@@ -10,6 +10,7 @@
 	"author": "",
 	"license": "ISC",
 	"dependencies": {
+		"@slangroom/cerbos": "workspace:^",
 		"@slangroom/core": "workspace:^",
 		"@slangroom/db": "workspace:^",
 		"@slangroom/dcql": "workspace:^",
