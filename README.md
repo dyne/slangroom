@@ -59,7 +59,7 @@ To use slangroom in your project you must install the `@slangroom/core` package 
 ```sh
 pnpm add @slangroom/core
 # and then install the plugin that you need, here we install all of them
-pnpm add @slangroom/db @slangroom/ethereum @slangroom/fs @slangroom/git @slangroom/helpers @slangroom/http @slangroom/json-schema @slangroom/oauth @slangroom/pocketbase @slangroom/qrcode @slangroom/rdf @slangroom/redis @slangroom/shell @slangroom/timestamp @slangroom/wallet @slangroom/zencode
+pnpm add @slangroom/db @slangroom/dcql @slangroom/ethereum @slangroom/fs @slangroom/git @slangroom/helpers @slangroom/http @slangroom/json-schema @slangroom/oauth @slangroom/pocketbase @slangroom/qrcode @slangroom/rdf @slangroom/redis @slangroom/shell @slangroom/timestamp @slangroom/wallet @slangroom/zencode
 ```
 
 
