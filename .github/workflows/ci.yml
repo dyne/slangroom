@@ -115,6 +115,10 @@ jobs:
     - name: 🌍 Build @slangroom/browser
       run: pnpm build
       working-directory: ./pkg/browser
+    - name: 🪪 Configure git author for CI
+      run: |
+        git config user.name "Dyne dev team"
+        git config user.email "dev@dyne.org"
     - name: 📦 Releases (OIDC / trusted publishing)
       run: |
         pnpm whoami || true
