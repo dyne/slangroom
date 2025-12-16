@@ -115,12 +115,7 @@ jobs:
     - name: 🌍 Build @slangroom/browser
       run: pnpm build
       working-directory: ./pkg/browser
-    - name: 📦 Releases
-      run: |
-        git config --global user.email "dev@dyne.org" && git config --global user.name "Dev Dyne.org"
-        echo "//registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN" > .npmrc
-        pnpm whoami
-        pnpm publish:ci
-      env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: 📦 Releases (OIDC / trusted publishing)
+        run: |
+          pnpm whoami || true
+          pnpm publish:ci
