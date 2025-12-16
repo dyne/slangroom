@@ -116,6 +116,6 @@ jobs:
       run: pnpm build
       working-directory: ./pkg/browser
     - name: 📦 Releases (OIDC / trusted publishing)
-        run: |
-          pnpm whoami || true
-          pnpm publish:ci
+      run: |
+        pnpm whoami || true
+        pnpm publish:ci
