@@ -1,0 +1,19 @@
+{
+	"principal": {
+		"id": "user@example.com",
+		"roles": [
+			"user"
+		],
+		"attr": {
+			"tier": "PREMIUM"
+		}
+	},
+	"resource": {
+		"kind": "document",
+		"id": "1",
+		"attr": {
+			"owner": "user@example.com"
+		}
+	},
+	"action": "view"
+}

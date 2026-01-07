@@ -9,6 +9,7 @@ import {markdownTable} from "markdown-table";
 // slangroom
 import {Slangroom} from "@slangroom/core";
 // packages
+import {cerbos} from "@slangroom/cerbos";
 import {db} from "@slangroom/db";
 import {dcql} from "@slangroom/dcql";
 import {did} from "@slangroom/did";
@@ -58,6 +59,7 @@ const generateTable = (plugin, name) => {
 }
 
 [
+	[cerbos, 'cerbos'],
 	[db, 'db'],
 	[dcql, 'dcql'],
 	[did, 'did'],

@@ -53,6 +53,9 @@ importers:
 
   docs/statements:
     dependencies:
+      '@slangroom/cerbos':
+        specifier: workspace:^
+        version: link:../../pkg/cerbos
       '@slangroom/core':
         specifier: workspace:^
         version: link:../../pkg/core
@@ -305,6 +308,28 @@ importers:
         specifier: ^1.0.1
         version: 1.0.1
 
+  pkg/cerbos:
+    dependencies:
+      '@cerbos/http':
+        specifier: 0.23.4
+        version: 0.23.4(@bufbuild/protobuf@2.10.1)(@cerbos/api@0.3.0)
+      '@slangroom/core':
+        specifier: workspace:*
+        version: link:../core
+      '@slangroom/shared':
+        specifier: workspace:*
+        version: link:../shared
+      zod:
+        specifier: 4.1.13
+        version: 4.1.13
+    devDependencies:
+      cerbos:
+        specifier: ^0.47.0
+        version: 0.47.0
+      cerbosctl:
+        specifier: ^0.47.0
+        version: 0.47.0
+
   pkg/core:
     dependencies:
       '@slangroom/deps':
@@ -366,7 +391,7 @@ importers:
         version: 10.5.0
       zenroom:
         specifier: ^5.0.0
-        version: 5.25.1
+        version: 5.28.5
 
   pkg/did:
     dependencies:
@@ -718,6 +743,9 @@ packages:
   '@bcoe/v8-coverage@0.2.3':
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
 
+  '@bufbuild/protobuf@2.10.1':
+    resolution: {integrity: sha512-ckS3+vyJb5qGpEYv/s1OebUHDi/xSNtfgw1wqKZo7MR9F2z+qXr0q5XagafAG/9O0QPVIUfST0smluYSTpYFkg==}
+
   '@capacitor/core@6.0.0':
     resolution: {integrity: sha512-NvxIQsJcMiIV+Le1DilR2GGyQQbDInfXK1UywGROQ5mycdFlW5XoAPZ+MKnFGB123RoEgE3uhDGgwTXUmSlX9A==}
 
@@ -725,6 +753,63 @@ packages:
     resolution: {integrity: sha512-3I1BbhhCBTMBziVvr0fU7RCRXqGvhUW/apHLRJSaJAWonASya5rp6AWsHv1lW1tkF0avUOMwp6e7iNA4UUGu8g==}
     peerDependencies:
       '@capacitor/core': ^6.0.0
+
+  '@cerbos/api@0.3.0':
+    resolution: {integrity: sha512-5FDET4b/483FxT32OoUspzJd80v07WBE8TjoD96mmpAtlGah0w3jRqu7ST7imXS8mrSENvmVSoEYvQc1fMuJPw==}
+    engines: {node: '>= 20'}
+
+  '@cerbos/cerbos-darwin-arm64@0.47.0':
+    resolution: {integrity: sha512-iosce8nO5gCviXltdP0HQpxiB0x3WWAMpwef1dZcQeNEuyPnxI83WIKfGJo2kmpjaqkhlY1FhndzR0FI4IDtCw==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@cerbos/cerbos-darwin-x64@0.47.0':
+    resolution: {integrity: sha512-72OPabYn2tqrSVqmpabd2y3V5C3oCBqQct5gvbxhn4+Sd1XhP0jJOfMYF5YQOiKKV+OPMf6xv3VQ8PXqsPViCQ==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@cerbos/cerbos-linux-arm64@0.47.0':
+    resolution: {integrity: sha512-Od3u0jpNts4bodeugrG8ZopGFyq/Qp2nditND11ZKs60KnHSvuLdIGraR0Ey23bazPZzcrUmVoSIpEeCxJlbNw==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@cerbos/cerbos-linux-x64@0.47.0':
+    resolution: {integrity: sha512-E3S0YeXRZrrnp7ZEHNilinjR9WBcJWIngvAYUISQwpPs8IimQhg8zFMrib4/hIBz6zVeXzt2Aa4+1d3A0XEErw==}
+    cpu: [x64]
+    os: [linux]
+
+  '@cerbos/cerbosctl-darwin-arm64@0.47.0':
+    resolution: {integrity: sha512-mbrNr6HuBR3zg6NqkgG/DbRROB3c4x9qt6m9HX3TMucl7SC3lOJqyB6Vm3sGiaK/hdzjaYRmP1P4Z/EUlrwGmA==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@cerbos/cerbosctl-darwin-x64@0.47.0':
+    resolution: {integrity: sha512-u98iEKG0PU/bZbCEHXdGcyG1fVimS6Jw6XUvhTuD08LHx3VOoOIKKSmEAPkgqWqbDJ3enFd7ATBA0txVGhWOHg==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@cerbos/cerbosctl-linux-arm64@0.47.0':
+    resolution: {integrity: sha512-HnG1F1CqS3DKkoK7ZCZlv5Q2bMmfJJaElBNx9JnOizEnMeuY08/byozIy+XEytvnRkf/vGwvAkN9DZAG9dIc+g==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@cerbos/cerbosctl-linux-x64@0.47.0':
+    resolution: {integrity: sha512-q6n+SlULIwK1EEagmd2ucdaIWkND5d70yqqiLz0U7metw1BLOqSmAK8lLF0SbDdZAHin5AvxuzgwUq0tXop1vg==}
+    cpu: [x64]
+    os: [linux]
+
+  '@cerbos/core@0.25.2':
+    resolution: {integrity: sha512-iPVTTxuxRR+y6Xe4O61LoJQ7afZGobMZrVqKlI+sEg8YrPoJel+NOtZn2D4xAFO2hBEUROr/uoYp400FZ7Pzrg==}
+    engines: {node: '>= 20'}
+    peerDependencies:
+      '@bufbuild/protobuf': ^2.10.1
+
+  '@cerbos/http@0.23.4':
+    resolution: {integrity: sha512-JtY/rrE43kJqF4qCoyPo+2ogcm3bJ6UMIFLxfg2JlLF2Sz4e7aIMRfvKDneZGWVkbWgYDNJnzEQHm5/zkkVu0w==}
+    engines: {node: '>= 20'}
+    peerDependencies:
+      '@bufbuild/protobuf': ^2.10.1
+      '@cerbos/api': ^0.3.0
 
   '@chevrotain/cst-dts-gen@10.5.0':
     resolution: {integrity: sha512-lhmC/FyqQ2o7pGK4Om+hzuDrm9rhFYIJ/AXoQBeongmn870Xeb0L6oGEiuR8nohFNL5sMaQEJWCxr1oIVIVXrw==}
@@ -2255,8 +2340,16 @@ packages:
     resolution: {integrity: sha512-B+L5iIa9mgcjLbliir2th36yEwPftrzteHYujzsx3dFP/31GCHcIeS8f5MGd80odLOjaOvSpU3EEAmRQptkxLQ==}
     engines: {node: ^16.14.0 || >=18.0.0}
 
+  call-bind-apply-helpers@1.0.2:
+    resolution: {integrity: sha512-Sp1ablJ0ivDkSzjcaJdxEunN5/XvksFJ2sMBFfq6x0ryhQV/2b/KwFe21cMpmHtPOSij8K99/wSfoEuTObmuMQ==}
+    engines: {node: '>= 0.4'}
+
   call-bind@1.0.5:
     resolution: {integrity: sha512-C3nQxfFZxFRVoJoGKKI8y3MOEo129NQ+FgQ08iye+Mk4zNZZGdjfs06bVTr+DBSlA66Q2VEcMki/cUCP4SercQ==}
+
+  call-bound@1.0.4:
+    resolution: {integrity: sha512-+ys997U96po4Kx/ABpBCqhA9EuxJaQWDQg7295H4hBphv3IZg0boBKuwYpt4YXp6MZ5AmZQnU/tyMTlRpaSejg==}
+    engines: {node: '>= 0.4'}
 
   callsites@3.1.0:
     resolution: {integrity: sha512-P8BjAsXvZS+VIDUI11hHCQEv74YT67YUi5JJFNWIqL235sBmjX4+qx9Muvls5ivyNENctx46xQLQ3aTuE7ssaQ==}
@@ -2288,6 +2381,14 @@ packages:
 
   ccount@2.0.1:
     resolution: {integrity: sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg==}
+
+  cerbos@0.47.0:
+    resolution: {integrity: sha512-5YvzrpqMQ5cH2Qh8Nui9ge6qJaIeDfC7Wa/EZUg49IBTMx1D3/smW8EwjJhr2VH96uSH+Cx3X1UZoUrlIBUR0Q==}
+    hasBin: true
+
+  cerbosctl@0.47.0:
+    resolution: {integrity: sha512-O1A14DYtR3wWP0IfLAIHm2vdZuhYXtJQRCEA1xXwCTzcPliu+EwfU5u71K6epESttRbxMGA/1XJe/5Dc4pQZGw==}
+    hasBin: true
 
   chalk@2.4.2:
     resolution: {integrity: sha512-Mti+f9lpJNcwF4tWV8/OrTTtF1gZi+f8FqlyAdouralcFWFQWF2+NgCHShjkCb+IFBLq9buZwE1xckQU4peSuQ==}
@@ -2692,6 +2793,10 @@ packages:
   dottie@2.0.6:
     resolution: {integrity: sha512-iGCHkfUc5kFekGiqhe8B/mdaurD+lakO9txNnTvKtA6PISrw86LgqHvRzWYPyoE2Ph5aMIrCw9/uko6XHTKCwA==}
 
+  dunder-proto@1.0.1:
+    resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
+    engines: {node: '>= 0.4'}
+
   duplexer2@0.1.4:
     resolution: {integrity: sha512-asLFVfWWtJ90ZyOUHMqk7/S2w2guQKxUI2itj3d92ADHhxUSbCMGi1f1cBcJ7xM1To+pE/Khbwo1yuNbMEPKeA==}
 
@@ -2748,6 +2853,18 @@ packages:
 
   error-ex@1.3.2:
     resolution: {integrity: sha512-7dFHNmqeFSEt2ZBsCriorKnn3Z2pj+fd9kmI6QoWw4//DL+icEBfc0U7qJCisqrTsKTjw4fNFy2pW9OqStD84g==}
+
+  es-define-property@1.0.1:
+    resolution: {integrity: sha512-e3nRfgfUZ4rNGL232gUgX06QNyyez04KdjFrF+LTRoOXmrOgFKDg4BCdsjW8EnT69eqdYGmRpJwiPVYNrCaW3g==}
+    engines: {node: '>= 0.4'}
+
+  es-errors@1.3.0:
+    resolution: {integrity: sha512-Zf5H2Kxt2xjTvbJvP2ZWLEICxA6j+hAmMzIlypy4xcBg1vKVnx89Wy0GbS+kf5cwCVFFzdCFh2XSCFNULS6csw==}
+    engines: {node: '>= 0.4'}
+
+  es-object-atoms@1.1.1:
+    resolution: {integrity: sha512-FGgH2h8zKNim9ljj7dankFPcICIK9Cp5bm+c2gQSYePhpaG5+esrLODihIorn+Pe6FGJzWhXQotPv73jTaldXA==}
+    engines: {node: '>= 0.4'}
 
   esbuild@0.21.5:
     resolution: {integrity: sha512-mg3OPMV4hXywwpoDxu3Qda5xCKQi+vCTZq8S9J/EpkhB2HzKXq4SNFZE3+NK93JYxc8VMSep+lOUSC/RVKaBqw==}
@@ -3068,6 +3185,14 @@ packages:
   get-intrinsic@1.2.2:
     resolution: {integrity: sha512-0gSo4ml/0j98Y3lngkFEot/zhiCeWsbYIlZ+uZOVgzLyLaUw7wxUL+nCTP0XJvJg1AXulJRI3UJi8GsbDuxdGA==}
 
+  get-intrinsic@1.3.0:
+    resolution: {integrity: sha512-9fSjSaos/fRIVIp+xSJlE6lfwhES7LNtKaCBIamHsjr2na1BiABJPo0mOjjz8GJDURarmCPGqaiVg5mfjb98CQ==}
+    engines: {node: '>= 0.4'}
+
+  get-proto@1.0.1:
+    resolution: {integrity: sha512-sTSfBjoXBp89JvIKIefqw7U2CCebsc74kiY6awiGogKtoSGbgjYE/G/+l9sF3MWFPNc9IcoOC4ODfKHfxFmp0g==}
+    engines: {node: '>= 0.4'}
+
   get-stream@6.0.1:
     resolution: {integrity: sha512-ts6Wi+2j3jQjqi70w5AlN8DFnkSwC+MqmxEzdEALB2qXZYV3X/b1CTfgPLGJNMeAWxdPfU8FO1ms3NUfaHCPYg==}
     engines: {node: '>=10'}
@@ -3137,6 +3262,10 @@ packages:
   gopd@1.0.1:
     resolution: {integrity: sha512-d65bNlIadxvpb/A2abVdlqKqV563juRnZ1Wtk6s1sIR8uNsXR70xqIzVqxVf1eTqDunwT2MkczEeaezCKTZhwA==}
 
+  gopd@1.2.0:
+    resolution: {integrity: sha512-ZUKRh6/kUFoAiTAtTYPZJ3hw9wNxx+BIBOijnlG9PnrJsCcSjs1wyyD6vJpaYtgnzDrKYRSqf3OO6Rfa93xsRg==}
+    engines: {node: '>= 0.4'}
+
   graceful-fs@4.2.10:
     resolution: {integrity: sha512-9ByhssR2fPVsNZj478qUUbKfmL0+t5BDVyjShtyZZLiK7ZDAArFFfopyOTj0M05wE2tJPisA4iTnnXl2YoPvOA==}
 
@@ -3172,6 +3301,10 @@ packages:
 
   has-symbols@1.0.3:
     resolution: {integrity: sha512-l3LCuF6MgDNwTDKkdYGEihYjt5pRPbEg46rtlmnSPlUbgmB8LOIrKJbYYFBSbnPaJexMKtiPO8hmeRjRz2Td+A==}
+    engines: {node: '>= 0.4'}
+
+  has-symbols@1.1.0:
+    resolution: {integrity: sha512-1cDNdwJ2Jaohmb3sg4OmKaMBwuC48sYni5HUw2DvsC8LjGTLK9h+eb1X6RyuOHe4hT0ULCW68iomhjUoKUqlPQ==}
     engines: {node: '>= 0.4'}
 
   has-tostringtag@1.0.0:
@@ -3748,6 +3881,10 @@ packages:
     resolution: {integrity: sha512-s2EMBOWtXFc8dgqvoAzKJXxNHibcdJMV0gwqKUaw9E2JBJuGUK7DrNKrA6g/i+v72TT16+6sVm5mS3thaMLQUw==}
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
+  math-intrinsics@1.1.0:
+    resolution: {integrity: sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g==}
+    engines: {node: '>= 0.4'}
+
   md5-hex@3.0.1:
     resolution: {integrity: sha512-BUiRtTtV39LIJwinWBjqVsU9xhdnz7/i889V859IBFpuqGAj6LuOvHv5XLbgZ2R7ptJoJaEcxkv88/h25T7Ciw==}
     engines: {node: '>=8'}
@@ -4173,6 +4310,10 @@ packages:
     resolution: {integrity: sha512-rJgTQnkUnH1sFw8yT6VSU3zD3sWmu6sZhIseY8VX+GRu3P6F7Fu+JNDoXfklElbLJSnc3FUQHVe4cU5hj+BcUg==}
     engines: {node: '>=0.10.0'}
 
+  object-inspect@1.13.4:
+    resolution: {integrity: sha512-W67iLl4J2EXEGTbfeHCffrjDfitvLANg0UlX3wFUUSTx92KXRFegMHUVgSqE+wvhAbi4WqjGg9czysTV2Epbew==}
+    engines: {node: '>= 0.4'}
+
   once@1.4.0:
     resolution: {integrity: sha512-lNaJgI+2Q5URQBkccEKHTQOPaXdUxnZZElQTZY0MFUAuaEqe1E+Nyvgdz/aIyNi6Z9MzO5dv1H8n58/GELp3+w==}
 
@@ -4538,6 +4679,10 @@ packages:
     engines: {node: '>=10.13.0'}
     hasBin: true
 
+  qs@6.14.0:
+    resolution: {integrity: sha512-YWWTjgABSKcvs/nWBi9PycY/JiPJqOD4JA6o9Sej2AtvSGarXxKC3OQSk4pAarbdQlKAh5D4FCQkJNkW+GAn3w==}
+    engines: {node: '>=0.6'}
+
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
 
@@ -4781,6 +4926,22 @@ packages:
 
   shiki@1.22.0:
     resolution: {integrity: sha512-/t5LlhNs+UOKQCYBtl5ZsH/Vclz73GIqT2yQsCBygr8L/ppTdmpL4w3kPLoZJbMKVWtoG77Ue1feOjZfDxvMkw==}
+
+  side-channel-list@1.0.0:
+    resolution: {integrity: sha512-FCLHtRD/gnpCiCHEiJLOwdmFP+wzCmDEkc9y7NsYxeF4u7Btsn1ZuwgwJGxImImHicJArLP4R0yX4c2KCrMrTA==}
+    engines: {node: '>= 0.4'}
+
+  side-channel-map@1.0.1:
+    resolution: {integrity: sha512-VCjCNfgMsby3tTdo02nbjtM/ewra6jPHmpThenkTYh8pG9ucZ/1P8So4u4FGBek/BjpOVsDCMoLA/iuBKIFXRA==}
+    engines: {node: '>= 0.4'}
+
+  side-channel-weakmap@1.0.2:
+    resolution: {integrity: sha512-WPS/HvHQTYnHisLo9McqBHOJk2FkHO/tlpvldyrnem4aeQp4hai3gythswg6p01oSoTl58rcpiFAjF2br2Ak2A==}
+    engines: {node: '>= 0.4'}
+
+  side-channel@1.1.0:
+    resolution: {integrity: sha512-ZX99e6tRweoUXqR+VBrslhda51Nh5MTQwou5tnUDgbtyM0dBgmhEDtWGP/xbKn6hqfPRHujUNwz5fy/wbbhnpw==}
+    engines: {node: '>= 0.4'}
 
   signal-exit@3.0.7:
     resolution: {integrity: sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ==}
@@ -5277,6 +5438,10 @@ packages:
     resolution: {integrity: sha512-8XkAphELsDnEGrDxUOHB3RGvXz6TeuYSGEZBOjtTtPm2lwhGBjLgOzLHB63IUWfBpNucQjND6d3AOudO+H3RWQ==}
     hasBin: true
 
+  uuid@13.0.0:
+    resolution: {integrity: sha512-XQegIaBTVUjSHliKqcnFqYypAd4S+WCYt5NIeRs6w/UAry7z8Y9j5ZwRRL4kzq9U3sD6v+85er9FvkEaBpji2w==}
+    hasBin: true
+
   uuid@8.3.2:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
     hasBin: true
@@ -5621,15 +5786,17 @@ packages:
     resolution: {integrity: sha512-GQHQqAopRhwU8Kt1DDM8NjibDXHC8eoh1erhGAJPEyveY9qqVeXvVikNKrDz69sHowPMorbPUrH/mx8c50eiBQ==}
     engines: {node: '>=18'}
 
-  zenroom@5.25.1:
-    resolution: {integrity: sha512-lQJUApp2IIIFQTbTp5TcE3g80oRpUHyed7hq/26hxST48Y/DugK8tovdRJlOYTNE0Q9dmMFHuCiNCWuvl8d+tg==}
-    engines: {node: '>=22'}
+  zenroom@5.28.5:
+    resolution: {integrity: sha512-llT5iXrd5kaE7YpGMGK3CFhszyH8cL49fwmbuIYkJFd7YuB0mJ+gkBDWYelwlK0nN0leMsfoRqwSvBq82MDkaQ==}
 
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
   zod@4.1.12:
     resolution: {integrity: sha512-JInaHOamG8pt5+Ey8kGmdcAcg3OL9reK8ltczgHTAwNhMys/6ThXHityHxVV2p3fkw/c+MAvBHFVYHFZDmjMCQ==}
+
+  zod@4.1.13:
+    resolution: {integrity: sha512-AvvthqfqrAhNH9dnfmrfKzX5upOdjUVJYFqNSlkmGf64gRaTzlPwz99IHYnVs28qYAybvAlBV+H7pn0saFY4Ig==}
 
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
@@ -5784,6 +5951,8 @@ snapshots:
 
   '@bcoe/v8-coverage@0.2.3': {}
 
+  '@bufbuild/protobuf@2.10.1': {}
+
   '@capacitor/core@6.0.0':
     dependencies:
       tslib: 2.8.1
@@ -5791,6 +5960,47 @@ snapshots:
   '@capacitor/preferences@6.0.3(@capacitor/core@6.0.0)':
     dependencies:
       '@capacitor/core': 6.0.0
+
+  '@cerbos/api@0.3.0':
+    dependencies:
+      '@bufbuild/protobuf': 2.10.1
+
+  '@cerbos/cerbos-darwin-arm64@0.47.0':
+    optional: true
+
+  '@cerbos/cerbos-darwin-x64@0.47.0':
+    optional: true
+
+  '@cerbos/cerbos-linux-arm64@0.47.0':
+    optional: true
+
+  '@cerbos/cerbos-linux-x64@0.47.0':
+    optional: true
+
+  '@cerbos/cerbosctl-darwin-arm64@0.47.0':
+    optional: true
+
+  '@cerbos/cerbosctl-darwin-x64@0.47.0':
+    optional: true
+
+  '@cerbos/cerbosctl-linux-arm64@0.47.0':
+    optional: true
+
+  '@cerbos/cerbosctl-linux-x64@0.47.0':
+    optional: true
+
+  '@cerbos/core@0.25.2(@bufbuild/protobuf@2.10.1)':
+    dependencies:
+      '@bufbuild/protobuf': 2.10.1
+      '@cerbos/api': 0.3.0
+      uuid: 13.0.0
+
+  '@cerbos/http@0.23.4(@bufbuild/protobuf@2.10.1)(@cerbos/api@0.3.0)':
+    dependencies:
+      '@bufbuild/protobuf': 2.10.1
+      '@cerbos/api': 0.3.0
+      '@cerbos/core': 0.25.2(@bufbuild/protobuf@2.10.1)
+      qs: 6.14.0
 
   '@chevrotain/cst-dts-gen@10.5.0':
     dependencies:
@@ -7600,11 +7810,21 @@ snapshots:
       tar: 6.2.1
       unique-filename: 3.0.0
 
+  call-bind-apply-helpers@1.0.2:
+    dependencies:
+      es-errors: 1.3.0
+      function-bind: 1.1.2
+
   call-bind@1.0.5:
     dependencies:
       function-bind: 1.1.2
       get-intrinsic: 1.2.2
       set-function-length: 1.1.1
+
+  call-bound@1.0.4:
+    dependencies:
+      call-bind-apply-helpers: 1.0.2
+      get-intrinsic: 1.3.0
 
   callsites@3.1.0: {}
 
@@ -7623,6 +7843,20 @@ snapshots:
       nofilter: 3.1.0
 
   ccount@2.0.1: {}
+
+  cerbos@0.47.0:
+    optionalDependencies:
+      '@cerbos/cerbos-darwin-arm64': 0.47.0
+      '@cerbos/cerbos-darwin-x64': 0.47.0
+      '@cerbos/cerbos-linux-arm64': 0.47.0
+      '@cerbos/cerbos-linux-x64': 0.47.0
+
+  cerbosctl@0.47.0:
+    optionalDependencies:
+      '@cerbos/cerbosctl-darwin-arm64': 0.47.0
+      '@cerbos/cerbosctl-darwin-x64': 0.47.0
+      '@cerbos/cerbosctl-linux-arm64': 0.47.0
+      '@cerbos/cerbosctl-linux-x64': 0.47.0
 
   chalk@2.4.2:
     dependencies:
@@ -8008,6 +8242,12 @@ snapshots:
 
   dottie@2.0.6: {}
 
+  dunder-proto@1.0.1:
+    dependencies:
+      call-bind-apply-helpers: 1.0.2
+      es-errors: 1.3.0
+      gopd: 1.2.0
+
   duplexer2@0.1.4:
     dependencies:
       readable-stream: 2.3.8
@@ -8053,6 +8293,14 @@ snapshots:
   error-ex@1.3.2:
     dependencies:
       is-arrayish: 0.2.1
+
+  es-define-property@1.0.1: {}
+
+  es-errors@1.3.0: {}
+
+  es-object-atoms@1.1.1:
+    dependencies:
+      es-errors: 1.3.0
 
   esbuild@0.21.5:
     optionalDependencies:
@@ -8449,6 +8697,24 @@ snapshots:
       has-symbols: 1.0.3
       hasown: 2.0.2
 
+  get-intrinsic@1.3.0:
+    dependencies:
+      call-bind-apply-helpers: 1.0.2
+      es-define-property: 1.0.1
+      es-errors: 1.3.0
+      es-object-atoms: 1.1.1
+      function-bind: 1.1.2
+      get-proto: 1.0.1
+      gopd: 1.2.0
+      has-symbols: 1.1.0
+      hasown: 2.0.2
+      math-intrinsics: 1.1.0
+
+  get-proto@1.0.1:
+    dependencies:
+      dunder-proto: 1.0.1
+      es-object-atoms: 1.1.1
+
   get-stream@6.0.1: {}
 
   get-stream@7.0.1: {}
@@ -8541,6 +8807,8 @@ snapshots:
     dependencies:
       get-intrinsic: 1.2.2
 
+  gopd@1.2.0: {}
+
   graceful-fs@4.2.10: {}
 
   graceful-fs@4.2.11: {}
@@ -8569,6 +8837,8 @@ snapshots:
   has-proto@1.0.1: {}
 
   has-symbols@1.0.3: {}
+
+  has-symbols@1.1.0: {}
 
   has-tostringtag@1.0.0:
     dependencies:
@@ -9135,6 +9405,8 @@ snapshots:
     dependencies:
       escape-string-regexp: 5.0.0
 
+  math-intrinsics@1.1.0: {}
+
   md5-hex@3.0.1:
     dependencies:
       blueimp-md5: 2.19.0
@@ -9527,6 +9799,8 @@ snapshots:
 
   object-assign@4.1.1: {}
 
+  object-inspect@1.13.4: {}
+
   once@1.4.0:
     dependencies:
       wrappy: 1.0.2
@@ -9859,6 +10133,10 @@ snapshots:
       pngjs: 5.0.0
       yargs: 15.4.1
 
+  qs@6.14.0:
+    dependencies:
+      side-channel: 1.1.0
+
   queue-microtask@1.2.3: {}
 
   randombytes@2.1.0:
@@ -10144,6 +10422,34 @@ snapshots:
       '@shikijs/types': 1.22.0
       '@shikijs/vscode-textmate': 9.3.0
       '@types/hast': 3.0.4
+
+  side-channel-list@1.0.0:
+    dependencies:
+      es-errors: 1.3.0
+      object-inspect: 1.13.4
+
+  side-channel-map@1.0.1:
+    dependencies:
+      call-bound: 1.0.4
+      es-errors: 1.3.0
+      get-intrinsic: 1.3.0
+      object-inspect: 1.13.4
+
+  side-channel-weakmap@1.0.2:
+    dependencies:
+      call-bound: 1.0.4
+      es-errors: 1.3.0
+      get-intrinsic: 1.3.0
+      object-inspect: 1.13.4
+      side-channel-map: 1.0.1
+
+  side-channel@1.1.0:
+    dependencies:
+      es-errors: 1.3.0
+      object-inspect: 1.13.4
+      side-channel-list: 1.0.0
+      side-channel-map: 1.0.1
+      side-channel-weakmap: 1.0.2
 
   signal-exit@3.0.7: {}
 
@@ -10652,6 +10958,8 @@ snapshots:
 
   uuid@10.0.0: {}
 
+  uuid@13.0.0: {}
+
   uuid@8.3.2: {}
 
   v8-compile-cache-lib@3.0.1: {}
@@ -11137,10 +11445,12 @@ snapshots:
 
   yoctocolors@2.1.1: {}
 
-  zenroom@5.25.1: {}
+  zenroom@5.28.5: {}
 
   zod@3.25.76: {}
 
   zod@4.1.12: {}
+
+  zod@4.1.13: {}
 
   zwitch@2.0.4: {}
