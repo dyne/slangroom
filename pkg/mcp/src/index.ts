@@ -1,22 +1,6 @@
-import { Server } from '@modelcontextprotocol/sdk/server/index.js';
-import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+// SPDX-FileCopyrightText: 2026 Dyne.org foundation
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
 
-// Initialize the MCP server
-const server = new Server(
-  {
-    name: "slangroom-mcp",
-    version: "1.0.0",
-  },
-  {
-    capabilities: {
-      resources: {},
-      tools: {},
-    },
-  }
-);
-
-// Set up stdio transport
-const transport = new StdioServerTransport();
-server.connect(transport);
-
-console.log("Slangroom MCP server initialized");
+export * from './catalog.js';
+export * from './server.js';

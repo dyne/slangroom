@@ -19,6 +19,9 @@
 	"type": "module",
 	"main": "./build/esm/src/index.js",
 	"types": "./build/esm/src/index.d.ts",
+	"bin": {
+		"slangroom-mcp": "./build/esm/src/cli.js"
+	},
 	"exports": {
 		".": {
 			"import": {
