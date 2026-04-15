@@ -113,25 +113,26 @@ export class AuthenticateHandler {
 
 			const result = await response.json();
 
-			const base58Key = result.didDocument.verificationMethod.find((value: any) => value.type == 'EcdsaSecp256r1VerificationKey').publicKeyBase58;
+			const base58Key = result.didDocument.verificationMethod.find((value: {id: string; type: string; controller: string}) => value.type == 'EcdsaSecp256r1VerificationKey').publicKeyBase58;
 			const uint8Key = bs58.decode(base58Key);
 			const x_base64Key = Buffer.from(uint8Key.buffer.slice(0, 32)).toString('base64url');
 			const y_base64Key = Buffer.from(uint8Key.buffer.slice(32)).toString('base64url');
 
-			const publicKey = await importJWK(
-				{
-					crv: 'P-256',
-					kty: 'EC',
-					x: x_base64Key,
-					y: y_base64Key,
-				},
-				'ES256',
-			);
-
-			//TODO?: add more checks on payload/header?
-			const outVerify = await jwtVerify(client['clientSecret'], publicKey);
-			if (!outVerify) {
-				return undefined;
+			if (client['clientSecret']) {
+				const publicKey = await importJWK(
+					{
+						crv: 'P-256',
+						kty: 'EC',
+						x: x_base64Key,
+						y: y_base64Key,
+					},
+					'ES256',
+				);
+				//TODO?: add more checks on payload/header?
+				const outVerify = await jwtVerify(client['clientSecret'], publicKey);
+				if (!outVerify) {
+					return undefined;
+				}
 			}
 			return client['id'];
 		} catch (e) {
@@ -182,8 +183,7 @@ export class AuthenticateHandler {
 		}
 		const result = await response.json();
 		const credentials_supported = result.credential_configurations_supported;
-		var valid_credentials = Object.entries(credentials_supported).some(([key, value]: [string, any]) => key === scope || value.vct === scope);
-		return valid_credentials;
+		return Object.entries(credentials_supported).some(([key, value]: [string, unknown]) => key === scope || typeof value === 'object' && value != null && 'vct' in value && value.vct === scope);
 	}
 
 	/**

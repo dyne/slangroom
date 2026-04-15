@@ -123,8 +123,6 @@ Then print data
 			expires_in: 500,
 			client: {
 				id: 'did:dyne:sandbox.genericissuer:6Cp8mPUvJmQaMxQPSnNyhb74f9Ga4WqfXCkBneFgikm5',
-				clientSecret:
-					'eyJhbGciOiJFUzI1NiJ9.eyJzdWIiOiJwaXBwbyJ9.hiVPL2JTdmcZY7Vcso95KUBEzcTGvmvQ7wlwkCo0G74Unpzny2drvLsu-HzHWyckKbRjwWox-V5gqqKeka8kEQ',
 				grants: ['authorization_code'],
 				redirectUris: ['https://Wallet.example.org/cb'],
 				scope: ['test_credential'],

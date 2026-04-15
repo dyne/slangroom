@@ -60,6 +60,11 @@ neither the open/connect part nor the parameters part are present.
 | connect      | record,table         | read the record of the table            |
 | connect      | variable,name,table  | save the variable in the database table |
 
+## dcql plugin
+| open/connect | params              | phrase                                   |
+| ------------ | ------------------- | ---------------------------------------- |
+|              | dcql_query,vp_token | validate the vp_token against dcql_query |
+
 ## did plugin
 | open/connect | params | phrase          |
 | ------------ | ------ | --------------- |

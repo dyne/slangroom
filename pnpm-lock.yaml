@@ -59,6 +59,9 @@ importers:
       '@slangroom/db':
         specifier: workspace:^
         version: link:../../pkg/db
+      '@slangroom/dcql':
+        specifier: workspace:^
+        version: link:../../pkg/dcql
       '@slangroom/did':
         specifier: workspace:^
         version: link:../../pkg/did
@@ -270,6 +273,9 @@ importers:
       '@slangroom/qrcode':
         specifier: workspace:*
         version: link:../qrcode
+      '@slangroom/rdf':
+        specifier: workspace:*
+        version: link:../rdf
       '@slangroom/timestamp':
         specifier: workspace:*
         version: link:../timestamp
@@ -331,6 +337,24 @@ importers:
       sqlite3:
         specifier: 5.1.7
         version: 5.1.7
+
+  pkg/dcql:
+    dependencies:
+      '@slangroom/core':
+        specifier: workspace:*
+        version: link:../core
+      '@slangroom/rdf':
+        specifier: workspace:*
+        version: link:../rdf
+      '@slangroom/shared':
+        specifier: workspace:*
+        version: link:../shared
+      dcql:
+        specifier: ^1.0.1
+        version: 1.0.1(typescript@5.6.3)
+      zod:
+        specifier: 4.1.12
+        version: 4.1.12
 
   pkg/deps:
     dependencies:
@@ -501,12 +525,15 @@ importers:
       '@slangroom/core':
         specifier: workspace:*
         version: link:../core
+      '@slangroom/deps':
+        specifier: workspace:*
+        version: link:../deps
       jsonld:
-        specifier: 8.3.3
-        version: 8.3.3(web-streams-polyfill@3.3.3)
+        specifier: 9.0.0
+        version: 9.0.0
       rdf-canonize:
-        specifier: 4.0.1
-        version: 4.0.1
+        specifier: 5.0.0
+        version: 5.0.0
     devDependencies:
       '@types/jsonld':
         specifier: ^1.5.15
@@ -739,9 +766,9 @@ packages:
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
     engines: {node: '>=12'}
 
-  '@digitalbazaar/http-client@3.4.1':
-    resolution: {integrity: sha512-Ahk1N+s7urkgj7WvvUND5f8GiWEPfUw0D41hdElaqLgu8wZScI8gdI0q+qWw5N1d35x7GCRH2uk9mi+Uzo9M3g==}
-    engines: {node: '>=14.0'}
+  '@digitalbazaar/http-client@4.2.0':
+    resolution: {integrity: sha512-OGju/GYp0V72qlZ/Pd4jGEwqBwT/Za/tw+Z3AC7lgMheGqsbhTZrtc5iLz9z59G/Q53QyE2fnjHV8N9wjBpiWA==}
+    engines: {node: '>=18.0'}
 
   '@docsearch/css@3.6.2':
     resolution: {integrity: sha512-vKNZepO2j7MrYBTZIGXvlUOIR+v9KRf70FApRgovWrj3GTs1EITz/Xb0AOlm1xsQBp16clVZj1SY/qaOJbQtZw==}
@@ -1092,10 +1119,6 @@ packages:
     resolution: {integrity: sha512-tqsQiBQDQdmPWE1xkkBq4rlSW5QZpLOUJ5RJh2/9fug+q9tnUhuZoVLk7s0scUIKTOzEtR72DFBXI4WiZcMpvw==}
     engines: {node: '>=14'}
     hasBin: true
-
-  '@fastify/busboy@2.1.1':
-    resolution: {integrity: sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==}
-    engines: {node: '>=14'}
 
   '@gar/promisify@1.1.3':
     resolution: {integrity: sha512-k2Ty1JcVojjJFwrg/ThKi2ujJ7XNLYaFGNB/bWT9wGR+oSMJHMa5w+CUq6p/pVrKeNNgA7pCqEcjSnHVoqJQFw==}
@@ -2251,8 +2274,9 @@ packages:
     resolution: {integrity: sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==}
     engines: {node: '>=10'}
 
-  canonicalize@1.0.8:
-    resolution: {integrity: sha512-0CNTVCLZggSh7bc5VkX5WWPWO+cyZbNd07IHIsSXLia/eAq+r836hgk+8BKoEh7949Mda87VUOitx5OddVj64A==}
+  canonicalize@2.1.0:
+    resolution: {integrity: sha512-F705O3xrsUtgt98j7leetNhTWPe+5S72rlL5O4jA1pKqBVQ/dT1O1D6PFxmSXvc0SUOinWS57DKx0I3CHrXJHQ==}
+    hasBin: true
 
   catering@2.1.1:
     resolution: {integrity: sha512-K7Qy8O9p76sL3/3m7/zLKbRkyOlSZAgzEaLhyj2mXS8PsCud2Eo4hAb8aLtZqHh0QGqLcb9dlJSu6lHRVENm1w==}
@@ -2548,6 +2572,9 @@ packages:
   date-time@3.1.0:
     resolution: {integrity: sha512-uqCUKXE5q1PNBXjPqvwhwJf9SwMoAHBgWJ6DcrnS5o+W2JOiIILl0JEdVD8SGujrNS02GGxgwAg2PN2zONgtjg==}
     engines: {node: '>=6'}
+
+  dcql@1.0.1:
+    resolution: {integrity: sha512-XZ9VJfvHZwPbeg6O+GvyNi7P5n4L+J0ATCFBUvgn2LXzQPoatHnOt9b7uHHtFWZzxyD5ngLpBCEOteEzKgtIAA==}
 
   debug@4.3.3:
     resolution: {integrity: sha512-/zxw5+vh1Tfv+4Qn7a5nsbcJKPaSvCDhojn6FEl9vupwK2VCSDtEiEtqr8DFtzYFOdz63LBkxec7DYuc2jon6Q==}
@@ -3533,9 +3560,9 @@ packages:
   jsonfile@6.1.0:
     resolution: {integrity: sha512-5dgndWOriYSm5cnYaJNhalLNDKOqFwyDB/rr1E9ZsGciGvKPs8R2xYGCacuf3z6K1YKDz182fd+fY3cn3pMqXQ==}
 
-  jsonld@8.3.3:
-    resolution: {integrity: sha512-9YcilrF+dLfg9NTEof/mJLMtbdX1RJ8dbWtJgE00cMOIohb1lIyJl710vFiTaiHTl6ZYODJuBd32xFvUhmv3kg==}
-    engines: {node: '>=14'}
+  jsonld@9.0.0:
+    resolution: {integrity: sha512-pjMIdkXfC1T2wrX9B9i2uXhGdyCmgec3qgMht+TDj+S0qX3bjWMQUfL7NeqEhuRTi8G5ESzmL9uGlST7nzSEWg==}
+    engines: {node: '>=18'}
 
   jsonparse@1.3.1:
     resolution: {integrity: sha512-POQXvpdL69+CluYsillJ7SUhKvytYjW9vG/GKpnf+xP8UWgYEM/RaMzHHofbALDiKbbP1W8UEYmgGl39WkPZsg==}
@@ -3557,19 +3584,9 @@ packages:
     resolution: {integrity: sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==}
     engines: {node: '>=0.10.0'}
 
-  ky-universal@0.11.0:
-    resolution: {integrity: sha512-65KyweaWvk+uKKkCrfAf+xqN2/epw1IJDtlyCPxYffFCMR8u1sp2U65NtWpnozYfZxQ6IUzIlvUcw+hQ82U2Xw==}
-    engines: {node: '>=14.16'}
-    peerDependencies:
-      ky: '>=0.31.4'
-      web-streams-polyfill: '>=3.2.1'
-    peerDependenciesMeta:
-      web-streams-polyfill:
-        optional: true
-
-  ky@0.33.3:
-    resolution: {integrity: sha512-CasD9OCEQSFIam2U8efFK81Yeg8vNMTBUqtMOHlrcWQHqUX3HeCl9Dr31u4toV7emlH8Mymk5+9p0lL6mKb/Xw==}
-    engines: {node: '>=14.16'}
+  ky@1.12.0:
+    resolution: {integrity: sha512-YRLmSUHCwOJRBMArtqMRLOmO7fewn3yOoui6aB8ERkRVXupa0UiaQaKbIXteMt4jUElhbdqTMsLFHs8APxxUoQ==}
+    engines: {node: '>=18'}
 
   level-concat-iterator@3.1.0:
     resolution: {integrity: sha512-BWRCMHBxbIqPxJ8vHOvKUsaO0v1sLYZtjN3K2iZJsRBYtp+ONsY6Jfi6hy9K3+zolgQRryhIn2NRZjZnWJ9NmQ==}
@@ -4531,12 +4548,8 @@ packages:
     resolution: {integrity: sha512-y3bGgqKj3QBdxLbLkomlohkvsA8gdAiUQlSBJnBhfn+BPxg4bc62d8TcBW15wavDfgexCgccckhcZvywyQYPOw==}
     hasBin: true
 
-  rdf-canonize@3.4.0:
-    resolution: {integrity: sha512-fUeWjrkOO0t1rg7B2fdyDTvngj+9RlUyL92vOdiB7c0FPguWVsniIMjEtHH+meLBO9rzkUlUzBVXgWrjI8P9LA==}
-    engines: {node: '>=12'}
-
-  rdf-canonize@4.0.1:
-    resolution: {integrity: sha512-B5ynHt4sasbUafzrvYI2GFARgeFcD8Sx9yXPbg7gEyT2EH76rlCv84kyO6tnxzVbxUN/uJDbK1S/MXh+DsnuTA==}
+  rdf-canonize@5.0.0:
+    resolution: {integrity: sha512-g8OUrgMXAR9ys/ZuJVfBr05sPPoMA7nHIVs8VEvg9QwM5W4GR2qSFEEHjsyHF1eWlBaf8Ev40WNjQFQ+nJTO3w==}
     engines: {node: '>=18'}
 
   read-cmd-shim@4.0.0:
@@ -5184,9 +5197,9 @@ packages:
   undici-types@7.8.0:
     resolution: {integrity: sha512-9UJ2xGDvQ43tYyVMpuHlsgApydB8ZKfVYTsLDhXkFL/6gfkp+U8xTGdh8pMJv1SpZna0zxG1DwsKZsreLbXBxw==}
 
-  undici@5.29.0:
-    resolution: {integrity: sha512-raqeBD6NQK4SkWhQzeYKd1KmIG6dllBOTt55Rmkt4HtI9mwdWtJljnrXjAFUBLTSN67HWrOIZ3EPF4kjUw80Bg==}
-    engines: {node: '>=14.0'}
+  undici@6.22.0:
+    resolution: {integrity: sha512-hU/10obOIu62MGYjdskASR3CUAiYaFTtC9Pa6vHyf//mAipSvSQg6od2CnJswq7fvzNS3zJhxoRkgNVaHurWKw==}
+    engines: {node: '>=18.17'}
 
   unicode-emoji-modifier-base@1.0.0:
     resolution: {integrity: sha512-yLSH4py7oFH3oG/9K+XWrz1pSi3dfUrWEnInbxMfArOfc1+33BlGPQtLsOYwvdMy11AwUBetYuaRxSPqgkq+8g==}
@@ -5274,6 +5287,14 @@ packages:
   v8-to-istanbul@9.3.0:
     resolution: {integrity: sha512-kiGUalWN+rgBJ/1OHZsBtU4rXZOfj/7rKQxULKlIzwzQSvMJUUNgPwJEEh7gU6xEVxC0ahoOBvN2YI8GH6FNgA==}
     engines: {node: '>=10.12.0'}
+
+  valibot@1.0.0-beta.8:
+    resolution: {integrity: sha512-OPAwJZtowb0j91b+bd77+ny7D1VVzsCzD7Jl9waLUlMprTsfI9Y3HHbW3hAQD7wKDKHsmGEesuiYWaYvcZL2wg==}
+    peerDependencies:
+      typescript: '>=5'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
 
   validate-npm-package-license@3.0.4:
     resolution: {integrity: sha512-DpKm2Ui/xN7/HQKCtpZxoRWBhZ9Z0kqtygG8XCgNQ8ZlDnxuQmWhj566j8fN4Cu3/JmbhsDo7fcAJq4s9h27Ew==}
@@ -5604,11 +5625,11 @@ packages:
     resolution: {integrity: sha512-lQJUApp2IIIFQTbTp5TcE3g80oRpUHyed7hq/26hxST48Y/DugK8tovdRJlOYTNE0Q9dmMFHuCiNCWuvl8d+tg==}
     engines: {node: '>=22'}
 
-  zod@3.24.1:
-    resolution: {integrity: sha512-muH7gBL9sI1nciMZV67X5fTKKBLtwpZ5VBp1vsOQzj1MhrBZ4wlVCm3gedKZWLp0Oyel8sIGfeiz54Su+OVT+A==}
-
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
+
+  zod@4.1.12:
+    resolution: {integrity: sha512-JInaHOamG8pt5+Ey8kGmdcAcg3OL9reK8ltczgHTAwNhMys/6ThXHityHxVV2p3fkw/c+MAvBHFVYHFZDmjMCQ==}
 
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
@@ -5823,13 +5844,10 @@ snapshots:
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
 
-  '@digitalbazaar/http-client@3.4.1(web-streams-polyfill@3.3.3)':
+  '@digitalbazaar/http-client@4.2.0':
     dependencies:
-      ky: 0.33.3
-      ky-universal: 0.11.0(ky@0.33.3)(web-streams-polyfill@3.3.3)
-      undici: 5.29.0
-    transitivePeerDependencies:
-      - web-streams-polyfill
+      ky: 1.12.0
+      undici: 6.22.0
 
   '@docsearch/css@3.6.2': {}
 
@@ -6041,8 +6059,6 @@ snapshots:
       levn: 0.4.1
 
   '@ethereumjs/rlp@4.0.1': {}
-
-  '@fastify/busboy@2.1.1': {}
 
   '@gar/promisify@1.1.3':
     optional: true
@@ -7598,7 +7614,7 @@ snapshots:
 
   camelcase@6.3.0: {}
 
-  canonicalize@1.0.8: {}
+  canonicalize@2.1.0: {}
 
   catering@2.1.1: {}
 
@@ -7911,6 +7927,12 @@ snapshots:
   date-time@3.1.0:
     dependencies:
       time-zone: 1.0.0
+
+  dcql@1.0.1(typescript@5.6.3):
+    dependencies:
+      valibot: 1.0.0-beta.8(typescript@5.6.3)
+    transitivePeerDependencies:
+      - typescript
 
   debug@4.3.3(supports-color@8.1.1):
     dependencies:
@@ -8896,14 +8918,12 @@ snapshots:
     optionalDependencies:
       graceful-fs: 4.2.11
 
-  jsonld@8.3.3(web-streams-polyfill@3.3.3):
+  jsonld@9.0.0:
     dependencies:
-      '@digitalbazaar/http-client': 3.4.1(web-streams-polyfill@3.3.3)
-      canonicalize: 1.0.8
+      '@digitalbazaar/http-client': 4.2.0
+      canonicalize: 2.1.0
       lru-cache: 6.0.0
-      rdf-canonize: 3.4.0
-    transitivePeerDependencies:
-      - web-streams-polyfill
+      rdf-canonize: 5.0.0
 
   jsonparse@1.3.1: {}
 
@@ -8921,15 +8941,7 @@ snapshots:
 
   kind-of@6.0.3: {}
 
-  ky-universal@0.11.0(ky@0.33.3)(web-streams-polyfill@3.3.3):
-    dependencies:
-      abort-controller: 3.0.0
-      ky: 0.33.3
-      node-fetch: 3.3.2
-    optionalDependencies:
-      web-streams-polyfill: 3.3.3
-
-  ky@0.33.3: {}
+  ky@1.12.0: {}
 
   level-concat-iterator@3.1.0:
     dependencies:
@@ -9860,11 +9872,7 @@ snapshots:
       minimist: 1.2.8
       strip-json-comments: 2.0.1
 
-  rdf-canonize@3.4.0:
-    dependencies:
-      setimmediate: 1.0.5
-
-  rdf-canonize@4.0.1:
+  rdf-canonize@5.0.0:
     dependencies:
       setimmediate: 1.0.5
 
@@ -10555,9 +10563,7 @@ snapshots:
 
   undici-types@7.8.0: {}
 
-  undici@5.29.0:
-    dependencies:
-      '@fastify/busboy': 2.1.1
+  undici@6.22.0: {}
 
   unicode-emoji-modifier-base@1.0.0: {}
 
@@ -10655,6 +10661,10 @@ snapshots:
       '@jridgewell/trace-mapping': 0.3.25
       '@types/istanbul-lib-coverage': 2.0.6
       convert-source-map: 2.0.0
+
+  valibot@1.0.0-beta.8(typescript@5.6.3):
+    optionalDependencies:
+      typescript: 5.6.3
 
   validate-npm-package-license@3.0.4:
     dependencies:
@@ -10939,7 +10949,7 @@ snapshots:
       util: 0.12.5
       web3-errors: 1.1.4
       web3-types: 1.3.1
-      zod: 3.24.1
+      zod: 3.25.76
 
   web3@4.3.0(bufferutil@4.0.7)(encoding@0.1.13)(typescript@5.6.3)(utf-8-validate@6.0.3)(zod@3.25.76):
     dependencies:
@@ -11129,8 +11139,8 @@ snapshots:
 
   zenroom@5.25.1: {}
 
-  zod@3.24.1: {}
-
   zod@3.25.76: {}
+
+  zod@4.1.12: {}
 
   zwitch@2.0.4: {}

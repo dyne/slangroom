@@ -20,6 +20,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 		<div id="test-fs"></div>
 		<div id="test-zencode"></div>
 		<div id="test-ethereum"></div>
+		<div id="test-rdf"></div>
 		<script>
 			async function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)) };
 			async function runTest() {
@@ -35,6 +36,7 @@ SPDX-License-Identifier: AGPL-3.0-or-later
 				const FsResDiv = document.getElementById('test-fs');
 				const ZencodeResDiv = document.getElementById('test-zencode');
 				const EthereumResDiv = document.getElementById('test-ethereum');
+				const RdfResDiv = document.getElementById('test-rdf');
 
 				// scripts
 				const scriptHttp = `
@@ -114,6 +116,12 @@ When I create the ethereum transaction to 'receiver'
 When I create the signed ethereum transaction for chain 'fabt'
 Then print the 'signed ethereum transaction'
 Compute 'transaction_id': connect to 'ethereum' and read the ethereum transaction id after broadcast where transaction is 'signed_ethereum_transaction'
+`;
+				const scriptRdf = `
+Prepare 'res': generate serialized canonical rdf with dictionary 'dataset'
+Given I have a 'base64' named 'res'
+When I create the hash of 'res'
+Then print the 'hash'
 `;
 
 				const rHttp = await slangroom.execute(scriptHttp, {
@@ -230,6 +238,29 @@ Compute 'transaction_id': connect to 'ethereum' and read the ethereum transactio
 					}
 				});
 				EthereumResDiv.innerText = JSON.stringify(rEthereum.result);
+
+				const rRdf = await slangroom.execute(scriptRdf, {
+					data: {
+						dataset: {
+							"@context": [
+								"https://www.w3.org/ns/credentials/v2",
+								"https://www.w3.org/ns/credentials/examples/v2"
+							],
+							id: "http://university.example/credentials/3732",
+							type: ["VerifiableCredential", "ExampleDegreeCredential"],
+							issuer: "https://university.example/issuers/565049",
+							validFrom: "2010-01-01T00:00:00Z",
+							credentialSubject: {
+								id: "did:example:ebfeb1f712ebc6f1c276e12ec21",
+								degree: {
+									type: "ExampleBachelorDegree",
+									name: "Bachelor of Science and Arts"
+								}
+							}
+						}
+					}
+				});
+				RdfResDiv.innerText = JSON.stringify(rRdf.result);
 			}
 
 			runTest();

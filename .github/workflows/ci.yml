@@ -34,7 +34,7 @@ jobs:
       fail-fast: false
       max-parallel: 1
       matrix:
-        node: [ lts/*, current ]
+        node: [ lts/*, 25.1.0 ]
     if: github.event_name == 'pull_request'
     steps:
       - name: 🛠️ Prepare pnpm workspace
@@ -115,12 +115,11 @@ jobs:
     - name: 🌍 Build @slangroom/browser
       run: pnpm build
       working-directory: ./pkg/browser
-    - name: 📦 Releases
+    - name: 🪪 Configure git author for CI
       run: |
-        git config --global user.email "dev@dyne.org" && git config --global user.name "Dev Dyne.org"
-        echo "//registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN" > .npmrc
-        pnpm whoami
+        git config user.name "Dyne dev team"
+        git config user.email "dev@dyne.org"
+    - name: 📦 Releases (OIDC / trusted publishing)
+      run: |
+        pnpm whoami || true
         pnpm publish:ci
-      env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

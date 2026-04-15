@@ -31,6 +31,15 @@
 <<< @/../examples/db/sql_statement_with_params.keys.json{json}
 :::
 
+## dcql plugin examples
+
+### validate vp_token against a dcql_query
+::: code-group
+<<< @/../examples/dcql/validate_vp_token.slang{1 gherkin:line-numbers}
+<<< @/../examples/dcql/validate_vp_token.data.json{json}
+<<< @/../examples/dcql/validate_vp_token.keys.json{json}
+:::
+
 ## did plugin examples
 
 ### resolve a did

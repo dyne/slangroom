@@ -1,0 +1,26 @@
+{
+	"dcql_query":{
+		"credentials":[
+			{
+				"id":"my_dcsdjwt_credential",
+				"format":"dc+sd-jwt",
+				"meta":{
+					"vct_values":[
+						"discount_from_voucher"
+					]
+				},
+				"claims":[
+					{
+						"path":[
+							"has_discount_from_voucher"
+						],
+						"values":[
+							20,
+							30
+						]
+					}
+				]
+			}
+		]
+	}
+}

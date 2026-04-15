@@ -1,6 +1,6 @@
 {
 	"name": "@slangroom/zencode",
-	"version": "1.49.4",
+	"version": "1.51.1",
 	"dependencies": {
 		"@slangroom/core": "workspace:*",
 		"@slangroom/shared": "workspace:*"
@@ -29,6 +29,6 @@
 		"access": "public"
 	},
 	"engines": {
-		"node": "^18.20.0 || ^20.10.0 || ^22 || ^23 || ^24"
+		"node": "^18.20.0 || ^20.10.0 || >=22"
 	}
 }

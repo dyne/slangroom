@@ -12,11 +12,12 @@
 		"@slangroom/location": "workspace:*",
 		"@slangroom/pocketbase": "workspace:*",
 		"@slangroom/qrcode": "workspace:*",
+		"@slangroom/rdf": "workspace:*",
 		"@slangroom/timestamp": "workspace:*",
 		"@slangroom/zencode": "workspace:*",
 		"buffer": "6.0.3"
 	},
-	"version": "1.49.4",
+	"version": "1.51.1",
 	"repository": "https://github.com/dyne/slangroom",
 	"license": "AGPL-3.0-only",
 	"type": "module",
@@ -56,6 +57,6 @@
 		"build": "pnpm exec esbuild --bundle src/index.ts --outfile=build/slangroom.js --target=ESNext --external:crypto --external:module --alias:fs=@zenfs/core --alias:path=path-browserify && cp build/slangroom.js public"
 	},
 	"engines": {
-		"node": "^18.20.0 || ^20.10.0 || ^22 || ^23 || ^24"
+		"node": "^18.20.0 || ^20.10.0 || >=22"
 	}
 }
