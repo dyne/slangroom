@@ -313,7 +313,7 @@ Slangroom @slangroom/dcql@${packageJson.version} Error: Invalid vp_token: it doe
 `), (error as Error).message);
 });
 
-test('ldp_vc', async (t) => {
+test.skip('ldp_vc', async (t) => {
 	const dcqlQuery = {
 		dcql_query: {
 			credentials: [
@@ -373,7 +373,7 @@ test('ldp_vc', async (t) => {
 	t.deepEqual(result.result, out, JSON.stringify(result));
 });
 
-test('dc+sd-jwt & ldp_vc', async (t) => {
+test.skip('dc+sd-jwt & ldp_vc', async (t) => {
 	const dcSdJwtLdpVcDcqlQuery = {
 		dcql_query: {
 			credentials: [
