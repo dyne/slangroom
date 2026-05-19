@@ -1,0 +1,18 @@
+# SPDX-FileCopyrightText: 2026 Dyne.org foundation
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+node_modules
+*.tsbuildinfo
+build
+coverage
+.nyc_output
+test
+.prettierrc
+.eslintrc
+.gitignore
+.prettierignore
+.editorconfig
+CONTRIBUTING.md
+CHANGELOG.md
+README.md.license

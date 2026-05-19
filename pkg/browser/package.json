@@ -46,7 +46,7 @@
 		"access": "public"
 	},
 	"devDependencies": {
-		"@playwright/test": "^1.52.0",
+		"@playwright/test": "^1.60.0",
 		"@types/node": "^20.17.32",
 		"@types/path-browserify": "^1.0.3",
 		"@zenfs/core": "^2.2.0",
